@@ -21,12 +21,12 @@ public struct Movement : IComponentData
     public float LinearDrag;
     public float Speed;
     
-    public Movement(float drag, float linearDrag)
+    public Movement(float drag, float linearDrag, float speed)
     {
         Velocity = float2.zero;
         Drag = drag;
         LinearDrag = linearDrag;
-        Speed = 1;
+        Speed = speed;
     }
 }
 
@@ -50,9 +50,9 @@ public partial struct MovementSystem : ISystem
             transform.Position += (movement.Velocity*dt).f3();
             
             // Relative drag
-            movement.Velocity -= movement.Velocity*dt*movement.Drag;
+            if (movement.Drag != 0) movement.Velocity -= movement.Velocity*dt*movement.Drag;
             // Linear drag
-            movement.Velocity = mathu.MoveTowards(movement.Velocity, float2.zero, movement.LinearDrag*dt);
+            if (movement.LinearDrag != 0) movement.Velocity = mathu.MoveTowards(movement.Velocity, float2.zero, movement.LinearDrag*dt);
         }
     }
 }

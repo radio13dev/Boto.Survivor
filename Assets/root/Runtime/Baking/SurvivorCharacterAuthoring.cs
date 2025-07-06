@@ -12,7 +12,7 @@ public class SurvivorAuthoring : MonoBehaviour
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new SurvivorTag());
-            AddComponent(entity, new Movement(1, 1));
+            AddComponent(entity, new Movement(10, 10, 10));
             AddComponent(entity, new PlayerInput());
             AddComponent(entity, new ProjectileSpawner());
             
