@@ -19,36 +19,22 @@ public partial class ProjectileCollisionSystemGroup : ComponentSystemGroup
 public struct Collider : IComponentData, IEnableableComponent
 {
     public AABB2D Value;
+    public int Category;
+    public int Index;
     
     public Collider(AABB2D value)
     {
         Value = value;
-    }
-}
-
-[UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
-public partial struct CollisionSetupSystem : ISystem
-{
-    EntityQuery m_toRegister;
-
-    public void OnCreate(ref SystemState state)
-    {
-        m_toRegister = SystemAPI.QueryBuilder().WithDisabled<Collider>().Build();
-    }
-
-    public void OnUpdate(ref SystemState state)
-    {
-        var entities = m_toRegister.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            SystemAPI.SetComponentEnabled<Collider>(entities[i], true);
-        }
+        Category = 0;
+        Index = -1;
     }
 }
 
 [UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
 public partial struct ProjectileCollisionSystem : ISystem
 {
+    EntityQuery m_toRegister;
+    
     NativeQuadtree<Entity> survivorTree;
     NativeQuadtree<Entity> survivorProjectileTree;
     NativeQuadtree<Entity> enemyTree;
@@ -56,6 +42,8 @@ public partial struct ProjectileCollisionSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        m_toRegister = SystemAPI.QueryBuilder().WithDisabled<Collider>().Build();
+        
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         survivorTree = new NativeQuadtree<Entity>(
             new AABB2D(new float2(-1000, -1000), 
@@ -92,6 +80,20 @@ public partial struct ProjectileCollisionSystem : ISystem
             ecb = delayedEcb.AsParallelWriter(),
             projectiles = enemyProjectileTree
         }.Schedule();
+        
+        //var entities = m_toRegister.ToEntityArray(Allocator.Temp);
+        //if (entities.Length > 0)
+        //{
+        //    var colliders = m_toRegister.ToComponentDataArray<Collider>(Allocator.Temp);
+        //    for (int i = 0; i < entities.Length; i++)
+        //    {
+        //        SystemAPI.SetComponentEnabled<Collider>(entities[i], true);
+        //        switch (colliders[i].Index)
+        //        {
+        //        
+        //        }
+        //    }
+        //}
     }
     
     /// <summary>
