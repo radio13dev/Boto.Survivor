@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.Hybrid.NetCodeClientAndServerSettings
   FilterSettings:
     ExcludedBakingSystemAssemblies: []
-  AdditionalScriptingDefines: []
+  AdditionalScriptingDefines:
+  - FRONTEND_PLAYER_BUILD
   GlobalNetCodeConfig: {fileID: 0}
   CurrentImportanceSuggestions:
   - MinValue: 1

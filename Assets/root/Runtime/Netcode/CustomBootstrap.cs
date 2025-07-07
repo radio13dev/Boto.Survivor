@@ -1,32 +1,118 @@
-﻿using Unity.Burst;
+﻿using System;
+using System.Collections;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Networking.Transport;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [UnityEngine.Scripting.Preserve]
 public class Bootstrap : ClientServerBootstrap
 {
+    const ushort k_NetworkPort = 7979;
+    
     public override bool Initialize(string defaultWorldName)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        AutoConnectPort = 7979;
-        CreateClientWorld("Webgl Client");
+        AutoConnectPort = 0;
+        var ep = NetworkEndpoint.LoopbackIpv4;//NetworkEndpoint.Parse(Address.text, ParsePortOrDefault(Port.text));
+        ep.Port = 7979;
+        Debug.Log($"[ConnectToServer] Called on '{ep.Address}:{ep.Port}'.");
+        
+        NetworkStreamReceiveSystem.DriverConstructor = new MyCustomDriverConstructor()
+        {
+            connectWithSsl = false,
+            hostname = ep.Address
+        };
+        
+        var client = ClientServerBootstrap.CreateClientWorld("ClientWorld");
+        DestroyLocalSimulationWorld();
+
+        if (World.DefaultGameObjectInjectionWorld == null)
+            World.DefaultGameObjectInjectionWorld = client;
+        //var sceneName = GetAndSaveSceneSelection();
+        //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+        {
+            using var drvQuery = client.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Connect(client.EntityManager, ep);
+        }
         return true;
 #else
-        // If the user added an OverrideDefaultNetcodeBootstrap MonoBehaviour to their active scene,
-        // or disabled Bootstrapping project-wide, this is respected here.
-        if (!DetermineIfBootstrappingEnabled())
+        Debug.Log($"[StartClientServer] Called with '{defaultWorldName}'.");
+        if (ClientServerBootstrap.RequestedPlayType != ClientServerBootstrap.PlayType.ClientAndServer)
         {
-            Debug.Log($"Bootstrapping disabled");
+            Debug.LogError($"Creating client/server worlds is not allowed if playmode is set to {ClientServerBootstrap.RequestedPlayType}");
             return false;
         }
-            
-        Debug.Log($"Bootstrapping enabled");
-        AutoConnectPort = 7979;
-        CreateDefaultClientServerWorlds();
+        
+        NetworkStreamReceiveSystem.DriverConstructor = new MyCustomDriverConstructor()
+        {
+            serverCertificate = "",
+            serverPrivateKey = "",
+            connectWithSsl = false,
+            hostname = NetworkEndpoint.LoopbackIpv4.Address
+        };
+
+        var server = ClientServerBootstrap.CreateServerWorld("ServerWorld");
+        var client = ClientServerBootstrap.CreateClientWorld("ClientWorld");
+
+        //Destroy the local simulation world to avoid the game scene to be loaded into it
+        //This prevent rendering (rendering from multiple world with presentation is not greatly supported)
+        //and other issues.
+        DestroyLocalSimulationWorld();
+        if (World.DefaultGameObjectInjectionWorld == null)
+            World.DefaultGameObjectInjectionWorld = server;
+
+        var port = ParsePortOrDefault("7979");
+
+        NetworkEndpoint ep = NetworkEndpoint.AnyIpv4.WithPort(port);
+        {
+            using var drvQuery = server.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.RequireConnectionApproval = false;//sceneName.Contains("ConnectionApproval", StringComparison.OrdinalIgnoreCase);
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Listen(ep);
+        }
+
+        ep = NetworkEndpoint.LoopbackIpv4.WithPort(port);
+        {
+            using var drvQuery = client.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Connect(client.EntityManager, ep);
+        }
         return true;
 #endif
+    }
+    
+    /// <summary>
+    /// Stores the old name of the local world (create by initial bootstrap).
+    /// It is reused later when the local world is created when coming back from game to the menu.
+    /// </summary>
+    internal static string OldFrontendWorldName = string.Empty;
+    protected void DestroyLocalSimulationWorld()
+    {
+        foreach (var world in World.All)
+        {
+            if (world.Flags == WorldFlags.Game)
+            {
+                OldFrontendWorldName = world.Name;
+                world.Dispose();
+                break;
+            }
+        }
+    }
+    
+    // Tries to parse a port, returns true if successful, otherwise false
+    // The port will be set to whatever is parsed, otherwise the default port of k_NetworkPort
+    private UInt16 ParsePortOrDefault(string s)
+    {
+        if (!UInt16.TryParse(s, out var port))
+        {
+            Debug.LogWarning($"Unable to parse port, using default port {k_NetworkPort}");
+            return k_NetworkPort;
+        }
+
+        return port;
     }
 }
 
@@ -35,6 +121,11 @@ public class Bootstrap : ClientServerBootstrap
 public partial struct ClientInGame : ISystem
 {
     private bool m_HasRegisteredSmoothingAction;
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<GameManager.Resources>();
+    }
 
     public void OnUpdate(ref SystemState state)
     {
