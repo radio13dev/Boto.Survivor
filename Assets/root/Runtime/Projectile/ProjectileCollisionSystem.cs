@@ -31,7 +31,28 @@ public struct Collider : IComponentData, IEnableableComponent
 }
 
 [UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
-public partial struct ProjectileCollisionSystem : ISystem
+public partial struct CollisionSetupSystem : ISystem
+{
+    EntityQuery m_toRegister;
+
+    public void OnCreate(ref SystemState state)
+    {
+        m_toRegister = SystemAPI.QueryBuilder().WithDisabled<Collider>().Build();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var entities = m_toRegister.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            
+            SystemAPI.SetComponentEnabled<Collider>(entities[i], true);
+        }
+    }
+}
+
+[UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
+public partial class ProjectileCollisionSystem : SystemBase
 {
     EntityQuery m_toRegister;
     
@@ -40,11 +61,14 @@ public partial struct ProjectileCollisionSystem : ISystem
     NativeQuadtree<Entity> enemyTree;
     NativeQuadtree<Entity> enemyProjectileTree;
 
-    public void OnCreate(ref SystemState state)
+    protected override void OnCreate()
     {
+        base.OnCreate();
+        
+        RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        
         m_toRegister = SystemAPI.QueryBuilder().WithDisabled<Collider>().Build();
         
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         survivorTree = new NativeQuadtree<Entity>(
             new AABB2D(new float2(-1000, -1000), 
                 new float2(1000, 1000)), 
@@ -63,18 +87,18 @@ public partial struct ProjectileCollisionSystem : ISystem
             Allocator.Persistent);
     }
 
-    public void OnDestroy(ref SystemState state)
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         survivorTree.Dispose();
         survivorProjectileTree.Dispose();
         enemyTree.Dispose();
         enemyProjectileTree.Dispose();
     }
 
-
-    public void OnUpdate(ref SystemState state)
+    protected override void OnUpdate()
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(World.Unmanaged);
         new CollisionJob()
         {
             ecb = delayedEcb.AsParallelWriter(),
