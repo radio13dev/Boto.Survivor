@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.Hybrid.NetCodeClientSettings
   FilterSettings:
     ExcludedBakingSystemAssemblies: []
-  AdditionalScriptingDefines: []
-  ClientTarget: 1
+  AdditionalScriptingDefines:
+  - FRONTEND_PLAYER_BUILD
+  ClientTarget: 0
