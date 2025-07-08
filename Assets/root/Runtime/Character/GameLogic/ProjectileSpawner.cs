@@ -12,6 +12,13 @@ using UnityEngine;
 public struct ProjectileSpawner : IComponentData
 {
     public double LastProjectileTime;
+    public int ColliderIndex;
+    
+    public ProjectileSpawner(int colliderIndex)
+    {
+        LastProjectileTime = 0;
+        ColliderIndex = colliderIndex;
+    }
 }
 
 
@@ -46,19 +53,25 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
             if (CurrentTime - spawner.LastProjectileTime > 2)
             {
                 spawner.LastProjectileTime = CurrentTime;
-                Debug.Log($"Spawning projectiles...");
                 
                 for (int i = 0; i < 8; i++)
                 {
                     var newProjectile = ecb.Instantiate(key, ProjectilePrefab);
                     ecb.SetComponent(key, newProjectile, new Projectile()
                     {
-                        DestroyTime = CurrentTime + 5
+                        DestroyTime = CurrentTime + 20
                     });
                     var projectileT = localTransform;
                     projectileT = projectileT.RotateZ(i*math.PI2/8);
                     ecb.SetComponent(key, newProjectile, projectileT);
                     ecb.SetComponent(key, newProjectile, new Movement(0,0,10){ Velocity = projectileT.Up().xy });
+                    
+                    if (spawner.ColliderIndex == Collisions.SurvivorProjectile.Index)
+                        ecb.AddComponent<Collisions.SurvivorProjectile>(key, newProjectile);
+                    else if (spawner.ColliderIndex == Collisions.EnemyProjectile.Index)
+                        ecb.AddComponent<Collisions.EnemyProjectile>(key, newProjectile);
+                    else
+                        Debug.Log($"Invalid collider index for spawner: {spawner.ColliderIndex}");
                 }
             }
         }

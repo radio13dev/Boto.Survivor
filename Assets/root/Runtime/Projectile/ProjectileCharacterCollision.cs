@@ -1,37 +1,29 @@
-using Unity.Entities;
+/*
+ using Unity.Entities;
 
-public struct ProjectileCharacterCollision : IBufferElementData
+namespace Collisions
 {
-    public Entity Projectile;
-    
-    public ProjectileCharacterCollision(Entity projectile)
+    [UpdateInGroup(typeof(GameLogicSystemGroup))]
+    [UpdateAfter(typeof(ProjectileCollisionSystem))]
+    public partial struct HandleProjectileCharacterCollisions : ISystem
     {
-        Projectile = projectile;
-    }
-}
-
-[UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
-[UpdateAfter(typeof(ProjectileCollisionSystem))]
-public partial struct HandleProjectileCharacterCollisions : ISystem
-{
-    public void OnUpdate(ref SystemState state)
-    {
-        new Job()
+        public void OnUpdate(ref SystemState state)
         {
+            var q = SystemAPI.QueryBuilder().WithAll<Collisions>().Build();
             
-        }.Schedule();
-    }
+            new Job().Schedule();
+        }
     
-    partial struct Job : IJobEntity
-    {
-        public void Execute(Entity entity, ref DynamicBuffer<ProjectileCharacterCollision> collisions, ref Health health)
+        partial struct Job : IJobEntity
         {
-            for (int i = 0; i < collisions.Length; i++)
+            public void Execute(Entity entity, in DynamicBuffer<Collisions> collisions, ref Health health)
             {
-                health.Value -= 1;
+                for (int i = 0; i < collisions.Length; i++)
+                {
+                    health.Value -= 1;
+                }
             }
-        
-            collisions.Clear();
         }
     }
 }
+*/

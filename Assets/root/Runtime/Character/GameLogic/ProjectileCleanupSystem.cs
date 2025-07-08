@@ -3,34 +3,25 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 [UpdateInGroup(typeof(GameLogicSystemGroup))]
 public partial struct ProjectileCleanupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        new Job()
+        var delayedEcb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);// SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var currentTime = SystemAPI.Time.ElapsedTime;
+        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<Projectile>>().WithEntityAccess())
         {
-            ecb = delayedEcb.AsParallelWriter(),
-            CurrentTime = SystemAPI.Time.ElapsedTime
-        }.Schedule();
-    }
-    
-    partial struct Job : IJobEntity
-    {
-        public EntityCommandBuffer.ParallelWriter ecb;
-        [ReadOnly] public Entity ProjectilePrefab;
-        [ReadOnly] public double CurrentTime;
-    
-        public void Execute([ChunkIndexInQuery] int key, Entity entity, in Projectile projectile)
-        {
-            if (projectile.DestroyTime < CurrentTime)
-                ecb.DestroyEntity(key, entity);
+            if (projectile.ValueRO.DestroyTime < currentTime)
+                delayedEcb.DestroyEntity(entity);
         }
+        delayedEcb.Playback(state.EntityManager);
+        delayedEcb.Dispose();
     }
 }

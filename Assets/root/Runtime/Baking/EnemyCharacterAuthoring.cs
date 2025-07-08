@@ -3,22 +3,22 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public class SurvivorAuthoring : MonoBehaviour
+public class EnemyCharacterAuthoring : MonoBehaviour
 {
-    public partial class SurvivorBaker : Baker<SurvivorAuthoring>
+    public partial class SurvivorBaker : Baker<EnemyCharacterAuthoring>
     {
-        public override void Bake(SurvivorAuthoring authoring)
+        public override void Bake(EnemyCharacterAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new CharacterTag());
-            AddComponent(entity, new SurvivorTag());
+            AddComponent(entity, new EnemyTag());
             AddComponent(entity, new Health(100));
             AddComponent(entity, new Movement(10, 10, 10));
             AddComponent(entity, new PlayerInput());
-            AddComponent(entity, new ProjectileSpawner(Collisions.SurvivorProjectile.Index));
+            AddComponent(entity, new ProjectileSpawner(Collisions.EnemyProjectile.Index));
             
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
-            AddComponent(entity, new Collisions.Survivor());
+            AddComponent(entity, new Collisions.Enemy());
             //AddBuffer<Collisions.Collisions>(entity);
         }
     }

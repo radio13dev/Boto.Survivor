@@ -13,8 +13,7 @@ public class ProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new Projectile());
             AddComponent(entity, new Movement(0,0,10));
             
-            AddComponent(entity, new Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
-            SetComponentEnabled<Collider>(entity, false);
+            AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
         }
     }       
 }
