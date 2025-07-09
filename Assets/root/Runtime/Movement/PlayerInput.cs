@@ -23,28 +23,9 @@ public partial class GatherInputs : SystemBase
 
     protected override void OnUpdate()
     {
-        var input = new PlayerInput();
-        
-        float2 dir = float2.zero;
-        if (Keyboard.current.wKey.isPressed) dir.y += 1;
-        if (Keyboard.current.sKey.isPressed) dir.y -= 1;
-        if (Keyboard.current.aKey.isPressed) dir.x -= 1;
-        if (Keyboard.current.dKey.isPressed) dir.x += 1;
-        input.Dir = dir;
-
-        if (Keyboard.current.eKey.isPressed)
-            input.RollActive.Set();
-            
-        Entities
-            .WithAll<GhostOwnerIsLocal>()
-            .ForEach((ref PlayerInput remoteInput)=>
-            {
-                remoteInput = input;
-            }).Run();
-            
-        //new GatherJob()
-        //{
-        //}.Schedule();
+        new GatherJob()
+        {
+        }.Schedule();
     }
 
     [WithAll(typeof(GhostOwnerIsLocal))]
@@ -52,8 +33,6 @@ public partial class GatherInputs : SystemBase
     {
         public void Execute(ref PlayerInput input)
         {
-            input = new();
-        
             float2 dir = float2.zero;
             if (Keyboard.current.wKey.isPressed) dir.y += 1;
             if (Keyboard.current.sKey.isPressed) dir.y -= 1;
