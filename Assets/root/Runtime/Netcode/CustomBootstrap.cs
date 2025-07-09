@@ -12,83 +12,51 @@ using UnityEngine.SceneManagement;
 public class Bootstrap : ClientServerBootstrap
 {
     const ushort k_NetworkPort = 7979;
-    
+
     public override bool Initialize(string defaultWorldName)
     {
+        bool runServer = true;
+        bool runClient = true;
+
 #if UNITY_WEBGL && !UNITY_EDITOR
-        AutoConnectPort = 0;
-        var ep = NetworkEndpoint.LoopbackIpv4;//NetworkEndpoint.Parse(Address.text, ParsePortOrDefault(Port.text));
-        ep.Port = 7979;
-        Debug.Log($"[ConnectToServer] Called on '{ep.Address}:{ep.Port}'.");
-        
-        NetworkStreamReceiveSystem.DriverConstructor = new MyCustomDriverConstructor()
-        {
-            connectWithSsl = false,
-            hostname = ep.Address
-        };
-        
-        var client = ClientServerBootstrap.CreateClientWorld("ClientWorld");
-        DestroyLocalSimulationWorld();
-
-        if (World.DefaultGameObjectInjectionWorld == null)
-            World.DefaultGameObjectInjectionWorld = client;
-        //var sceneName = GetAndSaveSceneSelection();
-        //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-        {
-            using var drvQuery = client.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
-            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Connect(client.EntityManager, ep);
-        }
-        return true;
-#else
-        Debug.Log($"[StartClientServer] Called with '{defaultWorldName}'.");
-        if (ClientServerBootstrap.RequestedPlayType != ClientServerBootstrap.PlayType.ClientAndServer)
-        {
-            Debug.LogError($"Creating client/server worlds is not allowed if playmode is set to {ClientServerBootstrap.RequestedPlayType}");
-            return false;
-        }
-        
-        NetworkStreamReceiveSystem.DriverConstructor = new MyCustomDriverConstructor()
-        {
-            serverCertificate = "",
-            serverPrivateKey = "",
-            connectWithSsl = false,
-            hostname = NetworkEndpoint.LoopbackIpv4.Address
-        };
-
-        var server = ClientServerBootstrap.CreateServerWorld("ServerWorld");
-        var client = ClientServerBootstrap.CreateClientWorld("ClientWorld");
-
-        //Destroy the local simulation world to avoid the game scene to be loaded into it
-        //This prevent rendering (rendering from multiple world with presentation is not greatly supported)
-        //and other issues.
-        DestroyLocalSimulationWorld();
-        if (World.DefaultGameObjectInjectionWorld == null)
-            World.DefaultGameObjectInjectionWorld = server;
-
-        var port = ParsePortOrDefault("7979");
-
-        NetworkEndpoint ep = NetworkEndpoint.AnyIpv4.WithPort(port);
-        {
-            using var drvQuery = server.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
-            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.RequireConnectionApproval = false;//sceneName.Contains("ConnectionApproval", StringComparison.OrdinalIgnoreCase);
-            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Listen(ep);
-        }
-
-        ep = NetworkEndpoint.LoopbackIpv4.WithPort(port);
-        {
-            using var drvQuery = client.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
-            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Connect(client.EntityManager, ep);
-        }
-        return true;
+        runServer = false;
 #endif
+
+#if UNITY_SERVER
+        runClient = false;
+#endif
+
+        var serverPortText = "25565";
+        var serverPort = ParsePortOrDefault(serverPortText);
+        var serverAddressText = "122.199.22.139";
+        var connectEp = NetworkEndpoint.Parse(serverAddressText, serverPort);
+
+        var listenEp = NetworkEndpoint.AnyIpv4.WithPort(serverPort);
+
+        if (runServer)
+        {
+            var server = ClientServerBootstrap.CreateServerWorld("ServerWorld");
+            using var drvQuery = server.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.RequireConnectionApproval =
+                false; //sceneName.Contains("ConnectionApproval", StringComparison.OrdinalIgnoreCase);
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Listen(listenEp);
+        }
+
+        if (runClient)
+        {
+            var client = ClientServerBootstrap.CreateClientWorld("ClientWorld");
+            using var drvQuery = client.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
+            drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW.Connect(client.EntityManager, connectEp);
+        }
+        return runServer || runClient;
     }
-    
+
     /// <summary>
     /// Stores the old name of the local world (create by initial bootstrap).
     /// It is reused later when the local world is created when coming back from game to the menu.
     /// </summary>
     internal static string OldFrontendWorldName = string.Empty;
+
     protected void DestroyLocalSimulationWorld()
     {
         foreach (var world in World.All)
@@ -101,7 +69,7 @@ public class Bootstrap : ClientServerBootstrap
             }
         }
     }
-    
+
     // Tries to parse a port, returns true if successful, otherwise false
     // The port will be set to whatever is parsed, otherwise the default port of k_NetworkPort
     private UInt16 ParsePortOrDefault(string s)
