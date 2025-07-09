@@ -9,15 +9,16 @@ using UnityEngine;
 /// The 'auto attack' system for survivors. These are added as children to the survivor's LinkedEntityGroup
 /// </summary>
 [GhostComponent]
-public struct ProjectileSpawner : IComponentData
+[GhostEnabledBit]
+public struct ProjectileSpawner : IComponentData, IEnableableComponent
 {
     public double LastProjectileTime;
-    public int ColliderIndex;
+    public Team Team;
     
-    public ProjectileSpawner(int colliderIndex)
+    public ProjectileSpawner(Team team)
     {
         LastProjectileTime = 0;
-        ColliderIndex = colliderIndex;
+        this.Team = team;
     }
 }
 
@@ -57,7 +58,7 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
                 for (int i = 0; i < 8; i++)
                 {
                     var newProjectile = ecb.Instantiate(key, ProjectilePrefab);
-                    ecb.SetComponent(key, newProjectile, new Projectile()
+                    ecb.SetComponent(key, newProjectile, new DestroyAtTime()
                     {
                         DestroyTime = CurrentTime + 20
                     });
@@ -66,12 +67,12 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
                     ecb.SetComponent(key, newProjectile, projectileT);
                     ecb.SetComponent(key, newProjectile, new Movement(0,0,10){ Velocity = projectileT.Up().xy });
                     
-                    if (spawner.ColliderIndex == Collisions.SurvivorProjectile.Index)
-                        ecb.AddComponent<Collisions.SurvivorProjectile>(key, newProjectile);
-                    else if (spawner.ColliderIndex == Collisions.EnemyProjectile.Index)
-                        ecb.AddComponent<Collisions.EnemyProjectile>(key, newProjectile);
+                    if (spawner.Team == Collisions.SurvivorProjectileTag.Team)
+                        ecb.AddComponent<Collisions.SurvivorProjectileTag>(key, newProjectile);
+                    else if (spawner.Team == Collisions.EnemyProjectileTag.Team)
+                        ecb.AddComponent<Collisions.EnemyProjectileTag>(key, newProjectile);
                     else
-                        Debug.Log($"Invalid collider index for spawner: {spawner.ColliderIndex}");
+                        Debug.Log($"Invalid collider index for spawner: {spawner.Team}");
                 }
             }
         }

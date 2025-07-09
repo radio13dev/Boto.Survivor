@@ -17,6 +17,7 @@ public partial class MovementSystemGroup : ComponentSystemGroup
 public struct Movement : IComponentData
 {
     public float2 Velocity;
+    public float2 LastDirection;
     public float Drag;
     public float LinearDrag;
     public float Speed;
@@ -24,6 +25,7 @@ public struct Movement : IComponentData
     public Movement(float drag, float linearDrag, float speed)
     {
         Velocity = float2.zero;
+        LastDirection = new float2(1,0);
         Drag = drag;
         LinearDrag = linearDrag;
         Speed = speed;

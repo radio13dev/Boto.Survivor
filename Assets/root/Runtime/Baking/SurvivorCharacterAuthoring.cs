@@ -15,11 +15,20 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new Health(100));
             AddComponent(entity, new Movement(10, 10, 10));
             AddComponent(entity, new PlayerInput());
-            AddComponent(entity, new ProjectileSpawner(Collisions.SurvivorProjectile.Index));
+            AddComponent(entity, new MovementInputLockout());
+            SetComponentEnabled<MovementInputLockout>(entity, false);
+            AddComponent(entity, new ActiveLockout());
+            SetComponentEnabled<ActiveLockout>(entity, false);
             
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
-            AddComponent(entity, new Collisions.Survivor());
-            //AddBuffer<Collisions.Collisions>(entity);
+            
+            AddBuffer<LinkedEntityGroup>(entity);
+            
+            AddComponent(entity, new ProjectileSpawner(Team.Survivor));
+            SetComponentEnabled<ProjectileSpawner>(entity, false);
+            
+            AddComponent(entity, new RollActive());
+            SetComponentEnabled<RollActive>(entity, false);
         }
     }
 }

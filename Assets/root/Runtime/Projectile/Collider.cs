@@ -18,7 +18,7 @@ namespace Collisions
     /// </summary>
     [UpdateAfter(typeof(MovementSystemGroup))]
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-    public partial class ProjectileCollisionSystemGroup : ComponentSystemGroup
+    public partial class CollisionSystemGroup : ComponentSystemGroup
     {
     }
 
@@ -42,23 +42,13 @@ namespace Collisions
         }
     }
 
-    public struct Survivor : IComponentData
+    public struct SurvivorProjectileTag : IComponentData
     {
-        public const int Index = 0;
+        public const Team Team = global::Team.Survivor;
     }
 
-    public struct SurvivorProjectile : IComponentData
+    public struct EnemyProjectileTag : IComponentData
     {
-        public const int Index = 1;
-    }
-
-    public struct Enemy : IComponentData
-    {
-        public const int Index = 2;
-    }
-
-    public struct EnemyProjectile : IComponentData
-    {
-        public const int Index = 3;
+        public const Team Team = global::Team.Enemy;
     }
 }

@@ -5,7 +5,7 @@ using Unity.Transforms;
 
 [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 [UpdateInGroup(typeof(GameLogicSystemGroup))]
-public partial struct ProjectileCleanupSystem : ISystem
+public partial struct DestroyAtTimeCleanupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
@@ -16,7 +16,7 @@ public partial struct ProjectileCleanupSystem : ISystem
     {
         var delayedEcb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);// SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var currentTime = SystemAPI.Time.ElapsedTime;
-        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<Projectile>>().WithEntityAccess())
+        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<DestroyAtTime>>().WithEntityAccess())
         {
             if (projectile.ValueRO.DestroyTime < currentTime)
                 delayedEcb.DestroyEntity(entity);

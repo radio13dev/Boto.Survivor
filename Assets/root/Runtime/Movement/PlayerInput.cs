@@ -8,9 +8,7 @@ using UnityEngine.InputSystem;
 public struct PlayerInput : IInputComponentData
 {
     public float2 Dir;
-    public InputEvent Utility;
-    public InputEvent Special1;
-    public InputEvent Special2;
+    public InputEvent RollActive;
 }
 
 [UpdateInGroup(typeof(GhostInputSystemGroup))]
@@ -25,9 +23,28 @@ public partial class GatherInputs : SystemBase
 
     protected override void OnUpdate()
     {
-        new GatherJob()
-        {
-        }.Schedule();
+        var input = new PlayerInput();
+        
+        float2 dir = float2.zero;
+        if (Keyboard.current.wKey.isPressed) dir.y += 1;
+        if (Keyboard.current.sKey.isPressed) dir.y -= 1;
+        if (Keyboard.current.aKey.isPressed) dir.x -= 1;
+        if (Keyboard.current.dKey.isPressed) dir.x += 1;
+        input.Dir = dir;
+
+        if (Keyboard.current.eKey.isPressed)
+            input.RollActive.Set();
+            
+        Entities
+            .WithAll<GhostOwnerIsLocal>()
+            .ForEach((ref PlayerInput remoteInput)=>
+            {
+                remoteInput = input;
+            }).Run();
+            
+        //new GatherJob()
+        //{
+        //}.Schedule();
     }
 
     [WithAll(typeof(GhostOwnerIsLocal))]
@@ -35,6 +52,8 @@ public partial class GatherInputs : SystemBase
     {
         public void Execute(ref PlayerInput input)
         {
+            input = new();
+        
             float2 dir = float2.zero;
             if (Keyboard.current.wKey.isPressed) dir.y += 1;
             if (Keyboard.current.sKey.isPressed) dir.y -= 1;
@@ -43,13 +62,7 @@ public partial class GatherInputs : SystemBase
             input.Dir = dir;
 
             if (Keyboard.current.eKey.isPressed)
-                input.Special1.Set();
-
-            if (Keyboard.current.qKey.isPressed)
-                input.Special2.Set();
-
-            if (Keyboard.current.spaceKey.isPressed)
-                input.Utility.Set();
+                input.RollActive.Set();
         }
     }
 }
@@ -101,7 +114,7 @@ public partial class GatherInputs_ThinClient : SystemBase
         {
             inputData.ValueRW = default;
             if (jump == 1)
-                inputData.ValueRW.Utility.Set();
+                inputData.ValueRW.RollActive.Set();
             if (left == 1)
                 inputData.ValueRW.Dir.x -= 0.1f;
             if (right == 1)

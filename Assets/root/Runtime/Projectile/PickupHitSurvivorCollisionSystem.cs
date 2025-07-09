@@ -13,8 +13,9 @@ using UnityEngine;
 
 namespace Collisions
 {
-    [UpdateInGroup(typeof(ProjectileCollisionSystemGroup))]
-    public partial struct ProjectileCollisionSystem : ISystem
+    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+    [UpdateInGroup(typeof(CollisionSystemGroup))]
+    public partial struct PickupHitSurvivorCollisionSystem : ISystem
     {
         NativeTrees.NativeQuadtree<Entity> m_projectileTree;
         EntityQuery m_projectileQuery;
@@ -27,10 +28,10 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Projectile, SurvivorProjectile>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Pickup, DestroyAtTime>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Enemy, Health>().Build();
+            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<SurvivorTag, LinkedEntityGroup>().Build();
             state.RequireForUpdate(m_survivorQuery);
         }
 
@@ -58,7 +59,7 @@ namespace Collisions
             {
                 ecb = parallel,
                 tree = m_projectileTree,
-                projectileLookup = SystemAPI.GetComponentLookup<Projectile>(false)
+                projectileLookup = SystemAPI.GetComponentLookup<DestroyAtTime>(false)
             }.Schedule(m_survivorQuery);
 
             projectile_entities.Dispose();
@@ -88,15 +89,15 @@ namespace Collisions
         {
             public EntityCommandBuffer.ParallelWriter ecb;
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
-            public ComponentLookup<Projectile> projectileLookup;
+            public ComponentLookup<DestroyAtTime> projectileLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref DynamicBuffer<LinkedEntityGroup> linkedEntityGroup)
             {
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
-                fixed (Health* health_ptr = &health)
-                fixed (ComponentLookup<Projectile>* projectileLookup_ptr = &projectileLookup)
+                fixed (ComponentLookup<DestroyAtTime>* projectileLookup_ptr = &projectileLookup)
+                fixed (DynamicBuffer<LinkedEntityGroup>* linked_ptr = &linkedEntityGroup) 
                 {
-                    var visitor = new CollisionVisitor(Key, ref ecb, health_ptr, projectileLookup_ptr);
+                    var visitor = new CollisionVisitor(Key, entity, ref ecb, projectileLookup_ptr, linked_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                     visitor.Dispose();
                 }
@@ -104,18 +105,20 @@ namespace Collisions
 
             public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
             {
+                readonly Entity _parent;
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
-                Health* _health;
                 NativeParallelHashSet<Entity> _ignoredCollisions;
-                ComponentLookup<Projectile>* _projectileLookup;
+                ComponentLookup<DestroyAtTime>* _projectileLookup;
+                DynamicBuffer<LinkedEntityGroup>* _linked;
 
-                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, Health* health, ComponentLookup<Projectile>* projectileLookup)
+                public CollisionVisitor(int key, Entity parent, ref EntityCommandBuffer.ParallelWriter ecb, ComponentLookup<DestroyAtTime>* projectileLookup, DynamicBuffer<LinkedEntityGroup>* linked)
                 {
                     _key = key;
+                    _parent = parent;
                     _ecb = ecb;
-                    _health = health;
                     _projectileLookup = projectileLookup;
+                    _linked = linked;
                     _ignoredCollisions = new NativeParallelHashSet<Entity>(4, Allocator.TempJob);
                 }
 
@@ -127,7 +130,7 @@ namespace Collisions
                     {
                         // Destroy projectiles when they collide (by setting their life to 0)
                         _projectileLookup->GetRefRW(projectile).ValueRW.DestroyTime = 0;
-                        _health->Value -= 1;
+                        _ecb.SetComponentEnabled<ProjectileSpawner>(_key, _parent, true);
                     }
 
                     return true;

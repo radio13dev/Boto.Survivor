@@ -10,7 +10,8 @@ public class ProjectileAuthoring : MonoBehaviour
         public override void Bake(ProjectileAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new Projectile());
+            AddComponent(entity, new ProjectileTag());
+            AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new Movement(0,0,10));
             
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));

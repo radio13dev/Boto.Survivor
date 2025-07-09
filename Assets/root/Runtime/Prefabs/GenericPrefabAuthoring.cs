@@ -113,6 +113,7 @@ public partial class GenericPrefabSpawnSystem : SystemBase
 
 [RequireMatchingQueriesForUpdate]
 [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct GenericPrefabTrackSystem : ISystem
 {
     EntityQuery m_query;
