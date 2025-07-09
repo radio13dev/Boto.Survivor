@@ -1,5 +1,3 @@
-using System.Diagnostics.Contracts;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -11,16 +9,17 @@ using Unity.NetCode;
 [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
-        
 }
 
-public struct MovementInputLockout : IComponentData, IEnableableComponent { }
+public struct MovementInputLockout : IComponentData, IEnableableComponent
+{
+}
 
 [UpdateInGroup(typeof(ProcessInputsSystemGroup))]
 public partial struct ProcessInputs : ISystem
 {
-    static readonly float2 DirMin = new float2(-1,-1);
-    static readonly float2 DirMax = new float2(1,1);
+    static readonly float2 DirMin = new float2(-1, -1);
+    static readonly float2 DirMax = new float2(1, 1);
 
     public void OnCreate(ref SystemState state)
     {
@@ -29,31 +28,26 @@ public partial struct ProcessInputs : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        new MovementJob()
-        {
-        }.Schedule();
-        new ActiveJob()
+        new Job()
         {
         }.Schedule();
     }
-    
+
+    [WithPresent(typeof(ActiveLockout), typeof(MovementInputLockout), typeof(RollActive))]
     [WithAll(typeof(Simulate))]
-    partial struct MovementJob : IJobEntity
+    partial struct Job : IJobEntity
     {
-        public void Execute(in PlayerInput input, ref Movement movement)
-        {
-            var vel = math.clamp(input.Dir, DirMin, DirMax)*movement.Speed;
-            movement.Velocity += vel;
-            movement.LastDirection = math.normalizesafe(input.Dir, movement.LastDirection);
-        }
-    }
-    [WithAll(typeof(Simulate))]
-    partial struct ActiveJob : IJobEntity
-    {
-        public void Execute(in PlayerInput input,
+        public void Execute(in PlayerInput input, ref Movement movement,
             EnabledRefRW<ActiveLockout> activeLockout, EnabledRefRW<MovementInputLockout> movementInputLockout,
             EnabledRefRW<RollActive> roll)
         {
+            if (!movementInputLockout.ValueRO)
+            {
+                var vel = math.clamp(input.Dir, DirMin, DirMax) * movement.Speed;
+                movement.Velocity += vel;
+                movement.LastDirection = math.normalizesafe(input.Dir, movement.LastDirection);
+            }
+
             if (!activeLockout.ValueRW)
             {
                 if (input.RollActive.IsSet)

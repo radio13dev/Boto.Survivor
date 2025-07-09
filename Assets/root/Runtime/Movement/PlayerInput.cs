@@ -33,6 +33,7 @@ public partial class GatherInputs : SystemBase
     {
         public void Execute(ref PlayerInput input)
         {
+            input = new();
             float2 dir = float2.zero;
             if (Keyboard.current.wKey.isPressed) dir.y += 1;
             if (Keyboard.current.sKey.isPressed) dir.y -= 1;
