@@ -15,11 +15,9 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             AddComponent(entity, new Health(100));
             AddComponent(entity, new Movement(10, 10, 10));
             AddComponent(entity, new PlayerInput());
-            AddComponent(entity, new ProjectileSpawner(Collisions.EnemyProjectile.Index));
             
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
             AddComponent(entity, new Collisions.Enemy());
-            //AddBuffer<Collisions.Collisions>(entity);
         }
     }
 }

@@ -27,10 +27,10 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Projectile, EnemyProjectile>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Projectile, SurvivorProjectile>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Survivor, Health>().Build();
+            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Enemy, Health>().Build();
             state.RequireForUpdate(m_survivorQuery);
         }
 
@@ -90,13 +90,13 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
             public ComponentLookup<Projectile> projectileLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health survivorHealth)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health)
             {
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
-                fixed (Health* survivorHealth_ptr = &survivorHealth)
+                fixed (Health* health_ptr = &health)
                 fixed (ComponentLookup<Projectile>* projectileLookup_ptr = &projectileLookup)
                 {
-                    var visitor = new CollisionVisitor(Key, ref ecb, survivorHealth_ptr, projectileLookup_ptr);
+                    var visitor = new CollisionVisitor(Key, ref ecb, health_ptr, projectileLookup_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                     visitor.Dispose();
                 }
