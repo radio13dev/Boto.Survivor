@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Survivor
-  m_Shader: {fileID: -6465566751694194690, guid: 5138dafb04fb1c04db115f72c2bb3e34, type: 3}
+  m_Name: Player
+  m_Shader: {fileID: -6465566751694194690, guid: 1d8c1f6367f77c84f897804b75fd3138, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -68,6 +68,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture:
+        m_Texture: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -100,6 +104,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Index: 14
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005

@@ -7,7 +7,16 @@ using UnityEngine;
 
 public class CameraTrack : MonoBehaviour
 {
+    public float linearCameraChase;
+    public float relativeCameraChase;
+    public float velocityFalloff;
+    public float newVelocityEffect;
+    public float virtualTargetOffset;
+    
     Transform _target;
+    Vector3 virtualTarget;
+    Vector3 recentVelocity;
+    Vector3 recentPosition;
 
     private void Update()
     {
@@ -20,6 +29,13 @@ public class CameraTrack : MonoBehaviour
             _target = transforms[0].Spawned.Value.transform;
         }
         
-        transform.position = _target.position;
+        recentVelocity *= Time.deltaTime*velocityFalloff;
+        recentVelocity += (_target.position - recentPosition)*newVelocityEffect;
+        virtualTarget = _target.position + recentVelocity*virtualTargetOffset;
+        recentPosition = _target.position;
+        
+        var actualCamTarget = (_target.position + virtualTarget)/2;
+        transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime*linearCameraChase);
+        transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
     }
 }

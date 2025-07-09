@@ -30,6 +30,14 @@ public struct Movement : IComponentData
         LinearDrag = linearDrag;
         Speed = speed;
     }
+    public Movement(float2 direction)
+    {
+        Velocity = direction;
+        LastDirection = direction;
+        Drag = 0;
+        LinearDrag = 0;
+        Speed = 0;
+    }
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]

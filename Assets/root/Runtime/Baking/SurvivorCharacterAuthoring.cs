@@ -27,6 +27,9 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new ProjectileSpawner(Team.Survivor));
             SetComponentEnabled<ProjectileSpawner>(entity, false);
             
+            AddComponent(entity, new LaserProjectileSpawner(Team.Survivor));
+            SetComponentEnabled<LaserProjectileSpawner>(entity, true);
+            
             AddComponent(entity, new RollActive());
             SetComponentEnabled<RollActive>(entity, false);
         }
