@@ -99,7 +99,7 @@ namespace Collisions
                     var visitor = new NearestVisitor(Key, job_ptr, transform);
                     var distance = new DistanceProvider();
 
-                    tree.Nearest(transform.Position.xy, 10, ref visitor, distance);
+                    tree.Nearest(transform.Position.xy, 30, ref visitor, distance);
                     
                     if (visitor.Hits == 0)
                     {
@@ -130,6 +130,7 @@ namespace Collisions
                     var laser = _job->ecb.Instantiate(_key, _job->resources.Projectile_Survivor_Laser);
                     var dir = bounds.Center - _transform.Position.xy;
                     var transform = _transform.RotateZ(math.atan2(dir.y, dir.x));
+                    _job->ecb.AddComponent<SurvivorProjectileTag>(_key, laser);
                     _job->ecb.SetComponent(_key, laser, transform);
                     _job->ecb.SetComponent(_key, laser, new Movement(dir));
                     _job->ecb.SetComponent(_key, laser, new DestroyAtTime(){ DestroyTime = _job->time + 20 });
