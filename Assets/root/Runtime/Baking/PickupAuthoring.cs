@@ -13,6 +13,8 @@ public class PickupAuthoring : MonoBehaviour
             AddComponent(entity, new Pickup());
             AddComponent(entity, new DestroyAtTime(){ DestroyTime = double.MaxValue });
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
+            
+            AddComponent<SaveTag>(entity);
         }
     }
 }

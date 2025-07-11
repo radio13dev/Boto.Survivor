@@ -50,6 +50,7 @@ namespace Unity.Networking.Transport.Samples
             {
                 var client = gameObject.AddComponent<PingClientBehaviour>() as PingClientBehaviour;
                 client.PingUI = this;
+                client.SaveReference = new SaveManager(Game.World);
                 StartCoroutine(client.Connect());
             }
             
@@ -57,6 +58,7 @@ namespace Unity.Networking.Transport.Samples
             {
                 var server = gameObject.AddComponent<PingServerBehaviour>() as PingServerBehaviour;
                 server.PingUI = this;
+                server.SaveReference = new SaveManager(Game.World);
                 StartCoroutine(server.Connect());
 
                 m_CurrentState = PingUIState.ServerStarted;

@@ -14,12 +14,17 @@ public class Game : ICustomBootstrap
 
     public bool Initialize(string defaultWorldName)
     {
+        World.DefaultGameObjectInjectionWorld = CreateWorld();
+        return true;
+    }
+    
+    public static World CreateWorld()
+    {
         Debug.Log($"Creating Game...");
         World = new World("Game");
         var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.LocalSimulation);
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(World, systems);
-        World.DefaultGameObjectInjectionWorld = World;
-        return true;
+        return World;
     }
 }
 

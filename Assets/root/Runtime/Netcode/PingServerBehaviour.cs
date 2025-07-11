@@ -6,6 +6,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Entities.Serialization;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
@@ -23,7 +24,7 @@ namespace Unity.Networking.Transport.Samples
         public byte Data2;
         public byte Data3;
 
-        public ServerToClient(long step, NativeList<Player> connections) : this()
+        public ServerToClient(long step, NativeList<Client> connections) : this()
         {
             Step = step;
             if (connections.Length > 0) Data0 = connections[0].InputBuffer.Input;
@@ -66,29 +67,36 @@ namespace Unity.Networking.Transport.Samples
         }
     }
     
-    public struct Player
+    public struct Client
     {
         public NetworkConnection Connection;
-        public bool HasInput;
         public StepInput InputBuffer;
+        public bool HasInput;
+        public bool RequestedSave;
 
-        public Player(NetworkConnection connection)
+        public Client(NetworkConnection connection)
         {
             this.Connection = connection;
-            HasInput = false;
             InputBuffer = default;
+            HasInput = false;
+            RequestedSave = false;
         }
     }
 
     /// <summary>Component that will listen for ping connections and answer pings.</summary>
     public class PingServerBehaviour : MonoBehaviour
     {
+        public const byte CODE_SendStep = 0b0000_0000;
+        public const byte CODE_SendSave = 0b0000_0001;
+    
         /// <summary>UI component on which to set the join code.</summary>
         public PingUIBehaviour PingUI;
+        public SaveManager SaveReference;
 
         private NetworkDriver m_ServerDriver;
-        private NativeList<Player> m_ServerConnections;
+        private NativeList<Client> m_ServerConnections;
         private NativeReference<ServerToClient> m_ServerToClient;
+        
 
         private float m_CumulativeTime;
         
@@ -98,7 +106,7 @@ namespace Unity.Networking.Transport.Samples
 
         private void Start()
         {
-            m_ServerConnections = new NativeList<Player>(16, Allocator.Persistent);
+            m_ServerConnections = new NativeList<Client>(16, Allocator.Persistent);
             m_ServerToClient = new NativeReference<ServerToClient>(Allocator.Persistent);
         }
 
@@ -171,7 +179,7 @@ namespace Unity.Networking.Transport.Samples
         private struct ConnectionsRelayUpdateJob : IJob
         {
             public NetworkDriver Driver;
-            public NativeList<Player> Connections;
+            public NativeList<Client> Connections;
 
             public void Execute()
             {
@@ -189,7 +197,8 @@ namespace Unity.Networking.Transport.Samples
                 NetworkConnection connection;
                 while ((connection = Driver.Accept()) != default)
                 {
-                    Connections.Add(new Player(connection));
+                    Debug.Log($"Got new client: {connection}");
+                    Connections.Add(new Client(connection));
                 }
             }
         }
@@ -199,7 +208,7 @@ namespace Unity.Networking.Transport.Samples
         private unsafe struct ConnectionsRelayEventsJobs : IJobParallelForDefer
         {
             public NetworkDriver.Concurrent Driver;
-            public NativeArray<Player> Connections;
+            public NativeArray<Client> Connections;
             
             [NativeDisableContainerSafetyRestriction]
             public NativeReference<ServerToClient> ServerToClient;
@@ -213,8 +222,17 @@ namespace Unity.Networking.Transport.Samples
                 {
                     if (eventType == NetworkEvent.Type.Data)
                     {
-                        connection.InputBuffer.Input = reader.ReadByte();
-                        connection.HasInput = true;
+                        switch (reader.ReadByte())
+                        {
+                            case PingClientBehaviour.CODE_SendInput:
+                                connection.InputBuffer.Input = reader.ReadByte();
+                                connection.HasInput = true;
+                                break;
+                            case PingClientBehaviour.CODE_RequestSave:
+                                Debug.Log($"Save requested...");
+                                connection.RequestedSave = true;
+                                break;
+                        }
                         Connections[i] = connection;
                     }
                     else if (eventType == NetworkEvent.Type.Disconnect)
@@ -233,6 +251,7 @@ namespace Unity.Networking.Transport.Samples
                         return;
                     }
 
+                    writer.WriteByte(PingServerBehaviour.CODE_SendStep);
                     writer.WriteLong(ServerToClient.Value.Step);
                     writer.WriteByte(ServerToClient.Value.Data0);
                     writer.WriteByte(ServerToClient.Value.Data1);
@@ -256,6 +275,14 @@ namespace Unity.Networking.Transport.Samples
                 // First, complete the previously-scheduled job chain.
                 m_ServerJobHandle.Complete();
                 
+                for (int i = 0; i < m_ServerConnections.Length; i++)
+                    if (m_ServerConnections[i].RequestedSave)
+                    {
+                        var con = m_ServerConnections[i];
+                        SendSaveToConnection(m_ServerDriver, con);
+                        con.RequestedSave = false;
+                        m_ServerConnections[i] = con;
+                    }
 
                 // Create the jobs first.
                 var updateJob = new ConnectionsRelayUpdateJob
@@ -285,6 +312,27 @@ namespace Unity.Networking.Transport.Samples
                 m_ServerJobHandle = m_ServerDriver.ScheduleUpdate();
                 m_ServerJobHandle = updateJob.Schedule(m_ServerJobHandle);
                 m_ServerJobHandle = eventsJobs.Schedule(m_ServerConnections, 1, m_ServerJobHandle);
+            }
+        }
+        
+        public unsafe void SendSaveToConnection(NetworkDriver Driver, Client Connection)
+        {
+            Debug.Log($"... sending save...");
+            
+            var result = Driver.BeginSend(Connection.Connection, out var writer);
+            if (result < 0)
+            {
+                Debug.LogError($"Couldn't send ping answer (error code {result}).");
+                return;
+            }
+
+            writer.WriteByte(PingServerBehaviour.CODE_SendSave);
+            SaveReference.SendSave(ref writer);
+            result = Driver.EndSend(writer);
+            if (result < 0)
+            {
+                Debug.LogError($"Couldn't send ping answer (error code {result}).");
+                return;
             }
         }
     }

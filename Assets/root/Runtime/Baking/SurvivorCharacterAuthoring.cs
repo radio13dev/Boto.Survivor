@@ -33,6 +33,7 @@ public class SurvivorAuthoring : MonoBehaviour
             
             AddComponent(entity, new RollActive());
             SetComponentEnabled<RollActive>(entity, false);
+            AddComponent<SaveTag>(entity);
         }
     }
 }

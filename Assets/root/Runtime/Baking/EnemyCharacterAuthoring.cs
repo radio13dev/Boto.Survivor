@@ -19,6 +19,7 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
             
             AddBuffer<LinkedEntityGroup>(entity);
+            AddComponent<SaveTag>(entity);
         }
     }
 }
