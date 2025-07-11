@@ -1,15 +1,9 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using NativeTrees;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
-using Unity.Transforms;
-using UnityEngine;
 
 namespace Collisions
 {
@@ -17,12 +11,10 @@ namespace Collisions
     /// Projectile collision is predicted, only after all movement is done
     /// </summary>
     [UpdateAfter(typeof(MovementSystemGroup))]
-    [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
     public partial class CollisionSystemGroup : ComponentSystemGroup
     {
     }
 
-    [GhostComponent]
     [BurstCompile]
     public struct Collider : IComponentData
     {

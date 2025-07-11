@@ -1,4 +1,3 @@
-﻿using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 
 public struct ActiveLockout : IComponentData, IEnableableComponent { }

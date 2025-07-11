@@ -1,9 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 
-[GhostComponent]
 public struct MovementEffect : IComponentData
 {
     public Entity Target;

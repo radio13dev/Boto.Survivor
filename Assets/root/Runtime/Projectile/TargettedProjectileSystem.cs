@@ -1,16 +1,10 @@
-using System;
-using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using NativeTrees;
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Collisions
 {

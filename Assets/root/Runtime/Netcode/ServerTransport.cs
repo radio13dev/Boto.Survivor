@@ -6,7 +6,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Networking.Transport;
 
-public class JobifiedServerBehaviour : MonoBehaviour
+public class ServerTransport : MonoBehaviour
 {
     const int CON_BUF_SIZE = 256;
     const int SEND_BUF_SIZE = 4;
@@ -14,7 +14,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
 
     const int MAX_CONNNECTIONS = 32;
 
-    NetworkDriver m_Driver;
+    MultiNetworkDriver m_Driver;
     NativeList<NetworkConnection> m_Connections;
     NativeList<byte> m_ConnectionReadBuffers;
     NativeArray<NativeArray<byte>> m_MessageRingBuffer;
@@ -26,8 +26,8 @@ public class JobifiedServerBehaviour : MonoBehaviour
     [EditorButton]
     public void TestHost(int port)
     {
-        if (port == 0) port = 7978;
-        Execute(NetworkEndpoint.AnyIpv4.WithPort((ushort)port), 4);
+        if (port == 0) port = 25565;
+        Execute(port, 4);
     }
 
     private void OnEnable()
@@ -36,7 +36,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
             enabled = false;
     }
 
-    public void Execute(NetworkEndpoint listenEndpoint, int maxConnections)
+    public void Execute(int port, int maxConnections)
     {
         if (m_Driver.IsCreated)
         {
@@ -55,7 +55,27 @@ public class JobifiedServerBehaviour : MonoBehaviour
             Destroy(this);
             return;
 #endif
-        m_Driver = NetworkDriver.Create();
+
+        Debug.LogError($"Server start, listening to port {port}.");
+        var ipv4Driver = NetworkDriver.Create();
+        ipv4Driver.Bind(NetworkEndpoint.AnyIpv4.WithPort((ushort)port));
+        ipv4Driver.Listen();
+        var ipv4Driver_WEB = NetworkDriver.Create(new WebSocketNetworkInterface());
+        ipv4Driver_WEB.Bind(NetworkEndpoint.AnyIpv4.WithPort((ushort)port));
+        ipv4Driver_WEB.Listen();
+        var ipv6Driver = NetworkDriver.Create();
+        ipv6Driver.Bind(NetworkEndpoint.AnyIpv6.WithPort((ushort)port));
+        ipv6Driver.Listen();
+        var ipv6Driver_WEB = NetworkDriver.Create(new WebSocketNetworkInterface());
+        ipv6Driver_WEB.Bind(NetworkEndpoint.AnyIpv6.WithPort((ushort)port));
+        ipv6Driver_WEB.Listen();
+        
+        m_Driver = MultiNetworkDriver.Create();
+        m_Driver.AddDriver(ipv4Driver);
+        m_Driver.AddDriver(ipv4Driver_WEB);
+        m_Driver.AddDriver(ipv6Driver);
+        m_Driver.AddDriver(ipv6Driver_WEB);
+        
         m_Connections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
         m_ConnectionReadBuffers = new NativeList<byte>(maxConnections*CON_BUF_SIZE, Allocator.Persistent);
         
@@ -63,14 +83,6 @@ public class JobifiedServerBehaviour : MonoBehaviour
         for (int i = 0; i < m_MessageRingBuffer.Length; i++)
             m_MessageRingBuffer[i] = new NativeArray<byte>(SEND_BUF_SIZE, Allocator.Persistent);
 
-        if (m_Driver.Bind(listenEndpoint) != 0)
-        {
-            Debug.LogError($"Failed to bind to {listenEndpoint}.");
-            Cleanup();
-            return;
-        }
-
-        m_Driver.Listen();
         enabled = true;
     }
     
@@ -176,7 +188,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
     [BurstCompile]
     struct ServerUpdateConnectionsJob : IJob
     {
-        public NetworkDriver Driver;
+        public MultiNetworkDriver Driver;
         public NativeList<NetworkConnection> Connections;
         public NativeList<byte> ConnectionReadBuffers;
 
@@ -207,7 +219,7 @@ public class JobifiedServerBehaviour : MonoBehaviour
     [BurstCompile]
     unsafe struct ServerUpdateJob : IJobParallelForDefer
     {
-        public NetworkDriver.Concurrent Driver;
+        public MultiNetworkDriver.Concurrent Driver;
         public NativeArray<NetworkConnection> Connections;
         public NativeArray<byte> ReadBuffers;
         

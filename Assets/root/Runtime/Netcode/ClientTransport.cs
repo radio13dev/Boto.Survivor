@@ -22,10 +22,12 @@ public class ClientTransport : MonoBehaviour
     JobHandle m_ClientJobHandle;
 
     [EditorButton]
-    public void TestConnect(int port)
+    public void TestConnect(string address)
     {
-        if (port == 0) port = 7978;
-        Execute(NetworkEndpoint.LoopbackIpv4.WithPort((ushort)port));
+        if (string.IsNullOrEmpty(address)) address = "122.199.22.139";
+        var ep = NetworkEndpoint.Parse(address, 25565);
+        //ep = NetworkEndpoint.LoopbackIpv4.WithPort(25565);
+        Execute(ep);
     }
 
     private void OnEnable()

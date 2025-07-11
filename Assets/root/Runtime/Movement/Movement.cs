@@ -1,19 +1,16 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
 
 /// <summary>
 /// Character movement is predicted
 /// </summary>
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial class MovementSystemGroup : ComponentSystemGroup
 {
         
 }
 
-[GhostComponent]
 public struct Movement : IComponentData
 {
     public float2 Velocity;

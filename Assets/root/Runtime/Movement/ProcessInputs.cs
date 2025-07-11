@@ -1,12 +1,12 @@
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
+
+
 
 /// <summary>
 /// Projectile collision is predicted, only after all movement is done
 /// </summary>
 [UpdateBefore(typeof(MovementSystemGroup))]
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
 }
@@ -23,7 +23,7 @@ public partial struct ProcessInputs : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<PlayerInput>();
+        state.RequireForUpdate<StepInput>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -37,20 +37,21 @@ public partial struct ProcessInputs : ISystem
     [WithAll(typeof(Simulate))]
     partial struct Job : IJobEntity
     {
-        public void Execute(in PlayerInput input, ref Movement movement,
+        public void Execute(in StepInput input, ref Movement movement,
             EnabledRefRW<ActiveLockout> activeLockout, EnabledRefRW<MovementInputLockout> movementInputLockout,
             EnabledRefRW<RollActive> roll)
         {
             if (!movementInputLockout.ValueRO)
             {
-                var vel = math.clamp(input.Dir, DirMin, DirMax) * movement.Speed;
+                var dir = input.Direction;
+                var vel = dir * movement.Speed;
                 movement.Velocity += vel;
-                movement.LastDirection = math.normalizesafe(input.Dir, movement.LastDirection);
+                movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
             }
 
             if (!activeLockout.ValueRW)
             {
-                if (input.RollActive.IsSet)
+                if (input.S1)
                 {
                     roll.ValueRW = true;
                     activeLockout.ValueRW = true;
