@@ -1,15 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
-using Unity.Mathematics;
-using Unity.Networking.Transport.Samples;
 using Unity.Scenes;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
 [Preserve] 
@@ -28,8 +24,12 @@ public class Game : IDisposable
 {
     public World World => m_World;
 
-    private readonly World m_World;
-    private readonly EntityQuery m_EntitiesToSave;
+    private World m_World;
+    private EntityQuery m_EntitiesToSave;
+    
+    private Entity m_GameManagerSceneE;
+    private Entity m_GameSceneE;
+    private bool m_Ready;
 
     public Game()
     {
@@ -39,9 +39,10 @@ public class Game : IDisposable
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
         
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
-        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID);
+        m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID, new SceneSystem.LoadParameters(){ Flags = SceneLoadFlags.BlockOnStreamIn });
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
-        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
+        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID, new SceneSystem.LoadParameters(){ Flags = SceneLoadFlags.BlockOnStreamIn });
+        
         
         var savableEntities = new EntityQueryDesc
         {
@@ -52,8 +53,18 @@ public class Game : IDisposable
             Options = EntityQueryOptions.Default
         };
         m_EntitiesToSave = m_World.EntityManager.CreateEntityQuery(savableEntities);
-        
     }
+
+    public bool IsReady
+    {
+        get
+        {
+            if (m_Ready) return true;
+            return m_Ready = SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameManagerSceneE) && SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameSceneE);
+        }
+    }
+
+    
 
     public void Dispose()
     {
@@ -110,16 +121,7 @@ public class Game : IDisposable
         using (var serializeWorld = new World("Serialization World"))
         {
             EntityManager serializeEntityManager = serializeWorld.EntityManager;
-            serializeEntityManager.CopyEntitiesFrom(entityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
-
-            // Need to remove the SceneTag shared component from all entities because it contains an entity reference
-            // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
-            // entity to the subscene, but otherwise doesn't seem to cause any problems.
-            serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
-            serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
-            
-            // Also remove proxies and requests
-            serializeEntityManager.RemoveComponent<GenericPrefabRequest>(serializeEntityManager.UniversalQuery);
+            SetupSerializeWorld(ref serializeEntityManager, ref entityManager, ref m_EntitiesToSave);
 
             // Save
             using (var writer = new MemoryBinaryWriter())
@@ -137,16 +139,7 @@ public class Game : IDisposable
         using (var serializeWorld = new World("Serialization World"))
         {
             EntityManager serializeEntityManager = serializeWorld.EntityManager;
-            serializeEntityManager.CopyEntitiesFrom(m_World.EntityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
-
-            // Need to remove the SceneTag shared component from all entities because it contains an entity reference
-            // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
-            // entity to the subscene, but otherwise doesn't seem to cause any problems.
-            serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
-            serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
-            
-            // Also remove proxies and requests
-            serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+            SetupSerializeWorld(ref serializeEntityManager, ref entityManager, ref m_EntitiesToSave);
 
             // Save
             using (var memwriter = new MemoryBinaryWriter())
@@ -216,16 +209,7 @@ public class Game : IDisposable
             using (var serializeWorld = new World("Serialization World"))
             {
                 EntityManager serializeEntityManager = serializeWorld.EntityManager;
-                serializeEntityManager.CopyEntitiesFrom(entityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
-
-                // Need to remove the SceneTag shared component from all entities because it contains an entity reference
-                // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
-                // entity to the subscene, but otherwise doesn't seem to cause any problems.
-                serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
-                serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
-            
-                // Also remove proxies and requests
-                serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+                SetupSerializeWorld(ref serializeEntityManager, ref entityManager, ref m_EntitiesToSave);
 
                 // Save
                 {
@@ -254,6 +238,21 @@ public class Game : IDisposable
         }
 
     }
+
+    private static void SetupSerializeWorld(ref EntityManager serializeEntityManager, ref EntityManager entityManager, ref EntityQuery m_EntitiesToSave)
+    {
+        serializeEntityManager.CopyEntitiesFrom(entityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
+        
+        // Need to remove the SceneTag shared component from all entities because it contains an entity reference
+        // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
+        // entity to the subscene, but otherwise doesn't seem to cause any problems.
+        serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
+        serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
+            
+        // Also remove proxies and requests
+        serializeEntityManager.RemoveComponent<GenericPrefabRequest>(serializeEntityManager.UniversalQuery);
+        serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+    }
 }
 
 public partial struct StepSystem : ISystem
@@ -275,44 +274,7 @@ public struct StepController : IComponentData
     }
 }
 
-public struct PlayerControlledTag : IComponentData { }
-
-[StructLayout(layoutKind: LayoutKind.Sequential)]
-public struct StepInput : IComponentData
+public struct PlayerControlled : IComponentData
 {
-    public byte Input;
-
-    public StepInput(byte input)
-    {
-        Input = input;
-    }
-
-    public const int SizeOf = 1;
-        
-        // @formatter:off
-        public const byte LeftInput     = 0b0000_0001;
-        public const byte RightInput    = 0b0000_0010;
-        public const byte UpInput       = 0b0000_0100;
-        public const byte DownInput     = 0b0000_1000;
-        
-        public const byte S1Input       = 0b0001_0000;
-        public const byte S2Input       = 0b0010_0000;
-        public const byte S3Input       = 0b0100_0000;
-        public const byte S4Input       = 0b1000_0000;
-    // @formatter:on 
-    
-    public float2 Direction
-    {
-        get
-        {
-            float2 direction = default;
-            if ((Input & LeftInput) > 0) direction += new float2(-1,0);
-            if ((Input & RightInput) > 0) direction += new float2(1,0);
-            if ((Input & UpInput) > 0) direction += new float2(0,1);
-            if ((Input & DownInput) > 0) direction += new float2(0,-1);
-            return math.normalizesafe(direction);
-        }
-    }
-    
-    public bool S1 => (Input & S1Input) > 0;
+    public int Index;
 }

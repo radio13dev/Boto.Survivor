@@ -19,7 +19,6 @@ public class SurvivorAuthoring : MonoBehaviour
             SetComponentEnabled<MovementInputLockout>(entity, false);
             AddComponent(entity, new ActiveLockout());
             SetComponentEnabled<ActiveLockout>(entity, false);
-            AddComponent<PlayerControlledTag>(entity);
             
             AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
             
@@ -29,7 +28,7 @@ public class SurvivorAuthoring : MonoBehaviour
             SetComponentEnabled<ProjectileSpawner>(entity, false);
             
             AddComponent(entity, new LaserProjectileSpawner(Team.Survivor));
-            SetComponentEnabled<LaserProjectileSpawner>(entity, true);
+            SetComponentEnabled<LaserProjectileSpawner>(entity, false);
             
             AddComponent(entity, new RollActive());
             SetComponentEnabled<RollActive>(entity, false);

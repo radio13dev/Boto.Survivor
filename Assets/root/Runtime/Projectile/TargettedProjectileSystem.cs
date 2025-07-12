@@ -16,6 +16,8 @@ namespace Collisions
 
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<GameManager.Resources>();
+            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             m_enemyTree = new(
                 new(min: new float2(-1000, -1000), max: new float2(1000, 1000)),
                 Allocator.Persistent

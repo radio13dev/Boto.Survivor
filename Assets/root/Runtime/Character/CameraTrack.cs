@@ -1,6 +1,5 @@
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Networking.Transport.Samples;
 using UnityEngine;
 
 public class CameraTrack : MonoBehaviour
@@ -29,7 +28,7 @@ public class CameraTrack : MonoBehaviour
             }
         
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlledTag)), new ComponentType(typeof(SurvivorTag)), new ComponentType(typeof(GenericPrefabProxy)));
+            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)), new ComponentType(typeof(GenericPrefabProxy)));
             var transforms = query.ToComponentDataArray<GenericPrefabProxy>(Allocator.Temp);
             if (transforms.Length == 0 || !transforms[0].Spawned) return;
             _target = transforms[0].Spawned.Value.transform;
