@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Networking.Transport.Samples;
 using UnityEngine;
 
 public class CameraTrack : MonoBehaviour
@@ -10,6 +11,8 @@ public class CameraTrack : MonoBehaviour
     public float newVelocityEffect;
     public float virtualTargetOffset;
     
+    PingClientBehaviour _client;
+    
     Transform _target;
     Vector3 virtualTarget;
     Vector3 recentVelocity;
@@ -19,6 +22,12 @@ public class CameraTrack : MonoBehaviour
     {
         if (!_target)
         {
+            if (!_client || _client.Game == null)
+            {
+                _client = FindAnyObjectByType<PingClientBehaviour>();
+                if (!_client || _client.Game == null) return;
+            }
+        
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             var query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlledTag)), new ComponentType(typeof(SurvivorTag)), new ComponentType(typeof(GenericPrefabProxy)));
             var transforms = query.ToComponentDataArray<GenericPrefabProxy>(Allocator.Temp);

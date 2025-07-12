@@ -10,6 +10,7 @@ using Unity.Entities.Serialization;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
+using Unity.Networking.Transport.Utilities;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine.InputSystem;
@@ -25,6 +26,25 @@ namespace Unity.Networking.Transport.Samples
             Connection = connection;
         }
     }
+    
+    public unsafe struct BiggerDriver : IDisposable
+    {
+        public NetworkDriver Driver;
+        public NetworkPipeline LargePipeline;
+
+        public BiggerDriver(NetworkDriver driver)
+        {
+            Driver = driver;
+            LargePipeline = Driver.CreatePipeline(typeof(FragmentationPipelineStage));
+        }
+
+        public bool IsCreated => Driver.IsCreated;
+
+        public void Dispose()
+        {
+            Driver.Dispose();
+        }
+    }
 
     /// <summary>Component responsible for sending pings to the server.</summary>
     public unsafe class PingClientBehaviour : MonoBehaviour
@@ -36,13 +56,13 @@ namespace Unity.Networking.Transport.Samples
     
         /// <summary>UI component to get the join code and update statistics.</summay>
         public PingUIBehaviour PingUI;
-        public SaveManager SaveReference;
+        public Game Game => m_Game;
 
         // Frequency (in seconds) at which to send ping messages.
         public const float k_PingFrequency = 1.0f/60.0f;
         public const int k_FrameDelay = 1;
 
-        private NetworkDriver m_ClientDriver;
+        private BiggerDriver m_ClientDriver;
         private NativeReference<StepInput> m_FrameInput;
         private NativeQueue<ServerToClient> m_ServerMessageBuffer;
         
@@ -56,6 +76,7 @@ namespace Unity.Networking.Transport.Samples
         // Handle to the job chain of the ping client. We need to keep this around so that we can
         // schedule the jobs in one execution of Update and complete it in the next.
         private JobHandle m_ClientJobHandle;
+        private Game m_Game;
 
         private void Start()
         {
@@ -99,10 +120,11 @@ namespace Unity.Networking.Transport.Samples
             var relayServerData = joinTask.Result.ToRelayServerData("wss");
             var settings = new NetworkSettings();
             settings.WithRelayParameters(serverData: ref relayServerData);
+            settings.WithFragmentationStageParameters(payloadCapacity: 2_000_000);
 
-            m_ClientDriver = NetworkDriver.Create(new WebSocketNetworkInterface(), settings);
+            m_ClientDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
-            m_ClientConnection.Value = new Server(m_ClientDriver.Connect());
+            m_ClientConnection.Value = new Server(m_ClientDriver.Driver.Connect());
         }
         
         // Job that will send ping messages to the server.
@@ -140,7 +162,7 @@ namespace Unity.Networking.Transport.Samples
         [BurstCompile]
         private unsafe struct PingRelayUpdateJob : IJob
         {
-            public NetworkDriver Driver;
+            public BiggerDriver Driver;
             public NativeReference<Server> Connection;
             public NativeQueue<ServerToClient> ServerMessageBuffer;
             public NativeArray<byte> SaveBuffer;
@@ -148,7 +170,7 @@ namespace Unity.Networking.Transport.Samples
             public void Execute()
             {
                 NetworkEvent.Type eventType;
-                while ((eventType = Connection.Value.Connection.PopEvent(Driver, out var reader)) != NetworkEvent.Type.Empty)
+                while ((eventType = Connection.Value.Connection.PopEvent(Driver.Driver, out var reader, out var pipeline)) != NetworkEvent.Type.Empty)
                 {
                     switch (eventType)
                     {
@@ -180,8 +202,11 @@ namespace Unity.Networking.Transport.Samples
                                     var len = reader.ReadInt();
                                     Debug.Log($"... len {len}...");
                                     
-                                    *(int*)SaveBuffer.GetUnsafePtr() = len; // Write the length to the first 4 bytes of the save buffer
-                                    reader.ReadBytes(new Span<byte>(&((byte*)SaveBuffer.GetUnsafePtr())[4], len)); // ... then write the rest of the save out
+                                    ((int*)SaveBuffer.GetUnsafePtr())[0] = len; // Write the length to the first 4 bytes of the save buffer
+                                    reader.ReadBytes(new Span<byte>(&(((byte*)SaveBuffer.GetUnsafePtr())[4]), len)); // ... then write the rest of the save out
+                                    break;
+                                default:
+                                    Debug.Log($"... got mystery message from server.");
                                     break;
                             }
                             break;
@@ -197,7 +222,7 @@ namespace Unity.Networking.Transport.Samples
             {
                 m_ClientJobHandle.Complete();
                 
-                var result = m_ClientDriver.BeginSend(m_ClientConnection.Value.Connection, out var writer);
+                var result = m_ClientDriver.Driver.BeginSend(m_ClientConnection.Value.Connection, out var writer);
                 if (result < 0)
                 {
                     Debug.LogError($"Couldn't send ping (error code {result}).");
@@ -207,7 +232,7 @@ namespace Unity.Networking.Transport.Samples
                 Debug.Log($"Requesting save...");
                 writer.WriteByte(CODE_RequestSave);
                 
-                result = m_ClientDriver.EndSend(writer);
+                result = m_ClientDriver.Driver.EndSend(writer);
                 if (result < 0)
                 {
                     Debug.LogError($"Couldn't send ping (error code {result}).");
@@ -223,13 +248,17 @@ namespace Unity.Networking.Transport.Samples
                 // First, complete the previously-scheduled job chain.
                 m_ClientJobHandle.Complete();
                 
-                if (((int*)m_SaveBuffer.GetUnsafePtr())[0] != 0)
+                var memLen = ((int*)m_SaveBuffer.GetUnsafePtr())[0];
+                if (memLen != 0)
                 {
                     Debug.Log($"... loading save...");
                     
+                    if (m_Game == null)
+                        m_Game = new Game();
+                    
                     // Load this in
-                    SaveReference.LoadSave(m_SaveBuffer);
                     ((int*)m_SaveBuffer.GetUnsafePtr())[0] = 0;
+                    m_Game.LoadSave(&((byte*)m_SaveBuffer.GetUnsafePtr())[4], memLen);
                     
                     Debug.Log($"... done.");
                 }
@@ -238,10 +267,10 @@ namespace Unity.Networking.Transport.Samples
                 bool shouldSend = m_CumulativeTime >= k_PingFrequency;
                 if (shouldSend) m_CumulativeTime -= k_PingFrequency;
                 
-                if ((shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
+                if (m_Game != null && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
-                    msg.Apply(Game.World);
-                    Game.World.Update();
+                    Debug.Log($"Client: {msg.Step}");
+                    msg.Apply(m_Game.World);
                 }
 
                 if (m_FrameInput.IsCreated)
@@ -270,12 +299,12 @@ namespace Unity.Networking.Transport.Samples
                 };
 
                 // If it's time to send, schedule a send job.
-                var state = m_ClientDriver.GetConnectionState(m_ClientConnection.Value.Connection);
+                var state = m_ClientDriver.Driver.GetConnectionState(m_ClientConnection.Value.Connection);
                 if (state == NetworkConnection.State.Connected && shouldSend)
                 {
                     m_ClientJobHandle = new PingRelaySendJob
                     {
-                        Driver = m_ClientDriver.ToConcurrent(),
+                        Driver = m_ClientDriver.Driver.ToConcurrent(),
                         Connection = m_ClientConnection.Value.Connection,
                         FrameInput = m_FrameInput
                     }.Schedule();
@@ -283,7 +312,7 @@ namespace Unity.Networking.Transport.Samples
 
                 // Schedule a job chain with the ping send job (if scheduled), the driver update
                 // job, and then the ping update job. All jobs will run one after the other.
-                m_ClientJobHandle = m_ClientDriver.ScheduleUpdate(m_ClientJobHandle);
+                m_ClientJobHandle = m_ClientDriver.Driver.ScheduleUpdate(m_ClientJobHandle);
                 m_ClientJobHandle = updateJob.Schedule(m_ClientJobHandle);
             }
         }

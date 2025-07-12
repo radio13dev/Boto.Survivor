@@ -10,8 +10,10 @@ using Unity.Entities.Serialization;
 using Unity.Jobs;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
+using Unity.Networking.Transport.Utilities;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using UnityEditor;
 
 namespace Unity.Networking.Transport.Samples
 {
@@ -52,8 +54,11 @@ namespace Unity.Networking.Transport.Samples
                 var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
                 var stepController = query.GetSingleton<StepController>();
                 
-                if (stepController.Step != Step - 1) 
-                    Debug.LogError($"Jumped from step {stepController.Step} to {Step}");
+                if (stepController.Step != Step - 1)
+                {
+                    Debug.LogError($"Failed step, tried to go from step {stepController.Step} to {Step}");
+                    return;
+                }
                     
                 entityManager.SetComponentData(query.GetSingletonEntity(), new StepController(Step));
             }
@@ -64,6 +69,7 @@ namespace Unity.Networking.Transport.Samples
                     entityManager.SetComponentData(entities[0], new StepInput(Data0));
                 entities.Dispose();
             }
+            world.Update();
         }
     }
     
@@ -91,23 +97,26 @@ namespace Unity.Networking.Transport.Samples
     
         /// <summary>UI component on which to set the join code.</summary>
         public PingUIBehaviour PingUI;
-        public SaveManager SaveReference;
 
-        private NetworkDriver m_ServerDriver;
+        private BiggerDriver m_ServerDriver;
         private NativeList<Client> m_ServerConnections;
         private NativeReference<ServerToClient> m_ServerToClient;
         
+        private NativeArray<byte> m_SaveBuffer;
 
         private float m_CumulativeTime;
         
         // Handle to the job chain of the ping server. We need to keep this around so that we can
         // schedule the jobs in one execution of Update and complete it in the next.
         private JobHandle m_ServerJobHandle;
+        private Game m_Game;
 
         private void Start()
         {
             m_ServerConnections = new NativeList<Client>(16, Allocator.Persistent);
             m_ServerToClient = new NativeReference<ServerToClient>(Allocator.Persistent);
+            m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
+            m_Game = new Game();
         }
 
         private void OnDestroy()
@@ -121,6 +130,7 @@ namespace Unity.Networking.Transport.Samples
 
             m_ServerConnections.Dispose();
             m_ServerToClient.Dispose();
+            m_SaveBuffer.Dispose();
         }
 
         /// <summary>Start establishing a connection to the server and listening for connections.</summary>
@@ -154,18 +164,19 @@ namespace Unity.Networking.Transport.Samples
             var relayServerData = allocation.ToRelayServerData("wss");
             var settings = new NetworkSettings();
             settings.WithRelayParameters(serverData: ref relayServerData);
+            settings.WithFragmentationStageParameters(payloadCapacity: 2_000_000);
 
-            m_ServerDriver = NetworkDriver.Create(new WebSocketNetworkInterface(), settings);
+            m_ServerDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
             // NetworkDriver expects to be bound to something before listening for connections, but
             // for Relay it really doesn't matter what we bound to. AnyIpv4 is as good as any.
-            if (m_ServerDriver.Bind(NetworkEndpoint.AnyIpv4) < 0)
+            if (m_ServerDriver.Driver.Bind(NetworkEndpoint.AnyIpv4) < 0)
             {
                 Debug.LogError("Failed to bind the NetworkDriver.");
                 yield break;
             }
 
-            if (m_ServerDriver.Listen() < 0)
+            if (m_ServerDriver.Driver.Listen() < 0)
             {
                 Debug.LogError("Failed to start listening for connections.");
                 yield break;
@@ -178,7 +189,7 @@ namespace Unity.Networking.Transport.Samples
         [BurstCompile]
         private struct ConnectionsRelayUpdateJob : IJob
         {
-            public NetworkDriver Driver;
+            public BiggerDriver Driver;
             public NativeList<Client> Connections;
 
             public void Execute()
@@ -195,7 +206,7 @@ namespace Unity.Networking.Transport.Samples
 
                 // Accept all new connections.
                 NetworkConnection connection;
-                while ((connection = Driver.Accept()) != default)
+                while ((connection = Driver.Driver.Accept()) != default)
                 {
                     Debug.Log($"Got new client: {connection}");
                     Connections.Add(new Client(connection));
@@ -267,6 +278,13 @@ namespace Unity.Networking.Transport.Samples
                 }
             }
         }
+        
+        [EditorButton]
+        public void Reload()
+        {
+            m_ServerJobHandle.Complete();
+            m_Game.ReloadSave();
+        }
 
         private void Update()
         {
@@ -292,7 +310,7 @@ namespace Unity.Networking.Transport.Samples
                 };
                 var eventsJobs = new ConnectionsRelayEventsJobs
                 {
-                    Driver = m_ServerDriver.ToConcurrent(),
+                    Driver = m_ServerDriver.Driver.ToConcurrent(),
                     Connections = m_ServerConnections.AsDeferredJobArray(),
                 };
                 
@@ -305,21 +323,23 @@ namespace Unity.Networking.Transport.Samples
                         var old = m_ServerToClient.Value;
                         m_ServerToClient.Value = new ServerToClient(old.Step + 1, m_ServerConnections);
                         eventsJobs.ServerToClient = m_ServerToClient;
+                        Debug.Log($"Server: {m_ServerToClient.Value.Step}");
+                        m_ServerToClient.Value.Apply(m_Game.World);
                     }
                 }
 
                 // Schedule the job chain.
-                m_ServerJobHandle = m_ServerDriver.ScheduleUpdate();
+                m_ServerJobHandle = m_ServerDriver.Driver.ScheduleUpdate();
                 m_ServerJobHandle = updateJob.Schedule(m_ServerJobHandle);
                 m_ServerJobHandle = eventsJobs.Schedule(m_ServerConnections, 1, m_ServerJobHandle);
             }
         }
         
-        public unsafe void SendSaveToConnection(NetworkDriver Driver, Client Connection)
+        public unsafe void SendSaveToConnection(BiggerDriver Driver, Client Connection)
         {
             Debug.Log($"... sending save...");
             
-            var result = Driver.BeginSend(Connection.Connection, out var writer);
+            var result = Driver.Driver.BeginSend(Driver.LargePipeline, Connection.Connection, out var writer);
             if (result < 0)
             {
                 Debug.LogError($"Couldn't send ping answer (error code {result}).");
@@ -327,8 +347,8 @@ namespace Unity.Networking.Transport.Samples
             }
 
             writer.WriteByte(PingServerBehaviour.CODE_SendSave);
-            SaveReference.SendSave(ref writer);
-            result = Driver.EndSend(writer);
+            m_Game.SendSave(ref writer);
+            result = Driver.Driver.EndSend(writer);
             if (result < 0)
             {
                 Debug.LogError($"Couldn't send ping answer (error code {result}).");

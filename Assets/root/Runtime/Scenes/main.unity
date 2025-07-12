@@ -251,59 +251,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &278097888
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 278097890}
-  - component: {fileID: 278097889}
-  m_Layer: 0
-  m_Name: NetcodeSubscene
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &278097889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278097888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45a335734b1572644a6a5d09d87adc65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Scenes::Unity.Scenes.SubScene
-  _SceneAsset: {fileID: 102900000, guid: 957f4b1f6d8672f4aa6801a5d4a00b34, type: 3}
-  _HierarchyColor: {r: 0.7075472, g: 0.26366144, b: 0.7023708, a: 1}
-  AutoLoadScene: 1
-  _SceneGUID:
-    Value:
-      x: 4055168857
-      y: 1327982806
-      z: 1511032490
-      w: 1135610445
---- !u!4 &278097890
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278097888}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &491695310
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,6 +568,76 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &1296601283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1296601285}
+  - component: {fileID: 1296601284}
+  m_Layer: 0
+  m_Name: SceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1296601284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296601283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c921bd73e02e4aa38e4b3e2d398a81dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::SceneManager
+  gameManagerScene:
+    Id:
+      GlobalId:
+        SceneObjectIdentifier0: 102900000
+        SceneObjectIdentifier1: 0
+        AssetGUID:
+          Value:
+            x: 606540983
+            y: 1093180961
+            z: 1735887759
+            w: 3143248905
+        IdentifierType: 1
+      GenerationType: 4
+  gameScene:
+    Id:
+      GlobalId:
+        SceneObjectIdentifier0: 102900000
+        SceneObjectIdentifier1: 0
+        AssetGUID:
+          Value:
+            x: 4190915394
+            y: 1323043210
+            z: 647143851
+            w: 3622500961
+        IdentifierType: 1
+      GenerationType: 4
+--- !u!4 &1296601285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296601283}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1337659301
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,8 +647,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1337659302}
-  - component: {fileID: 1337659303}
-  - component: {fileID: 1337659304}
   - component: {fileID: 1337659305}
   m_Layer: 0
   m_Name: World
@@ -655,30 +670,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1337659303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1337659301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d61378da8f723d9468c06a36856e7f3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::WorldManager
---- !u!114 &1337659304
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1337659301}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e63b9f92a648faaf5294be7c93c831, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GameController
 --- !u!114 &1337659305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,9 +782,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 1680502878}
   - {fileID: 515235580}
-  - {fileID: 278097890}
   - {fileID: 143727263}
   - {fileID: 491695312}
   - {fileID: 4468460}
   - {fileID: 1461182484}
   - {fileID: 1337659302}
+  - {fileID: 1296601285}

@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Entities.Serialization;
 using UnityEngine;
 
 public static class GameManager
@@ -10,6 +11,13 @@ public static class GameManager
         public Entity SurvivorTemplate;
         
         public Entity Projectile_Survivor_Laser;
+    }
+    
+    [ChunkSerializable]
+    public struct SceneLoader : IComponentData
+    {
+        public EntitySceneReference GameManagerSubscene;
+        public EntitySceneReference GameSubscene;
     }
 }
 

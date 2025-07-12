@@ -1,30 +1,256 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.Serialization;
 using Unity.Mathematics;
 using Unity.Networking.Transport.Samples;
+using Unity.Scenes;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Scripting;
 
-[Preserve]
-public class Game : ICustomBootstrap
+[Preserve] 
+public class DisableBootstrap : ICustomBootstrap
 {
-    public static World World { get; private set; }
-
     public bool Initialize(string defaultWorldName)
     {
-        World.DefaultGameObjectInjectionWorld = CreateWorld();
+        var emptyWorld = new World("Empty");
+        World.DefaultGameObjectInjectionWorld = emptyWorld;
         return true;
     }
-    
-    public static World CreateWorld()
+}
+
+[Preserve]
+public class Game : IDisposable
+{
+    public World World => m_World;
+
+    private readonly World m_World;
+    private readonly EntityQuery m_EntitiesToSave;
+
+    public Game()
     {
         Debug.Log($"Creating Game...");
-        World = new World("Game");
-        var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.LocalSimulation);
-        DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(World, systems);
-        return World;
+        m_World = new World("Game", WorldFlags.Game);
+        var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).ToList();
+        DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
+        
+        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene);
+        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene);
+        
+        var savableEntities = new EntityQueryDesc
+        {
+            Any = new ComponentType[]
+            {
+                typeof(SaveTag),
+            },
+            Options = EntityQueryOptions.Default
+        };
+        m_EntitiesToSave = m_World.EntityManager.CreateEntityQuery(savableEntities);
+        
+    }
+
+    public void Dispose()
+    {
+        m_EntitiesToSave.Dispose();
+        m_World.Dispose();
+    }
+    
+    
+
+    // Looks for and removes a set of components and then adds a different set of components to the same set
+    // of entities. 
+    private void ReplaceComponents(
+        ComponentType[] typesToRemove,
+        ComponentType[] typesToAdd,
+        EntityManager entityManager)
+    {
+        EntityQuery query = entityManager.CreateEntityQuery(
+            new EntityQueryDesc { Any = typesToRemove, Options = EntityQueryOptions.Default }
+        );
+        NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+
+        foreach (ComponentType removeType in typesToRemove)
+        {
+            entityManager.RemoveComponent(entities, removeType);
+        }
+
+        foreach (ComponentType addType in typesToAdd)
+        {
+            entityManager.AddComponent(entities, addType);
+        }
+    }
+
+    public void SaveManual()
+    {
+        Save(Path.Combine(Application.persistentDataPath, "Saves", "01"));
+    }
+
+    public void LoadManual()
+    {
+        Load(Path.Combine(Application.persistentDataPath, "Saves", "01"));
+    }
+
+    public unsafe void Save(string filepath)
+    {
+        /*
+         * 1. Create a new world.
+         * 2. Copy over the entities we want to serialize to the new world.
+         * 3. Remove all shared components, components containing blob asset references, and components containing
+         *    external entity references.
+         * 4. Serialize the new world to a save file.
+         */
+
+        EntityManager entityManager = m_World.EntityManager;
+        using (var serializeWorld = new World("Serialization World"))
+        {
+            EntityManager serializeEntityManager = serializeWorld.EntityManager;
+            serializeEntityManager.CopyEntitiesFrom(entityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
+
+            // Need to remove the SceneTag shared component from all entities because it contains an entity reference
+            // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
+            // entity to the subscene, but otherwise doesn't seem to cause any problems.
+            serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
+            serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
+            
+            // Also remove proxies and requests
+            serializeEntityManager.RemoveComponent<GenericPrefabRequest>(serializeEntityManager.UniversalQuery);
+
+            // Save
+            using (var writer = new MemoryBinaryWriter())
+            using (var fileWriter = new StreamWriter(filepath))
+            {
+                SerializeUtility.SerializeWorld(serializeEntityManager, writer);
+                fileWriter.Write(new Span<char>(writer.Data, writer.Length / 2 + 1));
+            }
+        }
+    }
+
+    public unsafe void SendSave(ref DataStreamWriter writer)
+    {
+        EntityManager entityManager = m_World.EntityManager;
+        using (var serializeWorld = new World("Serialization World"))
+        {
+            EntityManager serializeEntityManager = serializeWorld.EntityManager;
+            serializeEntityManager.CopyEntitiesFrom(m_World.EntityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
+
+            // Need to remove the SceneTag shared component from all entities because it contains an entity reference
+            // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
+            // entity to the subscene, but otherwise doesn't seem to cause any problems.
+            serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
+            serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
+            
+            // Also remove proxies and requests
+            serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+
+            // Save
+            using (var memwriter = new MemoryBinaryWriter())
+            {
+                SerializeUtility.SerializeWorld(serializeEntityManager, memwriter);
+                writer.WriteInt(memwriter.Length);
+                writer.WriteBytes(new Span<byte>(memwriter.Data, memwriter.Length));
+                Debug.Log($"... wrote {memwriter.Length}...");
+            }
+        }
+    }
+
+    public unsafe void Load(string filepath)
+    {
+        EntityManager entityManager = m_World.EntityManager;
+        entityManager.DestroyEntity(m_EntitiesToSave);
+
+        using (var deserializeWorld = new World("Deserialization World"))
+        {
+            ExclusiveEntityTransaction transaction = deserializeWorld.EntityManager.BeginExclusiveEntityTransaction();
+
+            var fileData = File.ReadAllBytes(filepath);
+            fixed (byte* ptr = &fileData[0])
+            {
+                using (var reader = new MemoryBinaryReader(ptr, fileData.Length))
+                {
+                    SerializeUtility.DeserializeWorld(transaction, reader);
+                }
+            }
+
+            deserializeWorld.EntityManager.EndExclusiveEntityTransaction();
+
+            entityManager.MoveEntitiesFrom(deserializeWorld.EntityManager);
+        }
+    }
+
+    public unsafe void LoadSave(byte* ptr, int len)
+    {
+        // Read THAT into the world
+        EntityManager entityManager = m_World.EntityManager;
+        entityManager.DestroyEntity(m_EntitiesToSave);
+
+        using (var deserializeWorld = new World("Deserialization World"))
+        {
+            ExclusiveEntityTransaction transaction = deserializeWorld.EntityManager.BeginExclusiveEntityTransaction();
+
+            Debug.Log($"... setting up reader ...");
+            using (var memreader = new MemoryBinaryReader(ptr, len))
+            {
+                Debug.Log($"... deserializing ...");
+                SerializeUtility.DeserializeWorld(transaction, memreader);
+            }
+            
+            Debug.Log($"... wrapping up ...");
+
+            deserializeWorld.EntityManager.EndExclusiveEntityTransaction();
+
+            entityManager.MoveEntitiesFrom(deserializeWorld.EntityManager);
+        }
+    }
+    
+    public unsafe void ReloadSave()
+    {
+        using (var writer = new MemoryBinaryWriter())
+        {
+            EntityManager entityManager = m_World.EntityManager;
+            using (var serializeWorld = new World("Serialization World"))
+            {
+                EntityManager serializeEntityManager = serializeWorld.EntityManager;
+                serializeEntityManager.CopyEntitiesFrom(entityManager, m_EntitiesToSave.ToEntityArray(Allocator.Temp));
+
+                // Need to remove the SceneTag shared component from all entities because it contains an entity reference
+                // that exists outside the subscene which isn't allowed for SerializeUtility. This breaks the link from the
+                // entity to the subscene, but otherwise doesn't seem to cause any problems.
+                serializeEntityManager.RemoveComponent<SceneTag>(serializeEntityManager.UniversalQuery);
+                serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
+            
+                // Also remove proxies and requests
+                serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+
+                // Save
+                {
+                    SerializeUtility.SerializeWorld(serializeEntityManager, writer);
+                }
+            }
+            
+            entityManager.DestroyEntity(m_EntitiesToSave);
+            using (var deserializeWorld = new World("Deserialization World"))
+            {
+                ExclusiveEntityTransaction transaction = deserializeWorld.EntityManager.BeginExclusiveEntityTransaction();
+
+                Debug.Log($"... setting up reader ...");
+                using (var memreader = new MemoryBinaryReader(writer.Data, writer.Length))
+                {
+                    Debug.Log($"... deserializing ...");
+                    SerializeUtility.DeserializeWorld(transaction, memreader);
+                }
+            
+                Debug.Log($"... wrapping up ...");
+
+                deserializeWorld.EntityManager.EndExclusiveEntityTransaction();
+
+                entityManager.MoveEntitiesFrom(deserializeWorld.EntityManager);
+            }
+        }
+
     }
 }
 
@@ -32,7 +258,8 @@ public partial struct StepSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.EntityManager.CreateSingleton<StepController>();
+        var stepControllerEntity = state.EntityManager.CreateSingleton<StepController>();
+        state.EntityManager.AddComponent<SaveTag>(stepControllerEntity);
     }
 }
 
