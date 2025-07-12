@@ -38,8 +38,10 @@ public class Game : IDisposable
         var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).ToList();
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
         
-        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene);
-        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene);
+        Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
+        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID);
+        Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
+        SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
         
         var savableEntities = new EntityQueryDesc
         {

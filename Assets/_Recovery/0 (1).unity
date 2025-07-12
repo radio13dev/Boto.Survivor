@@ -597,8 +597,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c921bd73e02e4aa38e4b3e2d398a81dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::SceneManager
-  gameManagerScene: {fileID: 143727262}
-  gameScene: {fileID: 491695311}
+  gameManagerScene:
+    Id:
+      GlobalId:
+        SceneObjectIdentifier0: 102900000
+        SceneObjectIdentifier1: 0
+        AssetGUID:
+          Value:
+            x: 606540983
+            y: 1093180961
+            z: 1735887759
+            w: 3143248905
+        IdentifierType: 1
+      GenerationType: 4
+  gameScene:
+    Id:
+      GlobalId:
+        SceneObjectIdentifier0: 102900000
+        SceneObjectIdentifier1: 0
+        AssetGUID:
+          Value:
+            x: 4190915394
+            y: 1323043210
+            z: 647143851
+            w: 3622500961
+        IdentifierType: 1
+      GenerationType: 4
 --- !u!4 &1296601285
 Transform:
   m_ObjectHideFlags: 0

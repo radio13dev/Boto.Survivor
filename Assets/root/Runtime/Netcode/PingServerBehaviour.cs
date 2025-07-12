@@ -209,7 +209,7 @@ namespace Unity.Networking.Transport.Samples
                 while ((connection = Driver.Driver.Accept()) != default)
                 {
                     Debug.Log($"Got new client: {connection}");
-                    Connections.Add(new Client(connection));
+                    Connections.Add(new Client(connection){ RequestedSave = true });
                 }
             }
         }
