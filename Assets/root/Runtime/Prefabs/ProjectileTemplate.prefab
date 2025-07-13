@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2845609448633241007}
   - component: {fileID: 708185384290785635}
-  - component: {fileID: 7931170487677535920}
   - component: {fileID: 3099219579393939003}
+  - component: {fileID: 7157678349048579807}
   m_Layer: 0
   m_Name: ProjectileTemplate
   m_TagString: Untagged
@@ -46,20 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9fc89639284d18825bb54aa8c18d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ProjectileAuthoring
---- !u!114 &7931170487677535920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 311269425040365492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 1716246876074291696, guid: 53f31980ef1cc1a4988125d6f7c469e7, type: 3}
-  Dynamic: 1
 --- !u!114 &3099219579393939003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,3 +58,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.LinkedEntityGroupAuthoring
+--- !u!114 &7157678349048579807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcadda4238394090b4d81622e0588ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::SpecificPrefabAuthoring
+  ToSpawn: {fileID: 1716246876074291696, guid: 53f31980ef1cc1a4988125d6f7c469e7, type: 3}
+  ToSpawnId: 1
+  Dynamic: 1

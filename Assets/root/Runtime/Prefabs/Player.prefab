@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 240200278457971943}
   - component: {fileID: 6061478738849763825}
-  - component: {fileID: 5234817830966365714}
   - component: {fileID: 7756041969186760268}
+  - component: {fileID: 1849126249970056327}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -46,20 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bed4a64841004d24da1e97a0ebd5b20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
---- !u!114 &5234817830966365714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 2620210153631596142, guid: 27f8d1d7b4e00d14f9243acfe563be99, type: 3}
-  Dynamic: 1
 --- !u!114 &7756041969186760268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,3 +58,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.LinkedEntityGroupAuthoring
+--- !u!114 &1849126249970056327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcadda4238394090b4d81622e0588ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::SpecificPrefabAuthoring
+  ToSpawn: {fileID: 2620210153631596142, guid: 27f8d1d7b4e00d14f9243acfe563be99, type: 3}
+  ToSpawnId: 0
+  Dynamic: 1

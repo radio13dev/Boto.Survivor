@@ -254,11 +254,20 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             var memLen = ((int*)m_SaveBuffer.GetUnsafePtr())[0];
             if (memLen != 0)
             {
-                Debug.Log($"... loading save...");
-
                 if (m_Game == null)
+                {
+                    Debug.Log($"... setting up client world...");
                     m_Game = new Game();
+                }
 
+                if (!m_Game.IsReady)
+                {
+                    m_Game.World.Update();
+                    return;
+                }
+                
+                Debug.Log($"... loading save...");
+                
                 // Load this in
                 ((int*)m_SaveBuffer.GetUnsafePtr())[0] = 0;
                 m_Game.LoadSave(&((byte*)m_SaveBuffer.GetUnsafePtr())[4], memLen);

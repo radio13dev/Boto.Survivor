@@ -39,9 +39,9 @@ public class Game : IDisposable
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
         
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
-        m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID, new SceneSystem.LoadParameters(){ Flags = SceneLoadFlags.BlockOnStreamIn });
+        m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID);
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
-        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID, new SceneSystem.LoadParameters(){ Flags = SceneLoadFlags.BlockOnStreamIn });
+        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
         
         
         var savableEntities = new EntityQueryDesc
@@ -250,8 +250,8 @@ public class Game : IDisposable
         serializeEntityManager.RemoveComponent<SceneSection>(serializeEntityManager.UniversalQuery);
             
         // Also remove proxies and requests
-        serializeEntityManager.RemoveComponent<GenericPrefabRequest>(serializeEntityManager.UniversalQuery);
         serializeEntityManager.RemoveComponent<GenericPrefabProxy>(serializeEntityManager.UniversalQuery);
+        serializeEntityManager.RemoveComponent<SpecificPrefabProxy>(serializeEntityManager.UniversalQuery);
     }
 }
 
