@@ -39,7 +39,6 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
     private void OnDestroy()
     {
         m_SpecialActionArr.Dispose();
-        m_Game?.Dispose();
     }
 
     FullStepData m_StepData;

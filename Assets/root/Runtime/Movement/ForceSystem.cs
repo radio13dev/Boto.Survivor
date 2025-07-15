@@ -9,6 +9,13 @@ using Unity.Transforms;
 public struct Force : IComponentData
 {
     public float2 Velocity;
+    public float2 Shift;
+    
+    public void Reset()
+    {
+        Velocity = default;
+        Shift = default;
+    }
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]
@@ -24,10 +31,12 @@ public partial struct ForceSystem : ISystem
     
     partial struct Job : IJobEntity
     {
-        public void Execute(Entity entity, ref Movement movement, ref Force force)
+        public void Execute(Entity entity, ref LocalTransform transform, ref Movement movement, ref Force force)
         {
             movement.Velocity += force.Velocity;
-            force.Velocity = 0;
+            transform.Position += force.Shift.f3();
+            
+            force.Reset();
         }
     }
 }

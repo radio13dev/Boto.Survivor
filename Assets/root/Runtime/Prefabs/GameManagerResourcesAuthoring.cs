@@ -31,6 +31,11 @@ public struct GameManager : IComponentData
         public EntitySceneReference GameManagerSubscene;
         public EntitySceneReference GameSubscene;
     }
+    
+    public struct Particles : IBufferElementData
+    {
+        public Entity Prefab;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
@@ -42,6 +47,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
+    public ParticleDatabase ParticleDatabase;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -69,6 +75,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 var buffer = AddBuffer<GameManager.InstancedResources>(entity);
                 for (int i = 0; i < authoring.InstancedResourcesDatabase.Instances.Count; i++)
                     buffer.Add(new GameManager.InstancedResources() { Instance = authoring.InstancedResourcesDatabase.Instances[i] });
+            }
+            
+            if (authoring.ParticleDatabase)
+            {
+                var buffer = AddBuffer<GameManager.Particles>(entity);
+                for (int i = 0; i < authoring.ParticleDatabase.Length; i++)
+                {
+                    buffer.Add(new GameManager.Particles(){ Prefab = GetEntity(authoring.ParticleDatabase[i], TransformUsageFlags.None) });
+                }
             }
         }
     }

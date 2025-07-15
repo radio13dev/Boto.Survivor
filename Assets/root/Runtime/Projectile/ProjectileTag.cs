@@ -7,8 +7,3 @@ public enum Team
     Survivor,
     Enemy
 }
-
-public struct DestroyAtTime : IComponentData
-{
-    public double DestroyTime;
-}

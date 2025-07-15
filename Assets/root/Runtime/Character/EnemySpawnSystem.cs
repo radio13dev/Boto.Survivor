@@ -9,6 +9,7 @@ public partial struct EnemySpawner : IComponentData
     
     public const float SpawnRadius = 10;
     public const float SpawnBlockRadiusSqr = 9*9;
+    public const int SpawnChancePerFrame = 10;
     
     public EnemySpawner(int init)
     {
@@ -53,6 +54,9 @@ public partial struct EnemySpawnSystem : ISystem
     
         public void Execute([ChunkIndexInQuery] int key, in LocalTransform t, ref EnemySpawner spawner)
         {
+            if (spawner.random.NextInt(100) > EnemySpawner.SpawnChancePerFrame)
+                return;
+        
             var rPos = t.Position;
             rPos += math.normalizesafe(spawner.random.NextFloat2(min, max), max).f3() * EnemySpawner.SpawnRadius;
             

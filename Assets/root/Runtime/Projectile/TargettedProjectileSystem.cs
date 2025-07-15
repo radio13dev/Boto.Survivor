@@ -92,11 +92,11 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public double time;
 
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref LaserProjectileSpawner laserSpawner)
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
             {
                 fixed (FireAtNearestTargetJob* job_ptr = &this)
                 {
-                    var visitor = new NearestVisitor(Key, job_ptr, transform);
+                    var visitor = new NearestVisitor(Key, job_ptr, transform, movement);
                     var distance = new DistanceProvider();
 
                     tree.Nearest(transform.Position.xy, 30, ref visitor, distance);
@@ -115,14 +115,16 @@ namespace Collisions
                 int _key;
                 FireAtNearestTargetJob* _job;
                 LocalTransform _transform;
+                Movement _sourceMovement;
 
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform)
+                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement)
                 {
                     Hits = 0;
                     
                     _key = Key;
                     _job = job;
                     _transform = transform;
+                    _sourceMovement = sourceMovement;
                 }
 
                 public bool OnVist(Entity obj, AABB2D bounds)
@@ -134,7 +136,7 @@ namespace Collisions
                     _job->ecb.AddComponent<SurvivorProjectileTag>(_key, laser);
                     _job->ecb.SetComponent(_key, laser, transform);
                     _job->ecb.SetComponent(_key, laser, new Movement(dir));
-                    _job->ecb.SetComponent(_key, laser, new DestroyAtTime(){ DestroyTime = _job->time + 20 });
+                    _job->ecb.SetComponent(_key, laser, new DestroyAtTime(){ DestroyTime = _job->time + 5 });
                     return false;
                 }
             }

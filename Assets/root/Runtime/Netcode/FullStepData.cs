@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Unity.Collections;
+using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -181,6 +182,8 @@ public struct FullStepData
 
             entityManager.SetComponentData(query.GetSingletonEntity(), new StepController(Step));
         }
+        
+        world.SetTime(new TimeData(Step*(double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
         
         // Apply extra actions
         {

@@ -1,6 +1,11 @@
 using Unity.Collections;
 using Unity.Entities;
 
+public struct DestroyAtTime : IComponentData
+{
+    public double DestroyTime;
+}
+
 [UpdateInGroup(typeof(GameLogicSystemGroup))]
 public partial struct DestroyAtTimeCleanupSystem : ISystem
 {
