@@ -122,7 +122,7 @@ namespace Collisions
                         // Destroy projectiles when they collide (by setting their life to 0)
                         _ecb.SetComponent(_key, projectile, new DestroyAtTime());
                         _health->Value -= 1;
-                        _movement->Velocity += _projectileVelLookup->GetRefRO(projectile).ValueRO.Velocity/100;
+                        _movement->Velocity += _projectileVelLookup->GetRefRO(projectile).ValueRO.Velocity;
                     }
 
                     return true;
