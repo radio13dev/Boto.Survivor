@@ -41,23 +41,13 @@ public struct SpecialLockstepActions
                 var resources = resourcesQuery.GetSingleton<GameManager.Resources>();
                 var newPlayer = world.EntityManager.Instantiate(resources.SurvivorTemplate);
                 world.EntityManager.AddComponent<PlayerControlled>(newPlayer);
-                world.EntityManager.SetComponentData(newPlayer, new PlayerControlled(){ Index = Data });
+                world.EntityManager.SetSharedComponent(newPlayer, new PlayerControlled(){ Index = Data });
                 break;
                 
             case CODE_PlayerLeave:
                 var controlledQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
-                var controlled = controlledQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-                for (int i = 0; i < controlled.Length; i++)
-                {
-                    if (controlled[i].Index == Data)
-                    {
-                        var toDelete = controlledQuery.ToEntityArray(Allocator.Temp);
-                        world.EntityManager.DestroyEntity(toDelete[i]);
-                        toDelete.Dispose();
-                        break;
-                    }
-                }
-                controlled.Dispose();
+                controlledQuery.SetSharedComponentFilter(new PlayerControlled(){ Index = Data });
+                world.EntityManager.DestroyEntity(controlledQuery);
                 break;
         }
     }

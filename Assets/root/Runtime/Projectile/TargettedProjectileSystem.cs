@@ -1,5 +1,6 @@
 using System.Threading;
 using NativeTrees;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -9,6 +10,7 @@ using Unity.Transforms;
 namespace Collisions
 {
     [UpdateInGroup(typeof(CollisionSystemGroup))]
+    [BurstCompile]
     public partial struct EnemyColliderTreeSystem : ISystem
     {
         NativeTrees.NativeQuadtree<Entity> m_enemyTree;
@@ -62,6 +64,7 @@ namespace Collisions
             enemy_transforms.Dispose();
         }
 
+        [BurstCompile]
         partial struct RegenerateJob : IJob
         {
             public NativeTrees.NativeQuadtree<Entity> tree;
@@ -81,6 +84,7 @@ namespace Collisions
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
         [WithAll(typeof(LaserProjectileSpawner), typeof(SurvivorTag))]
+        [BurstCompile]
         unsafe partial struct FireAtNearestTargetJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ecb;
@@ -104,6 +108,7 @@ namespace Collisions
                 }
             }
 
+            [BurstCompile]
             unsafe struct NearestVisitor : IQuadtreeNearestVisitor<Entity>
             {
                 public volatile int Hits;
@@ -134,6 +139,7 @@ namespace Collisions
                 }
             }
 
+            [BurstCompile]
             unsafe struct DistanceProvider : IQuadtreeDistanceProvider<Entity>
             {
                 public float DistanceSquared(float2 point, Entity obj, AABB2D bounds)

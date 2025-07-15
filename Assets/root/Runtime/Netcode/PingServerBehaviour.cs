@@ -34,6 +34,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 {
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
+    public const byte CODE_SendId = 0b0000_0010;
 
     /// <summary>UI component on which to set the join code.</summary>
     public PingUIBehaviour PingUI;
@@ -52,6 +53,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ServerJobHandle;
     private Game m_Game;
+    public Game Game => m_Game;
 
     private void Start()
     {
@@ -60,7 +62,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent);
-        m_Game = new Game();
+        m_Game = new Game(false);
     }
 
     private void OnDestroy()
@@ -257,8 +259,10 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             if (m_ServerConnections.Length > 0)
             {
                 m_CumulativeTime += Time.deltaTime;
-                if (m_CumulativeTime >= PingClientBehaviour.k_PingFrequency)
+                if (m_CumulativeTime >= Game.k_ServerPingFrequency)
                 {
+                    m_CumulativeTime -= Game.k_ServerPingFrequency;
+                    
                     eventsJobs.ServerToClient = m_ServerToClient;
                     
                     // Iterate index + read inputs
@@ -275,6 +279,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     // Update server sim
                     newStepData.Apply(m_Game.World, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
+                    NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
                 }
             }
 
@@ -283,6 +288,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                 {
                     var con = m_ServerConnections[i];
                     SendSaveToConnection(m_ServerDriver, con);
+                    SendIdToConnection(m_ServerDriver, con, i);
                     con.RequestedSave = false;
                     m_ServerConnections[i] = con;
                 }
@@ -307,6 +313,28 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 
         writer.WriteByte(PingServerBehaviour.CODE_SendSave);
         m_Game.SendSave(ref writer);
+        result = Driver.Driver.EndSend(writer);
+        if (result < 0)
+        {
+            Debug.LogError($"Couldn't send ping answer (error code {result}).");
+            return;
+        }
+    }
+    
+    public void SendIdToConnection(BiggerDriver Driver, Client Connection, int index)
+    {
+        Debug.Log($"... sending Id...");
+
+        var result = Driver.Driver.BeginSend(Driver.LargePipeline, Connection.Connection, out var writer);
+        if (result < 0)
+        {
+            Debug.LogError($"Couldn't send ping answer (error code {result}).");
+            return;
+        }
+
+        writer.WriteByte(PingServerBehaviour.CODE_SendId);
+        GenericMessage.Id(index).Write(ref writer);
+        
         result = Driver.Driver.EndSend(writer);
         if (result < 0)
         {

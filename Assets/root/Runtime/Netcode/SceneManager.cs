@@ -6,6 +6,8 @@ using UnityEngine;
 public class SceneManager : MonoBehaviour
 {
     static SceneManager m_Instance;
+    
+    public static bool Ready => m_Instance;
     public static SubScene GameManagerScene => m_Instance.gameManagerScene;
     public static SubScene GameScene => m_Instance.gameScene;
     

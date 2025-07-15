@@ -1,0 +1,109 @@
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Jobs;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+public struct LocalTransformLast : IComponentData
+{
+    public LocalTransform Value;
+}
+
+[BurstCompile]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateBefore(typeof(LightweightRenderSystem))]
+public partial struct LocalTransformLastSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        new UpdateLastTransform().Schedule();
+    }
+
+    [BurstCompile]
+    partial struct UpdateLastTransform : IJobEntity
+    {
+        public void Execute(ref LocalTransformLast last, in LocalTransform current)
+        {
+            last.Value = current;
+        }
+    }
+}
+
+[BurstCompile]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+public partial struct LightweightRenderSystem : ISystem
+{
+    EntityQuery m_Query;
+    NativeArray<Matrix4x4> m_InstanceMats;
+    public float t;
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<GameManager.Resources>();
+        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest>().Build();
+        m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        m_InstanceMats.Dispose();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var resources = SystemAPI.GetSingletonBuffer<GameManager.InstancedResources>();
+        
+        for (int i = 0; i < resources.Length; i++)
+        {
+            m_Query.SetSharedComponentFilter(new InstancedResourceRequest(i));
+            var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+            if (transforms.Length == 0) continue;
+            var transformsLast = m_Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
+            
+            int toRender = math.min(transforms.Length, m_InstanceMats.Length); 
+            AsyncRenderTransformGenerator asyncRenderTransformGenerator = new AsyncRenderTransformGenerator
+            {
+                transforms = transforms,
+                transformsLast = transformsLast,
+                matrices = m_InstanceMats,
+                t = t
+            };
+            asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
+            
+            var mat = resources[i].Instance.Value.Material;
+            var mesh = resources[i].Instance.Value.Mesh;
+            RenderParams renderParams = new RenderParams(mat);
+            for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
+            {
+                int count = math.min(Profiling.k_MaxInstances, toRender - j);
+                Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
+            }
+            
+            transforms.Dispose();
+            transformsLast.Dispose();
+        }
+    }
+
+    [BurstCompile]
+    partial struct AsyncRenderTransformGenerator : IJobFor
+    {
+        [ReadOnly] public float t;
+        [ReadOnly] public NativeArray<LocalTransformLast> transformsLast;
+        [ReadOnly] public NativeArray<LocalTransform> transforms;
+
+        [WriteOnly] public NativeArray<Matrix4x4> matrices;
+
+        [BurstCompile]
+        public void Execute(int index)
+        {
+            var oldTransform = transformsLast[index];
+            var newTransform = transforms[index];
+            var p = math.lerp(oldTransform.Value.Position, newTransform.Position, t);
+            var q = math.slerp(oldTransform.Value.Rotation, newTransform.Rotation, t);
+            matrices[index] = LocalTransform.FromPositionRotation(p, q).ToMatrix();
+        }
+    }
+}

@@ -28,27 +28,33 @@ public partial struct ProcessInputs : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        new Job()
+        state.Dependency = new JobLightweight().Schedule(state.Dependency);
+        state.Dependency = new Job()
         {
-        }.Schedule();
+        }.Schedule(state.Dependency);
     }
 
+    [WithNone(typeof(MovementInputLockout))]
+    [WithAll(typeof(Simulate))]
+    partial struct JobLightweight : IJobEntity
+    {
+        public void Execute(in StepInput input, ref Movement movement)
+        {
+            var dir = input.Direction;
+            var vel = dir * movement.Speed;
+            movement.Velocity += vel;
+            movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
+        }
+    }
+    
     [WithPresent(typeof(ActiveLockout), typeof(MovementInputLockout), typeof(RollActive))]
     [WithAll(typeof(Simulate))]
     partial struct Job : IJobEntity
     {
-        public void Execute(in StepInput input, ref Movement movement,
+        public void Execute(in StepInput input,
             EnabledRefRW<ActiveLockout> activeLockout, EnabledRefRW<MovementInputLockout> movementInputLockout,
             EnabledRefRW<RollActive> roll)
         {
-            if (!movementInputLockout.ValueRO)
-            {
-                var dir = input.Direction;
-                var vel = dir * movement.Speed;
-                movement.Velocity += vel;
-                movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
-            }
-
             if (!activeLockout.ValueRW)
             {
                 if (input.S1)

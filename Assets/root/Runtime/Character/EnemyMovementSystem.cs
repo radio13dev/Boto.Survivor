@@ -1,0 +1,37 @@
+﻿using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+
+[RequireMatchingQueriesForUpdate]
+public partial struct EnemyMovementSystem : ISystem
+{
+    EntityQuery m_TargetQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<EnemyTag>();
+        m_TargetQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlled, LocalTransform>().Build();
+        state.RequireForUpdate(m_TargetQuery);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        new Job()
+        {
+            PlayerTransform = targets[0]
+        }.Schedule();
+        targets.Dispose();
+    }
+    
+    [WithAll(typeof(EnemyTag))]
+    partial struct Job : IJobEntity
+    {
+        [ReadOnly] public LocalTransform PlayerTransform;
+        public void Execute(in LocalTransform localTransform, in Movement movement, ref StepInput input)
+        {
+            input = StepInput.MoveTowards(in localTransform, in movement, in PlayerTransform);
+        }
+    }
+}

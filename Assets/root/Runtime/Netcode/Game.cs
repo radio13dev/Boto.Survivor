@@ -22,7 +22,18 @@ public class DisableBootstrap : ICustomBootstrap
 [Preserve]
 public class Game : IDisposable
 {
+    public const float k_ClientPingFrequency = 1.0f / 60.0f;
+    public const float k_ServerPingFrequency = 1.0f / 61.0f;
+    
+    public static bool ConstructorReady => SceneManager.Ready;
+    
+    public static Game SingleplayerGame;
+    public static Game ServerGame;
+    public static Game ClientGame;
+    public static Game PresentationGame => ClientGame ?? SingleplayerGame;
+
     public World World => m_World;
+    public int PlayerIndex = -1;
 
     private World m_World;
     private EntityQuery m_EntitiesToSave;
@@ -31,11 +42,11 @@ public class Game : IDisposable
     private Entity m_GameSceneE;
     private bool m_Ready;
 
-    public Game()
+    public Game(bool showVisuals)
     {
         Debug.Log($"Creating Game...");
         m_World = new World("Game", WorldFlags.Game);
-        var systems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).ToList();
+        var systems = DefaultWorldInitialization.GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.LocalSimulation).ToList();
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
         
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
@@ -64,11 +75,10 @@ public class Game : IDisposable
         }
     }
 
-    
+
 
     public void Dispose()
     {
-        m_EntitiesToSave.Dispose();
         m_World.Dispose();
     }
     
@@ -274,7 +284,7 @@ public struct StepController : IComponentData
     }
 }
 
-public struct PlayerControlled : IComponentData
+public struct PlayerControlled : ISharedComponentData
 {
     public int Index;
 }

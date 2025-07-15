@@ -7,7 +7,6 @@ using Unity.Transforms;
 
 namespace Collisions
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     public partial struct PickupHitSurvivorCollisionSystem : ISystem
     {

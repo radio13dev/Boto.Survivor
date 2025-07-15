@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
@@ -49,6 +50,7 @@ public class PingUIBehaviour : MonoBehaviour
             var client = gameObject.AddComponent<PingClientBehaviour>() as PingClientBehaviour;
             client.PingUI = this;
             StartCoroutine(client.Connect());
+            Game.ClientGame = client.Game;
         }
 
         if (GUILayout.Button("Start Server"))
@@ -56,7 +58,7 @@ public class PingUIBehaviour : MonoBehaviour
             var server = gameObject.AddComponent<PingServerBehaviour>() as PingServerBehaviour;
             server.PingUI = this;
             StartCoroutine(server.Connect());
-
+            Game.ServerGame = server.Game;
             m_CurrentState = PingUIState.ServerStarted;
         }
 

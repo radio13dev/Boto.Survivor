@@ -58,12 +58,12 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     public Game Game => m_Game;
 
     // Frequency (in seconds) at which to send ping messages.
-    public const float k_PingFrequency = 1.0f / 60.0f;
-    public const int k_FrameDelay = 1;
+    public const int k_FrameDelay = 3;
 
     private BiggerDriver m_ClientDriver;
     private NativeReference<StepInput> m_FrameInput;
     private NativeQueue<FullStepData> m_ServerMessageBuffer;
+    private NativeQueue<GenericMessage> m_GenericMessageBuffer;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
 
     private NativeArray<byte> m_SaveBuffer;
@@ -83,6 +83,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_ClientConnection = new NativeReference<Server>(Allocator.Persistent);
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
+        m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
         m_SaveBuffer = new NativeArray<byte>(k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
     }
@@ -99,6 +100,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_ClientConnection.Dispose();
         m_FrameInput.Dispose();
         m_ServerMessageBuffer.Dispose();
+        m_GenericMessageBuffer.Dispose();
         m_SaveBuffer.Dispose();
         m_SpecialActionArr.Dispose();
     }
@@ -166,8 +168,10 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         public BiggerDriver Driver;
         public NativeReference<Server> Connection;
         public NativeQueue<FullStepData> ServerMessageBuffer;
+        public NativeQueue<GenericMessage>.ParallelWriter GenericMessageBuffer;
         public NativeArray<byte> SaveBuffer;
         public NativeArray<SpecialLockstepActions> SpecialActionsArray;
+        public long Now;
 
         public void Execute()
         {
@@ -195,7 +199,9 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                         switch (reader.ReadByte())
                         {
                             case PingServerBehaviour.CODE_SendStep:
-                                ServerMessageBuffer.Enqueue(FullStepData.Read(ref reader, (SpecialLockstepActions*)SpecialActionsArray.GetUnsafePtr()));
+                                var stepData = FullStepData.Read(ref reader, (SpecialLockstepActions*)SpecialActionsArray.GetUnsafePtr());
+                                ServerMessageBuffer.Enqueue(stepData);
+                                //NetworkPing.ClientPingTimes.Data.Add((Now, (int)stepData.Step));
                                 break;
                             case PingServerBehaviour.CODE_SendSave:
 
@@ -206,6 +212,9 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
                                 ((int*)SaveBuffer.GetUnsafePtr())[0] = len; // Write the length to the first 4 bytes of the save buffer
                                 reader.ReadBytes(new Span<byte>(&(((byte*)SaveBuffer.GetUnsafePtr())[4]), len)); // ... then write the rest of the save out
+                                break;
+                            case PingServerBehaviour.CODE_SendId:
+                                GenericMessageBuffer.Enqueue(GenericMessage.Read(ref reader));
                                 break;
                             default:
                                 Debug.Log($"... got mystery message from server.");
@@ -257,7 +266,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                 if (m_Game == null)
                 {
                     Debug.Log($"... setting up client world...");
-                    m_Game = new Game();
+                    m_Game = new Game(true);
                 }
 
                 if (!m_Game.IsReady)
@@ -276,28 +285,24 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             }
 
             m_CumulativeTime += Time.deltaTime;
-            bool shouldSend = m_CumulativeTime >= k_PingFrequency;
-            if (shouldSend) m_CumulativeTime -= k_PingFrequency;
+            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
+            if (shouldSend) m_CumulativeTime -= Game.k_ClientPingFrequency;
 
             if (m_Game != null && m_Game.IsReady && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
             {
                 msg.Apply(m_Game.World, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+                NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
+            }
+            
+            while (m_GenericMessageBuffer.TryDequeue(out var message))
+            {
+                message.Execute(m_Game);
             }
 
             if (m_FrameInput.IsCreated)
             {
                 var val = m_FrameInput.Value;
-
-                if (Keyboard.current.wKey.isPressed) val.Input |= StepInput.UpInput;
-                if (Keyboard.current.sKey.isPressed) val.Input |= StepInput.DownInput;
-                if (Keyboard.current.aKey.isPressed) val.Input |= StepInput.LeftInput;
-                if (Keyboard.current.dKey.isPressed) val.Input |= StepInput.RightInput;
-
-                if (Keyboard.current.eKey.isPressed) val.Input |= StepInput.S1Input;
-                if (Keyboard.current.qKey.isPressed) val.Input |= StepInput.S2Input;
-                if (Keyboard.current.spaceKey.isPressed) val.Input |= StepInput.S3Input;
-                if (Keyboard.current.shiftKey.isPressed) val.Input |= StepInput.S4Input;
-
+                val.Collect();
                 m_FrameInput.Value = val;
             }
 
@@ -306,8 +311,10 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                 Driver = m_ClientDriver,
                 Connection = m_ClientConnection,
                 ServerMessageBuffer = m_ServerMessageBuffer,
+                GenericMessageBuffer = m_GenericMessageBuffer.AsParallelWriter(),
                 SaveBuffer = m_SaveBuffer,
-                SpecialActionsArray = m_SpecialActionArr
+                SpecialActionsArray = m_SpecialActionArr,
+                Now = DateTime.Now.Ticks
             };
 
             // If it's time to send, schedule a send job.

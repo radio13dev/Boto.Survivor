@@ -1,7 +1,6 @@
 using Unity.Collections;
 using Unity.Entities;
 
-[WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
 [UpdateInGroup(typeof(GameLogicSystemGroup))]
 public partial struct DestroyAtTimeCleanupSystem : ISystem
 {

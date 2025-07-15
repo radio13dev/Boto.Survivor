@@ -1,7 +1,9 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 /// <summary>
 /// Character movement is predicted
@@ -11,13 +13,14 @@ public partial class MovementSystemGroup : ComponentSystemGroup
         
 }
 
+[Serializable]
 public struct Movement : IComponentData
 {
     public float2 Velocity;
     public float2 LastDirection;
-    public float Drag;
-    public float LinearDrag;
-    public float Speed;
+    [SerializeField] public float Drag;
+    [SerializeField] public float LinearDrag;
+    [SerializeField] public float Speed;
     
     public Movement(float drag, float linearDrag, float speed)
     {
@@ -44,7 +47,7 @@ public partial struct MovementSystem : ISystem
     {
         new Job()
         {
-            dt = SystemAPI.Time.DeltaTime
+            dt = 1.0f/60.0f
         }.Schedule();
     }
     

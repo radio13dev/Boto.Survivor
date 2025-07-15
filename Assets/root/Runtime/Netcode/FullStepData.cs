@@ -2,7 +2,9 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]
 public struct StepInput : IComponentData
@@ -52,6 +54,35 @@ public struct StepInput : IComponentData
     {
         return new StepInput(reader.ReadByte());
     }
+
+    public static StepInput MoveTowards(in LocalTransform source, in Movement movement, in LocalTransform target)
+    {
+        return FromDirection(target.Position.xy - source.Position.xy);
+    }
+    
+    public static StepInput FromDirection(float2 direction)
+    {
+        byte input = 0;
+        if (direction.x > 0) input |= RightInput;
+        if (direction.x < 0) input |= LeftInput;
+        if (direction.y > 0) input |= UpInput;
+        if (direction.y < 0) input |= DownInput;
+        return new StepInput(input);
+    }
+
+    public void Collect()
+    {
+        if (Keyboard.current.wKey.isPressed)        Input |= StepInput.UpInput;
+        if (Keyboard.current.sKey.isPressed)        Input |= StepInput.DownInput;
+        if (Keyboard.current.aKey.isPressed)        Input |= StepInput.LeftInput;
+        if (Keyboard.current.dKey.isPressed)        Input |= StepInput.RightInput;
+        
+        if (Keyboard.current.eKey.isPressed)        Input |= StepInput.S1Input;
+        if (Keyboard.current.qKey.isPressed)        Input |= StepInput.S2Input;
+        if (Keyboard.current.spaceKey.isPressed)    Input |= StepInput.S3Input;
+        if (Keyboard.current.shiftKey.isPressed)    Input |= StepInput.S4Input;
+
+    }
 }
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]
@@ -89,6 +120,12 @@ public struct FullStepData
         Step = step;
         for (int i = 0; i < connections.Length; i++)
             this[i] = new StepInput(connections[i].InputBuffer.Input);
+    }
+    public FullStepData(long step, params StepInput[] inputs) : this()
+    {
+        Step = step;
+        for (int i = 0; i < inputs.Length; i++)
+            this[i] = inputs[i];
     }
 
     public bool HasData => Step != 0;
@@ -132,8 +169,11 @@ public struct FullStepData
         {
             var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
             var stepController = query.GetSingleton<StepController>();
+            
+            if (Step == -1)
+                Step = stepController.Step + 1;
 
-            if (stepController.Step != Step - 1)
+            if (Step != stepController.Step + 1)
             {
                 Debug.LogError($"Failed step, tried to go from step {stepController.Step} to {Step}");
                 return;
@@ -158,14 +198,12 @@ public struct FullStepData
             var entities = query.ToEntityArray(Allocator.Temp);
             if (entities.Length > 0)
             {
-                var components = query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-                for (int i = 0; i < components.Length; i++)
+                for (int i = 0; i < entities.Length; i++)
                 {
-                    var data = this[components[i].Index];
+                    var index = entityManager.GetSharedComponent<PlayerControlled>(entities[i]).Index;
+                    var data = this[index];
                     entityManager.SetComponentData(entities[i], data);
                 }
-
-                components.Dispose();
             }
 
             entities.Dispose();

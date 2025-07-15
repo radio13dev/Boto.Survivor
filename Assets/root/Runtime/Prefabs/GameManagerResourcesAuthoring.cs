@@ -10,6 +10,7 @@ public struct GameManager : IComponentData
     {
         public Entity ProjectileTemplate;
         public Entity SurvivorTemplate;
+        public Entity EnemyTemplate;
         
         public Entity Projectile_Survivor_Laser;
     }
@@ -17,6 +18,11 @@ public struct GameManager : IComponentData
     public struct SpecificPrefabs : IBufferElementData
     {
         public UnityObjectRef<GameObject> Prefab;
+    }
+    
+    public struct InstancedResources : IBufferElementData
+    {
+        public UnityObjectRef<InstancedResource> Instance;
     }
     
     [ChunkSerializable]
@@ -31,9 +37,11 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
 {
     public GameObject ProjectileTemplate;
     public GameObject SurvivorTemplate;
+    public GameObject EnemyTemplate;
     public GameObject Projectile_Survivor_Laser;
     
     public SpecificPrefabDatabase SpecificPrefabDatabase;
+    public InstancedResourcesDatabase InstancedResourcesDatabase;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -45,6 +53,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             {
                 ProjectileTemplate = GetEntity(authoring.ProjectileTemplate, TransformUsageFlags.WorldSpace),
                 SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
+                EnemyTemplate = GetEntity(authoring.EnemyTemplate, TransformUsageFlags.WorldSpace),
                 Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace)
             });
             
@@ -53,6 +62,13 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 var buffer = AddBuffer<GameManager.SpecificPrefabs>(entity);
                 for (int i = 0; i < authoring.SpecificPrefabDatabase.Prefabs.Count; i++)
                     buffer.Add(new GameManager.SpecificPrefabs() { Prefab = authoring.SpecificPrefabDatabase.Prefabs[i] });
+            }
+            
+            if (authoring.InstancedResourcesDatabase)
+            {
+                var buffer = AddBuffer<GameManager.InstancedResources>(entity);
+                for (int i = 0; i < authoring.InstancedResourcesDatabase.Instances.Count; i++)
+                    buffer.Add(new GameManager.InstancedResources() { Instance = authoring.InstancedResourcesDatabase.Instances[i] });
             }
         }
     }

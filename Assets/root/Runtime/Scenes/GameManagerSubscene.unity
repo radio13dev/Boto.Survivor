@@ -150,8 +150,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::GameManagerResourcesAuthoring
   ProjectileTemplate: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   SurvivorTemplate: {fileID: 7419757055955712054, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
+  EnemyTemplate: {fileID: 7419757055955712054, guid: c653466aa7f50c242a855e5c9a8d6911, type: 3}
   Projectile_Survivor_Laser: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   SpecificPrefabDatabase: {fileID: 11400000, guid: 2236ec58b14307e4f89f34b18668931c, type: 2}
+  InstancedResourcesDatabase: {fileID: 11400000, guid: d1bd9a978272a2e438fdeec8ba9fee6c, type: 2}
 --- !u!4 &143727263
 Transform:
   m_ObjectHideFlags: 0

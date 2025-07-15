@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/SpecificPrefabDatabase", order = 1)]
 public class SpecificPrefabDatabase : ScriptableObject

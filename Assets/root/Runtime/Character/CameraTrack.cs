@@ -1,5 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public class CameraTrack : MonoBehaviour
@@ -9,38 +11,42 @@ public class CameraTrack : MonoBehaviour
     public float velocityFalloff;
     public float newVelocityEffect;
     public float virtualTargetOffset;
+
+    float3 virtualTarget;
+    float3 recentVelocity;
+    float3 recentPosition;
     
-    PingClientBehaviour _client;
+    EntityQuery m_Query;
     
-    Transform _target;
-    Vector3 virtualTarget;
-    Vector3 recentVelocity;
-    Vector3 recentPosition;
+    bool setupComplete = false;
 
     private void Update()
     {
-        if (!_target)
+        if (!setupComplete)
         {
-            if (!_client || _client.Game == null)
-            {
-                _client = FindAnyObjectByType<PingClientBehaviour>();
-                if (!_client || _client.Game == null) return;
-            }
-        
-            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)), new ComponentType(typeof(GenericPrefabProxy)));
-            var transforms = query.ToComponentDataArray<GenericPrefabProxy>(Allocator.Temp);
-            if (transforms.Length == 0 || !transforms[0].Spawned) return;
-            _target = transforms[0].Spawned.Value.transform;
+            if (Game.PresentationGame == null)
+                return;
+
+            var entityManager = Game.PresentationGame.World.EntityManager;
+            m_Query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)),
+                new ComponentType(typeof(LocalTransform)));
+            setupComplete = true;
         }
         
-        recentVelocity *= Time.deltaTime*velocityFalloff;
-        recentVelocity += (_target.position - recentPosition)*newVelocityEffect;
-        virtualTarget = _target.position + recentVelocity*virtualTargetOffset;
-        recentPosition = _target.position;
-        
-        var actualCamTarget = (_target.position + virtualTarget)/2;
-        transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime*linearCameraChase);
-        transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
+        m_Query.SetSharedComponentFilter(new PlayerControlled() { Index = Game.PresentationGame.PlayerIndex });
+        var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+
+        if (transforms.Length > 0)
+        {
+            var target = transforms[0];
+            recentVelocity *= Time.deltaTime * velocityFalloff;
+            recentVelocity += (target.Position - recentPosition) * newVelocityEffect;
+            virtualTarget = target.Position + recentVelocity * virtualTargetOffset;
+            recentPosition = target.Position;
+
+            Vector3 actualCamTarget = (target.Position + virtualTarget) / 2;
+            transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime * linearCameraChase);
+            transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
+        }
     }
 }

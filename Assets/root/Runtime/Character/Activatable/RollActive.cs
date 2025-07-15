@@ -24,7 +24,7 @@ public partial struct RollActiveSystem : ISystem
     {
         new Job()
         {
-            dt = SystemAPI.Time.DeltaTime
+            dt = 1.0f/60.0f
         }.Schedule();
     }
     
