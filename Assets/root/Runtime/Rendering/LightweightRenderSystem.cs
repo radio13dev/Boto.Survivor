@@ -1,5 +1,6 @@
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -10,6 +11,11 @@ using Random = UnityEngine.Random;
 public struct LocalTransformLast : IComponentData
 {
     public LocalTransform Value;
+}
+
+public struct AnimFrame : IComponentData
+{
+    public float Frame;
 }
 
 [BurstCompile]
@@ -34,7 +40,7 @@ public partial struct LocalTransformLastSystem : ISystem
 
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
-public partial struct LightweightRenderSystem : ISystem
+public unsafe partial struct LightweightRenderSystem : ISystem
 {
     EntityQuery m_Query;
     NativeArray<Matrix4x4> m_InstanceMats;
@@ -73,9 +79,10 @@ public partial struct LightweightRenderSystem : ISystem
             };
             asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
             
-            var mat = resources[i].Instance.Value.Material;
+            var frames = m_Query.ToComponentDataArray<AnimFrame>(Allocator.Temp);
+            
             var mesh = resources[i].Instance.Value.Mesh;
-            RenderParams renderParams = new RenderParams(mat);
+            var renderParams = resources[i].Instance.Value.RenderParams;
             for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
             {
                 int count = math.min(Profiling.k_MaxInstances, toRender - j);

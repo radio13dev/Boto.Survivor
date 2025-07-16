@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -10,6 +11,23 @@ public class InstancedResource : ScriptableObject
 {
     public Material Material;
     public Mesh Mesh;
+
+    internal RenderParams RenderParams
+    {
+        get
+        {
+            if (!m_Setup)
+            {
+                m_Setup = true;
+                m_RenderParams = new RenderParams(Material);
+            }
+            
+            return m_RenderParams;
+        }
+    }
+
+    [NonSerialized] bool m_Setup;
+    [NonSerialized] RenderParams m_RenderParams;
 }
 
 

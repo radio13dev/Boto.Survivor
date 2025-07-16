@@ -26,7 +26,7 @@ namespace Collisions
             );
 
             m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
-            state.RequireForUpdate(m_enemyQuery);
+            //state.RequireForUpdate(m_enemyQuery);
         }
 
         public void OnUpdate(ref SystemState state)
@@ -94,17 +94,31 @@ namespace Collisions
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
             {
+                if (laserSpawner.LastProjectileTime + laserSpawner.TimeBetweenShots > time) return;
+            
                 fixed (FireAtNearestTargetJob* job_ptr = &this)
+                fixed (LaserProjectileSpawner* spawner_ptr = &laserSpawner)
                 {
-                    var visitor = new NearestVisitor(Key, job_ptr, transform, movement);
+                    var visitor = new NearestVisitor(Key, job_ptr, transform, movement, spawner_ptr);
                     var distance = new DistanceProvider();
 
                     tree.Nearest(transform.Position.xy, 30, ref visitor, distance);
                     
+                    float2 dir;
                     if (visitor.Hits == 0)
-                    {
-                        // Fire in old direction
-                    }
+                        dir = movement.LastDirection;
+                    else
+                        dir = math.normalizesafe(laserSpawner.LastProjectileDirection, movement.LastDirection);
+                    dir = math.normalizesafe(dir, new float2(1,0));
+                    
+                    var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
+                    var laserT = transform.RotateZ(math.atan2(dir.y, dir.x));
+                    ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
+                    ecb.SetComponent(Key, laser, laserT);
+                    ecb.SetComponent(Key, laser, new Movement(dir));
+                    ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + 5 });
+                    
+                    laserSpawner.LastProjectileTime = time;
                 }
             }
 
@@ -116,8 +130,9 @@ namespace Collisions
                 FireAtNearestTargetJob* _job;
                 LocalTransform _transform;
                 Movement _sourceMovement;
+                LaserProjectileSpawner* _sourceSpawner;
 
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement)
+                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
                 {
                     Hits = 0;
                     
@@ -125,18 +140,14 @@ namespace Collisions
                     _job = job;
                     _transform = transform;
                     _sourceMovement = sourceMovement;
+                    _sourceSpawner = sourceSpawner;
                 }
 
                 public bool OnVist(Entity obj, AABB2D bounds)
                 {
                     Interlocked.Increment(ref Hits);
-                    var laser = _job->ecb.Instantiate(_key, _job->resources.Projectile_Survivor_Laser);
                     var dir = bounds.Center - _transform.Position.xy;
-                    var transform = _transform.RotateZ(math.atan2(dir.y, dir.x));
-                    _job->ecb.AddComponent<SurvivorProjectileTag>(_key, laser);
-                    _job->ecb.SetComponent(_key, laser, transform);
-                    _job->ecb.SetComponent(_key, laser, new Movement(dir));
-                    _job->ecb.SetComponent(_key, laser, new DestroyAtTime(){ DestroyTime = _job->time + 5 });
+                    _sourceSpawner->LastProjectileDirection = dir;
                     return false;
                 }
             }
