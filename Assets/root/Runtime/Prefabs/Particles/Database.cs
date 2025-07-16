@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
-using System;
 using UnityEditor;
 #endif
 
@@ -39,7 +40,7 @@ public abstract class Database<T> : Database where T : Object
         Assets.Add(instance);
         return Assets.Count - 1;
     }
-    
+
 
     public T this[int index]
     {
@@ -51,70 +52,118 @@ public abstract class Database<T> : Database where T : Object
     }
 }
 
+[Serializable]
 public class DatabaseRef
+{
+    [SerializeField] public int AssetIndex;
+#if UNITY_EDITOR
+    [SerializeField] public Object Asset;
+#endif
+}
+
+[Serializable]
+public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
 {
 }
 
-public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
-{
-    public int AssetIndex;
+
 #if UNITY_EDITOR
-    public T Asset;
-
-    [CustomPropertyDrawer(typeof(DatabaseRef), true)]
-    public class DatbaseRefDrawer : PropertyDrawer
+[CustomPropertyDrawer(typeof(DatabaseRef), true)]
+public class DatbaseRefDrawer : PropertyDrawer
+{
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        // Draw the property inside the given rect
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        // Using BeginProperty / EndProperty on the parent property means that
+        // prefab override logic works on the entire property.
+        EditorGUI.BeginProperty(position, label, property);
+
+        // Draw label
+        position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+
+        var assetProp = property.FindPropertyRelative("Asset");
+        var indexProp = property.FindPropertyRelative("AssetIndex");
+
+        var databaseRefType = property.boxedValue.GetType();
+        var assetType = databaseRefType.GenericTypeArguments[0];
+        var databaseType = databaseRefType.GenericTypeArguments[1];
+        
+        string assetPath = @$"Assets\root\Runtime\Prefabs\{databaseType.Name}";
+
+        var asset = assetProp.objectReferenceValue;
+
+        GUI.enabled = false;
+        Rect indexRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
+        EditorGUI.PropertyField(indexRect, indexProp, GUIContent.none, true);
+        GUI.enabled = true;
+
+        var adjusted = EditorGUILayout.ObjectField(asset, assetType, false);
+        
+        if (typeof(ScriptableObject).IsAssignableFrom(assetType))
         {
-            // Using BeginProperty / EndProperty on the parent property means that
-            // prefab override logic works on the entire property.
-            EditorGUI.BeginProperty(position, label, property);
+            var spawnNewAsset = GUILayout.Button($"New {assetType.Name}...");
+            if (spawnNewAsset)
+            {
+                string assetKey = $"New{assetType.Name}";
+                int attempt = 1;
+                while (AssetDatabase.FindAssets(assetKey).Length >= 1)
+                {
+                    assetKey = $"New{assetType.Name}_{attempt++}";
+                }
+    
+                Debug.Log("Create new Asset");
+                adjusted = ScriptableObject.CreateInstance(assetType);
+                if (!Directory.Exists(assetPath))
+                    Directory.CreateDirectory(assetPath);
+                AssetDatabase.CreateAsset(adjusted, $@"{assetPath}\{assetKey}.asset");
+    
+                EditorUtility.SetDirty(adjusted);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+        }
+        
+        bool changed = false;
+        if (adjusted != asset)
+        {
+            assetProp.boxedValue = adjusted;
+            asset = adjusted;
+            changed = true;
+        }
 
-            // Draw label
-            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        if (changed)
+        {
+            bool shouldSave = false;
+            var databaseKey = databaseType.Name + "Asset";
+            string[] result = AssetDatabase.FindAssets(databaseKey);
+            Object database = null;
+            if (result.Length > 1)
+            {
+                Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
+                EditorGUI.EndProperty();
+                return;
+            }
+            
+            if (result.Length == 0)
+            {
+                Debug.Log("Create new Asset");
+                database = ScriptableObject.CreateInstance(databaseType);
+                if (!Directory.Exists(assetPath))
+                    Directory.CreateDirectory(assetPath);
+                AssetDatabase.CreateAsset(database, $@"{assetPath}\{databaseKey}.asset");
+                shouldSave = true;
+            }
+            else
+            {
+                string path = AssetDatabase.GUIDToAssetPath(result[0]);
+                database = AssetDatabase.LoadAssetAtPath(path, databaseType);
+                Debug.Log("Found Asset File !!!");
+            }
 
-            //// Don't make child fields be indented
-            //var indent = EditorGUI.indentLevel;
-            //EditorGUI.indentLevel = 0;
-
-            var assetProp = property.FindPropertyRelative("Asset");
-            var indexProp = property.FindPropertyRelative("AssetIndex");
-
-            var databaseRefType = property.objectReferenceValue.GetType();
-            var assetType = databaseRefType.GenericTypeArguments[0];
-            var databaseType = databaseRefType.GenericTypeArguments[1];
-
-            var asset = assetProp.objectReferenceValue;
             if (!asset)
             {
             }
             else
             {
-                var key = databaseType.Name + "Asset";
-                string[] result = AssetDatabase.FindAssets(key);
-                Object database = null;
-                if (result.Length > 1)
-                {
-                    Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
-                    return;
-                }
-
-                bool shouldSave = false;
-                if (result.Length == 0)
-                {
-                    Debug.Log("Create new Asset");
-                    database = ScriptableObject.CreateInstance(databaseType);
-                    AssetDatabase.CreateAsset(database, $@"Assets\root\Runtime\Prefabs\{key}.asset");
-                    shouldSave = true;
-                }
-                else
-                {
-                    string path = AssetDatabase.GUIDToAssetPath(result[0]);
-                    database = AssetDatabase.LoadAssetAtPath(path, databaseType);
-                    Debug.Log("Found Asset File !!!");
-                }
-
                 var indexMethod = databaseType.GetMethod("IndexOf", BindingFlags.Instance | BindingFlags.Public, null, new[] { assetType }, null);
                 var addMethod = databaseType.GetMethod("Add", BindingFlags.Instance | BindingFlags.Public, null, new[] { assetType }, null);
 
@@ -130,28 +179,22 @@ public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Obj
                     indexProp.intValue = newIndex;
                     shouldSave = true;
                 }
-
-                if (shouldSave)
-                {
-                    EditorUtility.SetDirty(database);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-                }
             }
 
-            // Draw fields - pass GUIContent.none to each so they are drawn without labels
-            Rect assetRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PropertyField(assetRect, assetProp, GUIContent.none, true);
-            GUI.enabled = false;
-            Rect indexRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight + 2, position.width, EditorGUIUtility.singleLineHeight);
-            EditorGUI.PropertyField(indexRect, indexProp, GUIContent.none, true);
-            GUI.enabled = true;
-
-            //// Set indent back to what it was
-            //EditorGUI.indentLevel = indent;
-
-            EditorGUI.EndProperty();
+            if (shouldSave)
+            {
+                EditorUtility.SetDirty(database);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
         }
+
+        EditorGUI.EndProperty();
     }
-#endif
+
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    {
+        return EditorGUIUtility.singleLineHeight;
+    }
 }
+#endif

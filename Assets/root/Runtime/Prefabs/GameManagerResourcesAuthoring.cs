@@ -34,7 +34,7 @@ public struct GameManager : IComponentData
     
     public struct Particles : IBufferElementData
     {
-        public Entity Prefab;
+        public UnityObjectRef<PooledParticle> Prefab;
     }
 }
 
@@ -82,7 +82,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 var buffer = AddBuffer<GameManager.Particles>(entity);
                 for (int i = 0; i < authoring.ParticleDatabase.Length; i++)
                 {
-                    buffer.Add(new GameManager.Particles(){ Prefab = GetEntity(authoring.ParticleDatabase[i], TransformUsageFlags.None) });
+                    buffer.Add(new GameManager.Particles(){ Prefab = authoring.ParticleDatabase[i] });
                 }
             }
         }

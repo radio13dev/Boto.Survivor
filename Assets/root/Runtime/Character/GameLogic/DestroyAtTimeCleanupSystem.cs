@@ -11,19 +11,17 @@ public partial struct DestroyAtTimeCleanupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);// SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var currentTime = SystemAPI.Time.ElapsedTime;
         foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<DestroyAtTime>>().WithEntityAccess())
         {
             if (projectile.ValueRO.DestroyTime < currentTime)
-                delayedEcb.DestroyEntity(entity);
+                delayedEcb.AddComponent<DestroyFlag>(entity);
         }
-        delayedEcb.Playback(state.EntityManager);
-        delayedEcb.Dispose();
     }
 }

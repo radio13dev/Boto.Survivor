@@ -13,7 +13,7 @@ public struct ParticleOnDestroy : IComponentData
 
 public class ParticleOnDestroyAuthoring : MonoBehaviour
 {
-    public DatabaseRef<ParticleAuthoring, ParticleDatabase> Particle;
+    public DatabaseRef<PooledParticle, ParticleDatabase> Particle = new();
 
     public class Baker : Baker<ParticleOnDestroyAuthoring>
     {
@@ -38,18 +38,13 @@ public partial struct ParticleOnDestroySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-    }
-
-    partial struct Job : IJobEntity
-    {
-        public EntityCommandBuffer ecb;
-        [ReadOnly] public NativeArray<GameManager.Particles> particles;
-
-        public void Execute(in ParticleOnDestroy onDestroy, in LocalTransform transform, in Movement movement)
+        var particles = SystemAPI.GetSingletonBuffer<GameManager.Particles>();
+        foreach (var (onDestroy, transform, movement, entity) in SystemAPI.Query<RefRO<ParticleOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>().WithAll<DestroyFlag>().WithEntityAccess())
         {
-            var newParticle = ecb.Instantiate(particles[onDestroy.ParticleIndex].Prefab);
-            ecb.SetComponent(newParticle, transform);
-            ecb.SetComponent(newParticle, new Force() { Velocity = movement.Velocity });
+            if (onDestroy.ValueRO.ParticleIndex < 0 || onDestroy.ValueRO.ParticleIndex >= particles.Length) continue;
+            var particlePrefab = particles[onDestroy.ValueRO.ParticleIndex];
+            var particle = particlePrefab.Prefab.Value.GetFromPool();
+            particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
         }
     }
 }

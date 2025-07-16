@@ -31,7 +31,7 @@ public partial struct HealthSystem : ISystem
         {
             if (health.Value < 0)
             {
-                ecb.DestroyEntity(entity);
+                ecb.AddComponent<DestroyFlag>(entity);
             }
         }
     }

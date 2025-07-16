@@ -11,12 +11,14 @@ public partial struct DestroySystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         m_DestroyQuery = SystemAPI.QueryBuilder().WithAll<DestroyFlag>().Build();
         state.RequireForUpdate(m_DestroyQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        state.EntityManager.DestroyEntity(m_DestroyQuery);
+        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        delayedEcb.DestroyEntity(m_DestroyQuery, EntityQueryCaptureMode.AtPlayback);
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 708185384290785635}
   - component: {fileID: 3099219579393939003}
   - component: {fileID: 7838071843867019903}
+  - component: {fileID: -3127374150066105801}
   m_Layer: 0
   m_Name: ProjectileTemplate
   m_TagString: Untagged
@@ -72,3 +73,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   AssetIndex: 3
   ToSpawn: {fileID: 11400000, guid: ff8758fc6cfd60c48828bdef4e8041a5, type: 2}
+--- !u!114 &-3127374150066105801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f710d9c624cc2982f7147ae7f3594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
+  Particle:
+    AssetIndex: 0
+    Asset: {fileID: 1513782937006824389, guid: 6e8e018e7f442ec4fb9537ed02937ec4, type: 3}
