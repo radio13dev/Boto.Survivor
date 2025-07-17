@@ -32,15 +32,12 @@ namespace Collisions
         public void OnUpdate(ref SystemState state)
         {
             // Update trees
-            var enemy_entities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob);
-            var enemy_colliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var enemy_transforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
             state.Dependency = new RegenerateJob()
             {
                 tree = m_enemyTree,
-                entities = enemy_entities,
-                colliders = enemy_colliders,
-                transforms = enemy_transforms
+                entities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob),
+                colliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
+                transforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob)
             }.Schedule(state.Dependency);
             
             state.CompleteDependency();
@@ -192,6 +189,10 @@ namespace Collisions
                     if (_source == projectile) return true;
                     if (!objBounds.Overlaps(queryRange)) return true;
                     
+                    _force->Velocity += (queryRange.Center - objBounds.Center)/2;
+                    return true;
+                    
+                    /*
                     float2 delta = queryRange.Center - objBounds.Center;
                     float2 halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
                     float2 halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
@@ -210,6 +211,7 @@ namespace Collisions
                         _force->Shift += new float2(0f, pushY);
                     }
                     return true;
+                    */
                 }
             }
         }
