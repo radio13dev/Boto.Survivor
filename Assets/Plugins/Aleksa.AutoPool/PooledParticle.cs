@@ -1,19 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.VFX;
 
 public class PooledParticle : AutoPoolBehaviour
 {
-    public ParticleSystem particleSystem;
+    public ParticleSystem[] ParticleSystems;
     public override void NewObjectSetup()
     {
-        particleSystem.Stop(true);
-        particleSystem.Clear(true);
-        particleSystem.Play(true);
-        this.ReturnToPool(particleSystem.main.duration);
+        for (int i = 0; i < ParticleSystems.Length; i++)
+        {
+            ParticleSystems[i].Stop(true);
+            ParticleSystems[i].Clear(true);
+            ParticleSystems[i].Play(true);
+        }
+        this.ReturnToPool(ParticleSystems[0].main.duration);
     }
 
     private void Reset()
     {
-        particleSystem = GetComponent<ParticleSystem>();
+        ParticleSystems = GetComponentsInChildren<ParticleSystem>();
     }
 }
