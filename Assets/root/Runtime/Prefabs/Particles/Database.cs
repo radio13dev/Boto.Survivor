@@ -4,16 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public abstract class Database : ScriptableObject
+[Serializable]
+public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
 {
+    public T Asset => _Asset as T;
 }
 
+[Serializable]
+public class DatabaseRef
+{
+    [SerializeField] public int AssetIndex;
+    [SerializeField] public Object _Asset;
+}
 
 public abstract class Database<T> : Database where T : Object
 {
@@ -52,20 +61,9 @@ public abstract class Database<T> : Database where T : Object
     }
 }
 
-[Serializable]
-public class DatabaseRef
-{
-    [SerializeField] public int AssetIndex;
-#if UNITY_EDITOR
-    [SerializeField] public Object Asset;
-#endif
-}
-
-[Serializable]
-public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
+public abstract class Database : ScriptableObject
 {
 }
-
 
 #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(DatabaseRef), true)]
@@ -80,7 +78,7 @@ public class DatbaseRefDrawer : PropertyDrawer
         // Draw label
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
-        var assetProp = property.FindPropertyRelative("Asset");
+        var assetProp = property.FindPropertyRelative("_Asset");
         var indexProp = property.FindPropertyRelative("AssetIndex");
 
         var databaseRefType = property.boxedValue.GetType();
@@ -96,7 +94,8 @@ public class DatbaseRefDrawer : PropertyDrawer
         EditorGUI.PropertyField(indexRect, indexProp, GUIContent.none, true);
         GUI.enabled = true;
 
-        var adjusted = EditorGUILayout.ObjectField(asset, assetType, false);
+    
+        var adjusted = InlineScritableEditDrawer.ObjectField(asset, assetType, false);
         
         if (typeof(ScriptableObject).IsAssignableFrom(assetType))
         {

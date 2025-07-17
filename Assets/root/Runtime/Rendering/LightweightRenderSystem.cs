@@ -13,11 +13,6 @@ public struct LocalTransformLast : IComponentData
     public LocalTransform Value;
 }
 
-public struct AnimFrame : IComponentData
-{
-    public float Frame;
-}
-
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 [UpdateBefore(typeof(LightweightRenderSystem))]
@@ -49,7 +44,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GameManager.Resources>();
-        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest>().Build();
+        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().Build();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
     }
 
@@ -79,10 +74,16 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             };
             asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
             
-            var frames = m_Query.ToComponentDataArray<AnimFrame>(Allocator.Temp);
+            var resource = resources[i].Instance.Value;
+            var mesh = resource.Mesh;
+            var renderParams = resource.RenderParams;
             
-            var mesh = resources[i].Instance.Value.Mesh;
-            var renderParams = resources[i].Instance.Value.RenderParams;
+            if (resource.Animated)
+            {
+                var spriteIndices = m_Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.Temp);
+                renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", spriteIndices.Reinterpret<float>().ToArray());
+            }
+            
             for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
             {
                 int count = math.min(Profiling.k_MaxInstances, toRender - j);

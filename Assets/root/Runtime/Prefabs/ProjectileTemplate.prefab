@@ -71,8 +71,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  AssetIndex: 3
-  ToSpawn: {fileID: 11400000, guid: ff8758fc6cfd60c48828bdef4e8041a5, type: 2}
+  Particle:
+    AssetIndex: 3
+    _Asset: {fileID: 11400000, guid: ff8758fc6cfd60c48828bdef4e8041a5, type: 2}
 --- !u!114 &-3127374150066105801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,4 +88,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
   Particle:
     AssetIndex: 0
-    Asset: {fileID: 1513782937006824389, guid: 6e8e018e7f442ec4fb9537ed02937ec4, type: 3}
+    _Asset: {fileID: 1513782937006824389, guid: 6e8e018e7f442ec4fb9537ed02937ec4, type: 3}

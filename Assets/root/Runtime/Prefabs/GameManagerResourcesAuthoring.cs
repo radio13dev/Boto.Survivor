@@ -23,6 +23,7 @@ public struct GameManager : IComponentData
     public struct InstancedResources : IBufferElementData
     {
         public UnityObjectRef<InstancedResource> Instance;
+        public SpriteAnimData AnimData;
     }
     
     [ChunkSerializable]
@@ -73,8 +74,11 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             if (authoring.InstancedResourcesDatabase)
             {
                 var buffer = AddBuffer<GameManager.InstancedResources>(entity);
-                for (int i = 0; i < authoring.InstancedResourcesDatabase.Instances.Count; i++)
-                    buffer.Add(new GameManager.InstancedResources() { Instance = authoring.InstancedResourcesDatabase.Instances[i] });
+                for (int i = 0; i < authoring.InstancedResourcesDatabase.Assets.Count; i++)
+                {
+                    var instance = authoring.InstancedResourcesDatabase.Assets[i];
+                    buffer.Add(new GameManager.InstancedResources() { Instance = instance, AnimData = instance.AnimData });
+                }
             }
             
             if (authoring.ParticleDatabase)

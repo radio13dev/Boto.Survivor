@@ -82,5 +82,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  AssetIndex: 2
-  ToSpawn: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
+  Particle:
+    AssetIndex: 2
+    _Asset: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
