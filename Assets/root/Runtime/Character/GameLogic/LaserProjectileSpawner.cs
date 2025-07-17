@@ -6,16 +6,22 @@ using Unity.Mathematics;
 /// </summary>
 public struct LaserProjectileSpawner : IComponentData, IEnableableComponent
 {
+    public Team Team;
+    
+    public double Lifespan;
+    public double TimeBetweenShots;
+    
     public float2 LastProjectileDirection;
     public double LastProjectileTime;
-    public double TimeBetweenShots;
-    public Team Team;
     
     public LaserProjectileSpawner(Team team)
     {
+        this.Team = team;
+        
+        Lifespan = 0;
+        TimeBetweenShots = 0.0d;
+        
         LastProjectileDirection = new float2(1,0);
         LastProjectileTime = 0;
-        TimeBetweenShots = 0.1d;
-        this.Team = team;
     }
 }

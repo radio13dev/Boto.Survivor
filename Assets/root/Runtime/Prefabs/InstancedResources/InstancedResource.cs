@@ -21,7 +21,7 @@ public class InstancedResource : ScriptableObject
                 {
                     matProps = new()
                 };
-                m_RenderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new float[1000]);
+                m_RenderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new float[Profiling.k_MaxInstances]);
             }
             
             return m_RenderParams;

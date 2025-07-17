@@ -1,7 +1,7 @@
 #ifndef SPRITE_SHEET_INCLUDED
 #define SPRITE_SHEET_INCLUDED
 
-uniform float spriteAnimFrameBuffer[1023];
+uniform float spriteAnimFrameBuffer[511];
 void SelectFrameFromBuffer_float(float instanceId, out float frame){
 	frame = spriteAnimFrameBuffer[(int)instanceId];
 }

@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -63,6 +64,8 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
             if (transforms.Length == 0) continue;
             var transformsLast = m_Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
+            var spriteIndices = m_Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.Temp);
+            var spriteIndicesF = spriteIndices.Reinterpret<float>();
             
             int toRender = math.min(transforms.Length, m_InstanceMats.Length); 
             AsyncRenderTransformGenerator asyncRenderTransformGenerator = new AsyncRenderTransformGenerator
@@ -78,20 +81,21 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             var mesh = resource.Mesh;
             var renderParams = resource.RenderParams;
             
-            if (resource.Animated)
-            {
-                var spriteIndices = m_Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.Temp);
-                renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", spriteIndices.Reinterpret<float>().ToArray());
-            }
-            
             for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
             {
                 int count = math.min(Profiling.k_MaxInstances, toRender - j);
+            
+                if (resource.Animated)
+                {
+                    renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new Span<float>(&((float*)spriteIndicesF.GetUnsafePtr())[j], count).ToArray());
+                }
+                
                 Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
             }
             
             transforms.Dispose();
             transformsLast.Dispose();
+            spriteIndices.Dispose();
         }
     }
 

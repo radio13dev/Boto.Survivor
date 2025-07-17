@@ -2,5 +2,5 @@
 {
     public const int k_ProfileCount = 10000;
     public const int k_MaxRender = 10000;
-    public const int k_MaxInstances = 1023;
+    public const int k_MaxInstances = 511;
 }

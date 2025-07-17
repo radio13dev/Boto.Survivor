@@ -116,7 +116,7 @@ namespace Collisions
                     ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
                     ecb.SetComponent(Key, laser, laserT);
                     ecb.SetComponent(Key, laser, new Movement(dir));
-                    ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + 5 });
+                    ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
                     
                     laserSpawner.LastProjectileTime = time;
                 }
