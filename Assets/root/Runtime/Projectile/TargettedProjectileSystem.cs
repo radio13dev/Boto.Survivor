@@ -42,26 +42,24 @@ namespace Collisions
                 colliders = enemy_colliders,
                 transforms = enemy_transforms
             }.Schedule(state.Dependency);
-
-            // Wait for that
+            
             state.CompleteDependency();
 
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            new FireAtNearestTargetJob()
+            state.Dependency = new FireAtNearestTargetJob()
             {
                 ecb = parallel,
                 resources = SystemAPI.GetSingleton<GameManager.Resources>(),
                 tree = m_enemyTree,
                 time = SystemAPI.Time.ElapsedTime
-            }.Schedule();
-
-            SystemAPI.QueryBuilder().Build().CalculateEntityCount();
-
-            enemy_entities.Dispose();
-            enemy_colliders.Dispose();
-            enemy_transforms.Dispose();
+            }.Schedule(state.Dependency);
+            
+            state.Dependency = new EnemyPushForceJob()
+            {
+                tree = m_enemyTree
+            }.Schedule(state.Dependency);
         }
 
         [BurstCompile]
@@ -115,7 +113,7 @@ namespace Collisions
                     var laserT = transform.RotateZ(math.atan2(dir.y, dir.x));
                     ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
                     ecb.SetComponent(Key, laser, laserT);
-                    ecb.SetComponent(Key, laser, new Movement(dir));
+                    ecb.SetComponent(Key, laser, new Movement(dir*8));
                     ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
                     
                     laserSpawner.LastProjectileTime = time;
@@ -158,6 +156,60 @@ namespace Collisions
                 public float DistanceSquared(float2 point, Entity obj, AABB2D bounds)
                 {
                     return math.distancesq(point, bounds.Center);
+                }
+            }
+        }
+
+        [BurstCompile]
+        unsafe partial struct EnemyPushForceJob : IJobEntity
+        {
+            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
+            {
+                var adjustedAABB2D = collider.Add(transform.Position.xy);
+                fixed (Force* force_ptr = &force)
+                {
+                    var visitor = new CollisionVisitor(entity, force_ptr);
+                    tree.Range(adjustedAABB2D, ref visitor);
+                }
+            }
+
+
+            public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
+            {
+                Entity _source;
+                Force* _force;
+
+                public CollisionVisitor(Entity source, Force* force)
+                {
+                    _source = source;
+                    _force = force;
+                }
+
+                public bool OnVisit(Entity projectile, AABB2D objBounds, AABB2D queryRange)
+                {
+                    if (_source == projectile) return true;
+                    if (!objBounds.Overlaps(queryRange)) return true;
+                    
+                    float2 delta = queryRange.Center - objBounds.Center;
+                    float2 halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
+                    float2 halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
+
+                    float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
+                    float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
+
+                    if (overlapX < overlapY)
+                    {
+                        float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
+                        _force->Shift += new float2(pushX, 0f);
+                    }
+                    else
+                    {
+                        float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
+                        _force->Shift += new float2(0f, pushY);
+                    }
+                    return true;
                 }
             }
         }

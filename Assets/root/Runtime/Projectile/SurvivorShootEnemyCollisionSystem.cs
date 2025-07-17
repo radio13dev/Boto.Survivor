@@ -1,4 +1,5 @@
 using NativeTrees;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -51,7 +52,7 @@ namespace Collisions
                 ecb = parallel,
                 tree = m_projectileTree,
                 projectileVelLookup = SystemAPI.GetComponentLookup<Movement>(true)
-            }.ScheduleParallel(m_survivorQuery, state.Dependency);
+            }.Schedule(m_survivorQuery, state.Dependency);
         }
 
         partial struct RegenerateJob : IJob
@@ -72,6 +73,7 @@ namespace Collisions
         /// <summary>
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
+        [BurstCompile]
         unsafe partial struct CollisionJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ecb;
@@ -83,33 +85,31 @@ namespace Collisions
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
                 fixed (Health* health_ptr = &health)
                 fixed (Force* movement_ptr = &movement)
-                fixed (ComponentLookup<Movement>* projectileVelLookup_ptr = &projectileVelLookup)
+                fixed (CollisionJob* job_ptr = &this)
                 {
-                    var visitor = new CollisionVisitor(Key, ref ecb, transform, health_ptr, movement_ptr, projectileVelLookup_ptr);
+                    var visitor = new CollisionVisitor(Key, ref ecb, job_ptr,health_ptr, movement_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                     visitor.Dispose();
                 }
             }
 
+            [BurstCompile]
             public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
             {
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
-                LocalTransform _sourceTransform;
+                CollisionJob* _job;
                 Health* _health;
                 Force* _movement;
                 NativeParallelHashSet<Entity> _ignoredCollisions;
-                ComponentLookup<Movement>* _projectileVelLookup;
 
-                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, LocalTransform sourceTransform, Health* health, Force* movement,
-                    ComponentLookup<Movement>* projectileVelLookup)
+                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, CollisionJob* job, Health* health, Force* movement)
                 {
                     _key = key;
+                    _job = job;
                     _ecb = ecb;
-                    _sourceTransform = sourceTransform;
                     _health = health;
                     _movement = movement;
-                    _projectileVelLookup = projectileVelLookup;
                     _ignoredCollisions = new NativeParallelHashSet<Entity>(4, Allocator.TempJob);
                 }
 
@@ -122,7 +122,7 @@ namespace Collisions
                         // Destroy projectiles when they collide (by setting their life to 0)
                         _ecb.SetComponent(_key, projectile, new DestroyAtTime());
                         _health->Value -= 1;
-                        var vel = _projectileVelLookup->GetRefRO(projectile).ValueRO;
+                        var vel = _job->projectileVelLookup[projectile];
                         _movement->Shift += vel.Velocity/20;
                         _movement->Velocity += vel.Velocity/3;
                     }

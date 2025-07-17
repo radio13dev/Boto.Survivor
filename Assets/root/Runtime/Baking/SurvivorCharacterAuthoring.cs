@@ -1,7 +1,7 @@
+using System;
 using NativeTrees;
 using UnityEngine;
 using Unity.Entities;
-using Unity.Mathematics;
 
 public class SurvivorAuthoring : MonoBehaviour
 {
@@ -26,16 +26,12 @@ public class SurvivorAuthoring : MonoBehaviour
             SetComponentEnabled<ActiveLockout>(entity, false);
             AddComponent(entity, new Force());
             
-            AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
-            
-            if (authoring.EnableEnemySpawning) AddComponent(entity, new EnemySpawner(authoring.GetInstanceID()));
-            
             AddBuffer<LinkedEntityGroup>(entity);
             
             AddComponent(entity, new ProjectileSpawner(Team.Survivor));
             SetComponentEnabled<ProjectileSpawner>(entity, false);
             
-            AddComponent(entity, new LaserProjectileSpawner(Team.Survivor){Lifespan = 100});
+            AddComponent(entity, new LaserProjectileSpawner(Team.Survivor){Lifespan = 5, TimeBetweenShots = 0.1});
             SetComponentEnabled<LaserProjectileSpawner>(entity, authoring.EnableLaserProjectile);
             
             AddComponent(entity, new RollActive());

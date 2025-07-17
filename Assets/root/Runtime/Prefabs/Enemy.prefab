@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3557533656269071170}
   - component: {fileID: 7756041969186760268}
   - component: {fileID: 4710129199327565736}
+  - component: {fileID: 8164776769268316261}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -46,6 +47,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
+  Movement:
+    Velocity:
+      x: 0
+      y: 0
+    LastDirection:
+      x: 1
+      y: 0
+    Drag: 20
+    LinearDrag: 1
+    Speed: 2
 --- !u!114 &7756041969186760268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,3 +84,21 @@ MonoBehaviour:
   Particle:
     AssetIndex: 1
     _Asset: {fileID: 11400000, guid: 93681e09dbeca32479459dd63c038432, type: 2}
+--- !u!114 &8164776769268316261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  Min:
+    x: -0.5
+    y: -0.5
+  Max:
+    x: 0.5
+    y: 0.5

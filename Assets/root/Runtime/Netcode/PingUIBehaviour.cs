@@ -78,4 +78,17 @@ public class PingUIBehaviour : MonoBehaviour
 
         m_IsSignedIn = AuthenticationService.Instance.IsSignedIn;
     }
+
+    public async void StartLobbyJoinCo(string lobbyCode)
+    {
+        JoinCode = lobbyCode;
+        await UnityServices.InitializeAsync();
+        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+
+        m_IsSignedIn = AuthenticationService.Instance.IsSignedIn;
+        var client = gameObject.AddComponent<PingClientBehaviour>() as PingClientBehaviour;
+        client.PingUI = this;
+        StartCoroutine(client.Connect());
+        Game.ClientGame = client.Game;
+    }
 }

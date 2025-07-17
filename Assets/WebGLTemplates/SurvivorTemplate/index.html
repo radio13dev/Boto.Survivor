@@ -11,15 +11,6 @@
   <body class="{{{ SPLASH_SCREEN_STYLE.toLowerCase() }}}">
     <!-- Read URL params at startup -->
     <script>
-      // Parse URL parameters and get the token
-      const urlParams = new URLSearchParams(window.location.search);
-      const tokenParam = urlParams.get('tok');
-      if (tokenParam) {
-        console.log("Token param found:", tokenParam);
-      } else {
-        console.log("No token param provided.");
-      }
-
       // We'll store the Unity instance in a global variable so we can access it later.
       var unityInstance = null;
 
@@ -118,6 +109,16 @@
             fullscreenButton.onclick = () => {
               unityInstance.SetFullscreen(1);
             };
+          }
+
+          // Parse URL parameters and get the token
+          const urlParams = new URLSearchParams(window.location.search);
+          const tokenParam = urlParams.get('lobby');
+          if (tokenParam) {
+            console.log("Token param found:", tokenParam);
+            unityInstance.SendMessage("JavascriptHook", "JoinLobby", tokenParam);
+          } else {
+            console.log("No token param provided.");
           }
 	  
 	      // When the user clicks on the canvas, it will receive focus

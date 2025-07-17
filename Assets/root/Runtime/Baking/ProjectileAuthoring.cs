@@ -14,8 +14,6 @@ public class ProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new Movement(0,0,10));
             
-            AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
-            
             AddComponent<SaveTag>(entity);
         }
     }       

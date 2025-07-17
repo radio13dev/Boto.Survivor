@@ -12,6 +12,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _ALPHATEST_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -28,7 +29,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: a54d50175dd22604e93b831c431ec1aa, type: 3}
+        m_Texture: {fileID: -1087164816274819069, guid: 621cee4dfb9237e41984ec0c2a0a904f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -96,7 +97,7 @@ Material:
     - LIGHTMAP_SHADOW_MIXING: 0
     - SHADOWS_SHADOWMASK: 0
     - _AddPrecomputedVelocity: 0
-    - _AlphaClip: 0
+    - _AlphaClip: 1
     - _AlphaClipThreshold: 0.5
     - _AlphaToMask: 0
     - _Blend: 0
@@ -116,7 +117,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Height: 10
+    - _Height: 1
     - _Index: 2.1
     - _LIGHTMAP_SHADOW_MIXING: 0
     - _Metallic: 0
@@ -133,7 +134,7 @@ Material:
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
-    - _Width: 8
+    - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4

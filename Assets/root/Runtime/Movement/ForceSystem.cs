@@ -36,7 +36,7 @@ public partial struct ForceSystem : ISystem
             movement.Velocity += force.Velocity;
             transform.Position += force.Shift.f3();
             
-            force.Reset();
+            force = new();
         }
     }
 }

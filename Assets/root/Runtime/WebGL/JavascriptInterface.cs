@@ -13,5 +13,10 @@ public class JavascriptHook : MonoBehaviour
     {
         // Nothing
     }
+    
+    public void JoinLobby(string lobbyCode)
+    {
+        Object.FindAnyObjectByType<PingUIBehaviour>().StartLobbyJoinCo(lobbyCode);
+    }
 #endif
 }

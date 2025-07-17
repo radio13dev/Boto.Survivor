@@ -8,6 +8,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
 using Unity.Networking.Transport.Utilities;
@@ -288,10 +289,19 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
             if (shouldSend) m_CumulativeTime -= Game.k_ClientPingFrequency;
 
-            if (m_Game != null && m_Game.IsReady && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
+            if (m_Game != null && m_Game.IsReady)
             {
-                msg.Apply(m_Game.World, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
-                NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
+                if ((shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
+                {
+                    msg.Apply(m_Game.World, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+                    NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
+                }
+                else
+                {
+                    var renderSystem = m_Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>();
+                    m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = math.clamp(m_CumulativeTime/Game.k_ClientPingFrequency, 0,1);
+                    renderSystem.Update(m_Game.World.Unmanaged);
+                }
             }
             
             while (m_GenericMessageBuffer.TryDequeue(out var message))

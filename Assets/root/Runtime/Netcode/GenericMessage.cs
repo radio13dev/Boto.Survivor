@@ -16,13 +16,16 @@ public struct GenericMessage
         switch (Type)
         {
             default:
+                Debug.Log($"Got ID message: {Data}");
                 game.PlayerIndex = Data;
+                Game.SingleplayerGame = game;
                 break;
         }
     }
     
     public static GenericMessage Id(int index)
     {
+        Debug.Log($"Creating ID message: {index}");
         return new GenericMessage()
         {
             Type = 0,

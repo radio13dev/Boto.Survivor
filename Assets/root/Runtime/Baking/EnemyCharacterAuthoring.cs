@@ -1,10 +1,11 @@
-using NativeTrees;
+using System;
 using UnityEngine;
 using Unity.Entities;
-using Unity.Mathematics;
 
 public class EnemyCharacterAuthoring : MonoBehaviour
 {
+    public Movement Movement = new Movement(1,1,1);
+    
     public partial class SurvivorBaker : Baker<EnemyCharacterAuthoring>
     {
         public override void Bake(EnemyCharacterAuthoring authoring)
@@ -13,11 +14,10 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new EnemyTag());
             AddComponent(entity, new Health(100));
-            AddComponent(entity, new Movement(1, 1, 1));
+            AddComponent(entity, authoring.Movement);
             AddComponent(entity, new StepInput());
             AddComponent(entity, new Force());
             
-            AddComponent(entity, new Collisions.Collider(new AABB2D(new float2(-1,-1), new float2(1,1))));
             
             AddBuffer<LinkedEntityGroup>(entity);
             AddComponent<SaveTag>(entity);
