@@ -16,6 +16,17 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine.InputSystem;
 
+public static class Netcode
+{
+    public static NetworkSettings NetworkSettings(ref RelayServerData relayServerData)
+    {
+        var settings = new NetworkSettings();
+        settings.WithRelayParameters(serverData: ref relayServerData);
+        settings.WithFragmentationStageParameters(payloadCapacity: 20_000_000);
+        return settings;
+    }
+}
+
 public unsafe struct Server
 {
     public NetworkConnection Connection;
@@ -122,10 +133,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
 
         var relayServerData = joinTask.Result.ToRelayServerData("wss");
-        var settings = new NetworkSettings();
-        settings.WithRelayParameters(serverData: ref relayServerData);
-        settings.WithFragmentationStageParameters(payloadCapacity: 2_000_000);
-
+        var settings = Netcode.NetworkSettings(ref relayServerData);
         m_ClientDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
         m_ClientConnection.Value = new Server(m_ClientDriver.Driver.Connect());
@@ -275,9 +283,9 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                     m_Game.World.Update();
                     return;
                 }
-                
+
                 Debug.Log($"... loading save...");
-                
+
                 // Load this in
                 ((int*)m_SaveBuffer.GetUnsafePtr())[0] = 0;
                 m_Game.LoadSave(&((byte*)m_SaveBuffer.GetUnsafePtr())[4], memLen);
@@ -299,11 +307,11 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                 else
                 {
                     var renderSystem = m_Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>();
-                    m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = math.clamp(m_CumulativeTime/Game.k_ClientPingFrequency, 0,1);
+                    m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1);
                     renderSystem.Update(m_Game.World.Unmanaged);
                 }
             }
-            
+
             while (m_GenericMessageBuffer.TryDequeue(out var message))
             {
                 message.Execute(m_Game);

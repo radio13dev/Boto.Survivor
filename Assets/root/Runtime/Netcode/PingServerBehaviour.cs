@@ -112,9 +112,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         JavascriptHook.SetUrlArg("lobby", joinCodeTask.Result);
 
         var relayServerData = allocation.ToRelayServerData("wss");
-        var settings = new NetworkSettings();
-        settings.WithRelayParameters(serverData: ref relayServerData);
-        settings.WithFragmentationStageParameters(payloadCapacity: 2_000_000);
+        var settings = Netcode.NetworkSettings(ref relayServerData);
 
         m_ServerDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
