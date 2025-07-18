@@ -7,23 +7,10 @@ public class TorusTerrainTool : MonoBehaviour
     Mesh m_Mesh;
     bool m_GeneratedMesh;
     
-    public float Radius = 20;
-    public float Thickness = 5;
-    public int RingSegments = 5;
-    public int TubeSegments = 5;
-    
-    [EditorButton]
-    public void GenerateMeshDefault()
-    {
-        GenerateMesh(Radius, Thickness, RingSegments, RingSegments);
-    }
-    
     [EditorButton]
     public void GenerateMesh(float radius, float thickness, int ringSegments, int tubeSegments)
     {
-        if (MeshFilter.sharedMesh)
-            m_Mesh = MeshFilter.sharedMesh;
-        else
+        if (!m_GeneratedMesh)
         {
             m_Mesh = new Mesh();
             m_GeneratedMesh = true;

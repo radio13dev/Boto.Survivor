@@ -29,15 +29,23 @@ namespace Collisions
             //state.RequireForUpdate(m_enemyQuery);
         }
 
+        NativeArray<Entity> m_EnemyQueryEntities;
+        NativeArray<Collider> m_EnemyQueryColliders;
+        NativeArray<LocalTransform2D> m_EnemyQueryTransforms;
+        
         public void OnUpdate(ref SystemState state)
         {
+            m_EnemyQueryEntities.Dispose();
+            m_EnemyQueryColliders.Dispose();
+            m_EnemyQueryTransforms.Dispose();
+            
             // Update trees
             state.Dependency = new RegenerateJob()
             {
                 tree = m_enemyTree,
-                entities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob),
-                colliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
-                transforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
+                entities = m_EnemyQueryEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob),
+                colliders = m_EnemyQueryColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
+                transforms = m_EnemyQueryTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
             }.Schedule(state.Dependency);
             
             state.CompleteDependency();
@@ -57,6 +65,14 @@ namespace Collisions
             {
                 tree = m_enemyTree
             }.Schedule(state.Dependency);
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            m_EnemyQueryEntities.Dispose();
+            m_EnemyQueryColliders.Dispose();
+            m_EnemyQueryTransforms.Dispose();
+            m_enemyTree.Dispose();
         }
 
         [BurstCompile]

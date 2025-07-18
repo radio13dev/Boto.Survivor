@@ -18,26 +18,26 @@ public partial struct EnemySpawner : IComponentData
 [RequireMatchingQueriesForUpdate]
 public partial struct EnemySpawnSystem : ISystem
 {
-    EntityQuery m_PlayerTransforms;
+    EntityQuery m_PlayerTransformsQuery;
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerControlled>();
-        m_PlayerTransforms = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, PlayerControlled>().Build();
-        state.RequireForUpdate(m_PlayerTransforms);
+        m_PlayerTransformsQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, PlayerControlled>().Build();
+        state.RequireForUpdate(m_PlayerTransformsQuery);
     }
 
-
+    NativeArray<LocalTransform2D> m_PlayerTransformsQueryResults;
     public void OnUpdate(ref SystemState state)
     {
-        var playerTransforms = m_PlayerTransforms.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob);
+        m_PlayerTransformsQueryResults.Dispose();
         var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         new Job()
         {
             ecb = delayedEcb.AsParallelWriter(),
             resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-            PlayerTransforms = playerTransforms
+            PlayerTransforms = m_PlayerTransformsQueryResults = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob)
         }.Schedule();
     }
     

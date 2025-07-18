@@ -30,18 +30,23 @@ namespace Collisions
             state.RequireForUpdate(m_survivorQuery);
         }
 
+        NativeArray<Entity> m_ProjectileQueryEntities;
+        NativeArray<Collider> m_ProjectileQueryColliders;
+        NativeArray<LocalTransform2D> m_ProjectileQueryTransforms;
+
         public void OnUpdate(ref SystemState state)
         {
+            m_ProjectileQueryEntities.Dispose();
+            m_ProjectileQueryColliders.Dispose();
+            m_ProjectileQueryTransforms.Dispose();
+        
             // Update trees
-            var projectile_entities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob);
-            var projectile_colliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var projectile_transforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
             state.Dependency = new RegenerateJob()
             {
                 tree = m_projectileTree,
-                entities = projectile_entities,
-                colliders = projectile_colliders,
-                transforms = projectile_transforms
+                entities = m_ProjectileQueryEntities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob),
+                colliders = m_ProjectileQueryColliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
+                transforms = m_ProjectileQueryTransforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
             }.Schedule(state.Dependency);
 
             // Perform collisions
@@ -53,6 +58,14 @@ namespace Collisions
                 tree = m_projectileTree,
                 projectileVelLookup = SystemAPI.GetComponentLookup<Movement>(true)
             }.Schedule(m_survivorQuery, state.Dependency);
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            m_ProjectileQueryEntities.Dispose();
+            m_ProjectileQueryColliders.Dispose();
+            m_ProjectileQueryTransforms.Dispose();
+            m_projectileTree.Dispose();
         }
 
         partial struct RegenerateJob : IJob

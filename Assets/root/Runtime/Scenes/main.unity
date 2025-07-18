@@ -600,6 +600,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 398463335}
+  - component: {fileID: 398463339}
   - component: {fileID: 398463338}
   - component: {fileID: 398463337}
   - component: {fileID: 398463336}
@@ -680,7 +681,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398463334}
-  m_Mesh: {fileID: 4300000, guid: 859815b399e644540a49a64d4c31ef9a, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 96c481dde247570409fa9bcce32d9982, type: 2}
 --- !u!114 &398463338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -698,6 +699,22 @@ MonoBehaviour:
   Thickness: 9.5
   RingSegments: 30
   TubeSegments: 5
+--- !u!114 &398463339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398463334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4306e576c59540909e506679d0665594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::TorusSettings
+  RingRadius: 100
+  Thickness: 5
+  XRotScale: 0.01
+  YRotScale: 0.1
 --- !u!1 &491695310
 GameObject:
   m_ObjectHideFlags: 0

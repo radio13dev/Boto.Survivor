@@ -62,7 +62,11 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         {
             m_Query.SetSharedComponentFilter(new InstancedResourceRequest(i));
             var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-            if (transforms.Length == 0) continue;
+            if (transforms.Length == 0)
+            {
+                transforms.Dispose();
+                continue;
+            }
             var transformsLast = m_Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
             var spriteIndices = m_Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.Temp);
             var spriteIndicesF = spriteIndices.Reinterpret<float>();
