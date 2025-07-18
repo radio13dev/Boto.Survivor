@@ -25,6 +25,8 @@ public struct StepInput : IComponentData
     public void Write(ref DataStreamWriter writer)
     {
         writer.WriteByte(Input);
+        writer.WriteFloat(Direction.x);
+        writer.WriteFloat(Direction.y);
     }
 
     public static StepInput Read(ref DataStreamReader reader)

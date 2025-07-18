@@ -63,6 +63,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent);
         m_Game = new Game(false);
+        m_Game.RunGameWorldInit();
     }
 
     private void OnDestroy()
@@ -108,6 +109,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         }
 
         PingUI.JoinCode = joinCodeTask.Result;
+        JavascriptHook.SetUrlArg("lobby", joinCodeTask.Result);
 
         var relayServerData = allocation.ToRelayServerData("wss");
         var settings = new NetworkSettings();
@@ -188,7 +190,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     switch (reader.ReadByte())
                     {
                         case PingClientBehaviour.CODE_SendInput:
-                            connection.InputBuffer.Input = reader.ReadByte();
+                            connection.InputBuffer = StepInput.Read(ref reader);
                             connection.HasInput = true;
                             break;
                         case PingClientBehaviour.CODE_RequestSave:

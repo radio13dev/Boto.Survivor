@@ -26,6 +26,7 @@ public class ParticleOnDestroyAuthoring : MonoBehaviour
 }
 
 [UpdateBefore(typeof(DestroySystem))]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct ParticleOnDestroySystem : ISystem
 {
     EntityQuery m_CleanupQuery;

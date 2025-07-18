@@ -149,7 +149,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             }
 
             writer.WriteByte(CODE_SendInput);
-            writer.WriteByte(FrameInput.Value.Input);
+            FrameInput.Value.Write(ref writer);
             FrameInput.Value = default;
 
             result = Driver.EndSend(writer);
