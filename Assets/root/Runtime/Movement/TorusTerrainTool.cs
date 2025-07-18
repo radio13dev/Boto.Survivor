@@ -29,7 +29,7 @@ public class TorusTerrainTool : MonoBehaviour
             m_GeneratedMesh = true;
         }
         
-        TorusMeshGenerator.GenerateTorusMesh(radius, thickness, ringSegments, tubeSegments, out var verts, out var tris, out var normals);
+        TorusMeshGenerator.GenerateTorusMesh(radius, thickness, ringSegments, tubeSegments, TorusMeshGenerator.Axis.y, out var verts, out var tris, out var normals);
         m_Mesh.SetVertices(Array.ConvertAll(verts, v => (Vector3)v));
         m_Mesh.SetTriangles(tris, 0);
         m_Mesh.SetNormals(Array.ConvertAll(normals, v => (Vector3)v));

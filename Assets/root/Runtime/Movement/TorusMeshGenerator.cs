@@ -2,6 +2,8 @@
 
 public static class TorusMeshGenerator
 {
+    public enum Axis { x, y, z }
+
     /// <summary>
     /// Generates a torus mesh with customizable parameters.
     /// </summary>
@@ -11,7 +13,7 @@ public static class TorusMeshGenerator
     /// <param name="tubeSegments">Number of segments around the tube.</param>
     /// <param name="vertices">Output array of vertices.</param>
     /// <param name="triangles">Output array of triangle indices.</param>
-    public static void GenerateTorusMesh(float ringRadius, float thickness, int ringSegments, int tubeSegments, out float3[] vertices, out int[] triangles, out float3[] normals)
+    public static void GenerateTorusMesh(float ringRadius, float thickness, int ringSegments, int tubeSegments, Axis upAxis, out float3[] vertices, out int[] triangles, out float3[] normals)
     {
         // Total vertices count.
         vertices = new float3[ringSegments * tubeSegments];
@@ -37,7 +39,16 @@ public static class TorusMeshGenerator
                 float x = (ringRadius + thickness * cosPhi) * cosTheta;
                 float y = (ringRadius + thickness * cosPhi) * sinTheta;
                 float z = thickness * sinPhi;
-                var point = vertices[i * tubeSegments + j] = new float3(x, y, z);
+                float3 point;
+                
+                if (upAxis == Axis.x)
+                    point = new float3(z, y, x);
+                else if (upAxis == Axis.y)
+                    point = new float3(x, z, y);
+                else
+                    point = new float3(x, y, z);
+                
+                vertices[i * tubeSegments + j] = point;
                 
                 
                 // Compute the torus circle center along the main ring.
@@ -48,6 +59,9 @@ public static class TorusMeshGenerator
             }
         }
 
+        // Determine if triangle winding should be reversed.
+        bool flipWinding = (upAxis == Axis.y);
+        
         // Build triangle indices.
         int index = 0;
         for (int i = 0; i < ringSegments; i++)
@@ -65,14 +79,28 @@ public static class TorusMeshGenerator
                 int c = nextI * tubeSegments + nextJ;
                 int d = i * tubeSegments + nextJ;
 
-                // Two triangles for the quad.
-                triangles[index++] = a;
-                triangles[index++] = b;
-                triangles[index++] = c;
+                if (flipWinding)
+                {
+                    // Flipped winding order.
+                    triangles[index++] = a;
+                    triangles[index++] = c;
+                    triangles[index++] = b;
 
-                triangles[index++] = a;
-                triangles[index++] = c;
-                triangles[index++] = d;
+                    triangles[index++] = a;
+                    triangles[index++] = d;
+                    triangles[index++] = c;
+                }
+                else
+                {
+                    // Original winding order.
+                    triangles[index++] = a;
+                    triangles[index++] = b;
+                    triangles[index++] = c;
+
+                    triangles[index++] = a;
+                    triangles[index++] = c;
+                    triangles[index++] = d;
+                }
             }
         }
     }

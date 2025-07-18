@@ -47,6 +47,8 @@ public class CameraTrack : MonoBehaviour
             Vector3 actualCamTarget = (target.Position + virtualTarget) / 2;
             transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime * linearCameraChase);
             transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
+            
+            transform.rotation = target.Rotation;
         }
     }
 }
