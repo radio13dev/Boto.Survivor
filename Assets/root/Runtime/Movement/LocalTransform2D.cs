@@ -71,12 +71,9 @@ public partial struct ConvertLocal2DToWorldSystem : ISystem
                 rotation = quaternion.LookRotation(-normal, math.cross(tangent, normal)); //quaternion.LookRotation(tangent, pointNormal);
             }
 
-            //TorusMapper.GetPositionAndUpRotation(local.Position, ref position, ref rotation, ref normal);
             world = LocalTransform.FromPositionRotation(position, 
                 math.mul(quaternion.AxisAngle(normal, -local.Rotation),
-                    math.mul(quaternion.AxisAngle(tangent, -1.3f),
                     rotation
-                    )
                 )
                 );
         }
