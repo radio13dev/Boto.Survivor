@@ -1,12 +1,15 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 [Preserve] 
 public class DisableBootstrap : ICustomBootstrap
@@ -157,17 +160,34 @@ public class Game : IDisposable
             EntityManager serializeEntityManager = serializeWorld.EntityManager;
             SetupSerializeWorld(ref serializeEntityManager, ref entityManager, ref m_EntitiesToSave);
 
-            // Save
+            // Serialize the world into a memory writer.
             using (var memwriter = new MemoryBinaryWriter())
             {
                 SerializeUtility.SerializeWorld(serializeEntityManager, memwriter);
-                writer.WriteInt(memwriter.Length);
-                writer.WriteBytes(new Span<byte>(memwriter.Data, memwriter.Length));
-                Debug.Log($"... wrote {memwriter.Length}...");
+
+                int uncompressedLength = memwriter.Length;
+                byte[] uncompressedData = new byte[uncompressedLength];
+                Marshal.Copy((IntPtr)memwriter.Data, uncompressedData, 0, uncompressedLength);
+
+                // Compress the data using GZipStream.
+                byte[] compressedData;
+                using (var outStream = new MemoryStream())
+                {
+                    using (var gzip = new GZipStream(outStream, CompressionLevel.Optimal, true))
+                    {
+                        gzip.Write(uncompressedData, 0, uncompressedLength);
+                    }
+                    compressedData = outStream.ToArray();
+                }
+
+                // Write the length of the compressed data and the data itself.
+                writer.WriteInt(compressedData.Length);
+                writer.WriteBytes(new Span<byte>(compressedData));
+                Debug.Log($"... wrote compressed {compressedData.Length} bytes...");
             }
         }
     }
-
+    
     public unsafe void Load(string filepath)
     {
         EntityManager entityManager = m_World.EntityManager;
@@ -194,7 +214,6 @@ public class Game : IDisposable
 
     public unsafe void LoadSave(byte* ptr, int len)
     {
-        // Read THAT into the world
         EntityManager entityManager = m_World.EntityManager;
         entityManager.DestroyEntity(m_EntitiesToSave);
 
@@ -202,17 +221,33 @@ public class Game : IDisposable
         {
             ExclusiveEntityTransaction transaction = deserializeWorld.EntityManager.BeginExclusiveEntityTransaction();
 
-            Debug.Log($"... setting up reader ...");
-            using (var memreader = new MemoryBinaryReader(ptr, len))
+            // Copy the compressed data from unmanaged memory to a managed byte array.
+            byte[] compressedData = new byte[len];
+            Marshal.Copy((IntPtr)ptr, compressedData, 0, len);
+
+            // Decompress the data using GZipStream.
+            byte[] uncompressedData;
+            using (var inStream = new MemoryStream(compressedData))
             {
-                Debug.Log($"... deserializing ...");
-                SerializeUtility.DeserializeWorld(transaction, memreader);
+                using (var gzip = new GZipStream(inStream, CompressionMode.Decompress))
+                {
+                    using (var outStream = new MemoryStream())
+                    {
+                        gzip.CopyTo(outStream);
+                        uncompressedData = outStream.ToArray();
+                    }
+                }
             }
-            
-            Debug.Log($"... wrapping up ...");
+
+            fixed (byte* uncompressedPtr = uncompressedData)
+            {
+                using (var memreader = new MemoryBinaryReader(uncompressedPtr, uncompressedData.Length))
+                {
+                    SerializeUtility.DeserializeWorld(transaction, memreader);
+                }
+            }
 
             deserializeWorld.EntityManager.EndExclusiveEntityTransaction();
-
             entityManager.MoveEntitiesFrom(deserializeWorld.EntityManager);
         }
     }
