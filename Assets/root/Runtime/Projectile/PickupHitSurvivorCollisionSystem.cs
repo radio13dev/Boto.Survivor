@@ -22,10 +22,10 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<Pickup, DestroyAtTime>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<Pickup, DestroyAtTime>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<SurvivorTag, LinkedEntityGroup>().Build();
+            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<SurvivorTag, LinkedEntityGroup>().Build();
             state.RequireForUpdate(m_survivorQuery);
         }
 
@@ -34,7 +34,7 @@ namespace Collisions
             // Update trees
             var projectile_entities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob);
             var projectile_colliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var projectile_transforms = m_projectileQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
+            var projectile_transforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
             state.Dependency = new RegenerateJob()
             {
                 tree = m_projectileTree,
@@ -66,13 +66,13 @@ namespace Collisions
             public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public NativeArray<Entity> entities;
             [ReadOnly] public NativeArray<Collider> colliders;
-            [ReadOnly] public NativeArray<LocalTransform> transforms;
+            [ReadOnly] public NativeArray<LocalTransform2D> transforms;
 
             public void Execute()
             {
                 tree.Clear();
                 for (int i = 0; i < colliders.Length; i++)
-                    tree.Insert(entities[i], colliders[i].Add(transforms[i].Position.xy));
+                    tree.Insert(entities[i], colliders[i].Add(transforms[i].Position));
             }
         }
 
@@ -85,7 +85,7 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
             public ComponentLookup<DestroyAtTime> projectileLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref DynamicBuffer<LinkedEntityGroup> linkedEntityGroup)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, ref DynamicBuffer<LinkedEntityGroup> linkedEntityGroup)
             {
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
                 fixed (ComponentLookup<DestroyAtTime>* projectileLookup_ptr = &projectileLookup)

@@ -41,7 +41,7 @@ public partial struct ProcessInputs : ISystem
         public void Execute(in StepInput input, ref Movement movement)
         {
             var dir = input.Direction;
-            var vel = dir * movement.Speed;
+            var vel = math.normalizesafe(dir) * movement.Speed * math.clamp(math.length(dir), 0, 1);
             movement.Velocity += vel;
             movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
         }

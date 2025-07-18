@@ -133,7 +133,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
         var transformAccessArray = new TransformAccessArray(proxyTransforms);
 
         // Initialize the job data
-        var job = new ApplyVelocityJobParallelForTransform()
+        var job = new ApplyLocalTransformToTransform()
         {
             transforms = transforms
         };
@@ -162,7 +162,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
         transforms.Dispose();
     }
 
-    public struct ApplyVelocityJobParallelForTransform : IJobParallelForTransform
+    public struct ApplyLocalTransformToTransform : IJobParallelForTransform
     {
         [ReadOnly] public NativeArray<LocalTransform> transforms;
 

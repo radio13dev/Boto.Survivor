@@ -16,7 +16,7 @@ public partial struct RollActiveSystem : ISystem
     {
         state.RequireForUpdate<RollActive>();
         state.RequireForUpdate<ActiveLockout>();
-        state.RequireForUpdate<LocalTransform>();
+        state.RequireForUpdate<LocalTransform2D>();
         state.RequireForUpdate<Movement>();
     }
 
@@ -32,12 +32,12 @@ public partial struct RollActiveSystem : ISystem
     {
         [ReadOnly] public float dt;
         public void Execute(EnabledRefRW<RollActive> rollActive, ref RollActive roll, EnabledRefRW<ActiveLockout> activeLockout, 
-            ref LocalTransform entityT, 
+            ref LocalTransform2D entityT, 
             in Movement movement, EnabledRefRW<MovementInputLockout> movementInputLockout)
         {
             float speed = roll.T*10 - 1.5f;
             speed *= speed;
-            entityT.Position += (movement.LastDirection * math.max(2-speed,0.1f)).f3();
+            entityT.Position += (movement.LastDirection * math.max(2-speed,0.1f));
             
             roll.T += dt;
             

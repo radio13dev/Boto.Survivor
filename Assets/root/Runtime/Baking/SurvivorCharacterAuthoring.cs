@@ -6,7 +6,6 @@ using Unity.Entities;
 public class SurvivorAuthoring : MonoBehaviour
 {
     public Movement Movement = new Movement(1,1,1);
-    public bool EnableEnemySpawning;
     public bool EnableLaserProjectile;
 
     public partial class SurvivorBaker : Baker<SurvivorAuthoring>
@@ -14,6 +13,7 @@ public class SurvivorAuthoring : MonoBehaviour
         public override void Bake(SurvivorAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
+            AddComponent<LocalTransform2D>(entity);
             AddSharedComponent(entity, new PlayerControlled());
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new SurvivorTag());

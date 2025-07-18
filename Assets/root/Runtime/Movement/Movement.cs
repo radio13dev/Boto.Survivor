@@ -55,9 +55,9 @@ public partial struct MovementSystem : ISystem
     {
         [ReadOnly] public float dt;
     
-        public void Execute(Entity entity, ref Movement movement, ref LocalTransform transform)
+        public void Execute(Entity entity, ref Movement movement, ref LocalTransform2D transform)
         {
-            transform.Position += (movement.Velocity*dt).f3();
+            transform.Position += movement.Velocity*dt;
             
             // Relative drag
             if (movement.Drag != 0) movement.Velocity -= movement.Velocity*dt*movement.Drag;

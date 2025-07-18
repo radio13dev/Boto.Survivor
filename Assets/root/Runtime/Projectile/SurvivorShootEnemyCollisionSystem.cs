@@ -23,10 +23,10 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, Movement>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, Movement>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag, Health, Force>().Build();
+            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<EnemyTag, Health, Force>().Build();
             state.RequireForUpdate(m_survivorQuery);
         }
 
@@ -35,7 +35,7 @@ namespace Collisions
             // Update trees
             var projectile_entities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob);
             var projectile_colliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var projectile_transforms = m_projectileQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
+            var projectile_transforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
             state.Dependency = new RegenerateJob()
             {
                 tree = m_projectileTree,
@@ -60,7 +60,7 @@ namespace Collisions
             public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public NativeArray<Entity> entities;
             [ReadOnly] public NativeArray<Collider> colliders;
-            [ReadOnly] public NativeArray<LocalTransform> transforms;
+            [ReadOnly] public NativeArray<LocalTransform2D> transforms;
 
             public void Execute()
             {
@@ -80,7 +80,7 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public ComponentLookup<Movement> projectileVelLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force movement)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, ref Health health, ref Force movement)
             {
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
                 fixed (Health* health_ptr = &health)

@@ -55,11 +55,11 @@ MonoBehaviour:
     LastDirection:
       x: 1
       y: 0
-    Drag: 20
+    Drag: 8
     LinearDrag: 1
-    Speed: 10
-  EnableEnemySpawning: 1
-  EnableLaserProjectile: 1
+    Speed: 2
+  EnableEnemySpawning: 0
+  EnableLaserProjectile: 0
 --- !u!114 &7756041969186760268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 190553e608ff4734a8cb3109ea829924, type: 3}
   m_Name: 
@@ -120,6 +120,6 @@ MonoBehaviour:
   Spawner:
     random:
       state: 0
-    SpawnRadius: 10
-    SpawnBlockRadiusSqr: 81
+    SpawnRadius: 100
+    SpawnBlockRadiusSqr: 9025
     SpawnChancePerFrame: 10

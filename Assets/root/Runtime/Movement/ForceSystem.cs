@@ -31,10 +31,10 @@ public partial struct ForceSystem : ISystem
     
     partial struct Job : IJobEntity
     {
-        public void Execute(Entity entity, ref LocalTransform transform, ref Movement movement, ref Force force)
+        public void Execute(Entity entity, ref LocalTransform2D transform, ref Movement movement, ref Force force)
         {
             movement.Velocity += force.Velocity;
-            transform.Position += force.Shift.f3();
+            transform.Position += force.Shift;
             
             force = new();
         }

@@ -25,7 +25,7 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
+            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<EnemyTag>().Build();
             //state.RequireForUpdate(m_enemyQuery);
         }
 
@@ -37,7 +37,7 @@ namespace Collisions
                 tree = m_enemyTree,
                 entities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob),
                 colliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
-                transforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob)
+                transforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
             }.Schedule(state.Dependency);
             
             state.CompleteDependency();
@@ -65,7 +65,7 @@ namespace Collisions
             public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public NativeArray<Entity> entities;
             [ReadOnly] public NativeArray<Collider> colliders;
-            [ReadOnly] public NativeArray<LocalTransform> transforms;
+            [ReadOnly] public NativeArray<LocalTransform2D> transforms;
 
             public void Execute()
             {
@@ -87,7 +87,7 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
             [ReadOnly] public double time;
 
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
             {
                 if (laserSpawner.LastProjectileTime + laserSpawner.TimeBetweenShots > time) return;
             
@@ -97,7 +97,7 @@ namespace Collisions
                     var visitor = new NearestVisitor(Key, job_ptr, transform, movement, spawner_ptr);
                     var distance = new DistanceProvider();
 
-                    tree.Nearest(transform.Position.xy, 30, ref visitor, distance);
+                    tree.Nearest(transform.Position, 30, ref visitor, distance);
                     
                     float2 dir;
                     if (visitor.Hits == 0)
@@ -107,7 +107,8 @@ namespace Collisions
                     dir = math.normalizesafe(dir, new float2(1,0));
                     
                     var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
-                    var laserT = transform.RotateZ(math.atan2(dir.y, dir.x));
+                    var laserT = transform;
+                    laserT.Rotation = math.atan2(dir.y, dir.x);
                     ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
                     ecb.SetComponent(Key, laser, laserT);
                     ecb.SetComponent(Key, laser, new Movement(dir*8));
@@ -123,11 +124,11 @@ namespace Collisions
                 public volatile int Hits;
                 int _key;
                 FireAtNearestTargetJob* _job;
-                LocalTransform _transform;
+                LocalTransform2D _transform;
                 Movement _sourceMovement;
                 LaserProjectileSpawner* _sourceSpawner;
 
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
+                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform2D transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
                 {
                     Hits = 0;
                     
@@ -141,7 +142,7 @@ namespace Collisions
                 public bool OnVist(Entity obj, AABB2D bounds)
                 {
                     Interlocked.Increment(ref Hits);
-                    var dir = bounds.Center - _transform.Position.xy;
+                    var dir = bounds.Center - _transform.Position;
                     _sourceSpawner->LastProjectileDirection = dir;
                     return false;
                 }
@@ -162,7 +163,7 @@ namespace Collisions
         {
             [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
 
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, ref Force force)
             {
                 var adjustedAABB2D = collider.Add(transform.Position.xy);
                 fixed (Force* force_ptr = &force)

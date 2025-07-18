@@ -24,14 +24,14 @@ public partial struct EnemySpawnSystem : ISystem
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerControlled>();
-        m_PlayerTransforms = SystemAPI.QueryBuilder().WithAll<LocalTransform, PlayerControlled>().Build();
+        m_PlayerTransforms = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, PlayerControlled>().Build();
         state.RequireForUpdate(m_PlayerTransforms);
     }
 
 
     public void OnUpdate(ref SystemState state)
     {
-        var playerTransforms = m_PlayerTransforms.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        var playerTransforms = m_PlayerTransforms.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob);
         var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         new Job()
         {
@@ -48,22 +48,22 @@ public partial struct EnemySpawnSystem : ISystem
     
         public EntityCommandBuffer.ParallelWriter ecb;
         public GameManager.Resources resources;
-        [ReadOnly] public NativeArray<LocalTransform> PlayerTransforms;
+        [ReadOnly] public NativeArray<LocalTransform2D> PlayerTransforms;
     
-        public void Execute([ChunkIndexInQuery] int key, in LocalTransform t, ref EnemySpawner spawner)
+        public void Execute([ChunkIndexInQuery] int key, in LocalTransform2D t, ref EnemySpawner spawner)
         {
             if (spawner.random.NextInt(100) > spawner.SpawnChancePerFrame)
                 return;
         
             var rPos = t.Position;
-            rPos += math.normalizesafe(spawner.random.NextFloat2(min, max), max).f3() * spawner.SpawnRadius;
+            rPos += math.normalizesafe(spawner.random.NextFloat2(min, max), max) * spawner.SpawnRadius;
             
             for (int i = 0; i < PlayerTransforms.Length; i++)
                 if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)
                     return;
             
             var enemy = ecb.Instantiate(key, resources.EnemyTemplate);
-            ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos));
+            ecb.SetComponent(key, enemy, LocalTransform2D.FromPosition(rPos));
         }
     }
 }

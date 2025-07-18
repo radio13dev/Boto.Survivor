@@ -11,38 +11,14 @@ using UnityEngine.InputSystem;
 public struct StepInput : IComponentData
 {
     public byte Input;
-
-    public StepInput(byte input)
-    {
-        Input = input;
-    }
-
-    public const int SizeOf = 1;
+    public float2 Direction;
         
-        // @formatter:off
-        public const byte LeftInput     = 0b0000_0001;
-        public const byte RightInput    = 0b0000_0010;
-        public const byte UpInput       = 0b0000_0100;
-        public const byte DownInput     = 0b0000_1000;
-        
+    // @formatter:off
         public const byte S1Input       = 0b0001_0000;
         public const byte S2Input       = 0b0010_0000;
         public const byte S3Input       = 0b0100_0000;
         public const byte S4Input       = 0b1000_0000;
     // @formatter:on 
-
-    public float2 Direction
-    {
-        get
-        {
-            float2 direction = default;
-            if ((Input & LeftInput) > 0) direction += new float2(-1, 0);
-            if ((Input & RightInput) > 0) direction += new float2(1, 0);
-            if ((Input & UpInput) > 0) direction += new float2(0, 1);
-            if ((Input & DownInput) > 0) direction += new float2(0, -1);
-            return math.normalizesafe(direction);
-        }
-    }
 
     public bool S1 => (Input & S1Input) > 0;
 
@@ -53,30 +29,18 @@ public struct StepInput : IComponentData
 
     public static StepInput Read(ref DataStreamReader reader)
     {
-        return new StepInput(reader.ReadByte());
-    }
-
-    public static StepInput MoveTowards(in LocalTransform source, in Movement movement, in LocalTransform target)
-    {
-        return FromDirection(target.Position.xy - source.Position.xy);
-    }
+        var input = reader.ReadByte();
+        var direction = new float2(reader.ReadFloat(), reader.ReadFloat());
     
-    public static StepInput FromDirection(float2 direction)
-    {
-        byte input = 0;
-        if (direction.x > 0) input |= RightInput;
-        if (direction.x < 0) input |= LeftInput;
-        if (direction.y > 0) input |= UpInput;
-        if (direction.y < 0) input |= DownInput;
-        return new StepInput(input);
+        return new StepInput(){Input = input, Direction = direction};
     }
 
     public void Collect()
     {
-        if (Keyboard.current.wKey.isPressed)        Input |= StepInput.UpInput;
-        if (Keyboard.current.sKey.isPressed)        Input |= StepInput.DownInput;
-        if (Keyboard.current.aKey.isPressed)        Input |= StepInput.LeftInput;
-        if (Keyboard.current.dKey.isPressed)        Input |= StepInput.RightInput;
+        if (Keyboard.current.wKey.isPressed)        Direction += new float2(0,1);
+        if (Keyboard.current.sKey.isPressed)        Direction += new float2(0,-1);
+        if (Keyboard.current.aKey.isPressed)        Direction += new float2(-1,0);
+        if (Keyboard.current.dKey.isPressed)        Direction += new float2(1,0);
         
         if (Keyboard.current.eKey.isPressed)        Input |= StepInput.S1Input;
         if (Keyboard.current.qKey.isPressed)        Input |= StepInput.S2Input;
@@ -120,7 +84,7 @@ public struct FullStepData
     {
         Step = step;
         for (int i = 0; i < connections.Length; i++)
-            this[i] = new StepInput(connections[i].InputBuffer.Input);
+            this[i] = connections[i].InputBuffer;
     }
     public FullStepData(long step, params StepInput[] inputs) : this()
     {

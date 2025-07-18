@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7756041969186760268}
   - component: {fileID: 4710129199327565736}
   - component: {fileID: 8164776769268316261}
+  - component: {fileID: 8235055791634373634}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -57,6 +58,8 @@ MonoBehaviour:
     Drag: 20
     LinearDrag: 1
     Speed: 2
+  Health:
+    Value: 2
 --- !u!114 &7756041969186760268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,3 +105,18 @@ MonoBehaviour:
   Max:
     x: 0.5
     y: 0.5
+--- !u!114 &8235055791634373634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f710d9c624cc2982f7147ae7f3594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
+  Particle:
+    AssetIndex: 4
+    _Asset: {fileID: -7316752644588120911, guid: 1f70d824da994f244bfaa631c330cd3a, type: 3}
