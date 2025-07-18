@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Burst;
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class TorusMapper
@@ -12,7 +13,18 @@ public static class TorusMapper
     private class XRotScaleKey {}
     public static readonly SharedStatic<float> YRotScale = SharedStatic<float>.GetOrCreate<float, YRotScaleKey>();
     private class YRotScaleKey {}
-    
+
+    public static (float2 Min, float2 Max) MapBounds
+    {
+        get
+        {
+            var min = new float2(-math.PI/TorusMapper.XRotScale.Data, -math.PI/TorusMapper.YRotScale.Data);
+            var max = new float2(math.PI/TorusMapper.XRotScale.Data, math.PI/TorusMapper.YRotScale.Data);
+            
+            return (min, max);
+        }
+    }
+
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {

@@ -26,6 +26,8 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
             return m_Game.IsReady;
         });
         
+        m_Game.RunGameWorldInit();
+        
         // Spawn the player
         m_Game.PlayerIndex = 0;
         SpawnPlayer();

@@ -82,6 +82,12 @@ public class Game : IDisposable
         m_World.Dispose();
     }
     
+
+    public void RunGameWorldInit()
+    {
+        var terrain = World.Unmanaged.GetExistingUnmanagedSystem<Collisions.TerrainInitSystem>();
+        World.Unmanaged.ResolveSystemStateRef(terrain).Enabled = true;
+    }
     
 
     // Looks for and removes a set of components and then adds a different set of components to the same set

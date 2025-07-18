@@ -37,6 +37,11 @@ public struct GameManager : IComponentData
     {
         public UnityObjectRef<PooledParticle> Prefab;
     }
+    
+    public struct Terrain : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
@@ -49,6 +54,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
     public ParticleDatabase ParticleDatabase;
+    public TerrainAuthoring[] Terrains;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -87,6 +93,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.ParticleDatabase.Length; i++)
                 {
                     buffer.Add(new GameManager.Particles(){ Prefab = authoring.ParticleDatabase[i] });
+                }
+            }
+            
+            if (authoring.Terrains?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Terrain>(entity);
+                for (int i = 0; i < authoring.Terrains.Length; i++)
+                {
+                    buffer.Add(new GameManager.Terrain(){ Entity = GetEntity(authoring.Terrains[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }
