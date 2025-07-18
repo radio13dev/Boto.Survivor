@@ -27,22 +27,25 @@ public partial struct ConvertLocal2DToWorldSystem : ISystem
     {
         public void Execute(in LocalTransform2D local, ref LocalTransform world)
         {
-            float3 position = default;
-            quaternion rotation = default;
-            float3 normal = default;
+            float3 position;
+            quaternion rotation;
+            float3 normal;
+            float3 tangent;
 
             {
                 var localPos = local.Position;
-                float theta = localPos.x * TorusMapper.XRotScale.Data;
                 float phi = localPos.y * TorusMapper.YRotScale.Data;
                 float phiCos = math.cos(phi);
+                float phiSin = math.sin(phi);
+                
+                float theta = localPos.x * TorusMapper.XRotScale.Data;
                 float thetaCos = math.cos(theta);
                 float thetaSin = math.sin(theta);
 
                 // Y-Pivot torus
                 float3 point = new float3(
                     (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * thetaCos,
-                    TorusMapper.Thickness.Data * math.sin(phi),
+                    TorusMapper.Thickness.Data * phiSin,
                     (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * thetaSin
                 );
 
@@ -57,19 +60,21 @@ public partial struct ConvertLocal2DToWorldSystem : ISystem
                 // Compute the torus circle center along the main ring.
                 float3 circleCenter = new float3(TorusMapper.RingRadius.Data * thetaCos, 0f, TorusMapper.RingRadius.Data * thetaSin);
                 // The normal is the direction from the circle center to the point.
-                float3 pointNormal = math.normalize(point - circleCenter);
+                normal = math.normalize(point - circleCenter);
 
                 // The tangent direction along the torus ring (derivative of [cos(theta), sin(theta)]).
-                float3 tangent = new float3(-thetaSin, 0f, thetaCos);
+                tangent = new float3(-thetaSin, 0f, thetaCos);
 
                 // Return a quaternion with forward as tangent and up as the torus surface normal.
                 position = point;
-                rotation = quaternion.LookRotation(-pointNormal, math.cross(tangent, pointNormal)); //quaternion.LookRotation(tangent, pointNormal);
-                normal = pointNormal;
+                rotation = quaternion.LookRotation(-normal, math.cross(tangent, normal)); //quaternion.LookRotation(tangent, pointNormal);
             }
 
             //TorusMapper.GetPositionAndUpRotation(local.Position, ref position, ref rotation, ref normal);
-            world = LocalTransform.FromPositionRotation(position, math.mul(quaternion.AxisAngle(normal, -local.Rotation), rotation));
+            world = LocalTransform.FromPositionRotation(position, 
+                math.mul(quaternion.AxisAngle(tangent, -1.3f), 
+                    math.mul(quaternion.AxisAngle(normal, -local.Rotation), rotation))
+                    );
         }
     }
 }
