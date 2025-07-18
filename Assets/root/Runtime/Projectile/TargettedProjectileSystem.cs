@@ -29,24 +29,24 @@ namespace Collisions
             //state.RequireForUpdate(m_enemyQuery);
         }
 
-        NativeArray<Entity> m_EnemyQueryEntities;
-        NativeArray<Collider> m_EnemyQueryColliders;
-        NativeArray<LocalTransform2D> m_EnemyQueryTransforms;
-        
         public void OnUpdate(ref SystemState state)
         {
-            m_EnemyQueryEntities.Dispose();
-            m_EnemyQueryColliders.Dispose();
-            m_EnemyQueryTransforms.Dispose();
-            
+            // Allocate
+            var enemyEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob);
+            var enemyColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
+            var enemyTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
+        
             // Update trees
             state.Dependency = new RegenerateJob()
             {
                 tree = m_enemyTree,
-                entities = m_EnemyQueryEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob),
-                colliders = m_EnemyQueryColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
-                transforms = m_EnemyQueryTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
+                entities = enemyEntities,
+                colliders = enemyColliders,
+                transforms = enemyTransforms 
             }.Schedule(state.Dependency);
+            enemyEntities.Dispose(state.Dependency);
+            enemyColliders.Dispose(state.Dependency);
+            enemyTransforms.Dispose(state.Dependency);
             
             state.CompleteDependency();
 
@@ -69,9 +69,6 @@ namespace Collisions
 
         public void OnDestroy(ref SystemState state)
         {
-            m_EnemyQueryEntities.Dispose();
-            m_EnemyQueryColliders.Dispose();
-            m_EnemyQueryTransforms.Dispose();
             m_enemyTree.Dispose();
         }
 

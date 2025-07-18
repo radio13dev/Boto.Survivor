@@ -16,10 +16,10 @@ public static class TorusMapper
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {
-        RingRadius.Data = 100f;
-        Thickness.Data = 5f;
-        XRotScale.Data = 0.01f;
-        YRotScale.Data = 0.1f;
+        RingRadius.Data = 80f;
+        Thickness.Data = 40f;
+        XRotScale.Data = 0.005f;
+        YRotScale.Data = 0.013f;
     }
     
 /*

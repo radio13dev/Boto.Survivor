@@ -29,24 +29,24 @@ namespace Collisions
             state.RequireForUpdate(m_survivorQuery);
         }
 
-        NativeArray<Entity> m_ProjectileQueryEntities;
-        NativeArray<Collider> m_ProjectileQueryColliders;
-        NativeArray<LocalTransform2D> m_ProjectileQueryTransforms;
-
         public void OnUpdate(ref SystemState state)
         {
-            m_ProjectileQueryEntities.Dispose();
-            m_ProjectileQueryColliders.Dispose();
-            m_ProjectileQueryTransforms.Dispose();
-            
+            // Allocate
+            var projectileEntities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob);
+            var projectileColliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
+            var projectileTransforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
+        
             // Update trees
             state.Dependency = new RegenerateJob()
             {
                 tree = m_projectileTree,
-                entities = m_ProjectileQueryEntities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob),
-                colliders = m_ProjectileQueryColliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob),
-                transforms = m_ProjectileQueryTransforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob)
+                entities = projectileEntities,
+                colliders = projectileColliders,
+                transforms = projectileTransforms
             }.Schedule(state.Dependency);
+            projectileEntities.Dispose(state.Dependency);
+            projectileColliders.Dispose(state.Dependency);
+            projectileTransforms.Dispose(state.Dependency);
 
             // Wait for that
             state.CompleteDependency();
@@ -64,9 +64,6 @@ namespace Collisions
 
         public void OnDestroy(ref SystemState state)
         {
-            m_ProjectileQueryEntities.Dispose();
-            m_ProjectileQueryColliders.Dispose();
-            m_ProjectileQueryTransforms.Dispose();
             m_projectileTree.Dispose();
         }
 

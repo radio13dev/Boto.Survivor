@@ -28,17 +28,18 @@ public partial struct EnemySpawnSystem : ISystem
         state.RequireForUpdate(m_PlayerTransformsQuery);
     }
 
-    NativeArray<LocalTransform2D> m_PlayerTransformsQueryResults;
     public void OnUpdate(ref SystemState state)
     {
-        m_PlayerTransformsQueryResults.Dispose();
+        var playerTransforms = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob);
         var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        new Job()
+        state.Dependency = new Job()
         {
             ecb = delayedEcb.AsParallelWriter(),
             resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-            PlayerTransforms = m_PlayerTransformsQueryResults = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob)
-        }.Schedule();
+            PlayerTransforms = playerTransforms
+        }.Schedule(state.Dependency);
+        playerTransforms.Dispose(state.Dependency);
+        
     }
     
     partial struct Job : IJobEntity
