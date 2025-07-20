@@ -10,7 +10,6 @@ public class ProjectileAuthoring : MonoBehaviour
         public override void Bake(ProjectileAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent<LocalTransform2D>(entity);
             AddComponent(entity, new ProjectileTag());
             AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new Movement(0,0,10));

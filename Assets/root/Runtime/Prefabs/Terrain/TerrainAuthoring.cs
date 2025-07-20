@@ -1,6 +1,7 @@
 using Collisions;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public class TerrainAuthoring : MonoBehaviour
@@ -11,7 +12,6 @@ public class TerrainAuthoring : MonoBehaviour
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent<TerrainTag>(entity);
-            AddComponent(entity, new LocalTransform2D(){ Position = ((float3)authoring.transform.position).xy });
         }
     }
 }

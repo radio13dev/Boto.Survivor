@@ -13,7 +13,6 @@ public class SurvivorAuthoring : MonoBehaviour
         public override void Bake(SurvivorAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent<LocalTransform2D>(entity); // save
             AddComponent(entity, new PlayerControlled(){ Index = -1 }); // save
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new SurvivorTag());

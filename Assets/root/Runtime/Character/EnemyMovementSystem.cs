@@ -11,16 +11,19 @@ public partial struct EnemyMovementSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EnemyTag>();
-        m_TargetQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlled, LocalTransform2D>().Build();
+        m_TargetQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlled, LocalTransform>().Build();
         state.RequireForUpdate(m_TargetQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var targets = m_TargetQuery.ToComponentDataArray<LocalTransform2D>(Allocator.TempJob);
+        var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        TorusMapper.CartesianToToroidal(targets[0].Position, out var x, out var y, out _);
+        float2 targetToroidal = new float2(x,y);
+         
         new Job()
         {
-            PlayerTransform = targets[0]
+            TargetToroidal = targetToroidal
         }.Schedule();
         targets.Dispose();
     }
@@ -28,10 +31,17 @@ public partial struct EnemyMovementSystem : ISystem
     [WithAll(typeof(EnemyTag))]
     partial struct Job : IJobEntity
     {
-        [ReadOnly] public LocalTransform2D PlayerTransform;
-        public void Execute(in LocalTransform2D localTransform, in Movement movement, ref StepInput input)
+        [ReadOnly] public float2 TargetToroidal;
+        public void Execute(in LocalTransform localTransform, in Movement movement, ref StepInput input)
         {
-            input = new StepInput(){Direction = PlayerTransform.Position - localTransform.Position };
+            // Convert our position and the targets position into cartesian/torodial coordinates
+            TorusMapper.CartesianToToroidal(localTransform.Position, out var x, out var y, out var ringCenterOffset);
+            var myToroidal = new float2(x,y);
+            var dirToroidal = TargetToroidal - myToroidal;
+            var dir = TorusMapper.ToroidalToCartesian(dirToroidal.x, dirToroidal.y);
+            
+            dir = localTransform.InverseTransformDirection(dir); // Convert the direction into a direction relative to our forward and right vectors (hope this works)
+            input = new StepInput(){Direction = dir.xz };
         }
     }
 }

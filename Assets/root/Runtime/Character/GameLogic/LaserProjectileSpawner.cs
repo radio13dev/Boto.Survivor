@@ -13,7 +13,7 @@ public struct LaserProjectileSpawner : IComponentData, IEnableableComponent
     public double Lifespan;
     public double TimeBetweenShots;
     
-    public float2 LastProjectileDirection;
+    public float3 LastProjectileDirection;
     public double LastProjectileTime;
     
     public LaserProjectileSpawner(Team team)
@@ -23,7 +23,7 @@ public struct LaserProjectileSpawner : IComponentData, IEnableableComponent
         Lifespan = 0;
         TimeBetweenShots = 0.0d;
         
-        LastProjectileDirection = new float2(1,0);
+        LastProjectileDirection = new float3(1,0,0);
         LastProjectileTime = 0;
     }
 }

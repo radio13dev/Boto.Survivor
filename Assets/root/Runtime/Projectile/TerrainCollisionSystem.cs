@@ -28,10 +28,12 @@ namespace Collisions
             Random r = Random.CreateFromIndex(unchecked((uint)DateTime.UtcNow.Ticks));
             for (int i = 0; i < k_TerrainSpawnAttempts; i++)
             {
+                // Todo
+                fix
                 var pos = r.NextFloat2(bounds.Min, bounds.Max);
                 var template = options[r.NextInt(options.Length)];
                 var newTerrainE = state.EntityManager.Instantiate(template.Entity);
-                state.EntityManager.SetComponentData(newTerrainE, new LocalTransform2D(){ Position = pos });
+                state.EntityManager.SetComponentData(newTerrainE, new LocalTransform(){ Position = pos });
             }
             
             state.Enabled = false;
@@ -45,18 +47,18 @@ namespace Collisions
     public partial struct TerrainCollisionSystem : ISystem
     {
         int m_LastEntityCount;
-        NativeTrees.NativeQuadtree<Entity> m_Tree;
+        NativeTrees.NativeOctree<Entity> m_Tree;
         EntityQuery m_TreeQuery;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             m_Tree = new(
-                new(min: new float2(-1000, -1000), max: new float2(1000, 1000)),
+                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
                 Allocator.Persistent
             );
 
-            m_TreeQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<TerrainTag>().Build();
+            m_TreeQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<TerrainTag>().Build();
             state.RequireForUpdate(m_TreeQuery);
         }
 
@@ -68,7 +70,7 @@ namespace Collisions
                 m_LastEntityCount = entityCount;
                 var entities = m_TreeQuery.ToEntityArray(allocator: Allocator.TempJob);
                 var colliders = m_TreeQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-                var transforms = m_TreeQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
+                var transforms = m_TreeQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
                 state.Dependency = new RegenerateJob()
                 {
                     tree = m_Tree,
@@ -103,20 +105,20 @@ namespace Collisions
         [BurstCompile]
         unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
-            unsafe public void Execute(in LocalTransform2D transform, in Collider collider, ref Force force)
+            unsafe public void Execute(in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform.Position.xy);
+                var adjustedAABB = collider.Add(transform.Position);
                 fixed (Force* force_ptr = &force)
                 {
                     var visitor = new CollisionVisitor(force_ptr);
-                    tree.Range(adjustedAABB2D, ref visitor);
+                    tree.Range(adjustedAABB, ref visitor);
                 }
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 Force* _force;
 
@@ -125,10 +127,12 @@ namespace Collisions
                     _force = force;
                 }
 
-                public bool OnVisit(Entity treeEntity, AABB2D objBounds, AABB2D queryRange)
+                public bool OnVisit(Entity treeEntity, AABB objBounds, AABB queryRange)
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
                     
+                    // TODO
+                    fix
                     float2 delta = queryRange.Center - objBounds.Center;
                     float2 halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
                     float2 halfSizeB = (queryRange.max - queryRange.min) * 0.5f;

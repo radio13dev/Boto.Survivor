@@ -5,13 +5,14 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     public partial struct SurvivorShootEnemyCollisionSystem : ISystem
     {
-        NativeTrees.NativeQuadtree<Entity> m_projectileTree;
+        NativeTrees.NativeOctree<Entity> m_projectileTree;
         EntityQuery m_projectileQuery;
         EntityQuery m_survivorQuery;
 
@@ -19,14 +20,14 @@ namespace Collisions
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             m_projectileTree = new(
-                new(min: new float2(-1000, -1000), max: new float2(1000, 1000)),
+                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, Movement>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, Movement>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<EnemyTag, Health, Force>().Build();
+            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag, Health, Force>().Build();
             state.RequireForUpdate(m_survivorQuery);
         }
 
@@ -35,7 +36,7 @@ namespace Collisions
             // Allocate
             var projectileEntities = m_projectileQuery.ToEntityArray(allocator: Allocator.TempJob);
             var projectileColliders = m_projectileQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var projectileTransforms = m_projectileQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
+            var projectileTransforms = m_projectileQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
         
             // Update trees
             state.Dependency = new RegenerateJob()
@@ -72,12 +73,12 @@ namespace Collisions
         unsafe partial struct CollisionJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
             [ReadOnly] public ComponentLookup<Movement> projectileVelLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, ref Health health, ref Force movement)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force movement)
             {
-                var adjustedAABB2D = collider.Add(transform.Position.xy);
+                var adjustedAABB2D = collider.Add(transform.Position);
                 fixed (Health* health_ptr = &health)
                 fixed (Force* movement_ptr = &movement)
                 fixed (CollisionJob* job_ptr = &this)
@@ -89,7 +90,7 @@ namespace Collisions
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
@@ -108,7 +109,7 @@ namespace Collisions
                     _ignoredCollisions = new NativeParallelHashSet<Entity>(4, Allocator.TempJob);
                 }
 
-                public bool OnVisit(Entity projectile, AABB2D objBounds, AABB2D queryRange)
+                public bool OnVisit(Entity projectile, AABB objBounds, AABB queryRange)
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
 

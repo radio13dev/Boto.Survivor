@@ -16,30 +16,35 @@ public partial class MovementSystemGroup : ComponentSystemGroup
 
 [Save]
 [Serializable]
-public struct Movement : IComponentData
+public struct MovementSettings : IComponentData
 {
-    public float2 Velocity;
-    public float2 LastDirection;
+    [SerializeField] public float Speed;
+}
+
+[Save]
+[Serializable]
+public struct DragSettings : IComponentData
+{
     [SerializeField] public float Drag;
     [SerializeField] public float LinearDrag;
-    [SerializeField] public float Speed;
-    
-    public Movement(float drag, float linearDrag, float speed)
-    {
-        Velocity = float2.zero;
-        LastDirection = new float2(1,0);
-        Drag = drag;
-        LinearDrag = linearDrag;
-        Speed = speed;
-    }
-    public Movement(float2 direction)
-    {
-        Velocity = direction;
-        LastDirection = direction;
-        Drag = 0;
-        LinearDrag = 0;
-        Speed = 0;
-    }
+}
+
+[Save]
+public struct Grounded : IComponentData, IEnableableComponent { }
+
+[Save]
+[Serializable]
+public struct Movement : IComponentData
+{
+    [HideInInspector] public float3 Velocity;
+    [HideInInspector] public float3 LastDirection;
+}
+
+[Save]
+[Serializable]
+public struct LockToSurface : IComponentData
+{
+    public float Height;
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]
@@ -49,7 +54,7 @@ public partial struct MovementSystem : ISystem
     {
         new Job()
         {
-            dt = 1.0f/60.0f
+            dt = SystemAPI.Time.DeltaTime
         }.Schedule();
     }
     
@@ -57,14 +62,14 @@ public partial struct MovementSystem : ISystem
     {
         [ReadOnly] public float dt;
     
-        public void Execute(Entity entity, ref Movement movement, ref LocalTransform2D transform)
+        public void Execute(Entity entity, ref Movement movement, ref LocalTransform transform)
         {
             transform.Position += movement.Velocity*dt;
             
             // Relative drag
             if (movement.Drag != 0) movement.Velocity -= movement.Velocity*dt*movement.Drag;
             // Linear drag
-            if (movement.LinearDrag != 0) movement.Velocity = mathu.MoveTowards(movement.Velocity, float2.zero, movement.LinearDrag*dt);
+            if (movement.LinearDrag != 0) movement.Velocity = mathu.MoveTowards(movement.Velocity, float3.zero, movement.LinearDrag*dt);
         }
     }
 }

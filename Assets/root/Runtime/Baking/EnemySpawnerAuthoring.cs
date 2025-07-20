@@ -15,7 +15,7 @@ public class EnemySpawnerAuthoring : MonoBehaviour
     {
         public override void Bake(EnemySpawnerAuthoring authoring)
         {
-            var entity = GetEntity(authoring, TransformUsageFlags.None);
+            var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             var spawner = authoring.Spawner;
             spawner.random = new Random((uint)authoring.GetInstanceID());
             AddComponent(entity, spawner);

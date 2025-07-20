@@ -10,7 +10,6 @@ public class PickupAuthoring : MonoBehaviour
         public override void Bake(PickupAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent<LocalTransform2D>(entity);
             AddComponent(entity, new Pickup());
             AddComponent(entity, new DestroyAtTime(){ DestroyTime = double.MaxValue });
         }

@@ -42,6 +42,11 @@ public struct GameManager : IComponentData
     {
         public Entity Entity;
     }
+    
+    public struct Projectiles : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour

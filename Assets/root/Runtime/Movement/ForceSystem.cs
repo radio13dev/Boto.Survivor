@@ -10,8 +10,8 @@ using Unity.Transforms;
 [Save]
 public struct Force : IComponentData
 {
-    public float2 Velocity;
-    public float2 Shift;
+    public float3 Velocity;
+    public float3 Shift;
     
     public void Reset()
     {
@@ -33,7 +33,7 @@ public partial struct ForceSystem : ISystem
     
     partial struct Job : IJobEntity
     {
-        public void Execute(Entity entity, ref LocalTransform2D transform, ref Movement movement, ref Force force)
+        public void Execute(Entity entity, ref LocalTransform transform, ref Movement movement, ref Force force)
         {
             movement.Velocity += force.Velocity;
             transform.Position += force.Shift;

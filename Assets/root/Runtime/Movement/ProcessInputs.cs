@@ -1,7 +1,7 @@
 using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
-
+using Unity.Transforms;
 
 
 /// <summary>
@@ -40,19 +40,9 @@ public partial struct ProcessInputs : ISystem
     [WithAll(typeof(Simulate))]
     partial struct JobLightweight : IJobEntity
     {
-        public void Execute(in StepInput input, in LocalTransform2D local, ref Movement movement)
+        public void Execute(in StepInput input, in LocalTransform local, ref Movement movement)
         {
-            var dir = input.Direction;
-            if (local.Rotation != 0)
-            {
-                float cos = math.cos(local.Rotation);
-                float sin = math.sin(local.Rotation);
-                dir = new float2(
-                    dir.x * cos - dir.y * sin,
-                    dir.x * sin + dir.y * cos
-                );
-            }
-
+            var dir = local.TransformDirection(input.Direction.f3());
             var vel = math.normalizesafe(dir) * movement.Speed * math.clamp(math.length(dir), 0, 1);
             movement.Velocity += vel;
             movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);

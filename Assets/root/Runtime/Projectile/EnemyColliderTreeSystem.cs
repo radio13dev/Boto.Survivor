@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
@@ -13,7 +14,7 @@ namespace Collisions
     [BurstCompile]
     public partial struct EnemyColliderTreeSystem : ISystem
     {
-        NativeTrees.NativeQuadtree<Entity> m_enemyTree;
+        NativeTrees.NativeOctree<Entity> m_enemyTree;
         EntityQuery m_enemyQuery;
 
         public void OnCreate(ref SystemState state)
@@ -21,11 +22,11 @@ namespace Collisions
             state.RequireForUpdate<GameManager.Resources>();
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             m_enemyTree = new(
-                new(min: new float2(-1000, -1000), max: new float2(1000, 1000)),
+                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
                 Allocator.Persistent
             );
 
-            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform2D, Collider>().WithAll<EnemyTag>().Build();
+            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
             //state.RequireForUpdate(m_enemyQuery);
         }
 
@@ -34,7 +35,7 @@ namespace Collisions
             // Allocate
             var enemyEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob);
             var enemyColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var enemyTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform2D>(allocator: Allocator.TempJob);
+            var enemyTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
         
             // Update trees
             state.Dependency = new RegenerateJob()
@@ -81,10 +82,10 @@ namespace Collisions
         {
             public EntityCommandBuffer.ParallelWriter ecb;
             [ReadOnly] public GameManager.Resources resources;
-            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
             [ReadOnly] public double time;
 
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
             {
                 if (laserSpawner.LastProjectileTime + laserSpawner.TimeBetweenShots > time) return;
             
@@ -96,16 +97,18 @@ namespace Collisions
 
                     tree.Nearest(transform.Position, 30, ref visitor, distance);
                     
-                    float2 dir;
+                    //TODO
+                    fix
+                    float3 dir;
                     if (visitor.Hits == 0)
                         dir = movement.LastDirection;
                     else
                         dir = math.normalizesafe(laserSpawner.LastProjectileDirection, movement.LastDirection);
-                    dir = math.normalizesafe(dir, new float2(1,0));
+                    dir = math.normalizesafe(dir, new float3(1,0,0));
                     
                     var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
                     var laserT = transform;
-                    laserT.Rotation = math.atan2(dir.y, dir.x);
+                    laserT.Rotation = quaternion.LookRotation(dir, transform.Up());
                     ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
                     ecb.SetComponent(Key, laser, laserT);
                     ecb.SetComponent(Key, laser, new Movement(dir*8));
@@ -116,16 +119,16 @@ namespace Collisions
             }
 
             [BurstCompile]
-            unsafe struct NearestVisitor : IQuadtreeNearestVisitor<Entity>
+            unsafe struct NearestVisitor : IOctreeNearestVisitor<Entity>
             {
                 public volatile int Hits;
                 int _key;
                 FireAtNearestTargetJob* _job;
-                LocalTransform2D _transform;
+                LocalTransform _transform;
                 Movement _sourceMovement;
                 LaserProjectileSpawner* _sourceSpawner;
 
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform2D transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
+                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
                 {
                     Hits = 0;
                     
@@ -136,7 +139,7 @@ namespace Collisions
                     _sourceSpawner = sourceSpawner;
                 }
 
-                public bool OnVist(Entity obj, AABB2D bounds)
+                public bool OnVist(Entity obj, AABB bounds)
                 {
                     Interlocked.Increment(ref Hits);
                     var dir = bounds.Center - _transform.Position;
@@ -146,9 +149,9 @@ namespace Collisions
             }
 
             [BurstCompile]
-            unsafe struct DistanceProvider : IQuadtreeDistanceProvider<Entity>
+            unsafe struct DistanceProvider : IOctreeDistanceProvider<Entity>
             {
-                public float DistanceSquared(float2 point, Entity obj, AABB2D bounds)
+                public float DistanceSquared(float3 point, Entity obj, AABB bounds)
                 {
                     return math.distancesq(point, bounds.Center);
                 }
@@ -158,11 +161,11 @@ namespace Collisions
         [BurstCompile]
         unsafe partial struct EnemyPushForceJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform2D transform, in Collider collider, ref Force force)
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform.Position.xy);
+                var adjustedAABB2D = collider.Add(transform.Position);
                 fixed (Force* force_ptr = &force)
                 {
                     var visitor = new CollisionVisitor(entity, force_ptr);
@@ -171,7 +174,7 @@ namespace Collisions
             }
 
 
-            public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 Entity _source;
                 Force* _force;
@@ -182,7 +185,7 @@ namespace Collisions
                     _force = force;
                 }
 
-                public bool OnVisit(Entity projectile, AABB2D objBounds, AABB2D queryRange)
+                public bool OnVisit(Entity projectile, AABB objBounds, AABB queryRange)
                 {
                     if (_source == projectile) return true;
                     if (!objBounds.Overlaps(queryRange)) return true;

@@ -5,6 +5,7 @@ using NativeTrees;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
+using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
@@ -20,9 +21,9 @@ namespace Collisions
     [Save]
     public struct Collider : IComponentData
     {
-        public NativeTrees.AABB2D Value;
+        public NativeTrees.AABB Value;
 
-        public Collider(AABB2D value)
+        public Collider(AABB value)
         {
             Value = value;
         }
@@ -30,9 +31,9 @@ namespace Collisions
         [BurstCompile]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        public NativeTrees.AABB2D Add(float2 offset)
+        public NativeTrees.AABB Add(float3 offset)
         {
-            return new NativeTrees.AABB2D(Value.min + offset, Value.max + offset);
+            return new NativeTrees.AABB(Value.min + offset, Value.max + offset);
         }
     }
 

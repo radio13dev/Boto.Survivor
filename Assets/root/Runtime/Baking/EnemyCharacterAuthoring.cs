@@ -12,7 +12,6 @@ public class EnemyCharacterAuthoring : MonoBehaviour
         public override void Bake(EnemyCharacterAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent<LocalTransform2D>(entity);
             AddComponent<CharacterTag>(entity);
             AddComponent<EnemyTag>(entity);
             
