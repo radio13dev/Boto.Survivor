@@ -96,22 +96,14 @@ namespace Collisions
                     var distance = new DistanceProvider();
 
                     tree.Nearest(transform.Position, 30, ref visitor, distance);
-                    
-                    //TODO
-                    fix
-                    float3 dir;
-                    if (visitor.Hits == 0)
-                        dir = movement.LastDirection;
-                    else
-                        dir = math.normalizesafe(laserSpawner.LastProjectileDirection, movement.LastDirection);
-                    dir = math.normalizesafe(dir, new float3(1,0,0));
+                    var dir = laserSpawner.LastProjectileDirection;
                     
                     var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
                     var laserT = transform;
-                    laserT.Rotation = quaternion.LookRotation(dir, transform.Up());
+                    laserT.Rotation = quaternion.LookRotationSafe(TorusMapper.ToroidalToCartesian(dir.x, dir.y), laserT.Up());
                     ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
                     ecb.SetComponent(Key, laser, laserT);
-                    ecb.SetComponent(Key, laser, new Movement(dir*8));
+                    ecb.SetComponent(Key, laser, new SurfaceMovement(){ Velocity = new float2(8,0)});
                     ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
                     
                     laserSpawner.LastProjectileTime = time;
@@ -142,8 +134,10 @@ namespace Collisions
                 public bool OnVist(Entity obj, AABB bounds)
                 {
                     Interlocked.Increment(ref Hits);
-                    var dir = bounds.Center - _transform.Position;
-                    _sourceSpawner->LastProjectileDirection = dir;
+                    TorusMapper.CartesianToToroidal(_transform.Position, out var myTheta, out var myPhi, out _);
+                    TorusMapper.CartesianToToroidal(bounds.Center, out var targetTheta, out var targetPhi, out _);
+                    var dirToroidal = math.normalizesafe(new float2(targetTheta - myTheta, targetPhi - myPhi), new float2(1,0));
+                    _sourceSpawner->LastProjectileDirection = dirToroidal;
                     return false;
                 }
             }

@@ -15,36 +15,15 @@ public partial class MovementSystemGroup : ComponentSystemGroup
 }
 
 [Save]
-[Serializable]
-public struct MovementSettings : IComponentData
-{
-    [SerializeField] public float Speed;
-}
-
-[Save]
-[Serializable]
-public struct DragSettings : IComponentData
-{
-    [SerializeField] public float Drag;
-    [SerializeField] public float LinearDrag;
-}
-
-[Save]
-public struct Grounded : IComponentData, IEnableableComponent { }
-
-[Save]
-[Serializable]
 public struct Movement : IComponentData
 {
-    [HideInInspector] public float3 Velocity;
-    [HideInInspector] public float3 LastDirection;
+    public float3 Velocity;
 }
 
 [Save]
-[Serializable]
-public struct LockToSurface : IComponentData
+public struct SurfaceMovement : IComponentData
 {
-    public float Height;
+    public float2 Velocity;
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]
@@ -52,24 +31,33 @@ public partial struct MovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        new Job()
+        new MovementJob()
+        {
+            dt = SystemAPI.Time.DeltaTime
+        }.Schedule();
+        new SurfaceMovementJob()
         {
             dt = SystemAPI.Time.DeltaTime
         }.Schedule();
     }
     
-    partial struct Job : IJobEntity
+    partial struct MovementJob : IJobEntity
     {
         [ReadOnly] public float dt;
     
-        public void Execute(Entity entity, ref Movement movement, ref LocalTransform transform)
+        public void Execute(in Movement movement, ref LocalTransform transform)
         {
             transform.Position += movement.Velocity*dt;
-            
-            // Relative drag
-            if (movement.Drag != 0) movement.Velocity -= movement.Velocity*dt*movement.Drag;
-            // Linear drag
-            if (movement.LinearDrag != 0) movement.Velocity = mathu.MoveTowards(movement.Velocity, float3.zero, movement.LinearDrag*dt);
+        }
+    }
+    
+    partial struct SurfaceMovementJob : IJobEntity
+    {
+        [ReadOnly] public float dt;
+
+        public void Execute(in SurfaceMovement surfaceMovement, ref LocalTransform transform)
+        {
+            transform.Position += transform.TransformDirection(surfaceMovement.Velocity.f3())*dt;
         }
     }
 }

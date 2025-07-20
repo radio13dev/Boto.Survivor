@@ -172,11 +172,12 @@ public static class TorusMapper
 
     [BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float3 SnapToSurface(float3 worldSpace)
+    public static void SnapToSurface(float3 worldSpace, float heightOffset, out float3 newPos, out float3 normal)
     {
         var circleCenter = GetTorusCircleCenter(worldSpace);
         float3 offset = worldSpace - circleCenter;
-        return circleCenter + math.normalizesafe(offset) * RingRadius.Data;
+        normal = math.normalizesafe(offset);
+        newPos = circleCenter + normal * (RingRadius.Data + heightOffset);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

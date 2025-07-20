@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using AABB = NativeTrees.AABB;
 using Random = Unity.Mathematics.Random;
 
 namespace Collisions
@@ -28,9 +29,8 @@ namespace Collisions
             Random r = Random.CreateFromIndex(unchecked((uint)DateTime.UtcNow.Ticks));
             for (int i = 0; i < k_TerrainSpawnAttempts; i++)
             {
-                // Todo
-                fix
-                var pos = r.NextFloat2(bounds.Min, bounds.Max);
+                var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
+                var pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
                 var template = options[r.NextInt(options.Length)];
                 var newTerrainE = state.EntityManager.Instantiate(template.Entity);
                 state.EntityManager.SetComponentData(newTerrainE, new LocalTransform(){ Position = pos });
@@ -131,24 +131,29 @@ namespace Collisions
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
                     
-                    // TODO
-                    fix
-                    float2 delta = queryRange.Center - objBounds.Center;
-                    float2 halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
-                    float2 halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
+                    // TODO: Fix this now that it uses 3D AABB
+                    var delta = queryRange.Center - objBounds.Center;
+                    var halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
+                    var halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
 
                     float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
                     float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
+                    float overlapZ = halfSizeA.z + halfSizeB.z - math.abs(delta.z);
 
-                    if (overlapX < overlapY)
+                    if (overlapX < overlapY && overlapX < overlapZ)
                     {
                         float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
-                        _force->Shift += new float2(pushX, 0f);
+                        _force->Shift += new float3(pushX, 0f, 0f);
+                    }
+                    else if (overlapY < overlapX && overlapY < overlapZ)
+                    {
+                        float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
+                        _force->Shift += new float3(0f, pushY, 0);
                     }
                     else
                     {
-                        float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
-                        _force->Shift += new float2(0f, pushY);
+                        float pushZ = overlapZ * (delta.z < 0f ? -1f : 1f);
+                        _force->Shift += new float3(0f, 0f, pushZ);
                     }
                     return true;
                 }
@@ -160,11 +165,11 @@ namespace Collisions
         [WithAll(typeof(ProjectileTag))]
         unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeQuadtree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
-            unsafe public void Execute(in LocalTransform2D transform, in Collider collider, ref DestroyAtTime projectileLifespan)
+            unsafe public void Execute(in LocalTransform transform, in Collider collider, ref DestroyAtTime projectileLifespan)
             {
-                var adjustedAABB2D = collider.Add(transform.Position.xy);
+                var adjustedAABB2D = collider.Add(transform.Position);
                 fixed (DestroyAtTime* lifespan_ptr = &projectileLifespan)
                 {
                     var visitor = new CollisionVisitor(lifespan_ptr);
@@ -173,7 +178,7 @@ namespace Collisions
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IQuadtreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 DestroyAtTime* _lifespanPtr;
 
@@ -182,7 +187,7 @@ namespace Collisions
                     _lifespanPtr = lifespanPtr;
                 }
 
-                public bool OnVisit(Entity treeEntity, AABB2D objBounds, AABB2D queryRange)
+                public bool OnVisit(Entity treeEntity, AABB objBounds, AABB queryRange)
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
                     _lifespanPtr->DestroyTime = 0;

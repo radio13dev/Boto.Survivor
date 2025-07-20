@@ -1,3 +1,4 @@
+using System;
 using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -10,6 +11,28 @@ using Unity.Transforms;
 [UpdateBefore(typeof(MovementSystemGroup))]
 public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
+}
+
+[Save]
+[Serializable]
+public struct MovementSettings : IComponentData
+{
+    public float Speed;
+    public float Drag;
+    public float LinearDrag;
+    
+    public MovementSettings(float speed, float drag, float linearDrag)
+    {
+        Speed = speed;
+        Drag = drag;
+        LinearDrag = linearDrag;
+    }
+}
+
+[Save]
+public struct LastStepInputLastDirection : IComponentData
+{
+    public float2 Value;
 }
 
 [Save]
@@ -40,12 +63,12 @@ public partial struct ProcessInputs : ISystem
     [WithAll(typeof(Simulate))]
     partial struct JobLightweight : IJobEntity
     {
-        public void Execute(in StepInput input, in LocalTransform local, ref Movement movement)
+        public void Execute(in StepInput input, ref LastStepInputLastDirection lastDirection, in LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
         {
+            lastDirection.Value = math.normalizesafe(lastDirection.Value, lastDirection.Value);
             var dir = local.TransformDirection(input.Direction.f3());
-            var vel = math.normalizesafe(dir) * movement.Speed * math.clamp(math.length(dir), 0, 1);
+            var vel = math.normalizesafe(dir) * movementSettings.Speed * math.clamp(math.length(dir), 0, 1);
             movement.Velocity += vel;
-            movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
         }
     }
     

@@ -60,6 +60,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public InstancedResourcesDatabase InstancedResourcesDatabase;
     public ParticleDatabase ParticleDatabase;
     public TerrainAuthoring[] Terrains;
+    public ProjectileAuthoring[] Projectiles;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -107,6 +108,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Terrains.Length; i++)
                 {
                     buffer.Add(new GameManager.Terrain(){ Entity = GetEntity(authoring.Terrains[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Projectiles?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Projectiles>(entity);
+                for (int i = 0; i < authoring.Projectiles.Length; i++)
+                {
+                    buffer.Add(new GameManager.Projectiles(){ Entity = GetEntity(authoring.Projectiles[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }

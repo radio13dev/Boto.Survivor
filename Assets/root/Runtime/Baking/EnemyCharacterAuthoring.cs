@@ -4,7 +4,7 @@ using Unity.Entities;
 
 public class EnemyCharacterAuthoring : MonoBehaviour
 {
-    public Movement Movement = new Movement(1,1,1);
+    public MovementSettings MovementSettings = new MovementSettings(1,1,1);
     public Health Health = new Health(10);
     
     public partial class SurvivorBaker : Baker<EnemyCharacterAuthoring>
@@ -12,14 +12,18 @@ public class EnemyCharacterAuthoring : MonoBehaviour
         public override void Bake(EnemyCharacterAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
+            
+            // Basic character setup
             AddComponent<CharacterTag>(entity);
             AddComponent<EnemyTag>(entity);
-            
-            AddComponent(entity, new StepInput());
-            AddComponent(entity, new Force());
-            
             AddComponent(entity, authoring.Health);
-            AddComponent(entity, authoring.Movement);
+            
+            // Movement and Inputs
+            AddComponent(entity, authoring.MovementSettings);
+            AddComponent<Movement>(entity);
+            AddComponent<StepInput>(entity);
+            AddComponent<Force>(entity);
+            
         }
     }
 }

@@ -37,13 +37,7 @@ namespace Collisions
         }
     }
 
-    public struct SurvivorProjectileTag : IComponentData
-    {
-        public const Team Team = global::Team.Survivor;
-    }
+    public struct SurvivorProjectileTag : IComponentData { }
 
-    public struct EnemyProjectileTag : IComponentData
-    {
-        public const Team Team = global::Team.Enemy;
-    }
+    public struct EnemyProjectileTag : IComponentData { }
 }

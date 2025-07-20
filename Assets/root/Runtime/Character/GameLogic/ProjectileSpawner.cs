@@ -61,10 +61,9 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
                     {
                         DestroyTime = CurrentTime + 20
                     });
-                    var projectileT = localTransform;
-                    projectileT.Rotation = i*math.PI2/8;
-                    ecb.SetComponent(key, newProjectile, projectileT);
-                    ecb.SetComponent(key, newProjectile, new Movement(0,0,0){ Velocity = projectileT.Forward });
+                    var ang = i*math.PI2/8;
+                    ecb.SetComponent(key, newProjectile, localTransform);
+                    ecb.SetComponent(key, newProjectile, new SurfaceMovement(){ Velocity = new float2(math.cos(ang), math.sin(ang)) });
                 }
             }
         }
