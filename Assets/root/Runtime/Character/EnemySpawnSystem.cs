@@ -1,4 +1,5 @@
 ﻿using System;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -7,6 +8,7 @@ using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [Serializable]
+[Save]
 public partial struct EnemySpawner : IComponentData
 {
     [HideInInspector] public Unity.Mathematics.Random random;

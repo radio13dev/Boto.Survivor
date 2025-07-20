@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
+using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[Save]
 public struct LocalTransform2D : IComponentData
 {
     public float2 Position;

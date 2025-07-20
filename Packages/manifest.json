@@ -2,6 +2,7 @@
   "dependencies": {
     "com.boto.bartofzo.nativetrees": "file:C:/Work Repos/NativeTrees.FORK/Packages/NativeTrees",
     "com.boto.utility": "file:C:/Work Repos/Boto.Utility/Assets/root",
+    "com.bovinelabs.core": "1.4.4",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.burst": "1.8.23",
     "com.unity.entities": "1.4.0-pre.3",
@@ -42,5 +43,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.bovinelabs.core"
+      ]
+    }
+  ]
 }

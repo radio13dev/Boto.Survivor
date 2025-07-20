@@ -34,17 +34,34 @@ public partial struct LocalTransformLastSystem : ISystem
     }
 }
 
+public struct RenderSystemHalfTime : IComponentData
+{
+    public float Value;
+}
+
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateInGroup(typeof(LateSimulationSystemGroup))]
+public partial class RenderSystemGroup : ComponentSystemGroup
+{
+    protected override void OnCreate()
+    {
+        base.OnCreate();
+        EntityManager.CreateEntity(typeof(RenderSystemHalfTime));
+    }
+}
+
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateInGroup(typeof(RenderSystemGroup))]
 public unsafe partial struct LightweightRenderSystem : ISystem
 {
     EntityQuery m_Query;
     NativeArray<Matrix4x4> m_InstanceMats;
-    public float t;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GameManager.Resources>();
+        state.RequireForUpdate<RenderSystemHalfTime>();
         m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().Build();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
     }
@@ -56,6 +73,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        var halfTime = SystemAPI.GetSingleton<RenderSystemHalfTime>();
         var resources = SystemAPI.GetSingletonBuffer<GameManager.InstancedResources>();
         
         for (int i = 0; i < resources.Length; i++)
@@ -77,7 +95,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 transforms = transforms,
                 transformsLast = transformsLast,
                 matrices = m_InstanceMats,
-                t = t
+                t = halfTime.Value
             };
             asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
             

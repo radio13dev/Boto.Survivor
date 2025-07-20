@@ -1,3 +1,4 @@
+using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -11,6 +12,7 @@ public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
 }
 
+[Save]
 public struct MovementInputLockout : IComponentData, IEnableableComponent
 {
 }

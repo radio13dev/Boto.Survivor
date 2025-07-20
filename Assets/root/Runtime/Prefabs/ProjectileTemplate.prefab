@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7838071843867019903}
   - component: {fileID: -3127374150066105801}
   - component: {fileID: 1234742855914670883}
+  - component: {fileID: 497324972839419108}
   m_Layer: 0
   m_Name: ProjectileTemplate
   m_TagString: Untagged
@@ -108,3 +109,15 @@ MonoBehaviour:
   Max:
     x: 0.2
     y: 0.2
+--- !u!114 &497324972839419108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring

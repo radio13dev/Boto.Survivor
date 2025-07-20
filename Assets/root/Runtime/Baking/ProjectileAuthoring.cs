@@ -14,8 +14,6 @@ public class ProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new ProjectileTag());
             AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new Movement(0,0,10));
-            
-            AddComponent<SaveTag>(entity);
         }
     }       
 }

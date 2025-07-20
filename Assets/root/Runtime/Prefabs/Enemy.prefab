@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 240200278457971943}
   - component: {fileID: 3557533656269071170}
-  - component: {fileID: 7756041969186760268}
   - component: {fileID: 4710129199327565736}
   - component: {fileID: 8164776769268316261}
   - component: {fileID: 8235055791634373634}
+  - component: {fileID: 2943698238182725417}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -60,18 +60,6 @@ MonoBehaviour:
     Speed: 2
   Health:
     Value: 2
---- !u!114 &7756041969186760268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.LinkedEntityGroupAuthoring
 --- !u!114 &4710129199327565736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,3 +108,15 @@ MonoBehaviour:
   Particle:
     AssetIndex: 4
     _Asset: {fileID: -7316752644588120911, guid: 1f70d824da994f244bfaa631c330cd3a, type: 3}
+--- !u!114 &2943698238182725417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring

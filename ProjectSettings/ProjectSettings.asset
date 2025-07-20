@@ -597,7 +597,8 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 1
   webEnableSubmoduleStrippingCompatibility: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    WebGL: BL_CORE_EXTENSIONS;BL_DISABLE_SUBSCENE;BL_DISABLE_STRIP;BL_DISABLE_PHYSICS_STATES;BL_DISABLE_PAUSE;BL_DISABLE_OBJECT_DEFINITION;BL_DISABLE_LIFECYCLE;BL_DISABLE_INPUT;BL_DISABLE_CAMERA;BL_DISABLE_ANALYZERS
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

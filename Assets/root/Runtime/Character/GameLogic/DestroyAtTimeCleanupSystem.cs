@@ -1,6 +1,8 @@
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 
+[Save]
 public struct DestroyAtTime : IComponentData
 {
     public double DestroyTime;

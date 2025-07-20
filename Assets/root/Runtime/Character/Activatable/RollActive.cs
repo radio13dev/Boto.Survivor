@@ -1,8 +1,10 @@
-﻿using Unity.Collections;
+﻿using BovineLabs.Saving;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[Save]
 public struct RollActive : IComponentData, IEnableableComponent
 {
     public float T;

@@ -13,8 +13,6 @@ public class PickupAuthoring : MonoBehaviour
             AddComponent<LocalTransform2D>(entity);
             AddComponent(entity, new Pickup());
             AddComponent(entity, new DestroyAtTime(){ DestroyTime = double.MaxValue });
-            
-            AddComponent<SaveTag>(entity);
         }
     }
 }

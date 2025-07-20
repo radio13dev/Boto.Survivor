@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 240200278457971943}
   - component: {fileID: 6061478738849763825}
-  - component: {fileID: 7756041969186760268}
   - component: {fileID: 3243524279367401719}
   - component: {fileID: 6264614865234835065}
   - component: {fileID: 1822928595746831905}
+  - component: {fileID: -2977659499843593134}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -59,18 +59,6 @@ MonoBehaviour:
     LinearDrag: 1
     Speed: 2
   EnableLaserProjectile: 1
---- !u!114 &7756041969186760268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.LinkedEntityGroupAuthoring
 --- !u!114 &3243524279367401719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,3 +110,15 @@ MonoBehaviour:
     SpawnRadius: 100
     SpawnBlockRadiusSqr: 9025
     SpawnChancePerFrame: 10
+--- !u!114 &-2977659499843593134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring

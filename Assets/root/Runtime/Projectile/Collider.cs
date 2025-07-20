@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using BovineLabs.Saving;
 using NativeTrees;
 using Unity.Burst;
 using Unity.Entities;
@@ -16,6 +17,7 @@ namespace Collisions
     }
 
     [BurstCompile]
+    [Save]
     public struct Collider : IComponentData
     {
         public NativeTrees.AABB2D Value;

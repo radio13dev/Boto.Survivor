@@ -1,7 +1,9 @@
 ﻿using System;
+using BovineLabs.Saving;
 using Unity.Entities;
 
 [Serializable]
+[Save]
 public struct Health : IComponentData
 {
     public int Value;

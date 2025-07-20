@@ -63,6 +63,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent);
         m_Game = new Game(false);
+        m_Game.LoadScenes();
         m_Game.RunGameWorldInit();
     }
 
@@ -228,13 +229,6 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         }
     }
 
-    [EditorButton]
-    public void Reload()
-    {
-        m_ServerJobHandle.Complete();
-        m_Game.ReloadSave();
-    }
-
     private void Update()
     {
         if (m_ServerDriver.IsCreated)
@@ -256,7 +250,11 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                 SpecialActionQueue = m_SpecialActionQueue.AsParallelWriter()
             };
 
-            if (m_ServerConnections.Length > 0)
+            if (!m_Game.IsReady)
+            {
+                m_Game.World.Update();
+            }
+            else if (m_ServerConnections.Length > 0)
             {
                 m_CumulativeTime += Time.deltaTime;
                 if (m_CumulativeTime >= Game.k_ServerPingFrequency)
@@ -277,21 +275,34 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
                     
                     // Update server sim
-                    newStepData.Apply(m_Game.World, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
+                    m_Game.ApplyStepData(newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
                     NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
                 }
             }
 
+            var saveState = m_Game.SaveState;
             for (int i = 0; i < m_ServerConnections.Length; i++)
                 if (m_ServerConnections[i].RequestedSave)
                 {
-                    var con = m_ServerConnections[i];
-                    SendSaveToConnection(m_ServerDriver, con);
-                    SendIdToConnection(m_ServerDriver, con, i);
-                    con.RequestedSave = false;
-                    m_ServerConnections[i] = con;
+                    
+                    if (saveState == SaveState.Idle)
+                    {
+                        m_Game.InitSave();
+                        continue;
+                    }
+                    if (saveState == SaveState.Saving) continue; // Wait
+                    if (saveState == SaveState.Ready)
+                    {
+                        // Send
+                        var con = m_ServerConnections[i];
+                        SendSaveToConnection(m_ServerDriver, con);
+                        SendIdToConnection(m_ServerDriver, con, i);
+                        con.RequestedSave = false;
+                        m_ServerConnections[i] = con;
+                    }
                 }
+            if (saveState == SaveState.Ready) m_Game.CleanSave();
 
             // Schedule the job chain.
             m_ServerJobHandle = m_ServerDriver.Driver.ScheduleUpdate();

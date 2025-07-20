@@ -1,4 +1,5 @@
 using System;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -13,6 +14,7 @@ public partial class MovementSystemGroup : ComponentSystemGroup
         
 }
 
+[Save]
 [Serializable]
 public struct Movement : IComponentData
 {

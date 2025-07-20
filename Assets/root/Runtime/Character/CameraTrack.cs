@@ -33,22 +33,25 @@ public class CameraTrack : MonoBehaviour
             setupComplete = true;
         }
         
-        m_Query.SetSharedComponentFilter(new PlayerControlled() { Index = Game.PresentationGame.PlayerIndex });
+        var players = m_Query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
         var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-
-        if (transforms.Length > 0)
+        for (int i = 0; i < players.Length; i++)
         {
-            var target = transforms[0];
-            recentVelocity *= Time.deltaTime * velocityFalloff;
-            recentVelocity += (target.Position - recentPosition) * newVelocityEffect;
-            virtualTarget = target.Position + recentVelocity * virtualTargetOffset;
-            recentPosition = target.Position;
+            if (players[i].Index == Game.PresentationGame.PlayerIndex)
+            {
+                var target = transforms[0];
+                recentVelocity *= Time.deltaTime * velocityFalloff;
+                recentVelocity += (target.Position - recentPosition) * newVelocityEffect;
+                virtualTarget = target.Position + recentVelocity * virtualTargetOffset;
+                recentPosition = target.Position;
 
-            Vector3 actualCamTarget = (target.Position + virtualTarget) / 2;
-            transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime * linearCameraChase);
-            transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
+                Vector3 actualCamTarget = (target.Position + virtualTarget) / 2;
+                transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime * linearCameraChase);
+                transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
             
-            transform.rotation = target.Rotation;
+                transform.rotation = target.Rotation;
+                break;
+            }
         }
     }
 }

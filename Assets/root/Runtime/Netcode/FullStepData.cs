@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
@@ -8,6 +9,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]
+[Save]
 public struct StepInput : IComponentData
 {
     public byte Input;
@@ -126,59 +128,5 @@ public struct FullStepData
                 extraActionPtr[i] = SpecialLockstepActions.Read(ref reader);
                 
         return result;
-    }
-
-    public unsafe void Apply(World world, SpecialLockstepActions* extraActionPtr)
-    {
-        var entityManager = world.EntityManager;
-
-        // Iterate step count
-        {
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
-            var stepController = query.GetSingleton<StepController>();
-            
-            if (Step == -1)
-                Step = stepController.Step + 1;
-
-            if (Step != stepController.Step + 1)
-            {
-                Debug.LogError($"Failed step, tried to go from step {stepController.Step} to {Step}");
-                return;
-            }
-
-            entityManager.SetComponentData(query.GetSingletonEntity(), new StepController(Step));
-        }
-        
-        world.SetTime(new TimeData(Step*(double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
-        
-        // Apply extra actions
-        {
-            if (ExtraActionCount > 0)
-            {
-                Debug.Log($"Step {Step}: Applying {ExtraActionCount} extra actions");
-                for (byte i = 0; i < ExtraActionCount; i++)
-                    extraActionPtr[i].Apply(world);
-            }
-        }
-        
-        // Apply inputs
-        {
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepInput)), new ComponentType(typeof(PlayerControlled)));
-            var entities = query.ToEntityArray(Allocator.Temp);
-            if (entities.Length > 0)
-            {
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    var index = entityManager.GetSharedComponent<PlayerControlled>(entities[i]).Index;
-                    var data = this[index];
-                    entityManager.SetComponentData(entities[i], data);
-                }
-            }
-
-            entities.Dispose();
-        }
-        
-        
-        world.Update();
     }
 }

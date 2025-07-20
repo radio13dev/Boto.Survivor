@@ -15,7 +15,6 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             AddComponent<LocalTransform2D>(entity);
             AddComponent<CharacterTag>(entity);
             AddComponent<EnemyTag>(entity);
-            AddComponent<SaveTag>(entity);
             
             AddComponent(entity, new StepInput());
             AddComponent(entity, new Force());

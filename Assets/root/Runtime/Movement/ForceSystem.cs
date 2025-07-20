@@ -1,4 +1,5 @@
-﻿using Unity.Collections;
+﻿using BovineLabs.Saving;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -6,6 +7,7 @@ using Unity.Transforms;
 /// <summary>
 /// Similar to Movement. Jobs can add velocities to this and they'll be applied to the Movement component next frame.
 /// </summary>
+[Save]
 public struct Force : IComponentData
 {
     public float2 Velocity;

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
+[Save]
 public struct ParticleOnDestroy : IComponentData
 {
     public int ParticleIndex;

@@ -1,3 +1,4 @@
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -7,6 +8,7 @@ using UnityEngine;
 /// <summary>
 /// The 'auto attack' system for survivors. These are added as children to the survivor's LinkedEntityGroup
 /// </summary>
+[Save]
 public struct ProjectileSpawner : IComponentData, IEnableableComponent
 {
     public double LastProjectileTime;

@@ -78,7 +78,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     private NativeQueue<GenericMessage> m_GenericMessageBuffer;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
 
-    private NativeArray<byte> m_SaveBuffer;
+    private NativeList<byte> m_SaveBuffer;
 
     // Connection and ping statistics. Values that can be modified by a job are stored in
     // NativeReferences since jobs can only modify values in native containers.
@@ -96,7 +96,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
         m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
-        m_SaveBuffer = new NativeArray<byte>(k_MaxSaveSize, Allocator.Persistent);
+        m_SaveBuffer = new NativeList<byte>(Allocator.Persistent);
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
     }
 
@@ -178,7 +178,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         public NativeReference<Server> Connection;
         public NativeQueue<FullStepData> ServerMessageBuffer;
         public NativeQueue<GenericMessage>.ParallelWriter GenericMessageBuffer;
-        public NativeArray<byte> SaveBuffer;
+        public NativeList<byte> SaveBuffer;
         public NativeArray<SpecialLockstepActions> SpecialActionsArray;
         public long Now;
 
@@ -218,9 +218,8 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
                                 var len = reader.ReadInt();
                                 Debug.Log($"... len {len}...");
-
-                                ((int*)SaveBuffer.GetUnsafePtr())[0] = len; // Write the length to the first 4 bytes of the save buffer
-                                reader.ReadBytes(new Span<byte>(&(((byte*)SaveBuffer.GetUnsafePtr())[4]), len)); // ... then write the rest of the save out
+                                SaveBuffer.Resize(len, NativeArrayOptions.UninitializedMemory);
+                                reader.ReadBytes(SaveBuffer.AsArray());
                                 break;
                             case PingServerBehaviour.CODE_SendId:
                                 GenericMessageBuffer.Enqueue(GenericMessage.Read(ref reader));
@@ -269,8 +268,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             // First, complete the previously-scheduled job chain.
             m_ClientJobHandle.Complete();
 
-            var memLen = ((int*)m_SaveBuffer.GetUnsafePtr())[0];
-            if (memLen != 0)
+            if (m_SaveBuffer.Length != 0)
             {
                 if (m_Game == null)
                 {
@@ -278,17 +276,12 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                     m_Game = new Game(true);
                 }
 
-                if (!m_Game.IsReady)
-                {
-                    m_Game.World.Update();
-                    return;
-                }
-
-                Debug.Log($"... loading save...");
+                Debug.Log($"... loading save {m_SaveBuffer.Length}...");
 
                 // Load this in
-                ((int*)m_SaveBuffer.GetUnsafePtr())[0] = 0;
-                m_Game.LoadSave(&((byte*)m_SaveBuffer.GetUnsafePtr())[4], memLen);
+                m_Game.LoadSave(m_SaveBuffer.AsArray());
+                m_SaveBuffer.Clear();
+                m_Game.LoadScenes();
 
                 Debug.Log($"... done.");
             }
@@ -297,25 +290,27 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
             if (shouldSend) m_CumulativeTime -= Game.k_ClientPingFrequency;
 
-            if (m_Game != null && m_Game.IsReady)
+            if (m_Game != null)
             {
-                if ((shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
+                bool ready = m_Game.IsReady;
+                if (ready && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
-                    msg.Apply(m_Game.World, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+                    m_Game.ApplyStepData(msg, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
                 }
+                else if (!ready) m_Game.World.Update(); // Completes save loading
                 else
                 {
-                    var renderSystem = m_Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>();
-                    m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1);
-                    renderSystem.Update(m_Game.World.Unmanaged);
+                    // Render between steps
+                    m_Game.ApplyRender(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1));
+                }
+                
+                while (m_GenericMessageBuffer.TryDequeue(out var message))
+                {
+                    message.Execute(m_Game);
                 }
             }
 
-            while (m_GenericMessageBuffer.TryDequeue(out var message))
-            {
-                message.Execute(m_Game);
-            }
 
             if (m_FrameInput.IsCreated)
             {

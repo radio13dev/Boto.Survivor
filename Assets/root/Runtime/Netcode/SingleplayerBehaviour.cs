@@ -6,8 +6,10 @@ using UnityEngine;
 
 public unsafe class SingleplayerBehaviour : MonoBehaviour
 {
-    public float T;
-    public bool InitComplete;
+    public bool TickEnabled = true;
+
+    private float m_T;
+    private bool m_InitComplete;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
     private Game m_Game;
 
@@ -20,6 +22,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         // Build game
         yield return new WaitUntil(() => Game.ConstructorReady);
         m_Game = new Game(true);
+        m_Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
             m_Game.World.Update();
@@ -34,7 +37,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         ApplyStep();
         
         // Complete
-        InitComplete = true;
+        m_InitComplete = true;
         Game.SingleplayerGame = m_Game;
     }
 
@@ -47,23 +50,19 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
     StepInput m_Inputs;
     private void Update()
     {
-        if (!InitComplete) return;
+        if (!m_InitComplete) return;
         
         m_Inputs.Collect();
-        T += Time.deltaTime;
-        if (T >= Game.k_ClientPingFrequency)
+        
+        if (TickEnabled && (m_T += Time.deltaTime) >= Game.k_ClientPingFrequency)
         {
-            T -= Game.k_ClientPingFrequency;
-            var renderSystem = m_Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>();
-            m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = 0;
+            m_T -= Game.k_ClientPingFrequency;
             ApplyStep();
             m_Inputs = default;
         }
         else
         {
-            var renderSystem = m_Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>();
-            m_Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(renderSystem).t = T/Game.k_ClientPingFrequency;
-            renderSystem.Update(m_Game.World.Unmanaged);
+            m_Game.ApplyRender(m_T/Game.k_ClientPingFrequency);
         }
     }
 
@@ -74,7 +73,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         {
             ExtraActionCount = m_StepData.ExtraActionCount
         };
-        m_StepData.Apply(m_Game.World, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+        m_Game.ApplyStepData(m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
     }
 

@@ -1,9 +1,11 @@
 using System.Linq;
+using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
+[Save]
 public struct InstancedResourceRequest : ISharedComponentData
 {
     public readonly int ToSpawn;
