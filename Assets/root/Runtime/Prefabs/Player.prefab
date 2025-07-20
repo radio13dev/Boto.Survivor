@@ -48,16 +48,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bed4a64841004d24da1e97a0ebd5b20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
-  Movement:
-    Velocity:
-      x: 0
-      y: 0
-    LastDirection:
-      x: 1
-      y: 0
+  MovementSettings:
+    Speed: 2
     Drag: 8
     LinearDrag: 1
-    Speed: 2
+  Health:
+    Value: 100
   EnableLaserProjectile: 1
 --- !u!114 &3243524279367401719
 MonoBehaviour:
@@ -89,9 +85,11 @@ MonoBehaviour:
   Min:
     x: -0.5
     y: -1
+    z: -0.5
   Max:
     x: 0.5
     y: 1
+    z: 0.5
 --- !u!114 &1822928595746831905
 MonoBehaviour:
   m_ObjectHideFlags: 0

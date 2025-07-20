@@ -16,6 +16,9 @@ public struct StepInput : IComponentData
     public float2 Direction;
         
     // @formatter:off
+        public const byte RotLeftInput  = 0b0000_0001;
+        public const byte RotRightInput = 0b0000_0010;
+        
         public const byte S1Input       = 0b0001_0000;
         public const byte S2Input       = 0b0010_0000;
         public const byte S3Input       = 0b0100_0000;
@@ -23,6 +26,7 @@ public struct StepInput : IComponentData
     // @formatter:on 
 
     public bool S1 => (Input & S1Input) > 0;
+    public int RotateSign => ((Input & RotLeftInput) > 0 ? -1 : 0) + ((Input & RotRightInput) > 0 ? 1 : 0);
 
     public void Write(ref DataStreamWriter writer)
     {
@@ -46,8 +50,11 @@ public struct StepInput : IComponentData
         if (Keyboard.current.aKey.isPressed)        Direction += new float2(-1,0);
         if (Keyboard.current.dKey.isPressed)        Direction += new float2(1,0);
         
-        if (Keyboard.current.eKey.isPressed)        Input |= StepInput.S1Input;
-        if (Keyboard.current.qKey.isPressed)        Input |= StepInput.S2Input;
+        if (Keyboard.current.eKey.isPressed)        Input |= StepInput.RotRightInput;
+        if (Keyboard.current.qKey.isPressed)        Input |= StepInput.RotLeftInput;
+        
+        if (Keyboard.current.jKey.isPressed)        Input |= StepInput.S1Input;
+        if (Keyboard.current.kKey.isPressed)        Input |= StepInput.S2Input;
         if (Keyboard.current.spaceKey.isPressed)    Input |= StepInput.S3Input;
         if (Keyboard.current.shiftKey.isPressed)    Input |= StepInput.S4Input;
 

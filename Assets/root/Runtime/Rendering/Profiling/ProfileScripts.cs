@@ -50,19 +50,19 @@ public class ProfileScripts : MonoBehaviour
         m_Projectiles.Dispose();
         m_ProjectilesMats.Dispose();
     }
+}
+
+[BurstCompile]
+struct AsyncRenderTransformGenerator : IJobFor
+{
+    [ReadOnly] public NativeArray<LocalTransform> magneticProjectiles;
+
+    [WriteOnly] public NativeArray<Matrix4x4> matrices;
 
     [BurstCompile]
-    struct AsyncRenderTransformGenerator : IJobFor
+    public void Execute(int index)
     {
-        [ReadOnly] public NativeArray<LocalTransform> magneticProjectiles;
-
-        [WriteOnly] public NativeArray<Matrix4x4> matrices;
-
-        [BurstCompile]
-        public void Execute(int index)
-        {
-            var projectile = magneticProjectiles[index];
-            matrices[index] = projectile.ToMatrix();
-        }
+        var projectile = magneticProjectiles[index];
+        matrices[index] = projectile.ToMatrix();
     }
 }

@@ -21,7 +21,9 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             // Movement and Inputs
             AddComponent(entity, authoring.MovementSettings);
             AddComponent<Movement>(entity);
+            AddComponent<Grounded>(entity);
             AddComponent<StepInput>(entity);
+            AddComponent<LastStepInputLastDirection>(entity);
             AddComponent<Force>(entity);
             
         }

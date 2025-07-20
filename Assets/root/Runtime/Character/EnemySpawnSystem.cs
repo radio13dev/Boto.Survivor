@@ -60,7 +60,7 @@ public partial struct EnemySpawnSystem : ISystem
         
             var rPos = t.Position;
             var rDir = math.normalizesafe(spawner.random.NextFloat2(min, max), max) * spawner.SpawnRadius;
-            rPos += t.TransformDirection(rDir.f3());
+            rPos += t.TransformDirection(rDir.f3z());
             
             for (int i = 0; i < PlayerTransforms.Length; i++)
                 if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)

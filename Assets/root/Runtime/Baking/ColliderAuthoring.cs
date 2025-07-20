@@ -7,7 +7,7 @@ using AABB = NativeTrees.AABB;
 public class ColliderAuthoring : MonoBehaviour
 {
     public float3 Min = new float3(-0.5f,-0.5f,-0.5f);
-    public float3 Max = new float3(0.5f,0.5f,-0.5f);
+    public float3 Max = new float3(0.5f,0.5f,0.5f);
 
     public partial class Baker : Baker<ColliderAuthoring>
     {

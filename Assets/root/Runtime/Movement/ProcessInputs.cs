@@ -1,5 +1,6 @@
 using System;
 using BovineLabs.Saving;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -53,28 +54,46 @@ public partial struct ProcessInputs : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        state.Dependency = new JobLightweight().Schedule(state.Dependency);
-        state.Dependency = new Job()
+        state.Dependency = new MovementInputJob().Schedule(state.Dependency);
+        state.Dependency = new RotateInputJob()
+        {
+            dt = SystemAPI.Time.DeltaTime
+        }.Schedule(state.Dependency);
+        state.Dependency = new RollInputJob()
         {
         }.Schedule(state.Dependency);
     }
 
     [WithNone(typeof(MovementInputLockout))]
     [WithAll(typeof(Simulate))]
-    partial struct JobLightweight : IJobEntity
+    partial struct MovementInputJob : IJobEntity
     {
         public void Execute(in StepInput input, ref LastStepInputLastDirection lastDirection, in LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
         {
-            lastDirection.Value = math.normalizesafe(lastDirection.Value, lastDirection.Value);
-            var dir = local.TransformDirection(input.Direction.f3());
+            lastDirection.Value = math.normalizesafe(input.Direction, lastDirection.Value);
+            var dir = local.TransformDirection(input.Direction.f3z());
             var vel = math.normalizesafe(dir) * movementSettings.Speed * math.clamp(math.length(dir), 0, 1);
             movement.Velocity += vel;
+        }
+    }
+
+    [WithAll(typeof(Simulate))]
+    partial struct RotateInputJob : IJobEntity
+    {
+        [ReadOnly] public float dt;
+        public void Execute(in StepInput input, ref LocalTransform local)
+        {
+            var sign = input.RotateSign;
+            if (sign != 0)
+            {
+                local.Rotation = math.mul(local.Rotation, quaternion.RotateY(2.0f*dt*sign));
+            }
         }
     }
     
     [WithPresent(typeof(ActiveLockout), typeof(MovementInputLockout), typeof(RollActive))]
     [WithAll(typeof(Simulate))]
-    partial struct Job : IJobEntity
+    partial struct RollInputJob : IJobEntity
     {
         public void Execute(in StepInput input,
             EnabledRefRW<ActiveLockout> activeLockout, EnabledRefRW<MovementInputLockout> movementInputLockout,

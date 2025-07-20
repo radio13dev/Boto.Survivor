@@ -40,13 +40,13 @@ public class InstancedResourceAuthoring : MonoBehaviour
 #if UNITY_EDITOR
     private void OnEnable() {
 
-        UnityEditor.SceneView.onSceneGUIDelegate -= OnSceneGUI;
-        UnityEditor.SceneView.onSceneGUIDelegate += OnSceneGUI;
+        UnityEditor.SceneView.duringSceneGui -= OnSceneGUI;
+        UnityEditor.SceneView.duringSceneGui += OnSceneGUI;
     }   
 
     private void OnDisable() {
 
-        UnityEditor.SceneView.onSceneGUIDelegate -= OnSceneGUI;
+        UnityEditor.SceneView.duringSceneGui -= OnSceneGUI;
     }
 
     private void OnSceneGUI(SceneView sceneView) {

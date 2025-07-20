@@ -24,7 +24,9 @@ public class SurvivorAuthoring : MonoBehaviour
             // Movement and Inputs
             AddComponent(entity, authoring.MovementSettings);
             AddComponent<Movement>(entity);
+            AddComponent<Grounded>(entity);
             AddComponent<StepInput>(entity);
+            AddComponent<LastStepInputLastDirection>(entity);
             AddComponent<Force>(entity);
             
             // Abilities and Input Lockouts

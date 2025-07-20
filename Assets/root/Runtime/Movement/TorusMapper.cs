@@ -35,6 +35,11 @@ public static class TorusMapper
     private class RingRadiusSqKey
     {
     }
+    public static readonly SharedStatic<float> ThicknessSq = SharedStatic<float>.GetOrCreate<float, ThicknessSqKey>();
+
+    private class ThicknessSqKey
+    {
+    }
 
     public static (float2 Min, float2 Max) MapBounds
     {
@@ -55,6 +60,7 @@ public static class TorusMapper
         XRotScale.Data = 0.005f;
         YRotScale.Data = 0.013f;
         RingRadiusSq.Data = RingRadius.Data * RingRadius.Data;
+        ThicknessSq.Data = ThicknessSq.Data * ThicknessSq.Data;
     }
 
     /// <summary>
@@ -123,11 +129,11 @@ public static class TorusMapper
         // Get torus parameters from SharedStatic
         float ringRadius = RingRadius.Data;
 
-        // Compute the angle theta (in the X-Y plane) for the projection
-        float theta = math.atan2(worldSpace.y, worldSpace.x);
+        // Compute the angle theta (in the X-z plane) for the projection
+        float theta = math.atan2(worldSpace.z, worldSpace.x);
 
         // Compute the center of the main torus ring at this angle
-        circleCenter = new float3(ringRadius * math.cos(theta), ringRadius * math.sin(theta), 0f);
+        circleCenter = new float3(ringRadius * math.cos(theta), 0f, ringRadius * math.sin(theta));
 
         // Compute the offset from the ring center to worldSpace
         float3 offset = worldSpace - circleCenter;
@@ -157,7 +163,7 @@ public static class TorusMapper
         // TODO: Do a check to reduce the lengthsq comps
         float3 offset = worldSpace - circleCenter;
         var lengthsq = math.lengthsq(offset);
-        if (lengthsq >= RingRadiusSq.Data)
+        if (lengthsq >= ThicknessSq.Data)
         {
             clamped = false;
             normalIfClamped = offset; // This isn't actually the normal
@@ -167,19 +173,20 @@ public static class TorusMapper
 
         clamped = true;
         normalIfClamped = math.normalizesafe(offset);
-        newPos = circleCenter + normalIfClamped * RingRadius.Data;
+        newPos = circleCenter + normalIfClamped * Thickness.Data;
     }
 
-    [BurstCompile]
+    //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SnapToSurface(float3 worldSpace, float heightOffset, out float3 newPos, out float3 normal)
     {
         var circleCenter = GetTorusCircleCenter(worldSpace);
         float3 offset = worldSpace - circleCenter;
         normal = math.normalizesafe(offset);
-        newPos = circleCenter + normal * (RingRadius.Data + heightOffset);
+        newPos = circleCenter + normal * (Thickness.Data + heightOffset);
     }
 
+    //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CartesianToToroidal(float3 position, out float theta, out float phi, out float3 ringCenterOffset)
     {
@@ -187,7 +194,8 @@ public static class TorusMapper
         theta = math.atan2(position.z, position.x);
 
         // Obtain the ring center on the x-y plane.
-        float3 ringCenter = new float3(TorusMapper.RingRadius.Data * math.cos(theta),
+        float3 ringCenter = new float3(
+            TorusMapper.RingRadius.Data * math.cos(theta),
             0f,
             TorusMapper.RingRadius.Data * math.sin(theta)
         );
@@ -197,6 +205,7 @@ public static class TorusMapper
         phi = math.atan2(position.y, math.length(ringCenterOffset));
     }
 
+    //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 ToroidalToCartesian(float theta, float phi)
     {
@@ -204,8 +213,8 @@ public static class TorusMapper
         float phiCos = math.cos(phi);
         // Calculate the x-z components based on ring radius and thickness.
         float x = (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * math.cos(theta);
-        float z = (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * math.sin(theta);
         float y = TorusMapper.Thickness.Data * math.sin(phi);
+        float z = (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * math.sin(theta);
 
         return new float3(x, y, z);
     }

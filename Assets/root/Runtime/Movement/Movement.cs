@@ -57,7 +57,7 @@ public partial struct MovementSystem : ISystem
 
         public void Execute(in SurfaceMovement surfaceMovement, ref LocalTransform transform)
         {
-            transform.Position += transform.TransformDirection(surfaceMovement.Velocity.f3())*dt;
+            transform.Position += transform.TransformDirection(surfaceMovement.Velocity.f3z())*dt;
         }
     }
 }

@@ -48,16 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
-  Movement:
-    Velocity:
-      x: 0
-      y: 0
-    LastDirection:
-      x: 1
-      y: 0
+  MovementSettings:
+    Speed: 2
     Drag: 20
     LinearDrag: 1
-    Speed: 2
   Health:
     Value: 2
 --- !u!114 &4710129199327565736
@@ -90,9 +84,11 @@ MonoBehaviour:
   Min:
     x: -0.5
     y: -0.5
+    z: -0.5
   Max:
     x: 0.5
     y: 0.5
+    z: 0.5
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0

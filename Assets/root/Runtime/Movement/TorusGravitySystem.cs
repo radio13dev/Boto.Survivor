@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [Save]
 public struct Grounded : IComponentData, IEnableableComponent { }
@@ -16,7 +17,7 @@ public struct LockToSurface : IComponentData
     public float Height;
 }
 
-[BurstCompile]
+//[BurstCompile]
 [UpdateInGroup(typeof(MovementSystemGroup))]
 public partial struct TorusGravitySystem : ISystem
 {
@@ -46,8 +47,9 @@ public partial struct TorusGravitySystem : ISystem
         }
     }
     
-    [BurstCompile]
+    //[BurstCompile]
     [WithNone(typeof(LockToSurface))]
+    [WithPresent(typeof(Grounded))]
     partial struct GravityJob : IJobEntity
     {
         [ReadOnly] public float dt;
@@ -56,6 +58,7 @@ public partial struct TorusGravitySystem : ISystem
         {
             if (grounded.ValueRO)
             {
+                Debug.DrawLine(float3.zero, TorusMapper.GetTorusCircleCenter(transform.Position), Color.blue, 0.1f);
                 TorusMapper.SnapToSurface(transform.Position, 0, out var newPos, out var newNormal);
                 
                 var newForward = math.cross(transform.Right(), newNormal);
