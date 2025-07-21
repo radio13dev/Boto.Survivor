@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Collections;
+﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -68,7 +67,7 @@ public abstract class EntityLinkMono : MonoBehaviour
     public bool HasLink() => m_linkedEntity != Entity.Null;
 }
 
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial class GenericPrefabSpawnSystem : SystemBase
 {
     EntityQuery m_query;
@@ -94,16 +93,17 @@ public partial class GenericPrefabSpawnSystem : SystemBase
                 );
                 foreach (var link in spawned.GetComponentsInChildren<EntityLinkMono>(true))
                     link.SetLink(entity);
+
+                ecb.AddComponent(entity, new GenericPrefabProxy()
+                {
+                    Spawned = spawned
+                });
             }
             else
             {
-                Debug.LogError($"Failed to spawn {request.ValueRO.ToSpawn} from {entity}, the prefab is null or not set.");
+                Debug.LogWarning($"Failed to spawn {request.ValueRO.ToSpawn} from {entity}, the prefab is null or not set.");
+                ecb.RemoveComponent<GenericPrefabRequest>(entity);
             }
-
-            ecb.AddComponent(entity, new GenericPrefabProxy()
-            {
-                Spawned = spawned
-            });
         }
 
         ecb.Playback(EntityManager);
@@ -112,7 +112,8 @@ public partial class GenericPrefabSpawnSystem : SystemBase
 }
 
 [RequireMatchingQueriesForUpdate]
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct GenericPrefabTrackSystem : ISystem
 {
     EntityQuery m_query;
@@ -132,7 +133,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
         var transformAccessArray = new TransformAccessArray(proxyTransforms);
 
         // Initialize the job data
-        var job = new ApplyVelocityJobParallelForTransform()
+        var job = new ApplyLocalTransformToTransform()
         {
             transforms = transforms
         };
@@ -161,7 +162,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
         transforms.Dispose();
     }
 
-    public struct ApplyVelocityJobParallelForTransform : IJobParallelForTransform
+    public struct ApplyLocalTransformToTransform : IJobParallelForTransform
     {
         [ReadOnly] public NativeArray<LocalTransform> transforms;
 
@@ -172,7 +173,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
     }
 }
 
-[WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial class GenericPrefabCleanupSystem : SystemBase
 {
     EntityQuery m_query;

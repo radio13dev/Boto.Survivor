@@ -1,9 +1,12 @@
 {
     "name": "Boto.Survivor.Editor",
+    "rootNamespace": "",
     "references": [
         "Boto.Survivor"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

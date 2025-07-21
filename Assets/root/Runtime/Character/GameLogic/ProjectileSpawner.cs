@@ -1,23 +1,23 @@
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
 using UnityEngine;
 
 /// <summary>
 /// The 'auto attack' system for survivors. These are added as children to the survivor's LinkedEntityGroup
 /// </summary>
-[GhostComponent]
-public struct ProjectileSpawner : IComponentData
+[Save]
+public struct ProjectileSpawner : IComponentData, IEnableableComponent
 {
     public double LastProjectileTime;
-    public int ColliderIndex;
+    public int ProjectileIndex;
     
-    public ProjectileSpawner(int colliderIndex)
+    public ProjectileSpawner(int projectileIndex)
     {
         LastProjectileTime = 0;
-        ColliderIndex = colliderIndex;
+        ProjectileIndex = projectileIndex;
     }
 }
 
@@ -38,14 +38,14 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
         {
             ecb = delayedEcb.AsParallelWriter(),
             CurrentTime = SystemAPI.Time.ElapsedTime,
-            ProjectilePrefab = SystemAPI.GetSingleton<GameManager.Resources>().ProjectileTemplate
+            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(true)
         }.ScheduleParallel();
     }
     
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer.ParallelWriter ecb;
-        [ReadOnly] public Entity ProjectilePrefab;
+        [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
         [ReadOnly] public double CurrentTime;
     
         public void Execute([ChunkIndexInQuery] int key, Entity entity, in LocalTransform localTransform, ref ProjectileSpawner spawner)
@@ -56,22 +56,14 @@ public partial struct SurvivorProjectileSpawnerSystem : ISystem
                 
                 for (int i = 0; i < 8; i++)
                 {
-                    var newProjectile = ecb.Instantiate(key, ProjectilePrefab);
-                    ecb.SetComponent(key, newProjectile, new Projectile()
+                    var newProjectile = ecb.Instantiate(key, Projectiles[spawner.ProjectileIndex].Entity);
+                    ecb.SetComponent(key, newProjectile, new DestroyAtTime()
                     {
                         DestroyTime = CurrentTime + 20
                     });
-                    var projectileT = localTransform;
-                    projectileT = projectileT.RotateZ(i*math.PI2/8);
-                    ecb.SetComponent(key, newProjectile, projectileT);
-                    ecb.SetComponent(key, newProjectile, new Movement(0,0,10){ Velocity = projectileT.Up().xy });
-                    
-                    if (spawner.ColliderIndex == Collisions.SurvivorProjectile.Index)
-                        ecb.AddComponent<Collisions.SurvivorProjectile>(key, newProjectile);
-                    else if (spawner.ColliderIndex == Collisions.EnemyProjectile.Index)
-                        ecb.AddComponent<Collisions.EnemyProjectile>(key, newProjectile);
-                    else
-                        Debug.Log($"Invalid collider index for spawner: {spawner.ColliderIndex}");
+                    var ang = i*math.PI2/8;
+                    ecb.SetComponent(key, newProjectile, localTransform);
+                    ecb.SetComponent(key, newProjectile, new SurfaceMovement(){ Velocity = new float2(math.cos(ang), math.sin(ang)) });
                 }
             }
         }

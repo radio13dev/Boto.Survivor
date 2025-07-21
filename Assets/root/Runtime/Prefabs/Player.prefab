@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 240200278457971943}
   - component: {fileID: 6061478738849763825}
-  - component: {fileID: 5234817830966365714}
-  - component: {fileID: 7756041969186760268}
-  - component: {fileID: 5029571760541931279}
-  - component: {fileID: -4668757263469024894}
+  - component: {fileID: 3243524279367401719}
+  - component: {fileID: 6264614865234835065}
+  - component: {fileID: 1822928595746831905}
+  - component: {fileID: -2977659499843593134}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -48,7 +48,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bed4a64841004d24da1e97a0ebd5b20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
---- !u!114 &5234817830966365714
+  MovementSettings:
+    Speed: 2
+    Drag: 16
+    LinearDrag: 1
+  Health:
+    Value: 100
+  EnableLaserProjectile: 1
+--- !u!114 &3243524279367401719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -57,12 +64,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
+  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 2620210153631596142, guid: 27f8d1d7b4e00d14f9243acfe563be99, type: 3}
-  Dynamic: 1
---- !u!114 &7756041969186760268
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
+  Particle:
+    AssetIndex: 2
+    _Asset: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
+--- !u!114 &6264614865234835065
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,10 +79,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16549610bfe4458aa9389201d072bb6, type: 3}
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.LinkedEntityGroupAuthoring
---- !u!114 &5029571760541931279
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  Min:
+    x: -0.5
+    y: -1
+    z: -0.5
+  Max:
+    x: 0.5
+    y: 1
+    z: 0.5
+--- !u!114 &1822928595746831905
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,24 +99,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
+  m_Script: {fileID: 11500000, guid: 190553e608ff4734a8cb3109ea829924, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.GhostAuthoringComponent
-  DefaultGhostMode: 0
-  SupportedGhostModes: 3
-  OptimizationMode: 0
-  Importance: 60
-  MaxSendRate: 0
-  prefabId: 6765c9dc661a5b34c97f79187f0be07e
-  HasOwner: 1
-  SupportAutoCommandTarget: 1
-  TrackInterpolationDelay: 0
-  GhostGroup: 0
-  UsePreSerialization: 1
-  UseSingleBaseline: 0
-  RollbackPredictedSpawnedGhostState: 0
-  RollbackPredictionOnStructuralChanges: 1
---- !u!114 &-4668757263469024894
+  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerAuthoring
+  Spawner:
+    random:
+      state: 0
+    SpawnRadius: 100
+    SpawnBlockRadiusSqr: 9025
+    SpawnChancePerFrame: 10
+--- !u!114 &-2977659499843593134
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,7 +117,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfdaa6c06fe64fbda2b16e07a4ee0b25, type: 3}
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.GhostAuthoringInspectionComponent
-  ComponentOverrides: []
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring

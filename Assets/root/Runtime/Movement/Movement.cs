@@ -1,33 +1,30 @@
+using System;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.NetCode;
 using Unity.Transforms;
+using UnityEngine;
 
 /// <summary>
 /// Character movement is predicted
 /// </summary>
-[UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
 public partial class MovementSystemGroup : ComponentSystemGroup
 {
         
 }
 
-[GhostComponent]
+[Save]
 public struct Movement : IComponentData
 {
+    public float3 Velocity;
+    public float3 LastDirection;
+}
+
+[Save]
+public struct SurfaceMovement : IComponentData
+{
     public float2 Velocity;
-    public float Drag;
-    public float LinearDrag;
-    public float Speed;
-    
-    public Movement(float drag, float linearDrag, float speed)
-    {
-        Velocity = float2.zero;
-        Drag = drag;
-        LinearDrag = linearDrag;
-        Speed = speed;
-    }
 }
 
 [UpdateInGroup(typeof(MovementSystemGroup))]
@@ -35,24 +32,33 @@ public partial struct MovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        new Job()
+        new MovementJob()
+        {
+            dt = SystemAPI.Time.DeltaTime
+        }.Schedule();
+        new SurfaceMovementJob()
         {
             dt = SystemAPI.Time.DeltaTime
         }.Schedule();
     }
     
-    partial struct Job : IJobEntity
+    partial struct MovementJob : IJobEntity
     {
         [ReadOnly] public float dt;
     
-        public void Execute(Entity entity, ref Movement movement, ref LocalTransform transform)
+        public void Execute(in Movement movement, ref LocalTransform transform)
         {
-            transform.Position += (movement.Velocity*dt).f3();
-            
-            // Relative drag
-            if (movement.Drag != 0) movement.Velocity -= movement.Velocity*dt*movement.Drag;
-            // Linear drag
-            if (movement.LinearDrag != 0) movement.Velocity = mathu.MoveTowards(movement.Velocity, float2.zero, movement.LinearDrag*dt);
+            transform.Position += movement.Velocity*dt;
+        }
+    }
+    
+    partial struct SurfaceMovementJob : IJobEntity
+    {
+        [ReadOnly] public float dt;
+
+        public void Execute(in SurfaceMovement surfaceMovement, ref LocalTransform transform)
+        {
+            transform.Position += transform.TransformDirection(surfaceMovement.Velocity.f3z())*dt;
         }
     }
 }

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
+using BovineLabs.Saving;
 using NativeTrees;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.NetCode;
-using Unity.Transforms;
-using UnityEngine;
+using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
@@ -17,18 +13,17 @@ namespace Collisions
     /// Projectile collision is predicted, only after all movement is done
     /// </summary>
     [UpdateAfter(typeof(MovementSystemGroup))]
-    [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-    public partial class ProjectileCollisionSystemGroup : ComponentSystemGroup
+    public partial class CollisionSystemGroup : ComponentSystemGroup
     {
     }
 
-    [GhostComponent]
     [BurstCompile]
+    [Save]
     public struct Collider : IComponentData
     {
-        public NativeTrees.AABB2D Value;
+        public NativeTrees.AABB Value;
 
-        public Collider(AABB2D value)
+        public Collider(AABB value)
         {
             Value = value;
         }
@@ -36,29 +31,13 @@ namespace Collisions
         [BurstCompile]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        public NativeTrees.AABB2D Add(float2 offset)
+        public NativeTrees.AABB Add(float3 offset)
         {
-            return new NativeTrees.AABB2D(Value.min + offset, Value.max + offset);
+            return new NativeTrees.AABB(Value.min + offset, Value.max + offset);
         }
     }
 
-    public struct Survivor : IComponentData
-    {
-        public const int Index = 0;
-    }
+    public struct SurvivorProjectileTag : IComponentData { }
 
-    public struct SurvivorProjectile : IComponentData
-    {
-        public const int Index = 1;
-    }
-
-    public struct Enemy : IComponentData
-    {
-        public const int Index = 2;
-    }
-
-    public struct EnemyProjectile : IComponentData
-    {
-        public const int Index = 3;
-    }
+    public struct EnemyProjectileTag : IComponentData { }
 }
