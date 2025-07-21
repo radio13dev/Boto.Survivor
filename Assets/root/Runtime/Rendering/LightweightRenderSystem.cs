@@ -17,6 +17,7 @@ public struct LocalTransformLast : IComponentData
 [BurstCompile]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 [UpdateBefore(typeof(LightweightRenderSystem))]
+[UpdateInGroup(typeof(RenderSystemGroup))]
 public partial struct LocalTransformLastSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)

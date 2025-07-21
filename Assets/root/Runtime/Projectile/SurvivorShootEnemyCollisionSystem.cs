@@ -24,7 +24,7 @@ namespace Collisions
                 Allocator.Persistent
             );
 
-            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, Movement>().Build();
+            m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, SurfaceMovement>().Build();
             state.RequireForUpdate(m_projectileQuery);
 
             m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag, Health, Force>().Build();
@@ -57,7 +57,7 @@ namespace Collisions
             {
                 ecb = parallel,
                 tree = m_projectileTree,
-                projectileVelLookup = SystemAPI.GetComponentLookup<Movement>(true)
+                projectileVelLookup = SystemAPI.GetComponentLookup<SurfaceMovement>(true)
             }.Schedule(m_survivorQuery, state.Dependency);
         }
 
@@ -74,7 +74,7 @@ namespace Collisions
         {
             public EntityCommandBuffer.ParallelWriter ecb;
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
-            [ReadOnly] public ComponentLookup<Movement> projectileVelLookup;
+            [ReadOnly] public ComponentLookup<SurfaceMovement> projectileVelLookup;
 
             unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force movement)
             {
@@ -83,7 +83,7 @@ namespace Collisions
                 fixed (Force* movement_ptr = &movement)
                 fixed (CollisionJob* job_ptr = &this)
                 {
-                    var visitor = new CollisionVisitor(Key, ref ecb, job_ptr,health_ptr, movement_ptr);
+                    var visitor = new CollisionVisitor(Key, ref ecb, transform, job_ptr,health_ptr, movement_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                     visitor.Dispose();
                 }
@@ -94,16 +94,18 @@ namespace Collisions
             {
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
+                LocalTransform _transform;
                 CollisionJob* _job;
                 Health* _health;
                 Force* _movement;
                 NativeParallelHashSet<Entity> _ignoredCollisions;
 
-                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, CollisionJob* job, Health* health, Force* movement)
+                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, LocalTransform transform, CollisionJob* job, Health* health, Force* movement)
                 {
                     _key = key;
                     _job = job;
                     _ecb = ecb;
+                    _transform = transform;
                     _health = health;
                     _movement = movement;
                     _ignoredCollisions = new NativeParallelHashSet<Entity>(4, Allocator.TempJob);
@@ -119,8 +121,9 @@ namespace Collisions
                         _ecb.SetComponent(_key, projectile, new DestroyAtTime());
                         _health->Value -= 1;
                         var vel = _job->projectileVelLookup[projectile];
-                        _movement->Shift += vel.Velocity/20;
-                        _movement->Velocity += vel.Velocity/3;
+                        var mov = _transform.TransformDirection(vel.Velocity.f3z());
+                        _movement->Shift += mov/20;
+                        _movement->Velocity += mov/3;
                     }
 
                     return true;

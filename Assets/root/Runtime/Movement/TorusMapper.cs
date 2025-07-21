@@ -186,6 +186,12 @@ public static class TorusMapper
         newPos = circleCenter + normal * (Thickness.Data + heightOffset);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float2 CartesianToToroidal(float3 position)
+    {
+        CartesianToToroidal(position, out float theta, out float phi, out _);
+        return new float2(theta, phi);
+    }
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CartesianToToroidal(float3 position, out float theta, out float phi, out float3 ringCenterOffset)
@@ -205,6 +211,11 @@ public static class TorusMapper
         phi = math.atan2(position.y, math.length(ringCenterOffset));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float3 ToroidalToCartesian(float2 toroidal)
+    {
+        return ToroidalToCartesian(toroidal.x, toroidal.y);
+    }
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 ToroidalToCartesian(float theta, float phi)

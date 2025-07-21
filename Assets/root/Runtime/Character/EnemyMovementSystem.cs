@@ -2,6 +2,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [RequireMatchingQueriesForUpdate]
 public partial struct EnemyMovementSystem : ISystem
@@ -18,30 +19,23 @@ public partial struct EnemyMovementSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-        TorusMapper.CartesianToToroidal(targets[0].Position, out var x, out var y, out _);
-        float2 targetToroidal = new float2(x,y);
-         
         new Job()
         {
-            TargetToroidal = targetToroidal
+            Target = targets[0].Position,
+            TargetToroidal = TorusMapper.CartesianToToroidal(targets[0].Position)
         }.Schedule();
         targets.Dispose();
     }
     
     [WithAll(typeof(EnemyTag))]
     partial struct Job : IJobEntity
-    {
+    {   
+        [ReadOnly] public float3 Target;
         [ReadOnly] public float2 TargetToroidal;
         public void Execute(in LocalTransform localTransform, in Movement movement, ref StepInput input)
         {
-            // Convert our position and the targets position into cartesian/torodial coordinates
-            TorusMapper.CartesianToToroidal(localTransform.Position, out var x, out var y, out var ringCenterOffset);
-            var myToroidal = new float2(x,y);
-            var dirToroidal = TargetToroidal - myToroidal;
-            var dir = TorusMapper.ToroidalToCartesian(dirToroidal.x, dirToroidal.y);
-            
-            dir = localTransform.InverseTransformDirection(dir); // Convert the direction into a direction relative to our forward and right vectors (hope this works)
-            input = new StepInput(){Direction = dir.xz };
+            var dir = localTransform.InverseTransformDirection(Target - localTransform.Position); // Convert the direction into a direction relative to our forward and right vectors (hope this works)
+            input = new StepInput(){Direction = math.normalizesafe(dir.xz) };
         }
     }
 }

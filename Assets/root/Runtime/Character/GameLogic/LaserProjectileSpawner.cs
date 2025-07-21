@@ -11,6 +11,6 @@ public struct LaserProjectileSpawner : IComponentData, IEnableableComponent
     public double Lifespan;
     public double TimeBetweenShots;
     
-    public float2 LastProjectileDirection;
+    public float3 LastProjectileDirection;
     public double LastProjectileTime;
 }

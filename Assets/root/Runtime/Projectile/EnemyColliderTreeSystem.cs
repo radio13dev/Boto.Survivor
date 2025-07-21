@@ -92,16 +92,19 @@ namespace Collisions
                 fixed (FireAtNearestTargetJob* job_ptr = &this)
                 fixed (LaserProjectileSpawner* spawner_ptr = &laserSpawner)
                 {
-                    var visitor = new NearestVisitor(Key, job_ptr, transform, movement, spawner_ptr);
+                    var visitor = new NearestVisitor(Key, job_ptr, transform, spawner_ptr);
                     var distance = new DistanceProvider();
 
                     tree.Nearest(transform.Position, 30, ref visitor, distance);
-                    var dir = laserSpawner.LastProjectileDirection;
+                    
+                    if (visitor.Hits == 0)
+                    {
+                        laserSpawner.LastProjectileDirection = movement.LastDirection;
+                    }
                     
                     var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
                     var laserT = transform;
-                    laserT.Rotation = quaternion.LookRotationSafe(TorusMapper.ToroidalToCartesian(dir.x, dir.y), laserT.Up());
-                    ecb.AddComponent<SurvivorProjectileTag>(Key, laser);
+                    laserT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), -math.PIHALF), quaternion.LookRotationSafe(laserSpawner.LastProjectileDirection, transform.Up()));
                     ecb.SetComponent(Key, laser, laserT);
                     ecb.SetComponent(Key, laser, new SurfaceMovement(){ Velocity = new float2(8,0)});
                     ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
@@ -113,31 +116,26 @@ namespace Collisions
             [BurstCompile]
             unsafe struct NearestVisitor : IOctreeNearestVisitor<Entity>
             {
-                public volatile int Hits;
+                public int Hits;
                 int _key;
                 FireAtNearestTargetJob* _job;
                 LocalTransform _transform;
-                Movement _sourceMovement;
                 LaserProjectileSpawner* _sourceSpawner;
 
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, Movement sourceMovement, LaserProjectileSpawner* sourceSpawner)
+                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, LaserProjectileSpawner* sourceSpawner)
                 {
                     Hits = 0;
                     
                     _key = Key;
                     _job = job;
                     _transform = transform;
-                    _sourceMovement = sourceMovement;
                     _sourceSpawner = sourceSpawner;
                 }
 
                 public bool OnVist(Entity obj, AABB bounds)
                 {
                     Interlocked.Increment(ref Hits);
-                    TorusMapper.CartesianToToroidal(_transform.Position, out var myTheta, out var myPhi, out _);
-                    TorusMapper.CartesianToToroidal(bounds.Center, out var targetTheta, out var targetPhi, out _);
-                    var dirToroidal = math.normalizesafe(new float2(targetTheta - myTheta, targetPhi - myPhi), new float2(1,0));
-                    _sourceSpawner->LastProjectileDirection = dirToroidal;
+                    _sourceSpawner->LastProjectileDirection = bounds.Center - _transform.Position;
                     return false;
                 }
             }

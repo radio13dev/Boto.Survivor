@@ -1,4 +1,5 @@
-﻿using NativeTrees;
+﻿using Collisions;
+using NativeTrees;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class ProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new SurfaceMovement());
             AddComponent(entity, new LockToSurface());
+            
+            AddComponent<SurvivorProjectileTag>(entity);
         }
     }       
 }

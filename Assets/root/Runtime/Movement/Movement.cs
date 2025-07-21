@@ -18,6 +18,7 @@ public partial class MovementSystemGroup : ComponentSystemGroup
 public struct Movement : IComponentData
 {
     public float3 Velocity;
+    public float3 LastDirection;
 }
 
 [Save]

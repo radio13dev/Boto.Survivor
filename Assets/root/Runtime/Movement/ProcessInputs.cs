@@ -74,6 +74,7 @@ public partial struct ProcessInputs : ISystem
             var dir = local.TransformDirection(input.Direction.f3z());
             var vel = math.normalizesafe(dir) * movementSettings.Speed * math.clamp(math.length(dir), 0, 1);
             movement.Velocity += vel;
+            movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
         }
     }
 

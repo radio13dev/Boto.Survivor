@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1397
   m_ShowMode: 4
-  m_Title: Console
+  m_Title: Scene
   m_RootView: {fileID: 3}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 1
-  controlID: 112
+  controlID: 38
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 50}
   m_MaxSize: {x: 32384, y: 8096}
   vertical: 0
-  controlID: 113
+  controlID: 39
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 175
+  controlID: 82
   draggingID: 0
 --- !u!114 &12
 MonoBehaviour:
@@ -360,7 +360,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1628
     y: 79
-    width: 565
+    width: 432
     height: 899
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -1233,9 +1233,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -149.66628, y: 59.592148, z: -18.891798}
+    m_Target: {x: 88.86595, y: 22.33633, z: -56.316994}
     speed: 2
-    m_Value: {x: -149.66628, y: 59.592148, z: -18.891798}
+    m_Value: {x: 88.86595, y: 22.33633, z: -56.316994}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1281,13 +1281,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.20414203, y: -0.4668766, z: 0.11183233, w: -0.85324496}
+    m_Target: {x: 0.2631107, y: 0.7285833, z: -0.5060835, w: 0.37955937}
     speed: 2
-    m_Value: {x: 0.20414203, y: 0.46687663, z: -0.111832336, w: 0.853245}
+    m_Value: {x: 0.2631107, y: 0.7285833, z: -0.5060835, w: 0.3795594}
   m_Size:
-    m_Target: 10.976913
+    m_Target: 12.124355
     speed: 2
-    m_Value: 10.976913
+    m_Value: 12.124355
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1362,7 +1362,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: e0a4ffff94c7ffffacc7ffff6ecaffff74caffffbcccffffb2d1ffffc6e4ffffdee4ffffa4e7ffffaee7fffffae9ffff10fbffff5a140100
+      m_ExpandedIDs: 10fbffff18f60000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1483,7 +1483,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/root/Runtime/Prefabs/InstancedResources
+    - Assets/root/Runtime/Prefabs
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1493,15 +1493,15 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/root/Runtime/Prefabs/InstancedResources
+  - Assets/root/Runtime/Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Work Repos\Boto.Survivor
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 442}
-    m_SelectedIDs: 8cfc0000
-    m_LastClickedID: 64652
+    scrollPos: {x: 0, y: 431}
+    m_SelectedIDs: 60fb0000
+    m_LastClickedID: 64352
     m_ExpandedIDs: 000000005efb000060fb000062fb000064fb000066fb000068fb00006afb00006cfb00006efb000070fb000072fb0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1610,7 +1610,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 92376
+  m_LastSelectedObjectID: 62952
 --- !u!114 &23
 MonoBehaviour:
   m_ObjectHideFlags: 52
