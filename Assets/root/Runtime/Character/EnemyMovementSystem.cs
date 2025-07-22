@@ -1,10 +1,12 @@
-﻿using Unity.Collections;
+﻿using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
 [RequireMatchingQueriesForUpdate]
+[BurstCompile]
 public partial struct EnemyMovementSystem : ISystem
 {
     EntityQuery m_TargetQuery;
@@ -16,6 +18,7 @@ public partial struct EnemyMovementSystem : ISystem
         state.RequireForUpdate(m_TargetQuery);
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
@@ -27,6 +30,7 @@ public partial struct EnemyMovementSystem : ISystem
         targets.Dispose();
     }
     
+    [BurstCompile]
     [WithAll(typeof(EnemyTag))]
     partial struct Job : IJobEntity
     {   

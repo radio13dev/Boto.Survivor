@@ -64,7 +64,6 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent);
         m_Game = new Game(false);
         m_Game.LoadScenes();
-        m_Game.RunGameWorldInit();
     }
 
     private void OnDestroy()

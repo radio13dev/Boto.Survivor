@@ -48,24 +48,24 @@ namespace Collisions
             enemyEntities.Dispose(state.Dependency);
             enemyColliders.Dispose(state.Dependency);
             enemyTransforms.Dispose(state.Dependency);
-            
-            state.CompleteDependency();
 
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            state.Dependency = new FireAtNearestTargetJob()
+            var a = new FireAtNearestTargetJob()
             {
                 ecb = parallel,
                 resources = SystemAPI.GetSingleton<GameManager.Resources>(),
                 tree = m_enemyTree,
                 time = SystemAPI.Time.ElapsedTime
-            }.Schedule(state.Dependency);
+            }.ScheduleParallel(state.Dependency);
             
-            state.Dependency = new EnemyPushForceJob()
+            var b = new EnemyPushForceJob()
             {
                 tree = m_enemyTree
-            }.Schedule(state.Dependency);
+            }.ScheduleParallel(state.Dependency);
+            
+            state.Dependency = JobHandle.CombineDependencies(a,b);
         }
 
         public void OnDestroy(ref SystemState state)

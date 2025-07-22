@@ -5,13 +5,13 @@ using Unity.Mathematics;
 
 public class PickupAuthoring : MonoBehaviour
 {
-    public partial class SurvivorBaker : Baker<PickupAuthoring>
+    partial class Baker : Baker<PickupAuthoring>
     {
         public override void Bake(PickupAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new Pickup());
-            AddComponent(entity, new DestroyAtTime(){ DestroyTime = double.MaxValue });
+            AddComponent(entity, new Collectable());
+            SetComponentEnabled<Collectable>(entity, false);
         }
     }
 }

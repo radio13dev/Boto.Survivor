@@ -60,7 +60,7 @@ public static class TorusMapper
         XRotScale.Data = 0.005f;
         YRotScale.Data = 0.013f;
         RingRadiusSq.Data = RingRadius.Data * RingRadius.Data;
-        ThicknessSq.Data = ThicknessSq.Data * ThicknessSq.Data;
+        ThicknessSq.Data = Thickness.Data * Thickness.Data;
     }
 
     /// <summary>

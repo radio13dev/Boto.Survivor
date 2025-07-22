@@ -18,7 +18,6 @@ public struct GenericMessage
             default:
                 Debug.Log($"Got ID message: {Data}");
                 game.PlayerIndex = Data;
-                Game.SingleplayerGame = game;
                 break;
         }
     }

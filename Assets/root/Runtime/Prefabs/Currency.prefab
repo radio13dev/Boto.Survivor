@@ -9,13 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 240200278457971943}
-  - component: {fileID: 6061478738849763825}
-  - component: {fileID: 3243524279367401719}
-  - component: {fileID: 6264614865234835065}
-  - component: {fileID: 1822928595746831905}
-  - component: {fileID: -2977659499843593134}
+  - component: {fileID: 3078662805218601296}
+  - component: {fileID: 5750577854139021121}
+  - component: {fileID: 1249446285491673129}
+  - component: {fileID: 651722630156716425}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Currency
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,35 +35,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6061478738849763825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bed4a64841004d24da1e97a0ebd5b20d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
-  MovementSettings:
-    Speed: 2
-  PhysicsResponse:
-    Gravity: 9
-    BounceThresholdMin: 0
-    BounceResponse: 0
-    BounceFriction: 0
-    AirDrag: 0
-    AirDragLinear: 0
-    Friction: 8
-    FrictionLinear: 1
-    RotationalDrag: 0
-    RotationalDragLinear: 0
-  Health:
-    Value: 100
-  EnableLaserProjectile: 1
---- !u!114 &3243524279367401719
+--- !u!114 &3078662805218601296
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -77,9 +48,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 2
-    _Asset: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
---- !u!114 &6264614865234835065
+    AssetIndex: 5
+    _Asset: {fileID: 11400000, guid: c7fee6b9dc62f9a4fb5b583dd6f768c4, type: 2}
+--- !u!114 &5750577854139021121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,32 +63,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   Min:
-    x: -0.5
-    y: -1
-    z: -0.5
+    x: -0.1
+    y: -0.1
+    z: -0.02
   Max:
-    x: 0.5
-    y: 1
-    z: 0.5
---- !u!114 &1822928595746831905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190553e608ff4734a8cb3109ea829924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerAuthoring
-  Spawner:
-    random:
-      state: 0
-    SpawnRadius: 100
-    SpawnBlockRadiusSqr: 9025
-    SpawnChancePerFrame: 10
---- !u!114 &-2977659499843593134
+    x: 0.1
+    y: 0.1
+    z: 0.02
+--- !u!114 &1249446285491673129
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,3 +82,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &651722630156716425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ec3c8c9b5a4c3290858a98920a151b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::CurrencyCollectableAuthoring
+  MovementSettings:
+    Speed: 1
+  PhysicsResponse:
+    Gravity: 15
+    BounceThresholdMin: 0.3
+    BounceResponse: 0.8
+    BounceFriction: 0.1
+    AirDrag: 4
+    AirDragLinear: 0.5
+    Friction: 20
+    FrictionLinear: 1
+    RotationalDrag: 1
+    RotationalDragLinear: 1

@@ -1,4 +1,5 @@
 using System;
+using BovineLabs.Saving;
 using NativeTrees;
 using Unity.Burst;
 using Unity.Collections;
@@ -11,34 +12,6 @@ using Random = Unity.Mathematics.Random;
 
 namespace Collisions
 {
-    public partial struct TerrainInitSystem : ISystem
-    {
-        public const int k_TerrainSpawnAttempts = 5000;
-    
-        public void OnCreate(ref SystemState state)
-        {
-            state.RequireForUpdate<GameManager.Terrain>();
-            state.Enabled = false;
-        }
-
-        public void OnUpdate(ref SystemState state)
-        {
-            // Setup map with initial terrain
-            var bounds = TorusMapper.MapBounds;
-            var options = SystemAPI.GetSingletonBuffer<GameManager.Terrain>();
-            Random r = Random.CreateFromIndex(unchecked((uint)DateTime.UtcNow.Ticks));
-            for (int i = 0; i < k_TerrainSpawnAttempts; i++)
-            {
-                var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
-                var pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
-                var template = options[r.NextInt(options.Length)];
-                var newTerrainE = state.EntityManager.Instantiate(template.Entity);
-                state.EntityManager.SetComponentData(newTerrainE, new LocalTransform(){ Position = pos });
-            }
-            
-            state.Enabled = false;
-        }
-    }
 
     public struct TerrainTag : IComponentData{}
 
@@ -84,14 +57,16 @@ namespace Collisions
             }
 
             // Perform collisions
-            state.Dependency = new CharacterTerrainCollisionJob()
+            var a = new CharacterTerrainCollisionJob()
             {
                 tree = m_Tree,
-            }.Schedule(state.Dependency);
-            state.Dependency = new ProjectileTerrainCollisionJob()
+            }.ScheduleParallel(state.Dependency);
+            var b = new ProjectileTerrainCollisionJob()
             {
                 tree = m_Tree,
-            }.Schedule(state.Dependency);
+            }.ScheduleParallel(state.Dependency);
+            
+            state.Dependency = JobHandle.CombineDependencies(a,b);
         }
 
         public void OnDestroy(ref SystemState state)

@@ -4,10 +4,11 @@ using Unity.Entities;
 
 public class EnemyCharacterAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings(1,1,1);
+    public MovementSettings MovementSettings = new MovementSettings(1);
+    public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(10);
     
-    public partial class SurvivorBaker : Baker<EnemyCharacterAuthoring>
+    partial class Baker : Baker<EnemyCharacterAuthoring>
     {
         public override void Bake(EnemyCharacterAuthoring authoring)
         {
@@ -21,6 +22,8 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             // Movement and Inputs
             AddComponent(entity, authoring.MovementSettings);
             AddComponent<Movement>(entity);
+            AddComponent(entity, authoring.PhysicsResponse);
+            AddComponent<RotateWithSurface>(entity);
             AddComponent<Grounded>(entity);
             AddComponent<StepInput>(entity);
             AddComponent<LastStepInputLastDirection>(entity);

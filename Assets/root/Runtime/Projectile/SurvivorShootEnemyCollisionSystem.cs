@@ -14,7 +14,6 @@ namespace Collisions
     {
         NativeTrees.NativeOctree<Entity> m_projectileTree;
         EntityQuery m_projectileQuery;
-        EntityQuery m_survivorQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -26,9 +25,6 @@ namespace Collisions
 
             m_projectileQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<ProjectileTag, SurvivorProjectileTag, SurfaceMovement>().Build();
             state.RequireForUpdate(m_projectileQuery);
-
-            m_survivorQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag, Health, Force>().Build();
-            state.RequireForUpdate(m_survivorQuery);
         }
 
         public void OnUpdate(ref SystemState state)
@@ -58,7 +54,7 @@ namespace Collisions
                 ecb = parallel,
                 tree = m_projectileTree,
                 projectileVelLookup = SystemAPI.GetComponentLookup<SurfaceMovement>(true)
-            }.Schedule(m_survivorQuery, state.Dependency);
+            }.ScheduleParallel(state.Dependency);
         }
 
         public void OnDestroy(ref SystemState state)
@@ -70,6 +66,7 @@ namespace Collisions
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
         [BurstCompile]
+        [WithAll(typeof(EnemyTag))]
         unsafe partial struct CollisionJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ecb;
@@ -123,7 +120,7 @@ namespace Collisions
                         var vel = _job->projectileVelLookup[projectile];
                         var mov = _transform.TransformDirection(vel.Velocity.f3z());
                         _movement->Shift += mov/20;
-                        _movement->Velocity += mov/3;
+                        //_movement->Velocity += mov/3;
                     }
 
                     return true;
