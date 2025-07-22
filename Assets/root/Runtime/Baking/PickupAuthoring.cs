@@ -12,6 +12,8 @@ public class PickupAuthoring : MonoBehaviour
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new Collectable());
             SetComponentEnabled<Collectable>(entity, false);
+            AddComponent(entity, new Collected());
+            SetComponentEnabled<Collected>(entity, false);
         }
     }
 }

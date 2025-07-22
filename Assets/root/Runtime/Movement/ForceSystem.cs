@@ -26,9 +26,9 @@ public partial struct ForceSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        new Job()
+        state.Dependency = new Job()
         {
-        }.Schedule();
+        }.ScheduleParallel(state.Dependency);
     }
     
     partial struct Job : IJobEntity

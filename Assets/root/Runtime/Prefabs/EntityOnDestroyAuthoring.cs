@@ -31,8 +31,7 @@ public class EntityOnDestroyAuthoring : MonoBehaviour
 }
 
 [UpdateBefore(typeof(DestroySystem))]
-[UpdateInGroup(typeof(LateSimulationSystemGroup))]
-[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateInGroup(typeof(DestroySystemGroup))]
 public partial struct EntityOnDestroySystem : ISystem
 {
     EntityQuery m_CleanupQuery;
@@ -52,6 +51,7 @@ public partial struct EntityOnDestroySystem : ISystem
             .WithAll<DestroyFlag>()
             )
         {
+            Debug.Log($"Creating {10} entities on destroy");
             for (int i = 0; i < 10; i++)
             {
                 var entity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);

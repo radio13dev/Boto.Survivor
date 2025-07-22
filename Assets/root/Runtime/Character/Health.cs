@@ -18,22 +18,23 @@ public partial struct HealthSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         new Job(){ ecb = delayedEcb }.Schedule();
     }
     
+    [WithAbsent(typeof(DestroyFlag))]
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer ecb;
     
         public void Execute(Entity entity, in Health health)
         {
-            if (health.Value < 0)
+            if (health.Value <= 0)
             {
                 ecb.AddComponent<DestroyFlag>(entity);
             }

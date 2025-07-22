@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5750577854139021121}
   - component: {fileID: 1249446285491673129}
   - component: {fileID: 651722630156716425}
+  - component: {fileID: 1346623939594366831}
   m_Layer: 0
   m_Name: Currency
   m_TagString: Untagged
@@ -63,13 +64,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   Min:
-    x: -0.1
-    y: -0.1
-    z: -0.02
+    x: -0.2
+    y: -0.2
+    z: -0.2
   Max:
-    x: 0.1
-    y: 0.1
-    z: 0.02
+    x: 0.2
+    y: 0.2
+    z: 0.2
 --- !u!114 &1249446285491673129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,16 +95,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69ec3c8c9b5a4c3290858a98920a151b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::CurrencyCollectableAuthoring
+  CollectableMin:
+    x: -4
+    y: -4
+    z: -4
+  CollectableMax:
+    x: 4
+    y: 4
+    z: 4
   MovementSettings:
-    Speed: 1
+    Speed: 4
+    MaxCollectableSpeed: 100
+    CollectRadius: 0.4
+    JumpValue: 0.5
   PhysicsResponse:
     Gravity: 15
-    BounceThresholdMin: 0.3
-    BounceResponse: 0.8
+    BounceThresholdMin: 1
+    BounceResponse: 0.9
     BounceFriction: 0.1
     AirDrag: 4
     AirDragLinear: 0.5
-    Friction: 20
+    Friction: 1
     FrictionLinear: 1
     RotationalDrag: 1
     RotationalDragLinear: 1
+--- !u!114 &1346623939594366831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f710d9c624cc2982f7147ae7f3594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
+  Particle:
+    AssetIndex: 6
+    _Asset: {fileID: -8333230072600633316, guid: 3ed2cd97193b7f140a123b0b56bd640c, type: 3}

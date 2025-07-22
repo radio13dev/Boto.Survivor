@@ -5,7 +5,7 @@ using Unity.Entities;
 
 public class SurvivorAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings(1);
+    public MovementSettings MovementSettings = new MovementSettings();
     public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(100);
     public bool EnableLaserProjectile;

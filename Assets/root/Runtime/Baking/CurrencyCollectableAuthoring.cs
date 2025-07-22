@@ -1,10 +1,15 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using AABB = NativeTrees.AABB;
+using Collider = Collisions.Collider;
 
 public class CurrencyCollectableAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings(1);
+    public float3 CollectableMin = new float3(-0.5f,-0.5f,-0.5f);
+    public float3 CollectableMax = new float3(0.5f,0.5f,0.5f);
+
+    public MovementSettings MovementSettings = new MovementSettings();
     public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     
     partial class Baker : Baker<CurrencyCollectableAuthoring>
@@ -16,6 +21,8 @@ public class CurrencyCollectableAuthoring : MonoBehaviour
             // Collectable setup
             AddComponent(entity, new Collectable());
             SetComponentEnabled<Collectable>(entity, false);
+            AddComponent(entity, new Collected());
+            SetComponentEnabled<Collected>(entity, false);
             
             // Physics (want it to bounce)
             AddComponent(entity, authoring.MovementSettings);
@@ -24,7 +31,15 @@ public class CurrencyCollectableAuthoring : MonoBehaviour
             AddComponent(entity, new Grounded());
             SetComponentEnabled<Grounded>(entity, false);
             AddComponent<RotationalInertia>(entity);
+            AddComponent<Force>(entity);
+            AddComponent(entity, new CollectCollider(){Collider = new Collider(new AABB(authoring.CollectableMin, authoring.CollectableMax))});
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0.5f, 0f, 0.3f, 1f);
+        Gizmos.DrawWireCube(transform.position + (Vector3)(CollectableMin/2 + CollectableMax/2), (CollectableMax - CollectableMin));
     }
 }
 
@@ -40,7 +55,7 @@ public partial struct CurrencyCollectableSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var collectable in SystemAPI.Query<RefRO<Collectable>>().WithAll<CurrencyCollectable>())
+        foreach (var collectable in SystemAPI.Query<RefRO<Collectable>>().WithAll<Collected, CurrencyCollectable>())
         {
             // Give currency to the entity
             if (SystemAPI.HasComponent<Wallet>(collectable.ValueRO.CollectedBy))

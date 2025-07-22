@@ -50,6 +50,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
   MovementSettings:
     Speed: 2
+    MaxCollectableSpeed: 0
+    CollectRadius: 0
+    JumpValue: 0
   PhysicsResponse:
     Gravity: 9
     BounceThresholdMin: 0

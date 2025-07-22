@@ -4,7 +4,7 @@ using Unity.Entities;
 
 public class EnemyCharacterAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings(1);
+    public MovementSettings MovementSettings = new MovementSettings();
     public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(10);
     

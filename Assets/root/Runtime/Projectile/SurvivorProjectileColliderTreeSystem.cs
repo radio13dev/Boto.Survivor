@@ -1,3 +1,4 @@
+/*
 using NativeTrees;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,7 +11,7 @@ using AABB = NativeTrees.AABB;
 namespace Collisions
 {
     [UpdateInGroup(typeof(CollisionSystemGroup))]
-    public partial struct SurvivorShootEnemyCollisionSystem : ISystem
+    public partial struct SurvivorProjectileColliderTreeSystem : ISystem
     {
         NativeTrees.NativeOctree<Entity> m_projectileTree;
         EntityQuery m_projectileQuery;
@@ -73,64 +74,36 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
             [ReadOnly] public ComponentLookup<SurfaceMovement> projectileVelLookup;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force movement)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity entity, in LocalTransform transform, in Collider collider)
             {
                 var adjustedAABB2D = collider.Add(transform.Position);
-                fixed (Health* health_ptr = &health)
-                fixed (Force* movement_ptr = &movement)
-                fixed (CollisionJob* job_ptr = &this)
-                {
-                    var visitor = new CollisionVisitor(Key, ref ecb, transform, job_ptr,health_ptr, movement_ptr);
-                    tree.Range(adjustedAABB2D, ref visitor);
-                    visitor.Dispose();
-                }
+                var visitor = new CollisionVisitor(Key, ref ecb, entity);
+                tree.Range(adjustedAABB2D, ref visitor);
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
-                LocalTransform _transform;
-                CollisionJob* _job;
-                Health* _health;
-                Force* _movement;
-                NativeParallelHashSet<Entity> _ignoredCollisions;
+                Entity _enemyE;
 
-                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, LocalTransform transform, CollisionJob* job, Health* health, Force* movement)
+                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, Entity enemyE)
                 {
                     _key = key;
-                    _job = job;
                     _ecb = ecb;
-                    _transform = transform;
-                    _health = health;
-                    _movement = movement;
-                    _ignoredCollisions = new NativeParallelHashSet<Entity>(4, Allocator.TempJob);
+                    _enemyE = enemyE;
                 }
 
                 public bool OnVisit(Entity projectile, AABB objBounds, AABB queryRange)
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
 
-                    if (_ignoredCollisions.Add(projectile))
-                    {
-                        // Destroy projectiles when they collide (by setting their life to 0)
-                        _ecb.SetComponent(_key, projectile, new DestroyAtTime());
-                        _health->Value -= 1;
-                        var vel = _job->projectileVelLookup[projectile];
-                        var mov = _transform.TransformDirection(vel.Velocity.f3z());
-                        _movement->Shift += mov/20;
-                        //_movement->Velocity += mov/3;
-                    }
-
-                    return true;
-                }
-
-                public void Dispose()
-                {
-                    _ignoredCollisions.Dispose();
+                    _ecb.SetComponent(_key, projectile, new ProjectileHit(){ HitEntity = _enemyE });
+                    return false;
                 }
             }
         }
     }
 }
+*/
