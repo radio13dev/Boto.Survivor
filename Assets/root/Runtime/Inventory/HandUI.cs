@@ -30,14 +30,8 @@ public class HandUI : Selectable, ICancelHandler
             return;
         }
         
-        foreach (var finger in Fingers)
-        {
-            finger.OnSelect(default);
-            finger.OnDeselect(default);
-        }
-        Map.OnDeselect(default);
-        Map.OnDeselect(default);
-        
+        // Force open to force close.
+        m_IsOpen = true;
         Close();
     }
 
@@ -74,7 +68,7 @@ public class HandUI : Selectable, ICancelHandler
         }
     }
     
-    const float k_ClosedOffset = -500;
+    const float k_ClosedOffset = -700;
     const float k_OpenOffset = 0;
     const float k_OpenDuration = 0.2f;
     IEnumerator ShowCo()

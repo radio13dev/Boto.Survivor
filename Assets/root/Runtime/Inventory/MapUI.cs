@@ -12,6 +12,12 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     float2 m_CursorPosition;
     DateTime m_LastAdjustTime;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        OnDeselect(default);
+    }
+
     private void Update()
     {
         var now = DateTime.UtcNow;

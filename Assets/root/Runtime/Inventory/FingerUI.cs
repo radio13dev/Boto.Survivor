@@ -9,6 +9,12 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
 
     public static RingUIElement Held;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        OnDeselect(default);
+    }
+
     public override void OnSelect(BaseEventData eventData)
     {
         base.OnSelect(eventData);
