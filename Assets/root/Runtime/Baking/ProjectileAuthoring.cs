@@ -12,6 +12,8 @@ public class ProjectileAuthoring : MonoBehaviour
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new ProjectileTag());
+            AddComponent(entity, new ProjectileHit());
+            SetComponentEnabled<ProjectileHit>(entity, false);
             AddComponent(entity, new DestroyAtTime());
             AddComponent(entity, new SurfaceMovement());
             AddComponent(entity, new LockToSurface());

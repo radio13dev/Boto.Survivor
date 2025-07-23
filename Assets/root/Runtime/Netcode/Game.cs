@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,12 +15,12 @@ using UnityEngine;
 using UnityEngine.Scripting;
 
 [Preserve] 
-public class DisableBootstrap : ICustomBootstrap
+public class ClientGameBootstrap : ICustomBootstrap
 {
     public bool Initialize(string defaultWorldName)
     {
-        var emptyWorld = new World("Empty");
-        World.DefaultGameObjectInjectionWorld = emptyWorld;
+        Game.ClientGame = new Game(true);
+        World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
         return true;
     }
 }
@@ -34,10 +35,9 @@ public class Game : IDisposable
     
     public static bool ConstructorReady => SceneManager.Ready;
     
-    public static Game SingleplayerGame;
     public static Game ServerGame;
     public static Game ClientGame;
-    public static Game PresentationGame => ClientGame ?? SingleplayerGame;
+    public static Game PresentationGame => ClientGame;
 
     public World World => m_World;
     public int PlayerIndex = -1;
@@ -134,12 +134,6 @@ public class Game : IDisposable
             
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
         m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
-    }
-    
-    public void RunGameWorldInit()
-    {
-        var terrain = World.Unmanaged.GetExistingUnmanagedSystem<Collisions.TerrainInitSystem>();
-        World.Unmanaged.ResolveSystemStateRef(terrain).Enabled = true;
     }
 
     public void Dispose()

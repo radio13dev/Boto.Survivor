@@ -48,24 +48,29 @@ namespace Collisions
             enemyEntities.Dispose(state.Dependency);
             enemyColliders.Dispose(state.Dependency);
             enemyTransforms.Dispose(state.Dependency);
-            
-            state.CompleteDependency();
 
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            state.Dependency = new FireAtNearestTargetJob()
+            var a = new FireAtNearestTargetJob()
             {
                 ecb = parallel,
                 resources = SystemAPI.GetSingleton<GameManager.Resources>(),
                 tree = m_enemyTree,
                 time = SystemAPI.Time.ElapsedTime
-            }.Schedule(state.Dependency);
+            }.ScheduleParallel(state.Dependency);
             
-            state.Dependency = new EnemyPushForceJob()
+            var b = new EnemyPushForceJob()
             {
                 tree = m_enemyTree
-            }.Schedule(state.Dependency);
+            }.ScheduleParallel(state.Dependency);
+            
+            var c = new ProjectileHitEnemyJob()
+            {
+                tree = m_enemyTree
+            }.ScheduleParallel(state.Dependency);
+            
+            state.Dependency = JobHandle.CombineDependencies(a,b,c);
         }
 
         public void OnDestroy(ref SystemState state)
@@ -184,27 +189,47 @@ namespace Collisions
                     
                     _force->Velocity += (queryRange.Center - objBounds.Center)/2;
                     return true;
-                    
-                    /*
-                    float2 delta = queryRange.Center - objBounds.Center;
-                    float2 halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
-                    float2 halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
+                }
+            }
+        }
+        
+        [BurstCompile]
+        [WithAll(typeof(SurvivorProjectileTag))]
+        [WithDisabled(typeof(ProjectileHit))]
+        unsafe partial struct ProjectileHitEnemyJob : IJobEntity
+        {
+            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
-                    float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
-                    float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
+            public unsafe void Execute([EntityIndexInChunk] int Key, Entity projectileE, in LocalTransform transform, in Collider collider, 
+                ref ProjectileHit projectileHit, EnabledRefRW<ProjectileHit> projectileHitState)
+            {
+                var adjustedAABB2D = collider.Add(transform.Position);
+                fixed (ProjectileHit* projectileHit_ptr = &projectileHit)
+                {
+                    var visitor = new CollisionVisitor(projectileE, projectileHit_ptr, projectileHitState);
+                    tree.Range(adjustedAABB2D, ref visitor);
+                }
+            }
 
-                    if (overlapX < overlapY)
-                    {
-                        float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
-                        _force->Shift += new float2(pushX, 0f);
-                    }
-                    else
-                    {
-                        float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
-                        _force->Shift += new float2(0f, pushY);
-                    }
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            {
+                Entity _projectileE;
+                ProjectileHit* _projectileHit_ptr;
+                EnabledRefRW<ProjectileHit> _projectileHitState;
+
+                public CollisionVisitor(Entity projectileE, ProjectileHit* projectileHit_ptr, EnabledRefRW<ProjectileHit> projectileHitState)
+                {
+                    _projectileE = projectileE;
+                    _projectileHit_ptr = projectileHit_ptr;
+                    _projectileHitState = projectileHitState;
+                }
+
+                public bool OnVisit(Entity enemyE, AABB objBounds, AABB queryRange)
+                {
+                    if (!objBounds.Overlaps(queryRange)) return true;
+                    _projectileHit_ptr->HitEntity = enemyE;
+                    _projectileHitState.ValueRW = true;
                     return true;
-                    */
                 }
             }
         }

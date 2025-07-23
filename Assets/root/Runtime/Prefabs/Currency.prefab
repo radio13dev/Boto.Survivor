@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7419757055955712054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 240200278457971943}
+  - component: {fileID: 3078662805218601296}
+  - component: {fileID: 5750577854139021121}
+  - component: {fileID: 1249446285491673129}
+  - component: {fileID: 651722630156716425}
+  - component: {fileID: 1346623939594366831}
+  m_Layer: 0
+  m_Name: Currency
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &240200278457971943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3078662805218601296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
+  Particle:
+    AssetIndex: 5
+    _Asset: {fileID: 11400000, guid: c7fee6b9dc62f9a4fb5b583dd6f768c4, type: 2}
+--- !u!114 &5750577854139021121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  Min:
+    x: -0.2
+    y: -0.2
+    z: -0.2
+  Max:
+    x: 0.2
+    y: 0.2
+    z: 0.2
+--- !u!114 &1249446285491673129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &651722630156716425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ec3c8c9b5a4c3290858a98920a151b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::CurrencyCollectableAuthoring
+  CollectableMin:
+    x: -4
+    y: -4
+    z: -4
+  CollectableMax:
+    x: 4
+    y: 4
+    z: 4
+  MovementSettings:
+    Speed: 4
+    MaxCollectableSpeed: 100
+    CollectRadius: 0.4
+    JumpValue: 0.5
+  PhysicsResponse:
+    Gravity: 15
+    BounceThresholdMin: 1
+    BounceResponse: 0.9
+    BounceFriction: 0.1
+    AirDrag: 4
+    AirDragLinear: 0.5
+    Friction: 1
+    FrictionLinear: 1
+    RotationalDrag: 1
+    RotationalDragLinear: 1
+--- !u!114 &1346623939594366831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f710d9c624cc2982f7147ae7f3594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
+  Particle:
+    AssetIndex: 6
+    _Asset: {fileID: -8333230072600633316, guid: 3ed2cd97193b7f140a123b0b56bd640c, type: 3}

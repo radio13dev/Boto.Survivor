@@ -45,6 +45,11 @@ public static class IAutoPoolExtensions
         yield return new WaitForSeconds(afterSeconds);
         AutoPool.Return(poolObject);
     }
+    
+    public static int GetPoolActiveCount<T>(this T prefabComponent) where T : AutoPoolBehaviour
+    {
+        return AutoPool.GetActiveCount(prefabComponent);
+    }
 }
 
 public static class AutoPool
@@ -53,6 +58,7 @@ public static class AutoPool
     {
         public GameObject prefab;
         public Stack<object> pool = new Stack<object>();
+        public int active;
 
         public bool TryPopT<T>(out T returnObject) where T : AutoPoolBehaviour
         {
@@ -99,6 +105,7 @@ public static class AutoPool
 
         poolObject.gameObject.SetActive(true);
         poolObject.NewObjectSetup();
+        genericPool.active++;
         return poolObject;
     }
     
@@ -117,5 +124,26 @@ public static class AutoPool
         
         poolObject.gameObject.SetActive(false);
         genericPool.pool.Push(poolObject);
+        genericPool.active--;
+    }
+    
+    public static int GetActiveCount<T>(T prefabComponent) where T : AutoPoolBehaviour
+    {
+        if (prefabComponent == null)
+        {
+            throw new Exception($"Prefab component cannot be null.");
+        }
+        
+        var poolKey = prefabComponent.gameObject;
+        if (!pools.TryGetValue(poolKey, out var genericPool))
+        {
+            var newPool = new AutoPoolContainer
+            {
+                prefab = prefabComponent.gameObject
+            };
+            pools[poolKey] = newPool;
+            genericPool = newPool;
+        }
+        return genericPool.active;
     }
 }

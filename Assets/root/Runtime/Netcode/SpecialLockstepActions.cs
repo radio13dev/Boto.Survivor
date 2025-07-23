@@ -1,5 +1,6 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 
 public struct SpecialLockstepActions
 {
@@ -42,6 +43,7 @@ public struct SpecialLockstepActions
                 var newPlayer = world.EntityManager.Instantiate(resources.SurvivorTemplate);
                 world.EntityManager.AddComponent<PlayerControlled>(newPlayer);
                 world.EntityManager.SetComponentData(newPlayer, new PlayerControlled(){ Index = Data });
+                world.EntityManager.SetComponentData(newPlayer, LocalTransform.FromPosition(20,0,0));
                 break;
                 
             case CODE_PlayerLeave:

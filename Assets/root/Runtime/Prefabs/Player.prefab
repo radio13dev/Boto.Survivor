@@ -50,8 +50,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
   MovementSettings:
     Speed: 2
-    Drag: 16
-    LinearDrag: 1
+    MaxCollectableSpeed: 0
+    CollectRadius: 0
+    JumpValue: 0
+  PhysicsResponse:
+    Gravity: 9
+    BounceThresholdMin: 0
+    BounceResponse: 0
+    BounceFriction: 0
+    AirDrag: 0
+    AirDragLinear: 0
+    Friction: 8
+    FrictionLinear: 1
+    RotationalDrag: 0
+    RotationalDragLinear: 0
   Health:
     Value: 100
   EnableLaserProjectile: 1

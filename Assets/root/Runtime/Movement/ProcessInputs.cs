@@ -19,15 +19,9 @@ public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 public struct MovementSettings : IComponentData
 {
     public float Speed;
-    public float Drag;
-    public float LinearDrag;
-    
-    public MovementSettings(float speed, float drag, float linearDrag)
-    {
-        Speed = speed;
-        Drag = drag;
-        LinearDrag = linearDrag;
-    }
+    public float MaxCollectableSpeed;
+    public float CollectRadius;
+    public float JumpValue;
 }
 
 [Save]

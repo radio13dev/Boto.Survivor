@@ -5,11 +5,12 @@ using Unity.Entities;
 
 public class SurvivorAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings(1,1,1);
+    public MovementSettings MovementSettings = new MovementSettings();
+    public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(100);
     public bool EnableLaserProjectile;
 
-    public partial class SurvivorBaker : Baker<SurvivorAuthoring>
+    partial class Baker : Baker<SurvivorAuthoring>
     {
         public override void Bake(SurvivorAuthoring authoring)
         {
@@ -25,6 +26,9 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, authoring.MovementSettings);
             AddComponent<Movement>(entity);
             AddComponent<Grounded>(entity);
+            SetComponentEnabled<Grounded>(entity, false);
+            AddComponent(entity, authoring.PhysicsResponse);
+            AddComponent<RotateWithSurface>(entity);
             AddComponent<StepInput>(entity);
             AddComponent<LastStepInputLastDirection>(entity);
             AddComponent<Force>(entity);

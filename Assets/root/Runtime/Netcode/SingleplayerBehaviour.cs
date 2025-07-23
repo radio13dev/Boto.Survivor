@@ -2,6 +2,7 @@
 using System.Collections;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Entities;
 using UnityEngine;
 
 public unsafe class SingleplayerBehaviour : MonoBehaviour
@@ -15,21 +16,24 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
 
     private IEnumerator Start()
     {
-        if (Game.SingleplayerGame != null) Debug.LogError($"Running multiple singleplayer games at the same time...");
-        
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
+        if (Game.ClientGame != null && Game.ClientGame.IsReady)
+        {
+            Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
+            Game.ClientGame = new Game(true);
+            World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
+        }
         
         // Build game
-        yield return new WaitUntil(() => Game.ConstructorReady);
-        m_Game = new Game(true);
+        yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
+        m_Game = Game.ClientGame;
+        
+        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
         m_Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
             m_Game.World.Update();
             return m_Game.IsReady;
         });
-        
-        m_Game.RunGameWorldInit();
         
         // Spawn the player
         m_Game.PlayerIndex = 0;
@@ -38,7 +42,6 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         
         // Complete
         m_InitComplete = true;
-        Game.SingleplayerGame = m_Game;
     }
 
     private void OnDestroy()

@@ -90,8 +90,19 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     private JobHandle m_ClientJobHandle;
     private Game m_Game;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        if (Game.ClientGame != null && Game.ClientGame.IsReady)
+        {
+            Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
+            Game.ClientGame = new Game(true);
+            World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
+        }
+        
+        // Build game
+        yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
+        m_Game = Game.ClientGame;
+        
         m_ClientConnection = new NativeReference<Server>(Allocator.Persistent);
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
@@ -270,12 +281,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
             if (m_SaveBuffer.Length != 0)
             {
-                if (m_Game == null)
-                {
-                    Debug.Log($"... setting up client world...");
-                    m_Game = new Game(true);
-                }
-
                 Debug.Log($"... loading save {m_SaveBuffer.Length}...");
 
                 // Load this in

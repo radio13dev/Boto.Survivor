@@ -28,7 +28,7 @@ public class ParticleOnDestroyAuthoring : MonoBehaviour
 }
 
 [UpdateBefore(typeof(DestroySystem))]
-[UpdateInGroup(typeof(LateSimulationSystemGroup))]
+[UpdateInGroup(typeof(DestroySystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct ParticleOnDestroySystem : ISystem
 {
