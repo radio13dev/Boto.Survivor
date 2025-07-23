@@ -212,20 +212,21 @@ public static class TorusMapper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float3 ToroidalToCartesian(float2 toroidal)
+    public static float3 ToroidalToCartesian(float2 toroidal, float height = 0)
     {
-        return ToroidalToCartesian(toroidal.x, toroidal.y);
+        return ToroidalToCartesian(toroidal.x, toroidal.y, height);
     }
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float3 ToroidalToCartesian(float theta, float phi)
+    public static float3 ToroidalToCartesian(float theta, float phi, float height = 0)
     {
         // Compute the cosine and sine for phi.
         float phiCos = math.cos(phi);
         // Calculate the x-z components based on ring radius and thickness.
-        float x = (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * math.cos(theta);
-        float y = TorusMapper.Thickness.Data * math.sin(phi);
-        float z = (TorusMapper.RingRadius.Data + TorusMapper.Thickness.Data * phiCos) * math.sin(theta);
+        var thickness = TorusMapper.Thickness.Data + height;
+        float x = (TorusMapper.RingRadius.Data + thickness * phiCos) * math.cos(theta);
+        float y = thickness * math.sin(phi);
+        float z = (TorusMapper.RingRadius.Data + thickness * phiCos) * math.sin(theta);
 
         return new float3(x, y, z);
     }
