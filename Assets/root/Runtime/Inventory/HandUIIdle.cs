@@ -8,7 +8,7 @@ public class HandUIIdle : Selectable, ICancelHandler, HandUIController.IStateCha
     public Transform ClosedT;
     public Transform NeatralT;
     public Transform InventoryT;
-    public Transform MapT;
+    public Transform MapT;    
     ExclusiveCoroutine Co;
 
     protected override void OnEnable()
