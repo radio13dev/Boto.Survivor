@@ -4,11 +4,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
+public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHandler, IPointerMoveHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
 {
     public CameraTarget Target;
     public Transform MapCameraTransform;
     public Camera MapCamera;
+    
+    public Transform CursorTransform;
+    public Collider MapCollider;
+    public Vector2 TextureScale;
+    
+    public Vector2 DragRate;
     
     public float PositionChaseRate = 10.0f;
     public float RotationChaseRate = 100.0f;
@@ -25,6 +31,8 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     
     float2 m_CursorPosition;
     DateTime m_LastAdjustTime;
+    bool m_Dragging = false;
+    bool m_AutoTrack = true;
 
     protected override void Awake()
     {
@@ -54,16 +62,11 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     {
         var now = DateTime.UtcNow;
         var timeSinceAdjust = now - m_LastAdjustTime;
-        if (this.currentSelectionState != SelectionState.Selected)
+        if (m_AutoTrack)
         {
             // Regular map update
             SetCursorPosition(Target.transform.position);
             AlignViewToCursor();
-        }
-        else
-        {
-            // Listen to inputs and move cursor
-            
         }
     }
 
@@ -112,10 +115,56 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
         Debug.DrawLine(worldPoint, forwardPoint);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerMove(PointerEventData eventData)
     {
-        // Ping at the selected position
-        Debug.Log(eventData.pointerCurrentRaycast.gameObject);
+        // As the mouse moves around on the surface move the cursor
+        var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+        var screenPos = transform.InverseTransformPoint(worldPos);
+        screenPos.x /= TextureScale.x;
+        screenPos.y /= TextureScale.y;
+        screenPos += new Vector3(0.5f, 0f, 0);
+        
+        Ray ray = MapCamera.ViewportPointToRay(screenPos);
+        
+        if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+        {
+            CursorTransform.position = hitInfo.point;
+            CursorTransform.rotation = Quaternion.LookRotation(hitInfo.normal, Vector3.up);
+            CursorTransform.gameObject.SetActive(true);
+        }
+        else
+        {
+            CursorTransform.gameObject.SetActive(false);
+        }
+    }
+
+    public override void OnPointerDown(PointerEventData eventData)
+    {
+        base.OnPointerDown(eventData);
+        if (eventData.button != PointerEventData.InputButton.Left)
+            return;
+            
+        // Drag!
+        m_Dragging = true;
+        m_AutoTrack = false;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (m_Dragging)
+        {
+            // Rotate the camera
+            var delta = eventData.delta;
+            MapCameraTransform.rotation = Quaternion.AngleAxis(delta.x*DragRate.x, MapCameraTransform.up) 
+                                          * Quaternion.AngleAxis(delta.y*DragRate.y, MapCameraTransform.right)
+                                          * MapCameraTransform.rotation;
+        }
+    }
+
+    public override void OnPointerUp(PointerEventData eventData)
+    {
+        base.OnPointerUp(eventData);
+        m_Dragging = false;
     }
 
     public void OnSubmit(BaseEventData eventData)
@@ -136,6 +185,7 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
         {
             case HandUIController.State.Closed:
                 target = ClosedT;
+                m_AutoTrack = true;
                 this.Deselect();
                 break;
             case HandUIController.State.Inventory:
