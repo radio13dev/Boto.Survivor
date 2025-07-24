@@ -35,6 +35,7 @@ public static class TorusMapper
     private class RingRadiusSqKey
     {
     }
+
     public static readonly SharedStatic<float> ThicknessSq = SharedStatic<float>.GetOrCreate<float, ThicknessSqKey>();
 
     private class ThicknessSqKey
@@ -192,6 +193,7 @@ public static class TorusMapper
         CartesianToToroidal(position, out float theta, out float phi, out _);
         return new float2(theta, phi);
     }
+
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CartesianToToroidal(float3 position, out float theta, out float phi, out float3 ringCenterOffset)
@@ -216,6 +218,7 @@ public static class TorusMapper
     {
         return ToroidalToCartesian(toroidal.x, toroidal.y, height);
     }
+
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 ToroidalToCartesian(float theta, float phi, float height = 0)

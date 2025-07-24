@@ -104,10 +104,10 @@ MonoBehaviour:
     y: 4
     z: 4
   MovementSettings:
-    Speed: 4
-    MaxCollectableSpeed: 100
+    Speed: 8
+    MaxCollectableSpeed: 160
     CollectRadius: 0.4
-    JumpValue: 0.5
+    JumpValue: 0
   PhysicsResponse:
     Gravity: 15
     BounceThresholdMin: 1

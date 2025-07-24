@@ -4,10 +4,17 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler
+public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
 {
     public CameraTarget Target;
     public Transform MapCameraTransform;
+    public Camera MapCamera;
+    
+    public Transform ClosedT;
+    public Transform NeatralT;
+    public Transform InventoryT;
+    public Transform MapT;
+    ExclusiveCoroutine Co;
     
     float2 m_CursorPosition;
     DateTime m_LastAdjustTime;
@@ -16,6 +23,24 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     {
         base.Awake();
         OnDeselect(default);
+    }
+    
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        HandUIController.Attach(this);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        HandUIController.Detach(this);
+    }
+
+    public override void OnSelect(BaseEventData eventData)
+    {
+        base.OnSelect(eventData);
+        HandUIController.SetState(HandUIController.State.Map);
     }
 
     private void Update()
@@ -48,11 +73,10 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
         MapCameraTransform.rotation = Quaternion.LookRotation(worldPoint - cameraPoint, worldPoint.y >= 0 ? Vector3.up : Vector3.down);
     }
 
-
     public void OnPointerClick(PointerEventData eventData)
     {
         // Ping at the selected position
-        // TODO
+        Debug.Log(eventData.pointerCurrentRaycast.gameObject);
     }
 
     public void OnSubmit(BaseEventData eventData)
@@ -63,6 +87,31 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
 
     public void OnCancel(BaseEventData eventData)
     {
-        HandUI.Home();
+        HandUIController.SetState(HandUIController.State.Closed);
+    }
+
+    public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
+    {
+        Transform target;
+        switch (newState)
+        {
+            case HandUIController.State.Closed:
+                target = ClosedT;
+                this.Deselect();
+                break;
+            case HandUIController.State.Inventory:
+                target = InventoryT;
+                break;
+            case HandUIController.State.Map:
+                target = MapT;
+                this.Select();
+                break;
+            case HandUIController.State.Neutral:
+            default:
+                target = NeatralT;
+                break;
+        }
+
+        Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, target, HandUIController.k_AnimTransitionTime));
     }
 }

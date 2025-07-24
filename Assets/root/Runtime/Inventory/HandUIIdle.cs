@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
-public class HandUI : MonoBehaviour, HandUIController.IStateChangeListener
+public class HandUIIdle : Selectable, ICancelHandler, HandUIController.IStateChangeListener
 {
     public Transform ClosedT;
     public Transform NeatralT;
@@ -8,16 +11,29 @@ public class HandUI : MonoBehaviour, HandUIController.IStateChangeListener
     public Transform MapT;
     ExclusiveCoroutine Co;
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         HandUIController.Attach(this);
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         HandUIController.Detach(this);
     }
-    
+
+    public void OnCancel(BaseEventData eventData)
+    {
+        HandUIController.SetState(HandUIController.State.Closed);
+    }
+
+    public override void OnSelect(BaseEventData eventData)
+    {
+        base.OnSelect(eventData);
+        HandUIController.SetState(HandUIController.State.Neutral);
+    }
+
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
         Transform target;
@@ -35,6 +51,7 @@ public class HandUI : MonoBehaviour, HandUIController.IStateChangeListener
             case HandUIController.State.Neutral:
             default:
                 target = NeatralT;
+                this.Select();
                 break;
         }
 
