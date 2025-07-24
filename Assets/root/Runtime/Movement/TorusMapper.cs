@@ -209,8 +209,13 @@ public static class TorusMapper
         );
         // Derive the offset
         ringCenterOffset = position - ringCenter;
+        
+        // Determine the x-z plane distance from the ring center so we can determine phi
+        var flatDistFromRing = math.length(ringCenterOffset.xz);
+        if (math.lengthsq(position.xz) < TorusMapper.RingRadiusSq.Data) flatDistFromRing = -flatDistFromRing;
+        
         // Calculate phi from the y component and distance from ring center.
-        phi = math.atan2(position.y, math.length(ringCenterOffset));
+        phi = math.atan2(position.y, flatDistFromRing);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

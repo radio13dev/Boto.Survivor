@@ -69,8 +69,14 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     {
         var worldPoint = (Vector3)TorusMapper.ToroidalToCartesian(m_CursorPosition);
         var cameraPoint = (Vector3)TorusMapper.ToroidalToCartesian(m_CursorPosition, 10);
+        
+        var forwardPointToroidal = m_CursorPosition + new float2(0, 0.1f);
+        var forwardPoint = (Vector3)TorusMapper.ToroidalToCartesian(forwardPointToroidal);
+        
         MapCameraTransform.position = cameraPoint;
-        MapCameraTransform.rotation = Quaternion.LookRotation(worldPoint - cameraPoint, worldPoint.y >= 0 ? Vector3.up : Vector3.down);
+        MapCameraTransform.rotation = Quaternion.LookRotation(worldPoint - cameraPoint, forwardPoint - worldPoint);
+        Debug.DrawLine(cameraPoint, worldPoint);
+        Debug.DrawLine(worldPoint, forwardPoint);
     }
 
     public void OnPointerClick(PointerEventData eventData)
