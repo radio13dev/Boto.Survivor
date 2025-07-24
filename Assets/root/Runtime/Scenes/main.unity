@@ -1377,7 +1377,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 314770847}
-  - component: {fileID: 314770848}
   m_Layer: 0
   m_Name: Map Camera
   m_TagString: Untagged
@@ -1393,32 +1392,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 314770846}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000008075451, y: 0.92923546, z: -0.36948812, w: 0.000000020309093}
-  m_LocalPosition: {x: -0.0000050857266, y: 34.334137, z: 116.34786}
+  m_LocalRotation: {x: 0.98981583, y: 0.00000014730819, z: 0, w: 0.14235397}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 678268064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &314770848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314770846}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 361b23238841da743be57fe17d942d41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::CameraTrack
-  CameraTarget: {fileID: 1490975862}
-  linearCameraChase: 1
-  relativeCameraChase: 6
-  velocityFalloff: 1
-  newVelocityEffect: 1
-  virtualTargetOffset: 1
 --- !u!1 &324750868
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,7 +2735,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1146
+  near clip plane: 964.88
   far clip plane: 1428
   field of view: 10.9
   orthographic: 0
@@ -2917,6 +2898,11 @@ MonoBehaviour:
   Target: {fileID: 1490975863}
   MapCameraTransform: {fileID: 314770847}
   MapCamera: {fileID: 678268066}
+  PositionChaseRate: 400
+  RotationChaseRate: 200
+  MaxInnerAngle: 2.3
+  SwapInnerAngle: 2.9
+  InnerAngleTransition: 0.3
   ClosedT: {fileID: 324750869}
   NeatralT: {fileID: 647136648}
   InventoryT: {fileID: 875186098}

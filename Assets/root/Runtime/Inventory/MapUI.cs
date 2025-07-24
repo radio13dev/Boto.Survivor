@@ -10,6 +10,13 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
     public Transform MapCameraTransform;
     public Camera MapCamera;
     
+    public float PositionChaseRate = 10.0f;
+    public float RotationChaseRate = 100.0f;
+    
+    public float MaxInnerAngle = 2.4f;
+    public float SwapInnerAngle = 2.9f;
+    public float InnerAngleTransition = 0.1f;
+    
     public Transform ClosedT;
     public Transform NeatralT;
     public Transform InventoryT;
@@ -65,16 +72,42 @@ public class MapUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHa
         m_CursorPosition = TorusMapper.CartesianToToroidal(worldPosition);
     }
 
+    bool m_Alignment;
     private void AlignViewToCursor()
     {
-        var worldPoint = (Vector3)TorusMapper.ToroidalToCartesian(m_CursorPosition);
-        var cameraPoint = (Vector3)TorusMapper.ToroidalToCartesian(m_CursorPosition, 10);
+        var alignToroidal = m_CursorPosition;
+        if (alignToroidal.y > MaxInnerAngle || alignToroidal.y < -MaxInnerAngle)
+        {
+            if (m_Alignment && alignToroidal.y < 0 && alignToroidal.y > -SwapInnerAngle)
+                m_Alignment = false; // Swap to negative alignment
+            if (!m_Alignment && alignToroidal.y > 0 && alignToroidal.y < SwapInnerAngle)
+                m_Alignment = true; // Swap to positive alignment
+            
+            if (m_Alignment && alignToroidal.y > 0)
+            {
+                alignToroidal.y = Mathf.Lerp(alignToroidal.y, MaxInnerAngle + InnerAngleTransition, (alignToroidal.y - MaxInnerAngle)/InnerAngleTransition);
+            }
+            else if (!m_Alignment && alignToroidal.y < 0)
+            {
+                alignToroidal.y = Mathf.Lerp(alignToroidal.y, -(MaxInnerAngle + InnerAngleTransition), (-alignToroidal.y - MaxInnerAngle)/InnerAngleTransition);
+            }
+            else
+            {
+                alignToroidal.y = m_Alignment ? (MaxInnerAngle+InnerAngleTransition) : -(MaxInnerAngle+InnerAngleTransition);
+            }
+            
+        }
+        else
+            m_Alignment = alignToroidal.y > 0;
         
-        var forwardPointToroidal = m_CursorPosition + new float2(0, 0.1f);
+        var worldPoint = (Vector3)TorusMapper.ToroidalToCartesian(alignToroidal);
+        var cameraPoint = (Vector3)TorusMapper.ToroidalToCartesian(alignToroidal, 10);
+        
+        var forwardPointToroidal = alignToroidal + new float2(0, -0.1f);
         var forwardPoint = (Vector3)TorusMapper.ToroidalToCartesian(forwardPointToroidal);
         
-        MapCameraTransform.position = cameraPoint;
-        MapCameraTransform.rotation = Quaternion.LookRotation(worldPoint - cameraPoint, forwardPoint - worldPoint);
+        MapCameraTransform.position = Vector3.zero;//Vector3.MoveTowards(MapCameraTransform.position, cameraPoint, Time.deltaTime * PositionChaseRate);
+        MapCameraTransform.rotation = Quaternion.RotateTowards(MapCameraTransform.rotation, Quaternion.LookRotation(worldPoint - cameraPoint, forwardPoint - worldPoint), Time.deltaTime * RotationChaseRate);
         Debug.DrawLine(cameraPoint, worldPoint);
         Debug.DrawLine(worldPoint, forwardPoint);
     }
