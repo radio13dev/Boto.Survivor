@@ -18,6 +18,7 @@ public struct StepInput : IComponentData
     // @formatter:off
         public const byte RotLeftInput  = 0b0000_0001;
         public const byte RotRightInput = 0b0000_0010;
+        public const byte AdjustInventoryInput = 0b0000_0100;
         
         public const byte S1Input       = 0b0001_0000;
         public const byte S2Input       = 0b0010_0000;
@@ -57,7 +58,6 @@ public struct StepInput : IComponentData
         if (Keyboard.current.kKey.isPressed)        Input |= StepInput.S2Input;
         if (Keyboard.current.spaceKey.isPressed)    Input |= StepInput.S3Input;
         if (Keyboard.current.shiftKey.isPressed)    Input |= StepInput.S4Input;
-
     }
 }
 

@@ -11,6 +11,8 @@ public struct GameManager : IComponentData
         public Entity ProjectileTemplate;
         public Entity SurvivorTemplate;
         public Entity EnemyTemplate;
+        public Entity ItemDropTemplate;
+        public Entity LootDropTemplate;
         
         public Entity Projectile_Survivor_Laser;
     }
@@ -56,6 +58,9 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public GameObject EnemyTemplate;
     public GameObject Projectile_Survivor_Laser;
     
+    public RingItemAuthoring ItemDropTemplate;
+    public LootGenerator2Authoring LootDropTemplate;
+    
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
     public ParticleDatabase ParticleDatabase;
@@ -73,7 +78,9 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 ProjectileTemplate = GetEntity(authoring.ProjectileTemplate, TransformUsageFlags.WorldSpace),
                 SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
                 EnemyTemplate = GetEntity(authoring.EnemyTemplate, TransformUsageFlags.WorldSpace),
-                Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace)
+                Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace),
+                ItemDropTemplate = GetEntity(authoring.ItemDropTemplate, TransformUsageFlags.WorldSpace),
+                LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace)
             });
             
             if (authoring.SpecificPrefabDatabase)

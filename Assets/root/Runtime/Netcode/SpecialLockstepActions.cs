@@ -1,28 +1,30 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 
+[Serializable]
 public struct SpecialLockstepActions
 {
     // @formatter:off
-    public const byte CODE_PlayerJoin    = 0b0000_0001;
-    public const byte CODE_PlayerLeave   = 0b0000_0010;
-    public const byte _2            = 0b0000_0100;
-    public const byte _3            = 0b0000_1000;
+    public const byte CODE_PlayerJoin               = 0b0000_0001;
+    public const byte CODE_PlayerLeave              = 0b0000_0010;
     
-    public const byte _4            = 0b0001_0000;
-    public const byte _5            = 0b0010_0000;
-    public const byte _6            = 0b0100_0000;
-    public const byte _7            = 0b1000_0000;
+    // All rpcs have the 0b1000_0000 bit set
+    public const byte CODE_Rpc_PlayerAdjustInventory= 0b1000_0000;
     // @formatter:on 
     
     public byte Type;
     public byte Data;
+    public byte Extension;
     
+    public bool IsValidClientRpc => Type >= 0b1000_0000;
+
     public void Write(ref DataStreamWriter writer)
     {
         writer.WriteByte(Type);
         writer.WriteByte(Data);
+        writer.WriteByte(Extension);
     }
 
     public static SpecialLockstepActions Read(ref DataStreamReader reader)
@@ -30,6 +32,7 @@ public struct SpecialLockstepActions
         SpecialLockstepActions result = new();
         result.Type = reader.ReadByte();
         result.Data = reader.ReadByte();
+        result.Extension = reader.ReadByte();
         return result;
     }
 
@@ -59,6 +62,11 @@ public struct SpecialLockstepActions
                 }
                 players.Dispose();
                 playersE.Dispose();
+                break;
+            
+            case CODE_Rpc_PlayerAdjustInventory:
+                var rpc = world.EntityManager.CreateEntity(new ComponentType(typeof(Rpc_PlayerAdjustInventory)));
+                world.EntityManager.SetComponentData(rpc, new Rpc_PlayerAdjustInventory(Data, Extension));
                 break;
         }
     }

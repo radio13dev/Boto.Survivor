@@ -61,6 +61,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 {
     public const byte CODE_SendInput = 0b0000_0000;
     public const byte CODE_RequestSave = 0b0000_0001;
+    public const byte CODE_SendRpc = 0b0000_0010;
 
     public const int k_MaxSaveSize = 200_000;
 
@@ -76,6 +77,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     private NativeReference<StepInput> m_FrameInput;
     private NativeQueue<FullStepData> m_ServerMessageBuffer;
     private NativeQueue<GenericMessage> m_GenericMessageBuffer;
+    private NativeQueue<SpecialLockstepActions> m_RpcSendBuffer;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
 
     private NativeList<byte> m_SaveBuffer;
@@ -107,6 +109,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
         m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
+        m_RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SaveBuffer = new NativeList<byte>(Allocator.Persistent);
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
     }
@@ -124,6 +127,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_FrameInput.Dispose();
         m_ServerMessageBuffer.Dispose();
         m_GenericMessageBuffer.Dispose();
+        m_RpcSendBuffer.Dispose();
         m_SaveBuffer.Dispose();
         m_SpecialActionArr.Dispose();
     }
@@ -170,6 +174,35 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             writer.WriteByte(CODE_SendInput);
             FrameInput.Value.Write(ref writer);
             FrameInput.Value = default;
+
+            result = Driver.EndSend(writer);
+            if (result < 0)
+            {
+                Debug.LogError($"Couldn't send ping (error code {result}).");
+                return;
+            }
+        }
+    }
+    
+    // Job that sends an Rpc to the server.
+    [BurstCompile]
+    private struct PingRelayRpcJob : IJob
+    {
+        public NetworkDriver Driver;
+        public NetworkConnection Connection;
+        public SpecialLockstepActions Rpc;
+
+        public void Execute()
+        {
+            var result = Driver.BeginSend(Connection, out var writer);
+            if (result < 0)
+            {
+                Debug.LogError($"Couldn't send ping (error code {result}).");
+                return;
+            }
+
+            writer.WriteByte(CODE_SendRpc);
+            Rpc.Write(ref writer);
 
             result = Driver.EndSend(writer);
             if (result < 0)
@@ -337,14 +370,28 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
             // If it's time to send, schedule a send job.
             var state = m_ClientDriver.Driver.GetConnectionState(m_ClientConnection.Value.Connection);
-            if (state == NetworkConnection.State.Connected && shouldSend)
+            if (state == NetworkConnection.State.Connected)
             {
-                m_ClientJobHandle = new PingRelaySendJob
+                // Send off any queued rpcs
+                while (m_RpcSendBuffer.TryDequeue(out var rpc))
                 {
-                    Driver = m_ClientDriver.Driver.ToConcurrent(),
-                    Connection = m_ClientConnection.Value.Connection,
-                    FrameInput = m_FrameInput
-                }.Schedule();
+                    m_ClientJobHandle = new PingRelayRpcJob()
+                    {
+                        Driver = m_ClientDriver.Driver,
+                        Connection = m_ClientConnection.Value.Connection,
+                        Rpc = rpc
+                    }.Schedule(m_ClientJobHandle);
+                }
+            
+                if (shouldSend)
+                {
+                    m_ClientJobHandle = new PingRelaySendJob
+                    {
+                        Driver = m_ClientDriver.Driver.ToConcurrent(),
+                        Connection = m_ClientConnection.Value.Connection,
+                        FrameInput = m_FrameInput
+                    }.Schedule(m_ClientJobHandle);
+                }
             }
 
             // Schedule a job chain with the ping send job (if scheduled), the driver update

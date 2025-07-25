@@ -195,6 +195,18 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                             Debug.Log($"Save requested...");
                             connection.RequestedSave = true;
                             break;
+                        case PingClientBehaviour.CODE_SendRpc:
+                            var rpc = SpecialLockstepActions.Read(ref reader);
+                            if (rpc.IsValidClientRpc)
+                            {
+                                SpecialActionQueue.Enqueue(rpc);
+                                Debug.Log($"Received RPC: {rpc.Type} {rpc.Data} {rpc.Extension}");
+                            }
+                            else
+                            {
+                                Debug.Log($"{connection} sent illegal RPC: {rpc.Type} {rpc.Data} {rpc.Extension}");
+                            }
+                            break;
                     }
 
                     Connections[i] = connection;

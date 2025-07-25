@@ -8,9 +8,6 @@ public class CurrencyCollectableAuthoring : MonoBehaviour
 {
     public float3 CollectableMin = new float3(-0.5f,-0.5f,-0.5f);
     public float3 CollectableMax = new float3(0.5f,0.5f,0.5f);
-
-    public MovementSettings MovementSettings = new MovementSettings();
-    public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     
     partial class Baker : Baker<CurrencyCollectableAuthoring>
     {
@@ -23,15 +20,6 @@ public class CurrencyCollectableAuthoring : MonoBehaviour
             SetComponentEnabled<Collectable>(entity, false);
             AddComponent(entity, new Collected());
             SetComponentEnabled<Collected>(entity, false);
-            
-            // Physics (want it to bounce)
-            AddComponent(entity, authoring.MovementSettings);
-            AddComponent(entity, authoring.PhysicsResponse);
-            AddComponent<Movement>(entity);
-            AddComponent(entity, new Grounded());
-            SetComponentEnabled<Grounded>(entity, false);
-            AddComponent<RotationalInertia>(entity);
-            AddComponent<Force>(entity);
             AddComponent(entity, new CollectCollider(){Collider = new Collider(new AABB(authoring.CollectableMin, authoring.CollectableMax))});
         }
     }

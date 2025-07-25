@@ -2,7 +2,12 @@
     "name": "Boto.Survivor.Editor",
     "rootNamespace": "",
     "references": [
-        "Boto.Survivor"
+        "Boto.Survivor",
+        "Boto.Utility",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.Collections",
+        "Unity.Transforms"
     ],
     "includePlatforms": [
         "Editor"

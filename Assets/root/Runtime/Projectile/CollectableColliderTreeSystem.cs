@@ -46,11 +46,13 @@ namespace Collisions
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            state.Dependency = new SurvivorCollectCollisionJob()
+            var a = new SurvivorCollectCollisionJob()
             {
                 ecb = parallel,
                 tree = m_Tree,
             }.ScheduleParallel(state.Dependency);
+            
+            state.Dependency = a;
         }
 
         public void OnDestroy(ref SystemState state)

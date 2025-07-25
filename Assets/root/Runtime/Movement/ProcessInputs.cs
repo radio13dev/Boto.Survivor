@@ -2,6 +2,7 @@ using System;
 using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
@@ -19,9 +20,6 @@ public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 public struct MovementSettings : IComponentData
 {
     public float Speed;
-    public float MaxCollectableSpeed;
-    public float CollectRadius;
-    public float JumpValue;
 }
 
 [Save]
@@ -48,14 +46,16 @@ public partial struct ProcessInputs : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        state.Dependency = new MovementInputJob().Schedule(state.Dependency);
+        state.Dependency = new MovementInputJob()
+        {
+        }.ScheduleParallel(state.Dependency);
         state.Dependency = new RotateInputJob()
         {
             dt = SystemAPI.Time.DeltaTime
-        }.Schedule(state.Dependency);
+        }.ScheduleParallel(state.Dependency);
         state.Dependency = new RollInputJob()
         {
-        }.Schedule(state.Dependency);
+        }.ScheduleParallel(state.Dependency);
     }
 
     [WithNone(typeof(MovementInputLockout))]
@@ -76,16 +76,17 @@ public partial struct ProcessInputs : ISystem
     partial struct RotateInputJob : IJobEntity
     {
         [ReadOnly] public float dt;
+
         public void Execute(in StepInput input, ref LocalTransform local)
         {
             var sign = input.RotateSign;
             if (sign != 0)
             {
-                local.Rotation = math.mul(local.Rotation, quaternion.RotateY(2.0f*dt*sign));
+                local.Rotation = math.mul(local.Rotation, quaternion.RotateY(2.0f * dt * sign));
             }
         }
     }
-    
+
     [WithPresent(typeof(ActiveLockout), typeof(MovementInputLockout), typeof(RollActive))]
     [WithAll(typeof(Simulate))]
     partial struct RollInputJob : IJobEntity

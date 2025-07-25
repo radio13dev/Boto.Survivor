@@ -7,6 +7,8 @@ public class CameraTarget : MonoBehaviour
 {
     bool setupComplete = false;
 
+    public Entity PlayerE => m_PlayerE;
+    Entity m_PlayerE;
     EntityQuery m_Query;
 
     private void Update()
@@ -23,15 +25,21 @@ public class CameraTarget : MonoBehaviour
         }
 
         var players = m_Query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-        var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         for (int i = 0; i < players.Length; i++)
         {
             if (players[i].Index == Game.PresentationGame.PlayerIndex)
             {
-                var target = transforms[i];
+                var entities = m_Query.ToEntityArray(Allocator.Temp);
+                m_PlayerE = entities[i];
+                var target = Game.PresentationGame.World.EntityManager.GetComponentData<LocalTransform>(m_PlayerE);
                 transform.SetPositionAndRotation(target.Position, target.Rotation);
+                
+                entities.Dispose();
+                players.Dispose();
+                
                 return;
             }
         }
+        players.Dispose();
     }
 }

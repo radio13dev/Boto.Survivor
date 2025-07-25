@@ -98,6 +98,7 @@ public class Game : IDisposable
         Debug.Log($"Creating Game...");
         m_World = new World("Game", WorldFlags.Game);
         var systems = DefaultWorldInitialization.GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
+        systems.Remove(typeof(UpdateWorldTimeSystem));
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
         
         var saveRequest = new EntityQueryDesc

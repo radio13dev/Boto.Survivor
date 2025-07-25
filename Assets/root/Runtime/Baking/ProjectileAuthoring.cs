@@ -11,7 +11,7 @@ public class ProjectileAuthoring : MonoBehaviour
         public override void Bake(ProjectileAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new ProjectileTag());
+            AddComponent(entity, new Projectile());
             AddComponent(entity, new ProjectileHit());
             SetComponentEnabled<ProjectileHit>(entity, false);
             AddComponent(entity, new DestroyAtTime());

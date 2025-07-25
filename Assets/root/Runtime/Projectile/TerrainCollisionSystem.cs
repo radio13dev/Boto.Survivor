@@ -137,7 +137,7 @@ namespace Collisions
         
         
         [BurstCompile]
-        [WithAll(typeof(ProjectileTag))]
+        [WithAll(typeof(Projectile))]
         unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;

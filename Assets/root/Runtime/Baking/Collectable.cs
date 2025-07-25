@@ -56,13 +56,16 @@ public partial struct CollectableClearSystem : ISystem
     [WithAbsent(typeof(DestroyFlag))]
     partial struct Job : IJobEntity
     {
+        public const float k_MaxCollectableSpeed = 160;
+        public const float k_CollectRadius = 0.4f;
+        
         [ReadOnly] public float dt;
         public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public ComponentLookup<LocalTransform> m_TransformLookup;
     
         public void Execute([ChunkIndexInQuery] int key, Entity collectableE, in Collectable collectable, 
             EnabledRefRW<Collected> collected, EnabledRefRW<Grounded> grounded,
-            in LocalTransform collectableT, in MovementSettings movementSettings, ref Force force)
+            in LocalTransform collectableT, ref Force force)
         {
             if (collected.ValueRO)
             {
@@ -81,15 +84,14 @@ public partial struct CollectableClearSystem : ISystem
             
             var dif = target.Position - collectableT.Position;
             var difLen = math.lengthsq(dif);
-            if (difLen < movementSettings.CollectRadius)
+            if (difLen < k_CollectRadius)
             {
                 collected.ValueRW = true;
                 return;
             }
             
             var dir = math.normalizesafe(dif);
-            force.Velocity += dir*movementSettings.MaxCollectableSpeed*dt;
-            force.Velocity += target.Up()*movementSettings.JumpValue;
+            force.Velocity += dir*k_MaxCollectableSpeed*dt;
             grounded.ValueRW = false;
         }
     }

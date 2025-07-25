@@ -3,9 +3,9 @@ using Collisions;
 using Unity.Collections;
 using Unity.Entities;
 
-public struct ProjectileTag : IComponentData
+public struct Projectile : IComponentData
 {
-    
+    public float Damage;
 }
 
 [Save]
