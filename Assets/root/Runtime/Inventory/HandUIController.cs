@@ -44,6 +44,11 @@ public class HandUIController : MonoBehaviour
             if (m_State == State.Closed) SetState(State.Neutral);
             else SetState(State.Closed);
     }
+
+    public static void StartTransaction(RingEquipTransaction transaction)
+    {
+        SetState(State.Inventory);
+    }
 }
 
 public static class SelectableExtensions

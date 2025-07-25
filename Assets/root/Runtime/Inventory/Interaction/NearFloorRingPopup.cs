@@ -5,10 +5,19 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
+
+public class LootPopup : MonoBehaviour
+{
+    public void Focus(Entity nearestE)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class NearFloorRingPopup : MonoBehaviour
 {
-    public GameObject ItemPopup;
-    public GameObject LootPopup;
+    public RingPopup ItemPopup;
+    public LootPopup LootPopup;
 
     (World World, EntityQuery Query) m_Query;
     
@@ -37,25 +46,30 @@ public class NearFloorRingPopup : MonoBehaviour
 
     private void Hide()
     {
-        ItemPopup.SetActive(false);
-        LootPopup.SetActive(false);
+        ItemPopup.gameObject.SetActive(false);
+        LootPopup.gameObject.SetActive(false);
     }
 
     private void Show(Entity nearestE)
     {
-        // Lazy stuff
-        Hide();
-        
         // Determine what shots
         var entityManager = m_Query.World.EntityManager;
         if (entityManager.HasComponent<RingStats>(nearestE))
         {
-            ItemPopup.SetActive(true);
+            ItemPopup.gameObject.SetActive(true);
+            ItemPopup.Focus(nearestE);
         }
+        else 
+            ItemPopup.gameObject.SetActive(false);
+            
         if (entityManager.HasComponent<LootGenerator2>(nearestE))
         {
-            LootPopup.SetActive(true);
+            LootPopup.gameObject.SetActive(true);
+            LootPopup.Focus(nearestE);
         }
+        else
+            LootPopup.gameObject.SetActive(false);
+        
         if (entityManager.HasComponent<LocalTransform>(nearestE))
         {
             var nearestT = entityManager.GetComponentData<LocalTransform>(nearestE);

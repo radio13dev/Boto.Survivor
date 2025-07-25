@@ -49,6 +49,8 @@ public class Game : IDisposable
     private EntityQuery m_RenderSystemHalfTime;
     private SystemHandle m_RenderSystemGroup;
     
+    public NativeQueue<SpecialLockstepActions> RpcSendBuffer;
+    
     private Entity m_GameManagerSceneE;
     private Entity m_GameSceneE;
     private bool m_Ready;
@@ -126,6 +128,8 @@ public class Game : IDisposable
             m_RenderSystemHalfTime = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(RenderSystemHalfTime)));
             m_RenderSystemGroup = m_World.GetExistingSystem<RenderSystemGroup>();
         }
+        
+        RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
     }
     
     public void LoadScenes()
@@ -139,6 +143,7 @@ public class Game : IDisposable
 
     public void Dispose()
     {
+        RpcSendBuffer.Dispose();
         m_World.Dispose();
     }
     

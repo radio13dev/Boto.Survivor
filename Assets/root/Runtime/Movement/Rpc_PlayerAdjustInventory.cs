@@ -34,6 +34,7 @@ public partial struct Rpc_PlayerAdjustInventory_System : ISystem
     {
         var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().ItemDropTemplate;
         var ecb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);
+        int lastTo = -1;
         foreach (var (rpcRO, rpcE) in SystemAPI.Query<RefRO<Rpc_PlayerAdjustInventory>>().WithEntityAccess())
         {
             ecb.DestroyEntity(rpcE);
@@ -42,6 +43,11 @@ public partial struct Rpc_PlayerAdjustInventory_System : ISystem
             var playerIndex = rpc.PlayerIndex;
             var from = rpc.From;
             var to = rpc.To;
+            
+            if (lastTo == to)
+                continue;
+            
+            lastTo = to;
 
             Entity playerE = Entity.Null;
             foreach (var (testPlayer, testPlayerE) in SystemAPI.Query<RefRO<PlayerControlled>>().WithEntityAccess())

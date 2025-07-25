@@ -88,4 +88,14 @@ public struct SpecialLockstepActions
             Data = (byte)i
         };
     }
+
+    public static SpecialLockstepActions Rpc_PlayerAdjustInventory(int player, int from, int to)
+    {
+        return new SpecialLockstepActions()
+        {
+            Type = CODE_Rpc_PlayerAdjustInventory,
+            Data = (byte)player,
+            Extension = (byte)((from << 4) | (to & 0x0F)) // Store 'from' in the upper nibble and 'to' in the lower nibble
+        };
+    }
 }

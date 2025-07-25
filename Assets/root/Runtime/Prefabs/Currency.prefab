@@ -104,19 +104,6 @@ MonoBehaviour:
     x: 4
     y: 4
     z: 4
-  MovementSettings:
-    Speed: 8
-  PhysicsResponse:
-    Gravity: 15
-    BounceThresholdMin: 1
-    BounceResponse: 0.9
-    BounceFriction: 0.1
-    AirDrag: 4
-    AirDragLinear: 0.5
-    Friction: 1
-    FrictionLinear: 1
-    RotationalDrag: 1
-    RotationalDragLinear: 1
 --- !u!114 &1346623939594366831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::BouncePhysicsAuthoring
   PhysicsResponse:
-    Gravity: 15
+    Gravity: 30
     BounceThresholdMin: 1
     BounceResponse: 0.9
     BounceFriction: 0.1

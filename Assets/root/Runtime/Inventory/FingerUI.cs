@@ -1,18 +1,25 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
 {
+    public static FingerUI[] Instances;
+    
+    public int FingerIndex;
     public RingUIElement Ring;
     public GameObject FingerHighlight;
 
-    public static RingUIElement Held;
+    public static RingEquipTransaction Transaction;
 
     protected override void Awake()
     {
         base.Awake();
         OnDeselect(default);
+        if (FingerIndex >= Instances.Length)
+            Array.Resize(ref Instances, FingerIndex+1);
+        Instances[FingerIndex] = this;
     }
     
     protected override void OnEnable()
@@ -39,7 +46,7 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     {
         base.OnDeselect(eventData);
         if (FingerHighlight) FingerHighlight.gameObject.SetActive(false);
-        if (Ring && Ring != Held) Ring.Description.gameObject.SetActive(false);
+        if (Ring) Ring.Description.gameObject.SetActive(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)

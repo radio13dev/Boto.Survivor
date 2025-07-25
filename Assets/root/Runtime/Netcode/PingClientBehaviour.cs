@@ -77,7 +77,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     private NativeReference<StepInput> m_FrameInput;
     private NativeQueue<FullStepData> m_ServerMessageBuffer;
     private NativeQueue<GenericMessage> m_GenericMessageBuffer;
-    private NativeQueue<SpecialLockstepActions> m_RpcSendBuffer;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
 
     private NativeList<byte> m_SaveBuffer;
@@ -109,7 +108,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
         m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
-        m_RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SaveBuffer = new NativeList<byte>(Allocator.Persistent);
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
     }
@@ -127,7 +125,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_FrameInput.Dispose();
         m_ServerMessageBuffer.Dispose();
         m_GenericMessageBuffer.Dispose();
-        m_RpcSendBuffer.Dispose();
         m_SaveBuffer.Dispose();
         m_SpecialActionArr.Dispose();
     }
@@ -373,7 +370,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             if (state == NetworkConnection.State.Connected)
             {
                 // Send off any queued rpcs
-                while (m_RpcSendBuffer.TryDequeue(out var rpc))
+                while (m_Game != null && m_Game.RpcSendBuffer.TryDequeue(out var rpc))
                 {
                     m_ClientJobHandle = new PingRelayRpcJob()
                     {
