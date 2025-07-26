@@ -4,13 +4,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
+public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener, HandUIController.ILastPressListener
 {
     public static FingerUI[] Instances = Array.Empty<FingerUI>();
     
     public int FingerIndex;
     public RingUIElement Ring;
     public GameObject FingerHighlight;
+    public GameObject SelectHighlight;
 
     protected override void Awake()
     {
@@ -63,6 +64,7 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     {
         base.OnDeselect(eventData);
         if (FingerHighlight) FingerHighlight.gameObject.SetActive(false);
+        
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -94,6 +96,11 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         }
     }
 
+    public void OnLastPressChanged(Selectable oldPressed, Selectable newPressed)
+    {
+        if (SelectHighlight) SelectHighlight.SetActive(newPressed == this);
+    }
+
     public void OnCancel(BaseEventData eventData)
     {
         if (HandUIController.LastPressed == this)
@@ -105,6 +112,10 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
         if (newState == HandUIController.State.Closed) this.Deselect();
+        if (newState != HandUIController.State.Inventory)
+        {
+            if (HandUIController.LastPressed == this) HandUIController.LastPressed = null;
+        }
     }
 
     private void OnStatsUpdated(Entity updated, CompiledStats stats, DynamicBuffer<Ring> rings)

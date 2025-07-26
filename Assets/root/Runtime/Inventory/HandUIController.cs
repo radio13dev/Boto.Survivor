@@ -7,9 +7,24 @@ using UnityEngine.UI;
 
 public class HandUIController : MonoBehaviour
 {
-    public static Selectable LastPressed;
+    public static Selectable LastPressed
+    {
+        get
+        {
+            return s_LastPressed;
+        }
+        set
+        {
+            var old = s_LastPressed;
+            s_LastPressed = value;
+            OnLastPressChanged?.Invoke(old, s_LastPressed);
+        }
+    }
+    static Selectable s_LastPressed;
 
-    public static event Action<State, State> OnStateChanged;
+    static event Action<State, State> OnStateChanged;
+    static event Action<Selectable, Selectable> OnLastPressChanged;
+    
     static State m_State = State.Closed;
     public enum State { Closed, Neutral, Inventory, Map }
     
@@ -18,6 +33,10 @@ public class HandUIController : MonoBehaviour
     public interface IStateChangeListener
     {
         void OnStateChanged(State oldState, State newState);
+    }
+    public interface ILastPressListener
+    {
+        void OnLastPressChanged(Selectable oldPressed, Selectable newPressed);
     }
     
     public static void SetState(HandUIController.State state)
@@ -29,15 +48,30 @@ public class HandUIController : MonoBehaviour
             OnStateChanged?.Invoke(oldState, m_State);
     }
 
-    public static void Attach(IStateChangeListener listener)
+    public static void Attach(object listener)
     {
-        OnStateChanged += listener.OnStateChanged;
-        listener.OnStateChanged(State.Closed, m_State);
+        if (listener is IStateChangeListener stateChangeListener) 
+        {
+            OnStateChanged += stateChangeListener.OnStateChanged;
+            stateChangeListener.OnStateChanged(State.Closed, m_State);
+        }
+        if (listener is ILastPressListener pressListener)
+        {
+            OnLastPressChanged += pressListener.OnLastPressChanged;
+            pressListener.OnLastPressChanged(null, LastPressed);
+        }
     }
 
-    public static void Detach(IStateChangeListener listener)
+    public static void Detach(object listener)
     {
-        OnStateChanged -= listener.OnStateChanged;
+        if (listener is IStateChangeListener stateChangeListener) 
+        {
+            OnStateChanged -= stateChangeListener.OnStateChanged;
+        }
+        if (listener is ILastPressListener pressListener)
+        {
+            OnLastPressChanged -= pressListener.OnLastPressChanged;
+        }
     }
 
     private void Update()
