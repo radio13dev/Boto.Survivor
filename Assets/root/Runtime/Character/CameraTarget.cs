@@ -14,10 +14,10 @@ public class CameraTarget : MonoBehaviour
     {
         if (!setupComplete)
         {
-            if (Game.PresentationGame == null)
+            if (Game.ClientGame == null)
                 return;
 
-            var entityManager = Game.PresentationGame.World.EntityManager;
+            var entityManager = Game.ClientGame.World.EntityManager;
             m_Query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)),
                 new ComponentType(typeof(LocalTransform)));
             setupComplete = true;
@@ -26,11 +26,11 @@ public class CameraTarget : MonoBehaviour
         var players = m_Query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
         for (int i = 0; i < players.Length; i++)
         {
-            if (players[i].Index == Game.PresentationGame.PlayerIndex)
+            if (players[i].Index == Game.ClientGame.PlayerIndex)
             {
                 var entities = m_Query.ToEntityArray(Allocator.Temp);
                 m_PlayerE = entities[i];
-                var target = Game.PresentationGame.World.EntityManager.GetComponentData<LocalTransform>(m_PlayerE);
+                var target = Game.ClientGame.World.EntityManager.GetComponentData<LocalTransform>(m_PlayerE);
                 transform.SetPositionAndRotation(target.Position, target.Rotation);
                 
                 entities.Dispose();

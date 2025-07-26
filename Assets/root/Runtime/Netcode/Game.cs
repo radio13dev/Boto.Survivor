@@ -33,17 +33,48 @@ public enum SaveState
     Ready
 }
 
+public enum GameType
+{
+    Client,
+    Server,
+}
+
 [Preserve]
 public class Game : IDisposable
 {
+    public static event Action<Game> OnClientGameStarted;
+
     public const float k_ClientPingFrequency = 1.0f / 60.0f;
     public const float k_ServerPingFrequency = 1.0f / 61.0f;
 
     public static bool ConstructorReady => SceneManager.Ready;
 
-    public static Game ServerGame;
-    public static Game ClientGame;
-    public static Game PresentationGame => ClientGame;
+    public static Game ServerGame
+    {
+        get
+        {
+            return s_ServerGame;
+        }
+        set
+        {
+            s_ServerGame = value;
+        }
+    }
+    static Game s_ServerGame;
+
+    public static Game ClientGame
+    {
+        get
+        {
+            return s_ClientGame;
+        }
+        set
+        {
+            s_ClientGame = value;
+            OnClientGameStarted?.Invoke(s_ClientGame);
+        }
+    }
+    static Game s_ClientGame;
 
     public World World => m_World;
     public int PlayerIndex = -1;
@@ -228,7 +259,7 @@ public class Game : IDisposable
             {
                 Debug.Log($"Step {stepData.Step}: Applying {stepData.ExtraActionCount} extra actions");
                 for (byte i = 0; i < stepData.ExtraActionCount; i++)
-                    extraActionPtr[i].Apply(m_World);
+                    extraActionPtr[i].Apply(this);
             }
         }
 
@@ -252,14 +283,7 @@ public class Game : IDisposable
 
         m_World.Update();
         
-        // Clean any dirty data
-        // TODO: Delay this to next frame.
-        var playersE = m_PlayerQuery.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < playersE.Length; i++)
-        {
-            var playerIndex = m_World.EntityManager.GetComponentData<PlayerControlled>(playersE[i]).Index;
-            
-        }
+        CollectDataForUI();
     }
 
     public void ApplyRender(float t)
@@ -267,10 +291,110 @@ public class Game : IDisposable
         m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = t });
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }
+    
+    public Action<PlayerDataCache> OnInventoryUpdated;
+    public List<PlayerDataCache> m_PlayerDataCaches = new();
+    public void CollectDataForUI()
+    {
+        for (int i = 0; i < m_PlayerDataCaches.Count; i++)
+        {
+            if (m_PlayerDataCaches[i].Dirty)
+            {
+                m_PlayerDataCaches[i].Clean(this);
+            }
+        }
+    }
+
+
+    public static void SetCacheDirty(Entity entity)
+    {
+        foreach (var cache in ClientGame.m_PlayerDataCaches)
+            if (cache.PlayerE == entity) 
+                cache.SetDirty();
+    }
 }
 
 [Save]
 public struct PlayerControlled : IComponentData
 {
     public int Index;
+}
+
+public class PlayerDataCache
+{
+    public int PlayerIndex => m_PlayerIndex;
+    private int m_PlayerIndex;
+
+    public bool Dirty => m_Dirty;
+    private bool m_Dirty = true;
+    
+    private EntityQuery m_PlayerQuery;
+    
+    public Entity PlayerE => m_PlayerE;
+    private Entity m_PlayerE;
+    
+    public Ring[] Rings => m_Rings;
+    private Ring[] m_Rings;
+
+    public PlayerDataCache(int playerIndex)
+    {
+        m_PlayerIndex = playerIndex;
+        m_Rings = new Ring[Ring.k_RingCount];
+    }
+
+    public void SetDirty()
+    {
+        m_Dirty = true;
+    }
+
+    public void Clean(Game game)
+    {
+        var world = game.World;
+        var entityManager = world.EntityManager;
+        
+        ValidatePlayerE(entityManager);
+        if (m_PlayerE == Entity.Null)
+            return;
+                
+        m_Dirty = false;
+
+        
+        ValidateRings(entityManager);
+        game.OnInventoryUpdated?.Invoke(this);
+    }
+
+    private void ValidatePlayerE(EntityManager entityManager)
+    {
+        if (!entityManager.HasComponent<PlayerControlled>(m_PlayerE) || entityManager.GetComponentData<PlayerControlled>(m_PlayerE).Index != PlayerIndex)
+        {
+            if (m_PlayerQuery == default)
+                m_PlayerQuery = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
+            
+            var players = m_PlayerQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i].Index == PlayerIndex)
+                {
+                    var playersE = m_PlayerQuery.ToEntityArray(Allocator.Temp);
+                    m_PlayerE = playersE[i];
+                    playersE.Dispose();
+                    break;
+                }
+            }
+            players.Dispose();
+        }
+    }
+
+    private void ValidateRings(EntityManager entityManager)
+    {
+        if (!entityManager.HasBuffer<Ring>(m_PlayerE))
+        {
+            m_Rings = new Ring[Ring.k_RingCount];
+            return;
+        }
+        
+        var buffer = entityManager.GetBuffer<Ring>(m_PlayerE);
+        for (int i = 0; i < buffer.Length; i++)
+            m_Rings[i] = buffer[i];
+    }
 }

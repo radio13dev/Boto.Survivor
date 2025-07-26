@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 359834467}
   - component: {fileID: 359834466}
   - component: {fileID: 359834468}
+  - component: {fileID: 359834469}
   m_Layer: 0
   m_Name: StepController
   m_TagString: Untagged
@@ -233,6 +234,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &359834469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 359834465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 669b0a41b09a4b63b0a9e4967d6e9e00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::SharedRandomAuthoring
 --- !u!1 &546460675
 GameObject:
   m_ObjectHideFlags: 0

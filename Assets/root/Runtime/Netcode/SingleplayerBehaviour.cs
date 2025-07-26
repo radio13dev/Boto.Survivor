@@ -28,7 +28,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
         m_Game = Game.ClientGame;
         
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
+        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
         m_Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
@@ -38,7 +38,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         
         // Spawn the player
         m_Game.PlayerIndex = 0;
-        SpawnPlayer();
+        m_Game.RpcSendBuffer.Enqueue(SpecialLockstepActions.PlayerJoin(0));
         ApplyStep();
         
         // Complete
@@ -74,18 +74,18 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
     [EditorButton]
     private void ApplyStep()
     {
+        // Load rpcs
+        while (m_StepData.ExtraActionCount < PingClientBehaviour.k_MaxSpecialActionCount && m_Game.RpcSendBuffer.TryDequeue(out var specialAction))
+        {
+            m_SpecialActionArr[m_StepData.ExtraActionCount] = specialAction;
+            m_StepData.ExtraActionCount++;
+        }
+        
         m_StepData = new FullStepData(m_StepData.Step + 1, m_Inputs)
         {
             ExtraActionCount = m_StepData.ExtraActionCount
         };
         m_Game.ApplyStepData(m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
-    }
-
-    [EditorButton]
-    public void SpawnPlayer()
-    {
-        m_SpecialActionArr[m_StepData.ExtraActionCount] = SpecialLockstepActions.PlayerJoin(0);
-        m_StepData.ExtraActionCount++;
     }
 }

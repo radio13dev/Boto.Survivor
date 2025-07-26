@@ -14,11 +14,11 @@ public class NearFloorRingPopup : MonoBehaviour
     
     void Update()
     {
-        if (Game.PresentationGame == null) return;
+        if (Game.ClientGame == null) return;
         
-        if (m_Query.World != Game.PresentationGame.World)
+        if (m_Query.World != Game.ClientGame.World)
         {
-            m_Query = (Game.PresentationGame.World, Game.PresentationGame.World.EntityManager.CreateEntityQuery(new EntityQueryDesc()
+            m_Query = (Game.ClientGame.World, Game.ClientGame.World.EntityManager.CreateEntityQuery(new EntityQueryDesc()
             {
                 All = new ComponentType[] { typeof(NearestInteractable) },
             }));

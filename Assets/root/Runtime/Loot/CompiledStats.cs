@@ -12,8 +12,6 @@ public struct CompiledStats : IComponentData
 [Save]
 public struct CompiledStatsDirty : IComponentData, IEnableableComponent
 {
-    public static Action<Entity, CompiledStats, DynamicBuffer<Ring>> OnStatsUpdated;
-    
 }
 
 [RequireMatchingQueriesForUpdate]
@@ -36,7 +34,7 @@ public partial struct CompiledStatsSystem : ISystem
         public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings)
         {
             statsDirty.ValueRW = false;
-            CompiledStatsDirty.OnStatsUpdated?.Invoke(entity, stats, rings);
+            Game.SetCacheDirty(entity);
         }
     }
 }

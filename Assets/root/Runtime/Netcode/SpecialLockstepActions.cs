@@ -36,8 +36,9 @@ public struct SpecialLockstepActions
         return result;
     }
 
-    public void Apply(World world)
+    public void Apply(Game game)
     {
+        var world = game.World;
         switch (Type)
         {
             case CODE_PlayerJoin:
@@ -47,6 +48,8 @@ public struct SpecialLockstepActions
                 world.EntityManager.AddComponent<PlayerControlled>(newPlayer);
                 world.EntityManager.SetComponentData(newPlayer, new PlayerControlled(){ Index = Data });
                 world.EntityManager.SetComponentData(newPlayer, LocalTransform.FromPosition(20,0,0));
+                
+                game.m_PlayerDataCaches.Add(new PlayerDataCache((int)Data));
                 break;
                 
             case CODE_PlayerLeave:

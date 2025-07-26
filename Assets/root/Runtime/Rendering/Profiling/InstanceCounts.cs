@@ -15,12 +15,12 @@ public class InstanceCounts : MonoBehaviour
     {
         if (!initComplete)
         {
-            if (Game.PresentationGame == null || !Game.PresentationGame.IsReady) return;
+            if (Game.ClientGame == null || !Game.ClientGame.IsReady) return;
             
             initComplete = true;
-            query = Game.PresentationGame.World.EntityManager.CreateEntityQuery(new ComponentType(typeof(InstancedResourceRequest), ComponentType.AccessMode.ReadOnly));
+            query = Game.ClientGame.World.EntityManager.CreateEntityQuery(new ComponentType(typeof(InstancedResourceRequest), ComponentType.AccessMode.ReadOnly));
             
-            instanceTypes = Game.PresentationGame.World.EntityManager.CreateEntityQuery(new ComponentType(typeof(GameManager.InstancedResources), ComponentType.AccessMode.ReadOnly))
+            instanceTypes = Game.ClientGame.World.EntityManager.CreateEntityQuery(new ComponentType(typeof(GameManager.InstancedResources), ComponentType.AccessMode.ReadOnly))
                 .GetSingletonBuffer<GameManager.InstancedResources>()
                 .Length;
         }

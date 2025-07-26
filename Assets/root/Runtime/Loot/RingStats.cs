@@ -4,6 +4,8 @@ using Unity.Entities;
 [Save]
 public struct Ring : IBufferElementData
 {
+    public const int k_RingCount = 8;
+
     public double LastActivateTime;
 
     public RingStats Stats;

@@ -11,8 +11,6 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     public int FingerIndex;
     public RingUIElement Ring;
     public GameObject FingerHighlight;
-    
-    GameAttachmentDescription m_AttachmentDescription;
 
     protected override void Awake()
     {
@@ -21,11 +19,6 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         if (FingerIndex >= Instances.Length)
             Array.Resize(ref Instances, FingerIndex+1);
         Instances[FingerIndex] = this;
-        
-        m_AttachmentDescription = new GameAttachmentDescription(
-            gameType: GameType.Presentation,
-            onInventoryChanged: (-1, OnInventoryChanged)
-        );
     }
     
     
@@ -33,23 +26,30 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     {
         base.OnEnable();
         HandUIController.Attach(this);
-        CompiledStatsDirty.OnStatsUpdated += OnStatsUpdated;
         
-        m_AttachmentDescription?.Attach();
+        Game.OnClientGameStarted += OnGameStarted;
+        if (Game.ClientGame != null) OnGameStarted(Game.ClientGame);
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         HandUIController.Detach(this);
-        CompiledStatsDirty.OnStatsUpdated -= OnStatsUpdated;
         
-        m_AttachmentDescription?.Detach();
+        Game.OnClientGameStarted -= OnGameStarted;
+        if (Game.ClientGame != null) Game.ClientGame.OnInventoryUpdated -= OnInventoryChanged;
     }
-    
-    private void OnInventoryChanged(Ring[] rings)
+
+    private void OnGameStarted(Game game)
     {
-        
+        game.OnInventoryUpdated += OnInventoryChanged;
+    }
+
+    private void OnInventoryChanged(PlayerDataCache player)
+    {
+        if (player.PlayerIndex != Game.ClientGame.PlayerIndex) return;
+        var inventory = player.Rings;
+        Ring.gameObject.SetActive(inventory[FingerIndex].Stats.PrimaryEffect != RingPrimaryEffect.None);
     }
 
     public override void OnSelect(BaseEventData eventData)
@@ -63,12 +63,6 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     {
         base.OnDeselect(eventData);
         if (FingerHighlight) FingerHighlight.gameObject.SetActive(false);
-    }
-    
-    public void Refresh()
-    {
-        var inventory = Game.PresentationGame.GetInventory(Game.PresentationGame.PlayerIndex);
-        Ring.gameObject.SetActive(inventory[FingerIndex].Stats.PrimaryEffect != RingPrimaryEffect.None);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -85,13 +79,13 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         else if (HandUIController.LastPressed is FingerUI otherfinger)
         {
             // Perform a swap + deselect both
-            Game.PresentationGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.PresentationGame.PlayerIndex, otherfinger.FingerIndex, this.FingerIndex));
+            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, otherfinger.FingerIndex, this.FingerIndex));
             HandUIController.LastPressed = null;
         }
         else if (HandUIController.LastPressed is RingPopup ringPopup)
         {
             // Perform a swap + deselect both
-            Game.PresentationGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.PresentationGame.PlayerIndex, byte.MaxValue, this.FingerIndex));
+            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, byte.MaxValue, this.FingerIndex));
             HandUIController.LastPressed = null;
         }
         else
