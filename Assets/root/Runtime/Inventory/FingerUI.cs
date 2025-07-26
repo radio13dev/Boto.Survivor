@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener, HandUIController.ILastPressListener
+public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICancelHandler, IPointerEnterHandler, IPointerExitHandler, HandUIController.IStateChangeListener, HandUIController.ILastPressListener
 {
     public static FingerUI[] Instances = Array.Empty<FingerUI>();
     
@@ -64,7 +64,18 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     {
         base.OnDeselect(eventData);
         if (FingerHighlight) FingerHighlight.gameObject.SetActive(false);
-        
+    }
+
+    public override void OnPointerEnter(PointerEventData eventData)
+    {
+        base.OnPointerEnter(eventData);
+        if (FingerHighlight) FingerHighlight.gameObject.SetActive(true);
+    }
+
+    public override void OnPointerExit(PointerEventData eventData)
+    {
+        base.OnPointerExit(eventData);
+        if (FingerHighlight) FingerHighlight.gameObject.SetActive(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)
