@@ -7,6 +7,11 @@ using UnityEngine;
 public struct CompiledStats : IComponentData
 {
     public RingStats CombinedRingStats;
+
+    public void Add(RingStats stats)
+    {
+        CombinedRingStats.Add(stats);
+    }
 }
 
 [Save]
@@ -33,6 +38,9 @@ public partial struct CompiledStatsSystem : ISystem
     {
         public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings)
         {
+            stats = new();
+            for (int i = 0; i < rings.Length; i++)
+                stats.Add(rings[i].Stats);
             statsDirty.ValueRW = false;
             Game.SetCacheDirty(entity);
         }

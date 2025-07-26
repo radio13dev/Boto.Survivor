@@ -7,10 +7,27 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct RingSystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<GameManager.Projectiles>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        state.Dependency = new Job()
+        {
+            ecb = delayedEcb.AsParallelWriter(),
+            Time = SystemAPI.Time.ElapsedTime,
+            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>()
+        }.Schedule(state.Dependency);
+    }
+
     [BurstCompile]
     partial struct Job : IJobEntity
     {
-        EntityCommandBuffer.ParallelWriter ecb;
+        public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public double Time;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
 

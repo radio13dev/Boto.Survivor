@@ -34,6 +34,19 @@ public struct RingStats : IComponentData
     // Extra effect
     public RingSecondaryEffect SecondaryEffect;
     public float SecondaryEffectValue;
+
+    public void Add(RingStats stats)
+    {
+        Size += stats.Size;
+        Damage += stats.Damage;
+        ProjectileSpeed += stats.ProjectileSpeed;
+        ProjectileDuration += stats.ProjectileDuration;
+        Speed += stats.Speed;
+        Regen += stats.Regen;
+        MaxHealth += stats.MaxHealth;
+        ProjectileCount += stats.ProjectileCount;
+        ProjectileRate += stats.ProjectileRate;
+    }
 }
 
 
