@@ -109,10 +109,9 @@ public struct FullStepData
     public unsafe void Write(ref DataStreamWriter writer, byte extraActionCount, SpecialLockstepActions* extraActionPtr)
     {
         writer.WriteLong(Step);
-        P0.Write(ref writer);
-        P1.Write(ref writer);
-        P2.Write(ref writer);
-        P3.Write(ref writer);
+        
+        for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
+            this[i].Write(ref writer);
         
         writer.WriteByte(extraActionCount);
         if (extraActionCount > 0)
@@ -124,10 +123,8 @@ public struct FullStepData
     {
         FullStepData result = new();
         result.Step = reader.ReadLong();
-        result.P0 = StepInput.Read(ref reader);
-        result.P1 = StepInput.Read(ref reader);
-        result.P2 = StepInput.Read(ref reader);
-        result.P3 = StepInput.Read(ref reader);
+        for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
+            result[i] = StepInput.Read(ref reader);
         
         result.ExtraActionCount = reader.ReadByte();
         if (result.ExtraActionCount > 0)

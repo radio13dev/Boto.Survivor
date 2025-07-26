@@ -18,11 +18,13 @@ using UnityEngine.InputSystem;
 
 public static class Netcode
 {
+    public const int k_MaxFragmentSize = 20_000_000;
+
     public static NetworkSettings NetworkSettings(ref RelayServerData relayServerData)
     {
         var settings = new NetworkSettings();
         settings.WithRelayParameters(serverData: ref relayServerData);
-        settings.WithFragmentationStageParameters(payloadCapacity: 20_000_000);
+        settings.WithFragmentationStageParameters(payloadCapacity: k_MaxFragmentSize);
         return settings;
     }
 }
@@ -64,6 +66,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     public const byte CODE_SendRpc = 0b0000_0010;
 
     public const int k_MaxSaveSize = 200_000;
+    public const int k_MaxSpecialActionCount = 4;
 
     /// <summary>UI component to get the join code and update statistics.</summay>
     public PingUIBehaviour PingUI;
@@ -109,7 +112,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
         m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
         m_SaveBuffer = new NativeList<byte>(Allocator.Persistent);
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
+        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(k_MaxSpecialActionCount, Allocator.Persistent);
     }
 
     private void OnDestroy()

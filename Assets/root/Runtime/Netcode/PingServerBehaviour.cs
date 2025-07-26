@@ -32,6 +32,8 @@ public struct Client
 /// <summary>Component that will listen for ping connections and answer pings.</summary>
 public unsafe class PingServerBehaviour : MonoBehaviour
 {
+    public const int k_MaxPlayerCount = 4;
+
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
     public const byte CODE_SendId = 0b0000_0010;
@@ -57,11 +59,11 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 
     private void Start()
     {
-        m_ServerConnections = new NativeArray<Client>(4, Allocator.Persistent);
+        m_ServerConnections = new NativeArray<Client>(k_MaxPlayerCount, Allocator.Persistent);
         m_ServerToClient = new NativeReference<FullStepData>(Allocator.Persistent);
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
-        m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent);
+        m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
         m_Game = new Game(false);
         m_Game.LoadScenes();
     }
@@ -280,7 +282,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     
                     // Load special actions
                     m_SpecialActionList.Clear();
-                    while (m_SpecialActionQueue.TryDequeue(out var act))
+                    while (m_SpecialActionList.Length < PingClientBehaviour.k_MaxSpecialActionCount && m_SpecialActionQueue.TryDequeue(out var act))
                         m_SpecialActionList.Add(act);
                     eventsJobs.SpecialActions = m_SpecialActionList.AsArray();
                     newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
