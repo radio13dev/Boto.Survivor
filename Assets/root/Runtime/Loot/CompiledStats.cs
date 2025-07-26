@@ -1,5 +1,7 @@
-﻿using BovineLabs.Saving;
+﻿using System;
+using BovineLabs.Saving;
 using Unity.Entities;
+using UnityEngine;
 
 [Save]
 public struct CompiledStats : IComponentData
@@ -8,8 +10,13 @@ public struct CompiledStats : IComponentData
 }
 
 [Save]
-public struct CompiledStatsDirty : IComponentData, IEnableableComponent {}
+public struct CompiledStatsDirty : IComponentData, IEnableableComponent
+{
+    public static Action<Entity, CompiledStats, DynamicBuffer<Ring>> OnStatsUpdated;
+    
+}
 
+[RequireMatchingQueriesForUpdate]
 public partial struct CompiledStatsSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -22,12 +29,14 @@ public partial struct CompiledStatsSystem : ISystem
         new Job().Schedule();
     }
     
+    [RequireMatchingQueriesForUpdate]
     [WithAll(typeof(CompiledStatsDirty))]
     partial struct Job : IJobEntity
     {
         public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings)
         {
             statsDirty.ValueRW = false;
+            CompiledStatsDirty.OnStatsUpdated?.Invoke(entity, stats, rings);
         }
     }
 }

@@ -7,9 +7,11 @@ using UnityEngine.UI;
 
 public class HandUIController : MonoBehaviour
 {
-    public enum State { Closed, Neutral, Inventory, Map }
+    public static Selectable LastPressed;
+
     public static event Action<State, State> OnStateChanged;
     static State m_State = State.Closed;
+    public enum State { Closed, Neutral, Inventory, Map }
     
     public const float k_AnimTransitionTime = 0.2f;
     
@@ -43,11 +45,6 @@ public class HandUIController : MonoBehaviour
         if (Keyboard.current.tabKey.wasPressedThisFrame)
             if (m_State == State.Closed) SetState(State.Neutral);
             else SetState(State.Closed);
-    }
-
-    public static void StartTransaction(RingEquipTransaction transaction)
-    {
-        SetState(State.Inventory);
     }
 }
 

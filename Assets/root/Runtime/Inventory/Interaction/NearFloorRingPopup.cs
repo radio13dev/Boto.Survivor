@@ -1,18 +1,9 @@
-using System;
 using System.Collections;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-
-public class LootPopup : MonoBehaviour
-{
-    public void Focus(Entity nearestE)
-    {
-        throw new NotImplementedException();
-    }
-}
 
 public class NearFloorRingPopup : MonoBehaviour
 {

@@ -1,9 +1,10 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class RingPopup : Selectable
+public class LootPopup : Selectable
 {
     public GameObject InteractionNotification;
     public GameObject HeldHighlight;
@@ -23,13 +24,12 @@ public class RingPopup : Selectable
                 HandUIController.LastPressed = this;
                 for (int i = 0; i < FingerUI.Instances.Length; i++)
                 {
-                    if (!FingerUI.Instances[i].Ring.isActiveAndEnabled)
+                    if (!FingerUI.Instances[i].Ring)
                     {
                         FingerUI.Instances[i].Select();
-                        return;
+                        break;
                     }
                 }
-                FingerUI.Instances[0].Select();
             }
         }
     }

@@ -13,8 +13,9 @@ using Unity.Entities.Serialization;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
-[Preserve] 
+[Preserve]
 public class ClientGameBootstrap : ICustomBootstrap
 {
     public bool Initialize(string defaultWorldName)
@@ -25,16 +26,21 @@ public class ClientGameBootstrap : ICustomBootstrap
     }
 }
 
-public enum SaveState { Idle, Saving, Ready }
+public enum SaveState
+{
+    Idle,
+    Saving,
+    Ready
+}
 
 [Preserve]
 public class Game : IDisposable
 {
     public const float k_ClientPingFrequency = 1.0f / 60.0f;
     public const float k_ServerPingFrequency = 1.0f / 61.0f;
-    
+
     public static bool ConstructorReady => SceneManager.Ready;
-    
+
     public static Game ServerGame;
     public static Game ClientGame;
     public static Game PresentationGame => ClientGame;
@@ -48,9 +54,11 @@ public class Game : IDisposable
     private EntityQuery m_SaveBuffer;
     private EntityQuery m_RenderSystemHalfTime;
     private SystemHandle m_RenderSystemGroup;
-    
+
     public NativeQueue<SpecialLockstepActions> RpcSendBuffer;
-    
+
+    private EntityQuery m_PlayerQuery;
+
     private Entity m_GameManagerSceneE;
     private Entity m_GameSceneE;
     private bool m_Ready;
@@ -60,10 +68,10 @@ public class Game : IDisposable
         get
         {
             if (m_Ready) return true;
-            
+
             if (m_GameManagerSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameManagerSceneE)) return false;
             if (m_GameSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameSceneE)) return false;
-            
+
             return m_Ready = true;
         }
     }
@@ -73,13 +81,14 @@ public class Game : IDisposable
         get
         {
             if (!m_SaveStarted) return SaveState.Idle;
-            
+
             if (m_SaveRequest.CalculateEntityCount() > 0)
                 return SaveState.Saving;
-                
+
             return SaveState.Ready;
         }
     }
+
     private bool m_SaveStarted = false;
 
     public void InitSave()
@@ -99,10 +108,11 @@ public class Game : IDisposable
     {
         Debug.Log($"Creating Game...");
         m_World = new World("Game", WorldFlags.Game);
-        var systems = DefaultWorldInitialization.GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
+        var systems = DefaultWorldInitialization
+            .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
         systems.Remove(typeof(UpdateWorldTimeSystem));
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
-        
+
         var saveRequest = new EntityQueryDesc
         {
             Any = new ComponentType[]
@@ -121,22 +131,32 @@ public class Game : IDisposable
             Options = EntityQueryOptions.Default
         };
         m_SaveBuffer = m_World.EntityManager.CreateEntityQuery(saveBuffer);
-        
+
         m_ShowVisuals = showVisuals;
         if (m_ShowVisuals)
         {
             m_RenderSystemHalfTime = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(RenderSystemHalfTime)));
             m_RenderSystemGroup = m_World.GetExistingSystem<RenderSystemGroup>();
         }
-        
+
         RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
+        
+        var playerQuery = new EntityQueryDesc
+        {
+            Any = new ComponentType[]
+            {
+                typeof(PlayerControlled),
+            },
+            Options = EntityQueryOptions.Default
+        };
+        m_PlayerQuery = m_World.EntityManager.CreateEntityQuery(playerQuery);
     }
-    
+
     public void LoadScenes()
     {
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
         m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID);
-            
+
         Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
         m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
     }
@@ -146,7 +166,7 @@ public class Game : IDisposable
         RpcSendBuffer.Dispose();
         m_World.Dispose();
     }
-    
+
     public unsafe void SendSave(ref DataStreamWriter writer)
     {
         EntityManager entityManager = m_World.EntityManager;
@@ -160,7 +180,7 @@ public class Game : IDisposable
             Debug.LogError($"No save buffer found, failed send.");
             return;
         }
-        
+
         var saveBuffer = entityManager.GetBuffer<SaveBuffer>(saveBufferEntities[0]);
         var reint = saveBuffer.Reinterpret<byte>();
         writer.WriteInt(reint.Length);
@@ -185,7 +205,7 @@ public class Game : IDisposable
         {
             var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
             var stepController = query.GetSingleton<StepController>();
-            
+
             if (stepData.Step == -1)
                 stepData.Step = stepController.Step + 1;
 
@@ -197,11 +217,11 @@ public class Game : IDisposable
 
             entityManager.SetComponentData(query.GetSingletonEntity(), new StepController(stepData.Step));
         }
-        
+
         // Setup time for the frame
-        m_World.SetTime(new TimeData(stepData.Step*(double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
-        if (m_ShowVisuals) m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime(){ Value = 0 });
-        
+        m_World.SetTime(new TimeData(stepData.Step * (double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
+        if (m_ShowVisuals) m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = 0 });
+
         // Apply extra actions
         {
             if (stepData.ExtraActionCount > 0)
@@ -211,7 +231,7 @@ public class Game : IDisposable
                     extraActionPtr[i].Apply(m_World);
             }
         }
-        
+
         // Apply inputs
         {
             var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepInput)), new ComponentType(typeof(PlayerControlled)));
@@ -228,14 +248,23 @@ public class Game : IDisposable
 
             entities.Dispose();
         }
-        
-        
+
+
         m_World.Update();
+        
+        // Clean any dirty data
+        // TODO: Delay this to next frame.
+        var playersE = m_PlayerQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < playersE.Length; i++)
+        {
+            var playerIndex = m_World.EntityManager.GetComponentData<PlayerControlled>(playersE[i]).Index;
+            
+        }
     }
 
     public void ApplyRender(float t)
     {
-        m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime(){ Value = t });
+        m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = t });
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }
 }

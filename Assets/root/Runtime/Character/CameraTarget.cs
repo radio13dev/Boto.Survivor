@@ -5,9 +5,8 @@ using UnityEngine;
 
 public class CameraTarget : MonoBehaviour
 {
-    bool setupComplete = false;
-
     public Entity PlayerE => m_PlayerE;
+    bool setupComplete = false;
     Entity m_PlayerE;
     EntityQuery m_Query;
 

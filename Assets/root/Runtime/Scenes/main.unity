@@ -317,6 +317,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 51227100}
+  FingerIndex: 6
   Ring: {fileID: 900514236}
   FingerHighlight: {fileID: 0}
 --- !u!1 &58057680
@@ -862,6 +863,7 @@ GameObject:
   - component: {fileID: 149276154}
   - component: {fileID: 149276153}
   - component: {fileID: 149276152}
+  - component: {fileID: 149276156}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -963,6 +965,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1162676916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149276156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149276151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e25a60701e642c4a182f6484f3491b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::RingPopup
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  InteractionNotification: {fileID: 0}
+  HeldHighlight: {fileID: 0}
 --- !u!1 &177118281
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,7 +1550,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 314770846}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.98981583, y: 0.00000014730819, z: 0, w: 0.14235397}
+  m_LocalRotation: {x: 0.92923546, y: -0.0000000080753795, z: 0.000000020309065, w: 0.36948812}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2062,6 +2107,7 @@ GameObject:
   - component: {fileID: 498442149}
   - component: {fileID: 498442148}
   - component: {fileID: 498442147}
+  - component: {fileID: 498442151}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2161,6 +2207,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1162676916}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &498442151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498442146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6ca2040f9a84911a94d460cb99e9255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::LootPopup
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  InteractionNotification: {fileID: 0}
+  HeldHighlight: {fileID: 0}
 --- !u!1 &515235578
 GameObject:
   m_ObjectHideFlags: 0
@@ -2586,6 +2675,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 622939698}
+  FingerIndex: 3
   Ring: {fileID: 419412953}
   FingerHighlight: {fileID: 0}
 --- !u!1 &626420321
@@ -2707,6 +2797,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 626420323}
+  FingerIndex: 2
   Ring: {fileID: 258533361}
   FingerHighlight: {fileID: 0}
 --- !u!1 &627009872
@@ -4317,8 +4408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aad9e4bafb4d5b74d9ea461134d6073c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::NearFloorRingPopup
-  ItemPopup: {fileID: 498442146}
-  LootPopup: {fileID: 149276151}
+  ItemPopup: {fileID: 149276156}
+  LootPopup: {fileID: 498442151}
 --- !u!4 &1162676916
 Transform:
   m_ObjectHideFlags: 0
@@ -4972,7 +5063,6 @@ GameObject:
   - component: {fileID: 1337659302}
   - component: {fileID: 1337659305}
   - component: {fileID: 1337659306}
-  - component: {fileID: 1337659307}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -5020,19 +5110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::SingleplayerBehaviour
   TickEnabled: 1
---- !u!114 &1337659307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1337659301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e866c4d750494d479255a6b8dde03bcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::InventoryItemDebugger
-  setupComplete: 0
 --- !u!1 &1338831771
 GameObject:
   m_ObjectHideFlags: 0
@@ -5339,6 +5416,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1369978399}
+  FingerIndex: 7
   Ring: {fileID: 825802637}
   FingerHighlight: {fileID: 0}
 --- !u!1 &1390001975
@@ -6339,6 +6417,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1535422547}
+  FingerIndex: 4
   Ring: {fileID: 310575430}
   FingerHighlight: {fileID: 0}
 --- !u!1 &1538146466
@@ -6460,6 +6539,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1538146468}
+  FingerIndex: 1
   Ring: {fileID: 537668337}
   FingerHighlight: {fileID: 0}
 --- !u!1 &1553477902
@@ -7531,6 +7611,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1944442186}
+  FingerIndex: 0
   Ring: {fileID: 770084272}
   FingerHighlight: {fileID: 0}
 --- !u!43 &1979425185
@@ -7830,6 +7911,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 1993262884}
+  FingerIndex: 5
   Ring: {fileID: 73174155}
   FingerHighlight: {fileID: 0}
 --- !u!1 &2029685053

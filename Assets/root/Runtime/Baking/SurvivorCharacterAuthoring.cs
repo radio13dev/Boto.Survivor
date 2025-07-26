@@ -1,5 +1,6 @@
 using System;
 using NativeTrees;
+using Unity.Collections;
 using UnityEngine;
 using Unity.Entities;
 
@@ -47,6 +48,11 @@ public class SurvivorAuthoring : MonoBehaviour
             
             AddComponent(entity, new LaserProjectileSpawner(){Lifespan = 5, TimeBetweenShots = 0.1});
             SetComponentEnabled<LaserProjectileSpawner>(entity, authoring.EnableLaserProjectile); // save
+            
+            // Stats
+            AddComponent(entity, new CompiledStats());
+            AddComponent(entity, new CompiledStatsDirty());
+            AddBuffer<Ring>(entity).Resize(8, NativeArrayOptions.ClearMemory);
         }
     }
 }

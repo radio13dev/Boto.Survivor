@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public unsafe class SingleplayerBehaviour : MonoBehaviour
@@ -60,6 +61,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         if (TickEnabled && (m_T += Time.deltaTime) >= Game.k_ClientPingFrequency)
         {
             m_T -= Game.k_ClientPingFrequency;
+            m_T = math.min(m_T, Game.k_ClientPingFrequency);
             ApplyStep();
             m_Inputs = default;
         }
