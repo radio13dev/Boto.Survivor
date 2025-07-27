@@ -13,6 +13,8 @@ public struct ItemDropOnDestroy : IBufferElementData
 {
     public Entity Drop;
     public int Chance;
+    public int MinCount;
+    public int MaxCount;
 }
 
 public class ItemDropOnDestroyAuthoring : MonoBehaviour
@@ -26,11 +28,16 @@ public class ItemDropOnDestroyAuthoring : MonoBehaviour
             var drops = AddBuffer<ItemDropOnDestroy>(entity);
             foreach (var drop in authoring.Drops)
             {
-                drops.Add(new ItemDropOnDestroy()
+                if (drop.Prefab)
                 {
-                    Drop = GetEntity(drop.Prefab, TransformUsageFlags.None),
-                    Chance = drop.Chance
-                });
+                    drops.Add(new ItemDropOnDestroy()
+                    {
+                        Drop = GetEntity(drop.Prefab, TransformUsageFlags.WorldSpace),
+                        Chance = drop.Chance,
+                        MinCount = drop.MinCount,
+                        MaxCount = drop.MaxCount
+                    });
+                }
             }
         }
     }
@@ -41,6 +48,8 @@ public class ItemDropOnDestroyAuthoring : MonoBehaviour
         public GameObject Prefab;
         [Range(0,100)]
         public int Chance;
+        public int MinCount;
+        public int MaxCount;
     }
 }
 
@@ -61,24 +70,51 @@ public partial struct ItemDropOnDestroySystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<ItemDropOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
-            .WithAll<DestroyFlag>()
-            )
+        state.Dependency = new Job()
         {
-            Random random = SystemAPI.GetSingleton<SharedRandom>().Random;
-            Debug.Log($"Creating {10} entities on destroy");
-            for (int i = 0; i < 10; i++)
+            ecb = delayedEcb,
+            baseRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
+            rotationalInertiaLookup = SystemAPI.GetComponentLookup<RotationalInertia>(true),
+            movementLookup = SystemAPI.GetComponentLookup<Movement>(true)
+        }.Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(DestroyFlag))]
+    partial struct Job : IJobEntity
+    {
+        public EntityCommandBuffer ecb;
+        [ReadOnly] public Random baseRandom;
+        [ReadOnly] public ComponentLookup<RotationalInertia> rotationalInertiaLookup;
+        [ReadOnly] public ComponentLookup<Movement> movementLookup;
+    
+        public void Execute(Entity entity, in DynamicBuffer<ItemDropOnDestroy> items, in LocalTransform transform)
+        {
+            var random = baseRandom;
+            for (int i = 0; i < items.Length; i++)
             {
-                var entity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);
-                delayedEcb.SetComponent(entity, transform.ValueRO);
+                if (items[i].Drop == Entity.Null) continue;
+                if (random.NextInt(100) >= items[i].Chance) continue;
                 
-                var inertia = new RotationalInertia();
-                inertia.Set(random.NextFloat3(), 1);
-                delayedEcb.SetComponent(entity, inertia);
+                var count = random.NextInt(items[i].MinCount, items[i].MaxCount + 1);
+                for (int loop = 0; loop < count; loop++)
+                {
+                    var newDropE = ecb.Instantiate(items[i].Drop);
+                    ecb.SetComponent(newDropE, transform);
                 
-                var newEntityMovement = new Movement();
-                newEntityMovement.Velocity = movement.ValueRO.Velocity + (math.length(movement.ValueRO.Velocity)/2 + 1) * random.NextFloat3();
-                delayedEcb.SetComponent(entity, newEntityMovement);
+                    if (rotationalInertiaLookup.HasComponent(items[i].Drop))
+                    {
+                        var newDropInertia = new RotationalInertia();
+                        newDropInertia.Set(random.NextFloat3(), 1);
+                        ecb.SetComponent(newDropE, newDropInertia);
+                    }
+                
+                    if (movementLookup.HasComponent(items[i].Drop) && movementLookup.TryGetComponent(entity, out var movement))
+                    {
+                        var newDropMovement = new Movement();
+                        newDropMovement.Velocity = movement.Velocity + (math.length(movement.Velocity)/2 + 1) * random.NextFloat3();
+                        ecb.SetComponent(newDropE, newDropMovement);
+                    }
+                }
             }
         }
     }

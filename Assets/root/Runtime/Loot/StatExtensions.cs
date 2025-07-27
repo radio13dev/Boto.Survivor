@@ -10,6 +10,7 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+            case RingPrimaryEffect.Projectile_NearestRapid:
                 return true;
             default:
                 return false;
@@ -23,6 +24,7 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+            case RingPrimaryEffect.Projectile_NearestRapid:
                 return true;
             default:
                 return false;
@@ -34,12 +36,17 @@ public static class StatExtensions
     [Pure]
     public static float GetCooldown(this RingPrimaryEffect primaryEffect, float modifier)
     {
+        float baseCD = 1;
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
-                return modifier >= 0 ? 1/(1 + modifier) : 1/modifier;
+                baseCD = 1f;
+                goto default;
+            case RingPrimaryEffect.Projectile_NearestRapid:
+                baseCD = 0.2f;
+                goto default;
             default:
-                return -1;
+                return baseCD*(modifier >= 0 ? 1/(1 + modifier) : 1/modifier);
         }
     }
     
@@ -47,12 +54,17 @@ public static class StatExtensions
     [Pure]
     public static float GetProjectileSpeed(this RingPrimaryEffect primaryEffect, float modifier)
     {
+        float baseSpeed = 10f;
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 10f;
+                baseSpeed = 10f;
+                goto default;
+            case RingPrimaryEffect.Projectile_NearestRapid:
+                baseSpeed = 20f;
+                goto default;
             default:
-                return -1;
+                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSpeed;
         }
     }
     
@@ -63,6 +75,7 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+            case RingPrimaryEffect.Projectile_NearestRapid:
                 return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 5f;
             default:
                 return -1;
@@ -76,6 +89,7 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+            case RingPrimaryEffect.Projectile_NearestRapid:
                 return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 10f;
             default:
                 return -1;
@@ -89,6 +103,7 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+            case RingPrimaryEffect.Projectile_NearestRapid:
                 return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 1f;
             default:
                 return -1;

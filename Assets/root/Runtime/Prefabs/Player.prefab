@@ -50,9 +50,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
   MovementSettings:
     Speed: 2
-    MaxCollectableSpeed: 0
-    CollectRadius: 0
-    JumpValue: 0
   PhysicsResponse:
     Gravity: 9
     BounceThresholdMin: 0
@@ -109,7 +106,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 190553e608ff4734a8cb3109ea829924, type: 3}
   m_Name: 
@@ -117,9 +114,9 @@ MonoBehaviour:
   Spawner:
     random:
       state: 0
+    nextSpawnTime: 0
     SpawnRadius: 100
     SpawnBlockRadiusSqr: 9025
-    SpawnChancePerFrame: 10
 --- !u!114 &-2977659499843593134
 MonoBehaviour:
   m_ObjectHideFlags: 0

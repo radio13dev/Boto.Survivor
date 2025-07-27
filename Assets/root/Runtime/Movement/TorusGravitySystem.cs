@@ -43,6 +43,11 @@ public struct PhysicsResponse : IComponentData
 [UpdateAfter(typeof(MovementSystem))]
 public partial struct TorusGravitySystem : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<SharedRandom>();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         new LockToSurfaceJob()

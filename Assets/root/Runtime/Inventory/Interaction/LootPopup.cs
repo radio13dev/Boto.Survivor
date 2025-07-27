@@ -1,42 +1,53 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
-public class LootPopup : Selectable
+public class LootPopup : MonoBehaviour
 {
-    public GameObject InteractionNotification;
-    public GameObject HeldHighlight;
+    public LootPopupOption[] Options;
     Entity m_LastEntity;
 
-    public void Focus(Entity nearestE)
+    public void Focus(World world, Entity nearestE)
     {
         if (m_LastEntity != nearestE)
         {
             // Update the display
+            var lootGen = world.EntityManager.GetComponentData<LootGenerator2>(nearestE);
+            for (int i = 0; i < Options.Length; i++)
+            {
+                Options[i].Setup(lootGen.GetRingStats(i));
+            }
         }
         
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if (Keyboard.current.eKey.wasPressedThisFrame && HandUIController.LastPressed is not LootPopupOption)
         {
-            if (HandUIController.LastPressed != this)
-            {
-                HandUIController.LastPressed = this;
-                for (int i = 0; i < FingerUI.Instances.Length; i++)
-                {
-                    if (!FingerUI.Instances[i].Ring)
-                    {
-                        FingerUI.Instances[i].Select();
-                        break;
-                    }
-                }
-            }
+            // Open the options and select the first one
+            for (int i = 0; i < Options.Length; i++)
+                Options[i].gameObject.SetActive(true);
+            Options[0].Select();
         }
     }
 
-    protected override void OnDisable()
+    private void OnDisable()
     {
-        base.OnDisable();
-        if (HandUIController.LastPressed == this) HandUIController.LastPressed = null;
         m_LastEntity = Entity.Null;
+        for (int i = 0; i < Options.Length; i++)
+            Options[i].gameObject.SetActive(false);
+    }
+    
+    public void ToggleFocus()
+    {
+        if (Options[0].isActiveAndEnabled)
+        {
+            for (int i = 0; i < Options.Length; i++)
+                Options[i].gameObject.SetActive(false);
+        }
+        else
+        {
+            for (int i = 0; i < Options.Length; i++)
+                Options[i].gameObject.SetActive(true);
+            Options[0].Select();
+        }
     }
 }

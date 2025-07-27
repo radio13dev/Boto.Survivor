@@ -18,9 +18,4 @@ public class StepControllerAuthoring : MonoBehaviour
 public struct StepController : IComponentData
 {
     public long Step;
-
-    public StepController(long step)
-    {
-        Step = step;
-    }
 }

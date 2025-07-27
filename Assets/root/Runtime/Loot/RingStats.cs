@@ -53,7 +53,10 @@ public struct RingStats : IComponentData
 public enum RingPrimaryEffect
 {
     None,
-    Projectile_Ring
+    Projectile_Ring,
+    Projectile_NearestRapid,
+    
+    Length
 }
 
 public enum RingSecondaryEffect

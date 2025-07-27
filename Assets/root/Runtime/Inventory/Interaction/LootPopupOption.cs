@@ -1,29 +1,26 @@
-﻿using Unity.Entities;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class RingPopup : Selectable, IPointerClickHandler
+public class LootPopupOption : Selectable, IPointerClickHandler, ISubmitHandler
 {
+    public int OptionIndex;
     public GameObject InteractionNotification;
     public GameObject HeldHighlight;
-    Entity m_LastEntity;
+    public TMP_Text Description;
 
-    public void Focus(World world, Entity nearestE)
+    public void Setup(RingStats ringStats)
     {
-        if (m_LastEntity != nearestE)
-        {
-            // Update the display
-        }
-        
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            OnPointerClick(default);
-        }
+        Description.text = ringStats.PrimaryEffect.ToString();
     }
     
     public void OnPointerClick(PointerEventData eventData)
+    {
+        OnSubmit(eventData);
+    }
+
+    public void OnSubmit(BaseEventData eventData)
     {
         if (HandUIController.LastPressed != this)
         {
@@ -44,6 +41,5 @@ public class RingPopup : Selectable, IPointerClickHandler
     {
         base.OnDisable();
         if (HandUIController.LastPressed == this) HandUIController.LastPressed = null;
-        m_LastEntity = Entity.Null;
     }
 }

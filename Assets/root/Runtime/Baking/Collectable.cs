@@ -68,7 +68,6 @@ public partial struct CollectableClearSystem : ISystem
             if (collected.ValueRO)
             {
                 // We let this entity live for 1 frame so systems can execute on it
-                Debug.Log($"Collected.");
                 ecb.AddComponent<DestroyFlag>(key, collectableE);
                 return;
             }

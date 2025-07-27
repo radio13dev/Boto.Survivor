@@ -1,46 +1,80 @@
 using System.Threading;
+using BovineLabs.Core.Collections;
+using BovineLabs.Core.Memory;
 using NativeTrees;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
+    public static class EnemyColliderTree
+    {
+        [BurstCompile]
+        public struct NearestVisitor : IOctreeNearestVisitor<Entity>
+        {
+            public int Hits;
+            public AABB Nearest;
+
+            public bool OnVist(Entity obj, AABB bounds)
+            {
+                Hits++;
+                Nearest = bounds;
+                return false; // End checks
+            }
+        }
+
+        [BurstCompile]
+        public struct DistanceProvider : IOctreeDistanceProvider<Entity>
+        {
+            public float DistanceSquared(float3 point, Entity obj, AABB bounds)
+            {
+                return math.distancesq(point, bounds.Center);
+            }
+        }
+    }
+
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     [BurstCompile]
-    public partial struct EnemyColliderTreeSystem : ISystem
+    public unsafe partial struct EnemyColliderTreeSystem : ISystem
     {
-        NativeTrees.NativeOctree<Entity> m_enemyTree;
-        EntityQuery m_enemyQuery;
-
+        public NativeOctree<Entity> Tree;
+        public EntityQuery Query;
+        
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<GameManager.Resources>();
-            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-            m_enemyTree = new(
+            Tree = new(
                 new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
                 Allocator.Persistent
             );
+            Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
 
-            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
-            //state.RequireForUpdate(m_enemyQuery);
+            state.RequireForUpdate<GameManager.Resources>();
+            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            Tree.Dispose();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             // Allocate
-            var enemyEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob);
-            var enemyColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var enemyTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
+            var enemyEntities = Query.ToEntityArray(allocator: Allocator.TempJob);
+            var enemyColliders = Query.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
+            var enemyTransforms = Query.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
         
             // Update trees
             state.Dependency = new RegenerateJob()
             {
-                tree = m_enemyTree,
+                tree = Tree,
                 entities = enemyEntities,
                 colliders = enemyColliders,
                 transforms = enemyTransforms 
@@ -56,26 +90,21 @@ namespace Collisions
             {
                 ecb = parallel,
                 resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-                tree = m_enemyTree,
+                tree = Tree,
                 time = SystemAPI.Time.ElapsedTime
             }.ScheduleParallel(state.Dependency);
             
             var b = new EnemyPushForceJob()
             {
-                tree = m_enemyTree
+                tree = Tree
             }.ScheduleParallel(state.Dependency);
             
             var c = new ProjectileHitEnemyJob()
             {
-                tree = m_enemyTree
+                tree = Tree
             }.ScheduleParallel(state.Dependency);
             
             state.Dependency = JobHandle.CombineDependencies(a,b,c);
-        }
-
-        public void OnDestroy(ref SystemState state)
-        {
-            m_enemyTree.Dispose();
         }
 
         /// <summary>

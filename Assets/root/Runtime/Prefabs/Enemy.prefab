@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 8164776769268316261}
   - component: {fileID: 8235055791634373634}
   - component: {fileID: 2943698238182725417}
-  - component: {fileID: -9189758318452623626}
   - component: {fileID: 2038396025834592094}
+  - component: {fileID: -6018945547334682560}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -52,9 +52,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
   MovementSettings:
     Speed: 2
-    MaxCollectableSpeed: 0
-    CollectRadius: 0
-    JumpValue: 0
   PhysicsResponse:
     Gravity: 9
     BounceThresholdMin: 0
@@ -130,20 +127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
---- !u!114 &-9189758318452623626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c42431cfaed4abba7f98ef9c8d1557f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EntityOnDestroyAuthoring
-  Prefab: {fileID: 7419757055955712054, guid: 9c1b7b8e5316a20448d87f135383f60f, type: 3}
-  Count: 10
 --- !u!114 &2038396025834592094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,3 +142,24 @@ MonoBehaviour:
   Particle:
     AssetIndex: 7
     _Asset: {fileID: -8333230072600633316, guid: 95eb34cd54f5f7a4195a1befee0b14c0, type: 3}
+--- !u!114 &-6018945547334682560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d441d596723349038a4ba229add7a43c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
+  Drops:
+  - Prefab: {fileID: 7419757055955712054, guid: 9c1b7b8e5316a20448d87f135383f60f, type: 3}
+    Chance: 100
+    MinCount: 1
+    MaxCount: 10
+  - Prefab: {fileID: 7419757055955712054, guid: 557e63004fd20314fbe8dc06e15f357c, type: 3}
+    Chance: 5
+    MinCount: 1
+    MaxCount: 1

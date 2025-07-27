@@ -46,7 +46,7 @@ public class NearFloorRingPopup : MonoBehaviour
         if (entityManager.HasComponent<RingStats>(nearestE))
         {
             ItemPopup.gameObject.SetActive(true);
-            ItemPopup.Focus(nearestE);
+            ItemPopup.Focus(m_Query.World,nearestE);
         }
         else 
             ItemPopup.gameObject.SetActive(false);
@@ -54,7 +54,7 @@ public class NearFloorRingPopup : MonoBehaviour
         if (entityManager.HasComponent<LootGenerator2>(nearestE))
         {
             LootPopup.gameObject.SetActive(true);
-            LootPopup.Focus(nearestE);
+            LootPopup.Focus(m_Query.World, nearestE);
         }
         else
             LootPopup.gameObject.SetActive(false);

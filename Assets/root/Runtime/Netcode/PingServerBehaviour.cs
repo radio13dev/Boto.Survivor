@@ -166,7 +166,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         public NetworkDriver.Concurrent Driver;
         public NativeArray<Client> Connections;
         public NativeQueue<SpecialLockstepActions>.ParallelWriter SpecialActionQueue;
-        
+
         [NativeDisableContainerSafetyRestriction]
         public NativeArray<SpecialLockstepActions> SpecialActions;
 
@@ -204,6 +204,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                                 SpecialActionQueue.Enqueue(rpc);
                                 Debug.Log($"Received RPC: {rpc.Type} {rpc.Data} {rpc.Extension}");
                             }
+
                             break;
                     }
 
@@ -269,20 +270,20 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                 if (m_CumulativeTime >= Game.k_ServerPingFrequency)
                 {
                     m_CumulativeTime -= Game.k_ServerPingFrequency;
-                    
+
                     eventsJobs.ServerToClient = m_ServerToClient;
-                    
+
                     // Iterate index + read inputs
                     var old = m_ServerToClient.Value;
                     var newStepData = new FullStepData(old.Step + 1, m_ServerConnections);
-                    
+
                     // Load special actions
                     m_SpecialActionList.Clear();
                     while (m_SpecialActionList.Length < PingClientBehaviour.k_MaxSpecialActionCount && m_SpecialActionQueue.TryDequeue(out var act))
                         m_SpecialActionList.Add(act);
                     eventsJobs.SpecialActions = m_SpecialActionList.AsArray();
                     newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
-                    
+
                     // Update server sim
                     m_Game.ApplyStepData(newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
@@ -294,13 +295,18 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             for (int i = 0; i < m_ServerConnections.Length; i++)
                 if (m_ServerConnections[i].RequestedSave)
                 {
-                    
                     if (saveState == SaveState.Idle)
                     {
                         m_Game.InitSave();
                         continue;
                     }
-                    if (saveState == SaveState.Saving) continue; // Wait
+
+                    if (saveState == SaveState.Saving)
+                    {
+                        Debug.Log("... saving...");
+                        continue; // Wait
+                    }
+
                     if (saveState == SaveState.Ready)
                     {
                         // Send
@@ -311,6 +317,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                         m_ServerConnections[i] = con;
                     }
                 }
+
             if (saveState == SaveState.Ready) m_Game.CleanSave();
 
             // Schedule the job chain.
@@ -340,7 +347,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             return;
         }
     }
-    
+
     public void SendIdToConnection(BiggerDriver Driver, Client Connection, int index)
     {
         Debug.Log($"... sending Id...");
@@ -354,7 +361,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 
         writer.WriteByte(PingServerBehaviour.CODE_SendId);
         GenericMessage.Id(index).Write(ref writer);
-        
+
         result = Driver.Driver.EndSend(writer);
         if (result < 0)
         {

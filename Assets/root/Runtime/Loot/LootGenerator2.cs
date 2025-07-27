@@ -1,5 +1,6 @@
 ﻿using BovineLabs.Saving;
 using Unity.Entities;
+using Unity.Mathematics;
 
 [Save]
 public struct LootGenerator2 : IComponentData
@@ -9,12 +10,17 @@ public struct LootGenerator2 : IComponentData
 
     public RingStats GetRingStats(int index)
     {
-        if (index < 0 || index >= OptionCount)
-            return default;
-        
-        return new RingStats()
+        var random = Random.CreateFromIndex(unchecked((uint)(Seed)));
+        for (int i = 0; i < OptionCount; i++)
         {
-            PrimaryEffect = RingPrimaryEffect.Projectile_Ring
-        };
+            RingStats stats = new RingStats();
+            
+            // TODO: Implement weighting
+            stats.PrimaryEffect = (RingPrimaryEffect)random.NextInt((int)RingPrimaryEffect.None + 1, (int)RingPrimaryEffect.Length + 1);
+            
+            if (i == index) return stats;
+        }
+        
+        return default;
     }
 }

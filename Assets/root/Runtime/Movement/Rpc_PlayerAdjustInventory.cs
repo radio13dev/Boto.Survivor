@@ -18,6 +18,11 @@ public struct Rpc_PlayerAdjustInventory : IComponentData
     public bool IsToFloor => To == (byte.MaxValue >> 4);
     public int FloorIndex => From - Ring.k_RingCount;
     
+    public static byte GetFloorIndexByte(int index)
+    {
+        return (byte)(Ring.k_RingCount + index);
+    }
+    
     public Rpc_PlayerAdjustInventory(byte playerIndex, byte fromTo)
     {
         PlayerIndex = playerIndex;

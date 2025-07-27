@@ -101,6 +101,12 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
             Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, byte.MaxValue, this.FingerIndex));
             HandUIController.LastPressed = null;
         }
+        else if (HandUIController.LastPressed is LootPopupOption lootOption)
+        {
+            // Perform a swap + deselect both
+            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, Rpc_PlayerAdjustInventory.GetFloorIndexByte(lootOption.OptionIndex), this.FingerIndex));
+            HandUIController.LastPressed = null;
+        }
         else
         {
             HandUIController.LastPressed = this;

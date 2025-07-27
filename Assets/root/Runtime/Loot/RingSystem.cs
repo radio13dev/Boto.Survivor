@@ -1,4 +1,6 @@
-﻿using Unity.Burst;
+﻿using Collisions;
+using NativeTrees;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -20,7 +22,8 @@ public partial struct RingSystem : ISystem
         {
             ecb = delayedEcb.AsParallelWriter(),
             Time = SystemAPI.Time.ElapsedTime,
-            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>()
+            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(),
+            EnemyColliderTree = state.WorldUnmanaged.GetUnsafeSystemRef<EnemyColliderTreeSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<EnemyColliderTreeSystem>()).Tree
         }.Schedule(state.Dependency);
     }
 
@@ -30,28 +33,29 @@ public partial struct RingSystem : ISystem
         public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public double Time;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
+        [ReadOnly] public NativeOctree<Entity> EnemyColliderTree;
 
         [BurstCompile]
-        public void Execute([EntityIndexInChunk] int Key, in LocalTransform transform, in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings)
+        public void Execute([EntityIndexInChunk] int Key, in LocalTransform transform, in Movement movement, in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings)
         {
             for (int i = 0; i < rings.Length; ++i)
             {
                 ref var ring = ref rings.ElementAt(i);
                 if (!ring.Stats.PrimaryEffect.IsTimed()) continue;
-                
+
                 var cooldown = ring.Stats.PrimaryEffect.GetCooldown(compiledStats.CombinedRingStats.ProjectileRate);
                 var activateTime = ring.LastActivateTime + cooldown;
                 if (activateTime > Time) continue;
-                
+
                 // Activate
                 ring.LastActivateTime = Time;
-                
+
                 // Get shared stats
                 float projectileSpeed = ring.Stats.PrimaryEffect.GetProjectileSpeed(compiledStats.CombinedRingStats.ProjectileSpeed);
                 float projectileDuration = ring.Stats.PrimaryEffect.GetProjectileDuration(compiledStats.CombinedRingStats.ProjectileDuration);
                 float projectileDamage = ring.Stats.PrimaryEffect.GetProjectileDamage(compiledStats.CombinedRingStats.ProjectileSpeed);
                 float projectileSize = ring.Stats.PrimaryEffect.GetProjectileSize(compiledStats.CombinedRingStats.ProjectileDuration);
-                
+
                 // Fire projectiles
                 switch (ring.Stats.PrimaryEffect)
                 {
@@ -59,41 +63,75 @@ public partial struct RingSystem : ISystem
                     // - Slight randomization in initial spawn points and angles
                     // - ProjectileCount: TODO: Increase radial count OR DOUBLE the count of projectiles (double sounds funner)
                     case RingPrimaryEffect.Projectile_Ring:
+                    {
                         const float Projectile_Ring_CharacterOffset = 1f;
-                    
+
                         var template = Projectiles[0];
                         var projectileCount = 8;
-                        var angStep = math.PI2/projectileCount;
+                        var angStep = math.PI2 / projectileCount;
                         var loopCount = 1 + compiledStats.CombinedRingStats.ProjectileCount;
-                        
+
                         // Instantiate all projectiles at once
-                        var allProjectiles = new NativeArray<Entity>(projectileCount*loopCount, Allocator.Temp);
+                        var allProjectiles = new NativeArray<Entity>(projectileCount * loopCount, Allocator.Temp);
                         ecb.Instantiate(Key, template.Entity, allProjectiles);
-                        
+
                         // Then modify them 1 by 1
                         for (int loopIt = 0; loopIt < loopCount; loopIt++)
                         {
-                            var ang0 = loopIt*angStep/loopCount;
+                            var ang0 = loopIt * angStep / loopCount;
                             for (int projIt = 0; projIt < projectileCount; projIt++)
                             {
-                                var ang = ang0 + projIt*angStep;
-                                var projectileE = allProjectiles[loopIt*projectileCount + projIt];
-                                
+                                var ang = ang0 + projIt * angStep;
+                                var projectileE = allProjectiles[loopIt * projectileCount + projIt];
+
                                 var projectileT = transform;
                                 projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), ang), transform.Rotation);
-                                projectileT.Position = projectileT.Position + projectileT.Forward() * Projectile_Ring_CharacterOffset * projectileSize;
+                                projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_Ring_CharacterOffset * projectileSize;
                                 projectileT.Scale = projectileSize;
                                 ecb.SetComponent(Key, projectileE, projectileT);
-                                
+
                                 ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
-                                ecb.SetComponent(Key, projectileE, new DestroyAtTime(){ DestroyTime = Time + projectileDuration });
-                                ecb.SetComponent(Key, projectileE, new Projectile(){ Damage = projectileDamage });
+                                ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
+                                ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
                             }
                         }
-                        
-                        break;
-                }
 
+                        break;
+                    }
+
+                    case RingPrimaryEffect.Projectile_NearestRapid:
+                    {
+                        const float Projectile_NearestRapid_CharacterOffset = 1f;
+
+                        var template = Projectiles[0];
+                        var projectileCount = 1;
+                        var loopCount = 1 + compiledStats.CombinedRingStats.ProjectileCount;
+
+                        var visitor = new EnemyColliderTree.NearestVisitor();
+                        var distance = new EnemyColliderTree.DistanceProvider();
+                        EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
+
+                        float3 dir;
+                        if (visitor.Hits > 0) dir = visitor.Nearest.Center - transform.Position;
+                        else dir = movement.LastDirection;
+
+                        for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                        {
+                            var projectileE = ecb.Instantiate(Key, template.Entity);
+                            var projectileT = transform;
+                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), -math.PIHALF), quaternion.LookRotationSafe(dir, transform.Up()));
+                            projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
+                            projectileT.Scale = projectileSize;
+                            ecb.SetComponent(Key, projectileE, projectileT);
+
+                            ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
+                            ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
+                            ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
+                        }
+
+                        break;
+                    }
+                }
             }
         }
     }

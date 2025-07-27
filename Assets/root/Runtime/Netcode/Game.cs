@@ -197,9 +197,14 @@ public class Game : IDisposable
     {
         EntityManager entityManager = m_World.EntityManager;
         var saveBufferEntities = m_SaveBuffer.ToEntityArray(Allocator.Temp);
-        if (saveBufferEntities.Length > 0)
+        if (saveBufferEntities.Length > 1)
         {
-            Debug.Log("Multiple save buffers found, weird.");
+            Debug.Log($"Multiple save buffers found, weird: {saveBufferEntities.Length}");
+            for (int i = 0; i < saveBufferEntities.Length; i++)
+            {
+                var weirdBuffer = entityManager.GetBuffer<SaveBuffer>(saveBufferEntities[i]);
+                Debug.Log($"{i}: {weirdBuffer.Length}");
+            }
         }
         else if (saveBufferEntities.Length == 0)
         {
@@ -220,6 +225,7 @@ public class Game : IDisposable
         var loadBufferE = entityManager.CreateEntity(ComponentType.ReadWrite<LoadBuffer>());
         var loadBuffer = entityManager.GetBuffer<LoadBuffer>(loadBufferE);
         loadBuffer.AddRange(ptr.Reinterpret<LoadBuffer>());
+        Debug.Log($"... save loaded...");
         m_Ready = false; // Unset ready.
     }
 
@@ -233,7 +239,10 @@ public class Game : IDisposable
             var stepController = query.GetSingleton<StepController>();
 
             if (stepData.Step == -1)
+            {
+                Debug.Log($"Step controller reset");
                 stepData.Step = stepController.Step + 1;
+            }
 
             if (stepData.Step != stepController.Step + 1)
             {
@@ -241,7 +250,10 @@ public class Game : IDisposable
                 return;
             }
 
-            entityManager.SetComponentData(query.GetSingletonEntity(), new StepController(stepData.Step));
+            entityManager.SetComponentData(query.GetSingletonEntity(), new StepController()
+            {
+                Step = stepData.Step
+            });
         }
 
         // Setup time for the frame
