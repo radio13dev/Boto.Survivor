@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BovineLabs.Core.SingletonCollection;
-using BovineLabs.Saving;
+﻿using BovineLabs.Saving;
 using Unity.Entities;
-using Random = Unity.Mathematics.Random;
 
 [Save]
 public struct LootGenerator2 : IComponentData

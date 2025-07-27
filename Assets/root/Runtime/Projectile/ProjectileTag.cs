@@ -1,6 +1,5 @@
 ﻿using BovineLabs.Saving;
 using Collisions;
-using Unity.Collections;
 using Unity.Entities;
 
 public struct Projectile : IComponentData

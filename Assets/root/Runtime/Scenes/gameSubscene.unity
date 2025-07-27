@@ -119,63 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &100018455
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 240200278457971943, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7419757055955712054, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
-      propertyPath: m_Name
-      value: ItemDebug
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 9e79d2be02d5acd40be5376e381f78d2, type: 3}
 --- !u!1 &359834465
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,7 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::Collisions.TerrainInitAuthoring
   TerrainInit:
-    TerrainSpawnAttempts: 2000
+    TerrainSpawnAttempts: 0
 --- !u!4 &546460678
 Transform:
   m_ObjectHideFlags: 0
@@ -541,6 +484,5 @@ SceneRoots:
   - {fileID: 359834467}
   - {fileID: 992332886}
   - {fileID: 546460678}
-  - {fileID: 100018455}
   - {fileID: 1174510931}
   - {fileID: 1362925330}

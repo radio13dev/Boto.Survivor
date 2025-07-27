@@ -1,11 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using BovineLabs.Saving;
 using Unity.Collections;
-using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine;
 using UnityEngine.InputSystem;
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]

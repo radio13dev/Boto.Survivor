@@ -1,5 +1,4 @@
-﻿using NativeTrees;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using AABB = NativeTrees.AABB;

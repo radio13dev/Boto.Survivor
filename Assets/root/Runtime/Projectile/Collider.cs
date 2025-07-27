@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using BovineLabs.Saving;
-using NativeTrees;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;

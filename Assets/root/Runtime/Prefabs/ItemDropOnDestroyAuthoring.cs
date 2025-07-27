@@ -1,4 +1,7 @@
-﻿using BovineLabs.Saving;
+﻿using System;
+using System.Collections.Generic;
+using BovineLabs.Saving;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -6,29 +9,44 @@ using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [Save]
-public struct EntityOnDestroy : IComponentData
+public struct ItemDropOnDestroy : IBufferElementData
 {
-    public Entity Prefab;
-    public int Count;
+    public Entity Drop;
+    public int Chance;
 }
 
-public class EntityOnDestroyAuthoring : MonoBehaviour
+public class ItemDropOnDestroyAuthoring : MonoBehaviour
 {
-    public GameObject Prefab;
-    public int Count;
-    public class Baker : Baker<EntityOnDestroyAuthoring>
+    public List<Drop> Drops = new();
+    public class Baker : Baker<ItemDropOnDestroyAuthoring>
     {
-        public override void Bake(EntityOnDestroyAuthoring authoring)
+        public override void Bake(ItemDropOnDestroyAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new EntityOnDestroy(){ Prefab = GetEntity(authoring.Prefab, TransformUsageFlags.None), Count = authoring.Count });
+            var drops = AddBuffer<ItemDropOnDestroy>(entity);
+            foreach (var drop in authoring.Drops)
+            {
+                drops.Add(new ItemDropOnDestroy()
+                {
+                    Drop = GetEntity(drop.Prefab, TransformUsageFlags.None),
+                    Chance = drop.Chance
+                });
+            }
         }
+    }
+    
+    [Serializable]
+    public class Drop
+    {
+        public GameObject Prefab;
+        [Range(0,100)]
+        public int Chance;
     }
 }
 
 [UpdateBefore(typeof(DestroySystem))]
 [UpdateInGroup(typeof(DestroySystemGroup))]
-public partial struct EntityOnDestroySystem : ISystem
+public partial struct ItemDropOnDestroySystem : ISystem
 {
     EntityQuery m_CleanupQuery;
 
@@ -36,14 +54,14 @@ public partial struct EntityOnDestroySystem : ISystem
     {
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<EntityOnDestroy, DestroyFlag>().Build();
+        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ItemDropOnDestroy, DestroyFlag>().Build();
         state.RequireForUpdate(m_CleanupQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<EntityOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
+        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<ItemDropOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
             .WithAll<DestroyFlag>()
             )
         {

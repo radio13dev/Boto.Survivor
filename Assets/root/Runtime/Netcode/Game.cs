@@ -1,19 +1,14 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using BovineLabs.Core.Utility;
 using BovineLabs.Saving;
 using BovineLabs.Saving.Data;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
-using Unity.Entities.Serialization;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
-using Object = UnityEngine.Object;
 
 [Preserve]
 public class ClientGameBootstrap : ICustomBootstrap

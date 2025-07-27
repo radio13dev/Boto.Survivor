@@ -1,7 +1,5 @@
-﻿using System;
-using BovineLabs.Saving;
+﻿using BovineLabs.Saving;
 using Unity.Entities;
-using UnityEngine;
 
 [Save]
 public struct CompiledStats : IComponentData

@@ -1,5 +1,3 @@
-using System;
-using NativeTrees;
 using Unity.Collections;
 using UnityEngine;
 using Unity.Entities;

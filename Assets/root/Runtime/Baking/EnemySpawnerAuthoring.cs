@@ -7,7 +7,6 @@ public class EnemySpawnerAuthoring : MonoBehaviour
 {
     public EnemySpawner Spawner = new EnemySpawner()
     {
-        SpawnChancePerFrame = 10,
         SpawnRadius = 10,
         SpawnBlockRadiusSqr = 9*9
     };

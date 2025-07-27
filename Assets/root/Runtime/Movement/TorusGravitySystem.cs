@@ -5,8 +5,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 [Save]
 public struct Grounded : IComponentData, IEnableableComponent { }
@@ -62,7 +60,7 @@ public partial struct TorusGravitySystem : ISystem
         new InertiaGravityJob()
         {
             dt = SystemAPI.Time.DeltaTime,
-            randomIndex = unchecked((uint)SystemAPI.Time.ElapsedTime)
+            sharedRandom = SystemAPI.GetSingleton<SharedRandom>()
         }.Schedule();
     }
     
@@ -150,8 +148,8 @@ public partial struct TorusGravitySystem : ISystem
     [WithPresent(typeof(Grounded))]
     partial struct InertiaGravityJob : IJobEntity
     {
-        [ReadOnly] public uint randomIndex;
         [ReadOnly] public float dt;
+        [ReadOnly] public SharedRandom sharedRandom;
     
         public void Execute(Entity entity, ref Movement movement, ref LocalTransform transform, EnabledRefRW<Grounded> grounded, in PhysicsResponse response, ref RotationalInertia inertia)
         {
@@ -189,7 +187,7 @@ public partial struct TorusGravitySystem : ISystem
                         movement.Velocity -= movement.Velocity * response.BounceFriction;
                         
                         // Randomise inertia
-                        inertia.Set(Random.CreateFromIndex(unchecked((uint)(randomIndex + entity.Index + entity.Version))).NextFloat3(), downVel * response.BounceResponse);
+                        inertia.Set(sharedRandom.Random.NextFloat3(), downVel * response.BounceResponse);
                     }
                     else if (downVel >= 0)
                     {

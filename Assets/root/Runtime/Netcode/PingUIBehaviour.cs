@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using Unity.Services.Core;
 using Unity.Services.Authentication;

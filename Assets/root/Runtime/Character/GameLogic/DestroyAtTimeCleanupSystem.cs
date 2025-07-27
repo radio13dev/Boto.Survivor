@@ -1,5 +1,4 @@
 using BovineLabs.Saving;
-using Unity.Collections;
 using Unity.Entities;
 
 [Save]

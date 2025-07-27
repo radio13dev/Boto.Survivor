@@ -5,16 +5,15 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 [Serializable]
 [Save]
 public partial struct EnemySpawner : IComponentData
 {
     [HideInInspector] public Unity.Mathematics.Random random;
+    [HideInInspector] public double nextSpawnTime;
     public float SpawnRadius;
     public float SpawnBlockRadiusSqr;
-    public int SpawnChancePerFrame;
 }
 
 [RequireMatchingQueriesForUpdate]
@@ -23,6 +22,8 @@ public partial struct EnemySpawnSystem : ISystem
     EntityQuery m_PlayerTransformsQuery;
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<StepController>();
+        state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerControlled>();
@@ -38,7 +39,10 @@ public partial struct EnemySpawnSystem : ISystem
         {
             ecb = delayedEcb.AsParallelWriter(),
             resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-            PlayerTransforms = playerTransforms
+            PlayerTransforms = playerTransforms,
+            stepController = SystemAPI.GetSingleton<StepController>(),
+            Time = SystemAPI.Time.ElapsedTime,
+            dt = SystemAPI.Time.DeltaTime
         }.Schedule(state.Dependency);
         playerTransforms.Dispose(state.Dependency);
         
@@ -46,28 +50,49 @@ public partial struct EnemySpawnSystem : ISystem
     
     partial struct Job : IJobEntity
     {
+        const int k_MaxSpawnedPerFrame = 10;
+    
         static readonly float2 min = new float2(-1,-1);
         static readonly float2 max = new float2(1,1);
     
         public EntityCommandBuffer.ParallelWriter ecb;
-        public GameManager.Resources resources;
+        [ReadOnly] public GameManager.Resources resources;
+        [ReadOnly] public StepController stepController;
+        [ReadOnly] public double Time;
+        [ReadOnly] public float dt;
         [ReadOnly] public NativeArray<LocalTransform> PlayerTransforms;
     
         public void Execute([ChunkIndexInQuery] int key, in LocalTransform t, ref EnemySpawner spawner)
         {
-            if (spawner.random.NextInt(100) > spawner.SpawnChancePerFrame)
-                return;
-        
-            var rPos = t.Position;
-            var rDir = math.normalizesafe(spawner.random.NextFloat2(min, max), max) * spawner.SpawnRadius;
-            rPos += t.TransformDirection(rDir.f3z());
+            int spawned = 0;
+            while (spawner.nextSpawnTime < Time)
+            {
+                if (spawned >= k_MaxSpawnedPerFrame)
+                {
+                    spawner.nextSpawnTime = Time;
+                    Debug.Log($"Hit max spawn count in frame: {spawned}");
+                    break;
+                }
             
-            for (int i = 0; i < PlayerTransforms.Length; i++)
-                if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)
-                    return;
+                // Spawn chance scales with time, so that the longer the game runs, the more enemies spawn.
+                double enemiesPerSecond = (8*Time/1000);
+                enemiesPerSecond *= enemiesPerSecond;
+                enemiesPerSecond += 0.3d;
+                spawner.nextSpawnTime += 1/enemiesPerSecond;
+                spawner.nextSpawnTime += spawner.random.NextFloat(-0.5f,0.5f); // A little randomness is the spice of life
             
-            var enemy = ecb.Instantiate(key, resources.EnemyTemplate);
-            ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos));
+                var rPos = t.Position;
+                var rDir = math.normalizesafe(spawner.random.NextFloat2(min, max), max) * spawner.SpawnRadius;
+                rPos += t.TransformDirection(rDir.f3z());
+            
+                for (int i = 0; i < PlayerTransforms.Length; i++)
+                    if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)
+                        return;
+            
+                var enemy = ecb.Instantiate(key, resources.EnemyTemplate);
+                ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos));
+                spawned++;
+            }
         }
     }
 }

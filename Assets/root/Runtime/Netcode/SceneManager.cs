@@ -1,6 +1,4 @@
-﻿using System;
-using Unity.Entities.Serialization;
-using Unity.Scenes;
+﻿using Unity.Scenes;
 using UnityEngine;
 
 public class SceneManager : MonoBehaviour
