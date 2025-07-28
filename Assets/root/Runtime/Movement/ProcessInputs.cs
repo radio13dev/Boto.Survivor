@@ -10,6 +10,7 @@ using Unity.Transforms;
 /// Projectile collision is predicted, only after all movement is done
 /// </summary>
 [UpdateBefore(typeof(MovementSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
 }

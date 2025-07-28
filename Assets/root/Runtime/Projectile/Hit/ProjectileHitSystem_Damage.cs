@@ -2,7 +2,6 @@
 using Unity.Entities;
 
 [UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Damage : ISystem
 {

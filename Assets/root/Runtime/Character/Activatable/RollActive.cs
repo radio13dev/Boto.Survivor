@@ -10,7 +10,7 @@ public struct RollActive : IComponentData, IEnableableComponent
     public float T;
 }
 
-[UpdateInGroup(typeof(GameLogicSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 [RequireMatchingQueriesForUpdate]
 public partial struct RollActiveSystem : ISystem
 {

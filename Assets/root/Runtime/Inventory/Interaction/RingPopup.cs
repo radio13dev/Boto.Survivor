@@ -43,7 +43,11 @@ public class RingPopup : Selectable, IPointerClickHandler
     protected override void OnDisable()
     {
         base.OnDisable();
-        if (HandUIController.LastPressed == this) HandUIController.LastPressed = null;
+        if (HandUIController.LastPressed == this)
+        {
+            HandUIController.LastPressed = null;
+            HandUIController.SetState(HandUIController.State.Closed);
+        }
         m_LastEntity = Entity.Null;
     }
 }

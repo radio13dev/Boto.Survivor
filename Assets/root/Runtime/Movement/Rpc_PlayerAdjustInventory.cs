@@ -30,6 +30,7 @@ public struct Rpc_PlayerAdjustInventory : IComponentData
     }
 }
 
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct Rpc_PlayerAdjustInventory_System : ISystem
 {
     public void OnCreate(ref SystemState state)

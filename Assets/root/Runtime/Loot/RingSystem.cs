@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [BurstCompile]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct RingSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

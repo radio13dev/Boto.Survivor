@@ -24,7 +24,6 @@ public class ParticleOnDamageAuthoring : MonoBehaviour
 }
 
 [UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
 public partial struct ProjectileHitSystem_Particle : ISystem
 {
     public void OnCreate(ref SystemState state)

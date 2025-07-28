@@ -14,6 +14,7 @@ public struct Health : IComponentData
     }
 }
 
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct HealthSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

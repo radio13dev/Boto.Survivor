@@ -29,6 +29,7 @@ namespace Collisions
     }
 
     [RequireMatchingQueriesForUpdate]
+    [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
     public partial struct TerrainInitSystem : ISystem
     {
         public void OnCreate(ref SystemState state)

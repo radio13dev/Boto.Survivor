@@ -21,7 +21,7 @@ public struct ProjectileSpawner : IComponentData, IEnableableComponent
 }
 
 
-[UpdateInGroup(typeof(GameLogicSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct SurvivorProjectileSpawnerSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

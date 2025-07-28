@@ -10,17 +10,6 @@ using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-[Preserve]
-public class ClientGameBootstrap : ICustomBootstrap
-{
-    public bool Initialize(string defaultWorldName)
-    {
-        Game.ClientGame = new Game(true);
-        World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
-        return true;
-    }
-}
-
 public enum SaveState
 {
     Idle,
@@ -98,6 +87,7 @@ public class Game : IDisposable
             if (m_GameManagerSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameManagerSceneE)) return false;
             if (m_GameSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameSceneE)) return false;
 
+            OnLoadComplete();
             return m_Ready = true;
         }
     }
@@ -136,7 +126,7 @@ public class Game : IDisposable
         m_World = new World("Game", WorldFlags.Game);
         var systems = DefaultWorldInitialization
             .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
-        systems.Remove(typeof(UpdateWorldTimeSystem));
+        systems.RemoveAll(s => s.Name == typeof(UpdateWorldTimeSystem).Name);
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
 
         var saveRequest = new EntityQueryDesc
@@ -285,6 +275,7 @@ public class Game : IDisposable
             }
 
             entities.Dispose();
+            query.Dispose();
         }
 
 
@@ -312,9 +303,24 @@ public class Game : IDisposable
         }
     }
 
+    private void OnLoadComplete()
+    {
+        // Fetch any 'initial' cache data
+        var query = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
+        var players = query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
+        for (int i = 0; i < players.Length; i++)
+            m_PlayerDataCaches.Add(new PlayerDataCache(players[i].Index));
+        players.Dispose();
+        query.Dispose();
+        
+        // Also enable the simulation system group
+        m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = true;
+    }
+
 
     public static void SetCacheDirty(Entity entity)
     {
+        Debug.Log($"Cleaning cache...");
         foreach (var cache in ClientGame.m_PlayerDataCaches)
             if (cache.PlayerE == entity) 
                 cache.SetDirty();

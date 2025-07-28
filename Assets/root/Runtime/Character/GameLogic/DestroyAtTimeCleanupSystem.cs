@@ -7,7 +7,7 @@ public struct DestroyAtTime : IComponentData
     public double DestroyTime;
 }
 
-[UpdateInGroup(typeof(GameLogicSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct DestroyAtTimeCleanupSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

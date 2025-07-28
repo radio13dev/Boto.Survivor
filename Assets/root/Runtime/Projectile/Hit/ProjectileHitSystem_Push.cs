@@ -3,7 +3,6 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Push : ISystem
 {

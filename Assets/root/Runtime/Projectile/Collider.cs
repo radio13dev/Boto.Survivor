@@ -12,6 +12,7 @@ namespace Collisions
     /// Projectile collision is predicted, only after all movement is done
     /// </summary>
     [UpdateAfter(typeof(MovementSystemGroup))]
+    [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
     public partial class CollisionSystemGroup : ComponentSystemGroup
     {
     }

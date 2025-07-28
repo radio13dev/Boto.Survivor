@@ -14,6 +14,7 @@ public struct ProjectileHit : IComponentData, IEnableableComponent
 }
 
 [UpdateBefore(typeof(CollisionSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial class ProjectileSystemGroup : ComponentSystemGroup
 {
 }

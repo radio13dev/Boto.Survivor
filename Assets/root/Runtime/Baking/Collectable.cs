@@ -23,6 +23,7 @@ public struct CollectCollider : IComponentData
 }
 
 [UpdateAfter(typeof(CollisionSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial class CollectableSystemGroup : ComponentSystemGroup
 {
 }

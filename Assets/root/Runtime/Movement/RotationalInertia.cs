@@ -21,6 +21,7 @@ public struct RotationalInertia : IComponentData
 }
 
 [BurstCompile]
+[UpdateInGroup(typeof(MovementSystemGroup))]
 public partial struct RotationalIntertiaSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)

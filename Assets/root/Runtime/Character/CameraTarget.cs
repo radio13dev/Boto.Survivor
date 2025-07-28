@@ -12,10 +12,11 @@ public class CameraTarget : MonoBehaviour
 
     private void Update()
     {
-        if (!setupComplete)
+        if (Game.ClientGame == null)
+            return;
+            
+        if (!setupComplete || !Game.ClientGame.World.EntityManager.IsQueryValid(m_Query))
         {
-            if (Game.ClientGame == null)
-                return;
 
             var entityManager = Game.ClientGame.World.EntityManager;
             m_Query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)),

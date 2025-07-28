@@ -3,6 +3,7 @@ using BovineLabs.Saving;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
@@ -50,23 +51,25 @@ public partial struct TorusGravitySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        new LockToSurfaceJob()
+        var a = new LockToSurfaceJob()
         {
         
-        }.Schedule();
-        new RotateWithSurfaceJob()
+        }.Schedule(state.Dependency);
+        var b = new RotateWithSurfaceJob()
         {
             
-        }.Schedule();
-        new GravityJob()
+        }.Schedule(a);
+        var c = new GravityJob()
         {
             dt = SystemAPI.Time.DeltaTime
-        }.Schedule();
-        new InertiaGravityJob()
+        }.Schedule(b);
+        var d = new InertiaGravityJob()
         {
             dt = SystemAPI.Time.DeltaTime,
             sharedRandom = SystemAPI.GetSingleton<SharedRandom>()
-        }.Schedule();
+        }.Schedule(c);
+        
+        state.Dependency = d;
     }
     
     [BurstCompile]
@@ -122,7 +125,7 @@ public partial struct TorusGravitySystem : ISystem
                     var downVel = math.dot(movement.Velocity, -normalIfClamped);
                     downVel = math.max(downVel, 0); // Don't make any adjustment if they're already going up
                     
-                    if (downVel > response.BounceThresholdMin)
+                    if (response.BounceThresholdMin > 0 && downVel > response.BounceThresholdMin)
                     {
                         // Bounce!
                         var bounceVel = downVel*response.BounceResponse;

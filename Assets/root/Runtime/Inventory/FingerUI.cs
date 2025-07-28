@@ -44,6 +44,8 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     private void OnGameStarted(Game game)
     {
         game.OnInventoryUpdated += OnInventoryChanged;
+        if (game.m_PlayerDataCaches.Count > game.PlayerIndex && game.PlayerIndex >= 0)
+            OnInventoryChanged(game.m_PlayerDataCaches[game.PlayerIndex]);
     }
 
     private void OnInventoryChanged(PlayerDataCache player)

@@ -17,6 +17,7 @@ public partial struct EnemySpawner : IComponentData
 }
 
 [RequireMatchingQueriesForUpdate]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct EnemySpawnSystem : ISystem
 {
     EntityQuery m_PlayerTransformsQuery;

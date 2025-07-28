@@ -93,7 +93,8 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
     private IEnumerator Start()
     {
-        if (Game.ClientGame != null && Game.ClientGame.IsReady)
+        if (Game.ClientGame == null ||
+            (Game.ClientGame != null && Game.ClientGame.IsReady))
         {
             Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
             Game.ClientGame = new Game(true);
@@ -185,7 +186,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     [BurstCompile]
     private struct PingRelayRpcJob : IJob
     {
-        public NetworkDriver Driver;
+        public NetworkDriver.Concurrent Driver;
         public NetworkConnection Connection;
         public SpecialLockstepActions Rpc;
 
@@ -370,11 +371,12 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             if (state == NetworkConnection.State.Connected)
             {
                 // Send off any queued rpcs
+                NetworkDriver.Concurrent concurrentDriver = m_ClientDriver.Driver.ToConcurrent();
                 while (m_Game != null && m_Game.RpcSendBuffer.TryDequeue(out var rpc))
                 {
                     m_ClientJobHandle = new PingRelayRpcJob()
                     {
-                        Driver = m_ClientDriver.Driver,
+                        Driver = concurrentDriver,
                         Connection = m_ClientConnection.Value.Connection,
                         Rpc = rpc
                     }.Schedule(m_ClientJobHandle);
@@ -384,7 +386,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
                 {
                     m_ClientJobHandle = new PingRelaySendJob
                     {
-                        Driver = m_ClientDriver.Driver.ToConcurrent(),
+                        Driver = concurrentDriver,
                         Connection = m_ClientConnection.Value.Connection,
                         FrameInput = m_FrameInput
                     }.Schedule(m_ClientJobHandle);

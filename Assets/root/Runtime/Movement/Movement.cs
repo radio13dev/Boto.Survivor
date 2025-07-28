@@ -1,12 +1,14 @@
 using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 
 /// <summary>
 /// Character movement is predicted
 /// </summary>
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial class MovementSystemGroup : ComponentSystemGroup
 {
         
@@ -30,14 +32,16 @@ public partial struct MovementSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        new MovementJob()
+        var a = new MovementJob()
         {
             dt = SystemAPI.Time.DeltaTime
-        }.Schedule();
-        new SurfaceMovementJob()
+        }.Schedule(state.Dependency);
+        var b = new SurfaceMovementJob()
         {
             dt = SystemAPI.Time.DeltaTime
-        }.Schedule();
+        }.Schedule(a);
+        
+        state.Dependency = b;
     }
     
     partial struct MovementJob : IJobEntity

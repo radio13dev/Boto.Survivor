@@ -1,4 +1,5 @@
 using System;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -19,6 +20,7 @@ public struct SpriteAnimFrameTime : IComponentData
     public double NextFrameTime;
 }
 
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct SpriteUpdateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

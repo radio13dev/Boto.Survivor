@@ -18,6 +18,7 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
 }
 
 [RequireMatchingQueriesForUpdate]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct CompiledStatsSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

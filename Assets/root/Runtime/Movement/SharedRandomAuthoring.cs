@@ -21,6 +21,7 @@ public struct SharedRandom : IComponentData
     public Random Random;
 }
 
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial struct SharedRandomSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

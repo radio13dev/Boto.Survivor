@@ -6,6 +6,7 @@ using Unity.Transforms;
 
 [RequireMatchingQueriesForUpdate]
 [BurstCompile]
+[UpdateInGroup(typeof(MovementSystemGroup))]
 public partial struct EnemyMovementSystem : ISystem
 {
     EntityQuery m_TargetQuery;

@@ -4,7 +4,7 @@ public struct DestroyFlag : IComponentData
 {
 }
 
-[UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup), OrderLast = true)]
 public partial class DestroySystemGroup : ComponentSystemGroup
 {
         

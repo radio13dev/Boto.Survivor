@@ -16,7 +16,8 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
 
     private IEnumerator Start()
     {
-        if (Game.ClientGame != null && Game.ClientGame.IsReady)
+        if (Game.ClientGame == null ||
+            (Game.ClientGame != null && Game.ClientGame.IsReady))
         {
             Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
             Game.ClientGame = new Game(true);
@@ -31,8 +32,9 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         m_Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
+            if (m_Game.IsReady) return true;
             m_Game.World.Update();
-            return m_Game.IsReady;
+            return false;
         });
         
         // Spawn the player
