@@ -35,23 +35,14 @@ public class Game : IDisposable
 
     public static Game ServerGame
     {
-        get
-        {
-            return s_ServerGame;
-        }
-        set
-        {
-            s_ServerGame = value;
-        }
+        get => s_ServerGame;
+        set => s_ServerGame = value;
     }
     static Game s_ServerGame;
 
     public static Game ClientGame
     {
-        get
-        {
-            return s_ClientGame;
-        }
+        get => s_ClientGame;
         set
         {
             s_ClientGame = value;
@@ -221,6 +212,12 @@ public class Game : IDisposable
 
     public unsafe void ApplyStepData(FullStepData stepData, SpecialLockstepActions* extraActionPtr)
     {
+        if (!m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled)
+        {
+            Debug.LogError($"Failed step, tried to go to step {stepData.Step} but simulation disabled.");
+            return;
+        }
+        
         var entityManager = m_World.EntityManager;
 
         // Iterate step count
