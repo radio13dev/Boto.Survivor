@@ -192,6 +192,8 @@ public partial struct FindNearestInteractableSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (Game.ClientGame == null) return;
+    
         // Get player
         var playerIndex = Game.ClientGame.PlayerIndex;
         Entity playerE = Entity.Null;

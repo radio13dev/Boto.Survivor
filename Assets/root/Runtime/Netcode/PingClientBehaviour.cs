@@ -323,8 +323,8 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             }
 
             m_CumulativeTime += Time.deltaTime;
-            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
-            if (shouldSend) m_CumulativeTime -= Game.k_ClientPingFrequency;
+            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency && !ClientDesyncDebugger.Paused;
+            if (shouldSend) m_CumulativeTime = 0;
 
             if (m_Game != null)
             {

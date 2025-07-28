@@ -5,6 +5,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Networking.Transport;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
@@ -60,7 +61,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
-        m_Game = new Game(false);
+        m_Game = new Game(true);
         m_Game.LoadScenes();
     }
 
@@ -294,14 +295,14 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 
             if (!m_Game.IsReady)
             {
-                m_Game.World.Update();
+                m_Game.Update_NoLogic();
             }
             else if (m_ServerConnections.Length > 0)
             {
                 m_CumulativeTime += Time.deltaTime;
-                if (m_CumulativeTime >= Game.k_ServerPingFrequency)
+                if (m_CumulativeTime >= Game.k_ServerPingFrequency && !ClientDesyncDebugger.Paused)
                 {
-                    m_CumulativeTime -= Game.k_ServerPingFrequency;
+                    m_CumulativeTime = math.min(m_CumulativeTime - Game.k_ServerPingFrequency, Game.k_ServerPingFrequency);
 
                     eventsJobs.ServerToClient = m_ServerToClient;
 

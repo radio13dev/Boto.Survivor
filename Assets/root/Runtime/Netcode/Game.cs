@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using BovineLabs.Saving.Data;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -29,7 +31,7 @@ public class Game : IDisposable
     public static event Action<Game> OnClientGameStarted;
 
     public const float k_ClientPingFrequency = 1.0f / 60.0f;
-    public const float k_ServerPingFrequency = 1.0f / 61.0f;
+    public const float k_ServerPingFrequency = 1.0f / 60.0f;
 
     public static bool ConstructorReady => SceneManager.Ready;
 
@@ -269,8 +271,13 @@ public class Game : IDisposable
             query.Dispose();
         }
 
-
-        m_World.Update();
+        if (ClientDesyncDebugger.Instance)
+        {
+            ClientDesyncDebugger.Instance.UpdateGame(stepData.Step, this);
+            ClientDesyncDebugger.Instance.CleanGameSaves();
+        }
+        else
+            m_World.Update();
         
         CollectDataForUI();
     }
@@ -323,6 +330,51 @@ public class Game : IDisposable
         m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = false;
         m_World.Update();
         m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = oldEnabled;
+    }
+
+    public NativeArray<byte> InstantSave()
+    {
+        InitSave();
+        do
+        {
+            Update_NoLogic();
+            CompleteDependencies();
+        }
+        while (SaveState == SaveState.Saving);
+        
+        EntityManager entityManager = m_World.EntityManager;
+        var saveBufferEntities = m_SaveBuffer.ToEntityArray(Allocator.Temp);
+        if (saveBufferEntities.Length > 1)
+        {
+            Debug.Log($"Multiple save buffers found, weird: {saveBufferEntities.Length}");
+            for (int i = 0; i < saveBufferEntities.Length; i++)
+            {
+                var weirdBuffer = entityManager.GetBuffer<SaveBuffer>(saveBufferEntities[i]);
+                Debug.Log($"{i}: {weirdBuffer.Length}");
+            }
+        }
+        else if (saveBufferEntities.Length == 0)
+        {
+            throw new Exception("No save buffer found, failed send.");
+        }
+
+        var saveBuffer = entityManager.GetBuffer<SaveBuffer>(saveBufferEntities[0]);
+        var reint = saveBuffer.Reinterpret<byte>();
+        var data = reint.ToNativeArray(Allocator.Persistent);
+        //Debug.Log($"... wrote {reint.Length}...");
+        CleanSave();
+        return data;
+    }
+
+    public void CompleteDependencies()
+    {
+        NativeList<JobHandle> dependencies = new NativeList<JobHandle>(Allocator.Temp);
+        m_World.Unmanaged.GetAllSystemDependencies(dependencies);
+        for (int i = 0; i < dependencies.Length; i++)
+        {
+            dependencies[i].Complete();
+        }
+        dependencies.Clear();
     }
 }
 
