@@ -96,7 +96,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
         if (Game.ClientGame == null ||
             (Game.ClientGame != null && Game.ClientGame.IsReady))
         {
-            Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
+            Debug.Log($"Running multiple singleplayer games at the same time, creating new one...");
             Game.ClientGame = new Game(true);
             World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
         }

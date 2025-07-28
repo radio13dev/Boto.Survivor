@@ -246,6 +246,38 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             // First, complete the previously-scheduled job chain.
             m_ServerJobHandle.Complete();
 
+            SaveLoop:
+            var saveState = m_Game.SaveState;
+            for (int i = 0; i < m_ServerConnections.Length; i++)
+                if (m_ServerConnections[i].RequestedSave)
+                {
+                    if (saveState == SaveState.Idle)
+                    {
+                        m_Game.InitSave();
+                        m_Game.Update_NoLogic();
+                        goto SaveLoop;
+                    }
+
+                    if (saveState == SaveState.Saving)
+                    {
+                        Debug.Log("... saving...");
+                        m_Game.Update_NoLogic();
+                        goto SaveLoop;
+                    }
+
+                    if (saveState == SaveState.Ready)
+                    {
+                        // Send
+                        var con = m_ServerConnections[i];
+                        SendSaveToConnection(m_ServerDriver, con);
+                        SendIdToConnection(m_ServerDriver, con, i);
+                        con.RequestedSave = false;
+                        m_ServerConnections[i] = con;
+                    }
+                }
+
+            if (saveState == SaveState.Ready) m_Game.CleanSave();
+            
             // Create the jobs first.
             var updateJob = new ConnectionsRelayUpdateJob
             {
@@ -290,35 +322,6 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
                 }
             }
-
-            var saveState = m_Game.SaveState;
-            for (int i = 0; i < m_ServerConnections.Length; i++)
-                if (m_ServerConnections[i].RequestedSave)
-                {
-                    if (saveState == SaveState.Idle)
-                    {
-                        m_Game.InitSave();
-                        continue;
-                    }
-
-                    if (saveState == SaveState.Saving)
-                    {
-                        Debug.Log("... saving...");
-                        continue; // Wait
-                    }
-
-                    if (saveState == SaveState.Ready)
-                    {
-                        // Send
-                        var con = m_ServerConnections[i];
-                        SendSaveToConnection(m_ServerDriver, con);
-                        SendIdToConnection(m_ServerDriver, con, i);
-                        con.RequestedSave = false;
-                        m_ServerConnections[i] = con;
-                    }
-                }
-
-            if (saveState == SaveState.Ready) m_Game.CleanSave();
 
             // Schedule the job chain.
             m_ServerJobHandle = m_ServerDriver.Driver.ScheduleUpdate();

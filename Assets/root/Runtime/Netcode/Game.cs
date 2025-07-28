@@ -228,12 +228,6 @@ public class Game : IDisposable
             var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
             var stepController = query.GetSingleton<StepController>();
 
-            if (stepData.Step == -1)
-            {
-                Debug.Log($"Step controller reset");
-                stepData.Step = stepController.Step + 1;
-            }
-
             if (stepData.Step != stepController.Step + 1)
             {
                 Debug.LogError($"Failed step, tried to go from step {stepController.Step} to {stepData.Step}");
@@ -324,6 +318,14 @@ public class Game : IDisposable
         foreach (var cache in ClientGame.m_PlayerDataCaches)
             if (cache.PlayerE == entity) 
                 cache.SetDirty();
+    }
+
+    public void Update_NoLogic()
+    {
+        var oldEnabled = m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled;
+        m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = false;
+        m_World.Update();
+        m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = oldEnabled;
     }
 }
 
