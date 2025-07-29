@@ -271,7 +271,7 @@ public class Game : IDisposable
             query.Dispose();
         }
 
-        if (ClientDesyncDebugger.Instance)
+        if (ClientDesyncDebugger.Instance && ClientDesyncDebugger.Instance.ManualUpdates)
         {
             ClientDesyncDebugger.Instance.UpdateGame(stepData.Step, this);
             ClientDesyncDebugger.Instance.CleanGameSaves();

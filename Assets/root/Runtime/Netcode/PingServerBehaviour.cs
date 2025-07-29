@@ -61,7 +61,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
-        m_Game = new Game(true);
+        m_Game = new Game(false);
         m_Game.LoadScenes();
     }
 

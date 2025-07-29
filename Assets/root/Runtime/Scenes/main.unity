@@ -1204,7 +1204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 314770846}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.98981583, y: 0.00000014730819, z: 0, w: 0.14235397}
+  m_LocalRotation: {x: 0.92923546, y: -0.0000000080753795, z: 0.000000020309065, w: 0.36948812}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4464,13 +4464,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1337659301}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4196bf7cd51b5e4881a794a467e707e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ClientDesyncDebugger
   textDisplayPrefab: {fileID: -6108054835189566739, guid: 2c4c86ed55721b84bb86b42dc9ee3bba, type: 3}
-  ManualUpdates: 1
+  ManualUpdates: 0
 --- !u!1 &1338831771
 GameObject:
   m_ObjectHideFlags: 0
@@ -5683,7 +5683,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1579163081}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5692,7 +5692,7 @@ RectTransform:
   - {fileID: 878368490}
   - {fileID: 1009744189}
   m_Father: {fileID: 1162676916}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 2.685}
@@ -7208,7 +7208,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 7.275958e-12, y: -198.5001}
+  m_AnchoredPosition: {x: 7.275958e-12, y: -198.50014}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.000000006519258}
 --- !u!1001 &2118247322

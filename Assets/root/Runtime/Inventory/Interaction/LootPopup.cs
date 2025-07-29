@@ -20,7 +20,7 @@ public class LootPopup : MonoBehaviour
             }
         }
         
-        if (Keyboard.current.eKey.wasPressedThisFrame && HandUIController.LastPressed is not LootPopupOption)
+        if (HandUIController.LastPressed is not LootPopupOption)
         {
             // Open the options and select the first one
             for (int i = 0; i < Options.Length; i++)
