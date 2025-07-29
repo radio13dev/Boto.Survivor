@@ -21,6 +21,8 @@ public class TorusTerrainTool : MonoBehaviour
         m_Mesh.SetTriangles(tris, 0);
         m_Mesh.SetNormals(Array.ConvertAll(normals, v => (Vector3)v));
         m_Mesh.SetUVs(0, Array.ConvertAll(uvs, v => (Vector2)v));
+        m_Mesh.RecalculateTangents();
+        m_Mesh.Optimize();
         
         MeshFilter.sharedMesh = m_Mesh;
     }
