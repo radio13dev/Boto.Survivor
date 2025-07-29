@@ -63,7 +63,7 @@ public class NearFloorRingPopup : MonoBehaviour
         {
             var nearestT = entityManager.GetComponentData<LocalTransform>(nearestE);
             transform.SetPositionAndRotation(nearestT.Position, nearestT.Rotation);
-            transform.LookAt(Camera.main.transform, Camera.main.transform.up);
+            transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Camera.main.transform.up);
         }
     }
 }
