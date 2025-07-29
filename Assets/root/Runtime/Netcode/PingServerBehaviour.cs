@@ -300,10 +300,10 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             else if (m_ServerConnections.Length > 0)
             {
                 m_CumulativeTime += Time.deltaTime;
-                if (m_CumulativeTime >= Game.k_ServerPingFrequency && !ClientDesyncDebugger.Paused)
+                if (m_CumulativeTime >= Game.k_ServerPingFrequency && ClientDesyncDebugger.CanExecuteStep(m_ServerToClient.Value.Step + 1))
                 {
                     m_CumulativeTime = math.min(m_CumulativeTime - Game.k_ServerPingFrequency, Game.k_ServerPingFrequency);
-
+                    
                     eventsJobs.ServerToClient = m_ServerToClient;
 
                     // Iterate index + read inputs

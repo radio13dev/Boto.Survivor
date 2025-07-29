@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using BovineLabs.Core.Extensions;
 using BovineLabs.Core.Internal;
 using BovineLabs.Core.SingletonCollection;
@@ -21,10 +23,17 @@ public class ClientDesyncDebugger : MonoBehaviour
     Dictionary<Game, Dictionary<long, List<NativeArray<byte>>>> m_GameSaves = new();
     
     public bool ManualUpdates = false;
-    int m_StepForward = 0;
+    long m_StepForward = 0;
     
     public static ClientDesyncDebugger Instance;
-    public static bool Paused => Instance && Instance.ManualUpdates && Instance.m_StepForward == 0;
+
+    public static bool CanExecuteStep(long step)
+    {
+        if (!Instance) return true;
+        if (!Instance.ManualUpdates) return true;
+        if (Instance.m_StepForward >= step) return true;
+        return false;
+    }
 
     private void OnEnable()
     {
@@ -47,65 +56,29 @@ public class ClientDesyncDebugger : MonoBehaviour
                 save.Value.Remove(key);
             }
         }
+        m_Comparison.Dispose();
     }
     
     [EditorButton]
     public void StepForward()
     {
-        m_StepForward = 2;
+        m_StepForward++;
     }
 
     void Update()
     {
-        if (m_StepForward > 0)
-            m_StepForward--;
-            
-        bool comparisonReady = !m_ComparisonMade && m_Comparisons.Count > 0;
-        foreach (var comp in m_Comparisons)
+        if (m_Comparison?.ComparisonReady == true)
         {
-            if (!comp.IsReady)
+            if (!m_Comparison.ComparisonMade)
             {
-                comp.Update_NoLogic();
-                comparisonReady = false;
-            }
-            comp.ApplyRender(0);
-        }
-        
-        if (comparisonReady)
-        {
-            m_ComparisonMade = true;
-            var zero = GameState.Compile(m_Comparisons[0]);
-            bool match = true;
-            for (int comparisonIndex = 1; comparisonIndex < m_Comparisons.Count; comparisonIndex++)
-            {
-                var b = GameState.Compile(m_Comparisons[1]);
-                if (zero.Dif(b, out var error, out var mismatchA, out var mismatchB)) continue;
-                
-                if (error == GameState.DifError.MismatchedCount)
+                if (m_Comparison.Compare())
                 {
-                    Debug.LogError($"Mismatched count: {zero.Entities.Count} != {b.Entities.Count}");
-                    match = false;
-                    continue;
-                }
-                else if (error == GameState.DifError.MismatchedKeys)
-                {
-                    Debug.LogError($"Mismatched keys: {mismatchA} != {mismatchB}");
-                    match = false;
-                    continue;
-                }
-                else if (error == GameState.DifError.MismatchedValues)
-                {
-                    Debug.LogError($"Mismatched values for key {mismatchA} != {mismatchB}");
-                    match = false;
-                    continue;
+                    StepForward();
                 }
             }
-            
-            if (match)
+            else if (m_Comparison.ComparisonResult == true)
             {
-                Debug.Log($"Match!");
-                CompareGameSaves(-1);
-                StepForward();
+                TryCompare(m_StepForward);
             }
         }
     
@@ -230,7 +203,7 @@ public class ClientDesyncDebugger : MonoBehaviour
 
     public void UpdateGame(long step, Game game)
     {
-        Debug.Log($"Starting game loop debug for step {step} in game {game.World.Name}");
+        //Debug.Log($"Starting game loop debug for step {step} in game {game.World.Name}");
     
         // Manually update the systems in the expected order + record memory at each step
         LinkedList<SystemHandle> systems = new();
@@ -242,7 +215,7 @@ public class ClientDesyncDebugger : MonoBehaviour
         int i = 0;
         foreach (var system in systems)
             sb.AppendLine($"{i++}: {TypeManager.GetSystemName(game.World.Unmanaged.GetSystemTypeIndex(system))}");
-        Debug.Log(sb.ToString());
+        //Debug.Log(sb.ToString());
         
         sb = new();
         sb.AppendLine($"Execution log:");
@@ -273,7 +246,7 @@ public class ClientDesyncDebugger : MonoBehaviour
             m_GameSaves[game] = saveHistory = new();
         saveHistory[step] = saves;
         
-        Debug.Log(sb.ToString());
+        //Debug.Log(sb.ToString());
     }
 
     private static void RecursiveAddSystems(World world, ComponentSystemGroup simSys, in LinkedList<SystemHandle> systems)
@@ -304,7 +277,7 @@ public class ClientDesyncDebugger : MonoBehaviour
             foreach (var key in save.Value.Keys.ToArray())
                 if (key < maxStep)
                 {
-                    Debug.Log($"... cleaned step {key}.");
+                    //Debug.Log($"... cleaned step {key}.");
                     foreach (var part in save.Value[key])
                         part.Dispose();
                     save.Value.Remove(key);
@@ -312,39 +285,142 @@ public class ClientDesyncDebugger : MonoBehaviour
         }
     }
     
-    bool m_ComparisonMade = false;
-    List<Game> m_Comparisons = new();
+    GameCompare m_Comparison;
     [EditorButton]
     public void CompareGameSaves(int index)
     {
-        m_ComparisonMade = false;
-        
-        foreach (var comp in m_Comparisons) comp.Dispose();
-        m_Comparisons.Clear();
-        
         if (m_GameSaves.Count == 0 || m_GameSaves.Any(s => s.Value.Count == 0))
         {
-            m_ComparisonMade = true;
             return;
         }
     
         var minStep = m_GameSaves.Min(kvp => kvp.Value.Max(kvp => kvp.Key));
         if (m_GameSaves.Any(kvp => !kvp.Value.ContainsKey(minStep)))
         {
-            m_ComparisonMade = true;
             return;
         }
         
-        foreach (var save in m_GameSaves)
+        if (m_Comparison != null) m_Comparison.Dispose();
+        m_Comparison = null;
+
+        m_Comparison = new GameCompare(m_GameSaves, minStep, index);
+    }
+    
+    private void TryCompare(long minStep)
+    {
+        if (m_GameSaves.Count == 0 || m_GameSaves.Any(s => s.Value.Count == 0))
         {
-            var tempSaveGame = new Game(true);
-            m_Comparisons.Add(tempSaveGame);
-            tempSaveGame.LoadSave(save.Value[minStep][index == -1 ? ^1 : index]);
-            tempSaveGame.LoadScenes();
+            return;
         }
+    
+        minStep = math.max(minStep, m_GameSaves.Min(kvp => kvp.Value.Max(kvp => kvp.Key)));
+        if (m_GameSaves.Any(kvp => !kvp.Value.ContainsKey(minStep)))
+        {
+            return;
+        }
+        
+        if (m_Comparison != null) m_Comparison.Dispose();
+        m_Comparison = null;
+
+        m_Comparison = new GameCompare(m_GameSaves, minStep, -1);
     }
 }
 
+public class GameCompare : IDisposable
+{
+    public long Step;
+    public bool ComparisonReady => m_ComparisonTask == null;
+    public bool ComparisonMade => ComparisonResult.HasValue;
+    public bool? ComparisonResult;
+    
+    List<Game> m_Comparisons = new();
+    Coroutine m_ComparisonTask;
+    List<GameState> m_ComparisonStates = new();
+    
+    public GameCompare(Dictionary<Game, Dictionary<long, List<NativeArray<byte>>>> games, long step, int index)
+    {
+        Step = step;
+        foreach (var save in games)
+        {
+            var i = index == -1 ? ^1 : index;
+        
+            var tempSaveGame = new Game(true);
+            m_Comparisons.Add(tempSaveGame);
+            var saveData = save.Value[step][i];
+            tempSaveGame.LoadSave(saveData);
+            tempSaveGame.LoadScenes();
+        }
+        
+        m_ComparisonTask = CoroutineHost.Instance.StartCoroutine(StateLoadCo());
+    }
+
+    private IEnumerator StateLoadCo()
+    {
+        for (int i = 0; i < m_Comparisons.Count; i++)
+        {
+            while (!m_Comparisons[i].IsReady)
+            {
+                m_Comparisons[i].Update_NoLogic();
+                yield return null;
+            }
+        }
+
+        for (int i = 0; i < m_Comparisons.Count; i++)
+        {
+            m_ComparisonStates.Add(GameState.Compile(m_Comparisons[i]));
+            yield return null;
+        }
+        
+        m_ComparisonTask = null;
+    }
+
+    public bool Compare()
+    {
+        var zero = m_ComparisonStates[0];
+        bool match = true;
+        for (int comparisonIndex = 1; comparisonIndex < m_Comparisons.Count; comparisonIndex++)
+        {
+            var b = m_ComparisonStates[1];
+            if (zero.Dif(b, out var error, out var mismatchA, out var mismatchB)) continue;
+                
+            if (error == GameState.DifError.MismatchedCount)
+            {
+                Debug.LogError($"Mismatched count: {zero.Entities.Count} != {b.Entities.Count}");
+                match = false;
+                continue;
+            }
+            else if (error == GameState.DifError.MismatchedKeys)
+            {
+                Debug.LogError($"Mismatched keys: {mismatchA} != {mismatchB}");
+                match = false;
+                continue;
+            }
+            else if (error == GameState.DifError.MismatchedValues)
+            {
+                Debug.LogError($"Mismatched values for key {mismatchA} != {mismatchB}");
+                match = false;
+                continue;
+            }
+        }
+            
+        if (match)
+            Debug.Log($"Match!");
+        ComparisonResult = match;
+        return match;
+    }
+
+    public void Dispose()
+    {
+        if (m_ComparisonTask != null && CoroutineHost.Instance) CoroutineHost.Instance.StopCoroutine(m_ComparisonTask);
+        for (int i = 0; i < m_Comparisons.Count; i++) m_Comparisons[i].Dispose();
+    }
+
+    public void Update_Render()
+    {
+        for (int i = 0; i < m_Comparisons.Count; i++)
+            m_Comparisons[i].ApplyRender(0);
+    }
+}
 
 public readonly struct GameState : IEquatable<GameState>
 {

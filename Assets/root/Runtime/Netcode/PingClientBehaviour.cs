@@ -323,13 +323,13 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             }
 
             m_CumulativeTime += Time.deltaTime;
-            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency && !ClientDesyncDebugger.Paused;
+            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
             if (shouldSend) m_CumulativeTime = 0;
 
             if (m_Game != null)
             {
                 bool ready = m_Game.IsReady;
-                if (ready && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && m_ServerMessageBuffer.TryDequeue(out var msg))
+                if (ready && m_ServerMessageBuffer.Count > 0 && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && ClientDesyncDebugger.CanExecuteStep(m_ServerMessageBuffer.Peek().Step) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
                     m_Game.ApplyStepData(msg, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));

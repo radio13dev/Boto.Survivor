@@ -173,7 +173,7 @@ public class Game : IDisposable
     public void Dispose()
     {
         RpcSendBuffer.Dispose();
-        m_World.Dispose();
+        if (m_World.IsCreated) m_World.Dispose();
     }
 
     public unsafe void SendSave(ref DataStreamWriter writer)
