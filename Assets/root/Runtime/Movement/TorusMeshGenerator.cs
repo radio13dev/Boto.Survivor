@@ -58,7 +58,7 @@ public static class TorusMeshGenerator
                 float3 normal = math.normalize(point - circleCenter);
                 normals[i * tubeSegments + j] = normal;
                 
-                uvs[i*tubeSegments + j] = new float2((float)i/ringSegments, (float)j/tubeSegments);
+                uvs[i*tubeSegments + j] = new float2((float)i/(ringSegments-1), (float)j/(tubeSegments-1));
             }
         }
 
