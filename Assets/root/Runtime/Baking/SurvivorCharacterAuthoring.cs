@@ -1,6 +1,7 @@
 using Unity.Collections;
 using UnityEngine;
 using Unity.Entities;
+using Unity.Mathematics;
 
 public class SurvivorAuthoring : MonoBehaviour
 {
@@ -39,17 +40,13 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new RollActive());
             SetComponentEnabled<RollActive>(entity, false);
             
-            // Attacks
-            AddComponent(entity, new ProjectileSpawner());
-            SetComponentEnabled<ProjectileSpawner>(entity, false); // save
-            
-            AddComponent(entity, new LaserProjectileSpawner(){Lifespan = 5, TimeBetweenShots = 0.1});
-            SetComponentEnabled<LaserProjectileSpawner>(entity, authoring.EnableLaserProjectile); // save
-            
             // Stats
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());
-            AddBuffer<Ring>(entity).Resize(8, NativeArrayOptions.ClearMemory);
+            var rings = AddBuffer<Ring>(entity);
+            rings.Resize(8, NativeArrayOptions.ClearMemory);
+            if (authoring.EnableLaserProjectile) rings[0] = new Ring(){ Stats = new RingStats(){ PrimaryEffect = RingPrimaryEffect.Projectile_Ring } };
+            
         }
     }
 }

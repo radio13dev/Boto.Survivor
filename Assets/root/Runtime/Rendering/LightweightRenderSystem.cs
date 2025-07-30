@@ -78,6 +78,8 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         
         for (int i = 0; i < resources.Length; i++)
         {
+            if (!resources[i].Valid) continue;
+            
             m_Query.SetSharedComponentFilter(new InstancedResourceRequest(i));
             var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
             if (transforms.Length == 0)

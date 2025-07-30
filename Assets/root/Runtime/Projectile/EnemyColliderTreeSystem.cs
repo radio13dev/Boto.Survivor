@@ -86,13 +86,6 @@ namespace Collisions
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            var a = new FireAtNearestTargetJob()
-            {
-                ecb = parallel,
-                resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-                tree = Tree,
-                time = SystemAPI.Time.ElapsedTime
-            }.ScheduleParallel(state.Dependency);
             
             var b = new EnemyPushForceJob()
             {
@@ -104,84 +97,7 @@ namespace Collisions
                 tree = Tree
             }.ScheduleParallel(state.Dependency);
             
-            state.Dependency = JobHandle.CombineDependencies(a,b,c);
-        }
-
-        /// <summary>
-        /// Searches for overlaps between entities and their collision targets.
-        /// </summary>
-        [WithAll(typeof(LaserProjectileSpawner), typeof(SurvivorTag))]
-        [BurstCompile]
-        unsafe partial struct FireAtNearestTargetJob : IJobEntity
-        {
-            public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public GameManager.Resources resources;
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
-            [ReadOnly] public double time;
-
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
-            {
-                if (laserSpawner.LastProjectileTime + laserSpawner.TimeBetweenShots > time) return;
-            
-                fixed (FireAtNearestTargetJob* job_ptr = &this)
-                fixed (LaserProjectileSpawner* spawner_ptr = &laserSpawner)
-                {
-                    var visitor = new NearestVisitor(Key, job_ptr, transform, spawner_ptr);
-                    var distance = new DistanceProvider();
-
-                    tree.Nearest(transform.Position, 30, ref visitor, distance);
-                    
-                    if (visitor.Hits == 0)
-                    {
-                        laserSpawner.LastProjectileDirection = movement.LastDirection;
-                    }
-                    
-                    var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
-                    var laserT = transform;
-                    laserT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), -math.PIHALF), quaternion.LookRotationSafe(laserSpawner.LastProjectileDirection, transform.Up()));
-                    ecb.SetComponent(Key, laser, laserT);
-                    ecb.SetComponent(Key, laser, new SurfaceMovement(){ Velocity = new float2(8,0)});
-                    ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
-                    
-                    laserSpawner.LastProjectileTime = time;
-                }
-            }
-
-            [BurstCompile]
-            unsafe struct NearestVisitor : IOctreeNearestVisitor<Entity>
-            {
-                public int Hits;
-                int _key;
-                FireAtNearestTargetJob* _job;
-                LocalTransform _transform;
-                LaserProjectileSpawner* _sourceSpawner;
-
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, LaserProjectileSpawner* sourceSpawner)
-                {
-                    Hits = 0;
-                    
-                    _key = Key;
-                    _job = job;
-                    _transform = transform;
-                    _sourceSpawner = sourceSpawner;
-                }
-
-                public bool OnVist(Entity obj, AABB bounds)
-                {
-                    Interlocked.Increment(ref Hits);
-                    _sourceSpawner->LastProjectileDirection = bounds.Center - _transform.Position;
-                    return false;
-                }
-            }
-
-            [BurstCompile]
-            unsafe struct DistanceProvider : IOctreeDistanceProvider<Entity>
-            {
-                public float DistanceSquared(float3 point, Entity obj, AABB bounds)
-                {
-                    return math.distancesq(point, bounds.Center);
-                }
-            }
+            state.Dependency = JobHandle.CombineDependencies(b,c);
         }
 
         [BurstCompile]

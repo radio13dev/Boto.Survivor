@@ -25,6 +25,18 @@ public struct GameManager : IComponentData
     {
         public UnityObjectRef<InstancedResource> Instance;
         public SpriteAnimData AnimData;
+        public bool Valid;
+
+        public void Validate()
+        {
+            if (!Instance.Value || !Instance.Value.Mesh || !Instance.Value.Material)
+            {
+                Debug.Log($"{Instance.Value} invalid. Mesh or Mat null: {Instance.Value.Mesh}, {Instance.Value.Material}");
+                Valid = false;
+            }
+            else
+                Valid = true;
+        }
     }
     
     [ChunkSerializable]
@@ -95,7 +107,9 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.InstancedResourcesDatabase.Assets.Count; i++)
                 {
                     var instance = authoring.InstancedResourcesDatabase.Assets[i];
-                    buffer.Add(new GameManager.InstancedResources() { Instance = instance, AnimData = instance.AnimData });
+                    var instancedResource = new GameManager.InstancedResources() { Instance = instance, AnimData = instance.AnimData };
+                    instancedResource.Validate();
+                    buffer.Add(instancedResource);
                 }
             }
             

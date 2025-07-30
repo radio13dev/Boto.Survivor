@@ -115,7 +115,7 @@ namespace Collisions
                     _ecb.SetComponent(_key, treeEntity, new Collectable(){ CollectedBy = _survivorE });
                     _ecb.SetComponentEnabled<Collectable>(_key, treeEntity, true);
 
-                    return false;
+                    return true;
                 }
             }
         }
