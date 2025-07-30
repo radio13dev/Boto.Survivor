@@ -8,21 +8,20 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Enemy
-  m_Shader: {fileID: -6465566751694194690, guid: 2ae63fe2680efb145bab0bfe78186f42, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0907968ddbe2faf448020d6ad302e795, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap:
-    RenderType: Transparent
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
-  - DepthOnly
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -32,7 +31,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: ccdccdad117eec447a3acfc62d7d7630, type: 3}
+        m_Texture: {fileID: 2800000, guid: e7ef497c70530a245bf5dd54b318e6de, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -55,8 +54,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _HashA:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HashB:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 610d8d96f2eda8644b2a60b9cef0a0eb, type: 3}
+        m_Texture: {fileID: 2800000, guid: b2ee15c7744aecc49b7b13f788755b90, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -80,7 +87,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RampTexture:
-        m_Texture: {fileID: 2800000, guid: f33b09e2bb9315c4f8ae509c8a3f9033, type: 3}
+        m_Texture: {fileID: 2800000, guid: 29feaa972fc66b448a664812a2799447, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -117,15 +124,16 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BlendOp: 0
+    - _Blending: 0
     - _BumpScale: 1
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EdgePower: 1
     - _EdgeScale: 2
@@ -135,44 +143,48 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Height: 1
-    - _Index: 6.8
+    - _Index: 14
     - _LIGHTMAP_SHADOW_MIXING: 0
+    - _MapDivision: 1
     - _Metallic: 0
     - _Mod: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Raycast: 1
     - _ReceiveShadows: 1
-    - _RingRadius: 53.9
+    - _RingRadius: 160
     - _SPECULAR: 0
     - _SampleGI: 0
-    - _Smoothness: 0
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
-    - _Thickness: 40
-    - _Tiling: 3
+    - _Surface: 0
+    - _Thickness: 79.5
+    - _Tiling: 0.1
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - _ZWriteControl: 0
-    - _r1: 0
-    - _r2: 0
+    - _r1: 1
+    - _r2: 2
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffuseColor: {r: 0.39689445, g: 0.3537736, b: 1, a: 0}
-    - _EdgeColor: {r: 1, g: 0.41176474, b: 0.8235295, a: 1}
+    - _EdgeColor: {r: 1, g: 0.77458084, b: 0.4764151, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _HashA: {r: 0.6415094, g: 0.15432537, b: 0.18542413, a: 1}
-    - _HashB: {r: 1, g: 0.41037738, b: 0.8219131, a: 1}
+    - _HashA: {r: 0.05660379, g: 0.008276968, b: 0.05660379, a: 1}
+    - _HashAColor: {r: 1, g: 0.5655875, b: 0.3254717, a: 1}
+    - _HashB: {r: 0.049005423, g: 0.02180491, b: 0.09433961, a: 1}
+    - _HashBColor: {r: 1, g: 0.39500728, b: 0.3254717, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Scale: {r: 10, g: 10, b: 10, a: 0}
+    - _Scale: {r: 200, g: 200, b: 0, a: 0}
     - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecularColour: {r: 1, g: 0.3774762, b: 0.25, a: 0.57254905}
