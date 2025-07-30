@@ -57,7 +57,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
     {
         if (!m_InitComplete) return;
         
-        m_Inputs.Collect();
+        m_Inputs.Collect(Camera.main);
         
         if (TickEnabled && (m_T += Time.deltaTime) >= Game.k_ClientPingFrequency)
         {

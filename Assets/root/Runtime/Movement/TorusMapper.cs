@@ -55,8 +55,8 @@ public static class TorusMapper
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {
-        RingRadius.Data = 80f;
-        Thickness.Data = 40f;
+        RingRadius.Data = 160f;
+        Thickness.Data = 80f;
         XRotScale.Data = 0.005f;
         YRotScale.Data = 0.013f;
         RingRadiusSq.Data = RingRadius.Data * RingRadius.Data;
@@ -124,7 +124,7 @@ public static class TorusMapper
 
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetTorusInfo(float3 worldSpace, out float3 circleCenter, out float3 surfaceNormal)
+    public static void GetTorusInfo(float3 worldSpace, out float3 circleCenter, out float3 surfaceNormal, out float3 surfaceTangent)
     {
         // Get torus parameters from SharedStatic
         float ringRadius = RingRadius.Data;
@@ -138,6 +138,11 @@ public static class TorusMapper
         // Compute the offset from the ring center to worldSpace
         float3 offset = worldSpace - circleCenter;
         surfaceNormal = math.normalizesafe(offset);
+        
+        // Compute the tangent too. This value will smoothly rotate as you travel in any direction.
+        // The tangent direction along the torus ring (derivative of [cos(theta), sin(theta)]).
+        surfaceTangent = new float3(-math.sin(theta), 0f, math.cos(theta));
+        
     }
 
     //[BurstCompile]

@@ -29,7 +29,6 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, authoring.PhysicsResponse);
             AddComponent<RotateWithSurface>(entity);
             AddComponent<StepInput>(entity);
-            AddComponent<LastStepInputLastDirection>(entity);
             AddComponent<Force>(entity);
             
             // Abilities and Input Lockouts

@@ -50,7 +50,7 @@ public partial struct EnemyMovementSystem : ISystem
                 }
             }
             var movDir = localTransform.InverseTransformDirection(dir); // Convert the direction into a direction relative to our forward and right vectors (hope this works)
-            input = new StepInput(){Direction = math.normalizesafe(dir.xz) };
+            input = new StepInput(){Direction = dir };
         }
     }
 }

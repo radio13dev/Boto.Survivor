@@ -351,7 +351,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             if (m_FrameInput.IsCreated)
             {
                 var val = m_FrameInput.Value;
-                val.Collect();
+                val.Collect(Camera.main);
                 m_FrameInput.Value = val;
             }
 

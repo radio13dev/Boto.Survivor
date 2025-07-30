@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 
 /// <summary>
@@ -20,12 +21,6 @@ public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 public struct MovementSettings : IComponentData
 {
     public float Speed;
-}
-
-[Save]
-public struct LastStepInputLastDirection : IComponentData
-{
-    public float2 Value;
 }
 
 [Save]
@@ -49,10 +44,6 @@ public partial struct ProcessInputs : ISystem
         state.Dependency = new MovementInputJob()
         {
         }.ScheduleParallel(state.Dependency);
-        state.Dependency = new RotateInputJob()
-        {
-            dt = SystemAPI.Time.DeltaTime
-        }.ScheduleParallel(state.Dependency);
         state.Dependency = new RollInputJob()
         {
         }.ScheduleParallel(state.Dependency);
@@ -62,28 +53,22 @@ public partial struct ProcessInputs : ISystem
     [WithAll(typeof(Simulate))]
     partial struct MovementInputJob : IJobEntity
     {
-        public void Execute(in StepInput input, ref LastStepInputLastDirection lastDirection, in LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
+        public void Execute(in StepInput input, ref LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
         {
-            lastDirection.Value = math.normalizesafe(input.Direction, lastDirection.Value);
-            var dir = local.TransformDirection(input.Direction.f3z());
-            var vel = math.normalizesafe(dir) * movementSettings.Speed * math.clamp(math.length(dir), 0, 1);
+            // Rotate character to face input direction
+            var up = local.Up();
+            var inputForward = math.cross(up, math.cross(math.normalizesafe(input.Direction, local.Forward()), up));
+            local.Rotation = quaternion.LookRotation(inputForward, up);
+            Debug.DrawLine(local.Position, local.Position + up, Color.green);
+            Debug.DrawLine(local.Position, local.Position + inputForward, Color.green);
+            
+            // Calculate movement direction of 3D input in local space
+            //var planeDir = local.InverseTransformDirection(input.Direction);
+            //planeDir = new float3(planeDir.y, 0, planeDir.z);
+        
+            movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
+            var vel = movement.LastDirection * movementSettings.Speed * math.clamp(math.length(input.Direction), 0, 1);
             movement.Velocity += vel;
-            movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
-        }
-    }
-
-    [WithAll(typeof(Simulate))]
-    partial struct RotateInputJob : IJobEntity
-    {
-        [ReadOnly] public float dt;
-
-        public void Execute(in StepInput input, ref LocalTransform local)
-        {
-            var sign = input.RotateSign;
-            if (sign != 0)
-            {
-                local.Rotation = math.mul(local.Rotation, quaternion.RotateY(2.0f * dt * sign));
-            }
         }
     }
 

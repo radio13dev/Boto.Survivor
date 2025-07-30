@@ -57,8 +57,6 @@ public unsafe partial struct LightweightRenderSystem : ISystem
 {
     EntityQuery m_Query;
     NativeArray<Matrix4x4> m_InstanceMats;
-    
-    public Color DebugColorOverlay;
 
     public void OnCreate(ref SystemState state)
     {
@@ -66,8 +64,6 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         state.RequireForUpdate<RenderSystemHalfTime>();
         m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().Build();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
-        
-        DebugColorOverlay = Color.white;
     }
 
     public void OnDestroy(ref SystemState state)
@@ -106,7 +102,6 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             var resource = resources[i].Instance.Value;
             var mesh = resource.Mesh;
             var renderParams = resource.RenderParams;
-            renderParams.matProps.SetColor("_BaseColor", DebugColorOverlay);
             
             for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
             {

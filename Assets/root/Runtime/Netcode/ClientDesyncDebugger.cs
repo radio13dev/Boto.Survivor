@@ -92,7 +92,6 @@ public class ClientDesyncDebugger : MonoBehaviour
             if (!m_ClientStates.TryGetValue(client, out var state))
             {
                 state = m_ClientStates[client] = new StateData();
-                client.Game.World.Unmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(client.Game.World.Unmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>()).DebugColorOverlay = Random.ColorHSV();
             }
             step = math.min(step, client.Game.World.EntityManager.GetSingleton<StepController>().Step);
             toDelete.Remove(client);

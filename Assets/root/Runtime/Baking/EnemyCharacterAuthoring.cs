@@ -25,7 +25,6 @@ public class EnemyCharacterAuthoring : MonoBehaviour
             AddComponent<RotateWithSurface>(entity);
             AddComponent<Grounded>(entity);
             AddComponent<StepInput>(entity);
-            AddComponent<LastStepInputLastDirection>(entity);
             AddComponent<Force>(entity);
             
         }

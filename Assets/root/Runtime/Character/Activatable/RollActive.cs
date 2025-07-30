@@ -34,12 +34,12 @@ public partial struct RollActiveSystem : ISystem
     {
         [ReadOnly] public float dt;
         public void Execute(EnabledRefRW<RollActive> rollActive, ref RollActive roll, EnabledRefRW<ActiveLockout> activeLockout, 
-            in LocalTransform entityT, in LastStepInputLastDirection lastInput, ref Movement movement, in MovementSettings movementSettings,
+            in LocalTransform entityT, ref Movement movement, in MovementSettings movementSettings,
             EnabledRefRW<MovementInputLockout> movementInputLockout)
         {
             float speed = roll.T*10 - 1.5f;
             speed *= speed;
-            movement.Velocity += entityT.TransformDirection(lastInput.Value.f3z()) * math.max(2-speed,0.1f) * dt * movementSettings.Speed * 200;
+            movement.Velocity += movement.LastDirection * math.max(2-speed,0.1f) * dt * movementSettings.Speed * 200;
             
             roll.T += dt;
             

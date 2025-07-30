@@ -1,5 +1,6 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -32,8 +33,8 @@ public class CameraTarget : MonoBehaviour
                 var entities = m_Query.ToEntityArray(Allocator.Temp);
                 m_PlayerE = entities[i];
                 var target = Game.ClientGame.World.EntityManager.GetComponentData<LocalTransform>(m_PlayerE);
-                transform.SetPositionAndRotation(target.Position, target.Rotation);
-                
+                var last = Game.ClientGame.World.EntityManager.GetComponentData<LocalTransformLast>(m_PlayerE);
+                transform.SetPositionAndRotation(math.lerp(last.Value.Position, target.Position, Game.ClientGame.HalfTime), math.slerp(last.Value.Rotation, target.Rotation, Game.ClientGame.HalfTime));
                 entities.Dispose();
                 players.Dispose();
                 

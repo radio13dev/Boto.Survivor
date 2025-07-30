@@ -3,6 +3,7 @@ using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]
@@ -10,11 +11,9 @@ using UnityEngine.InputSystem;
 public struct StepInput : IComponentData
 {
     public byte Input;
-    public float2 Direction;
+    public float3 Direction;
         
     // @formatter:off
-        public const byte RotLeftInput  = 0b0000_0001;
-        public const byte RotRightInput = 0b0000_0010;
         public const byte AdjustInventoryInput = 0b0000_0100;
         
         public const byte S1Input       = 0b0001_0000;
@@ -24,32 +23,29 @@ public struct StepInput : IComponentData
     // @formatter:on 
 
     public bool S1 => (Input & S1Input) > 0;
-    public int RotateSign => ((Input & RotLeftInput) > 0 ? -1 : 0) + ((Input & RotRightInput) > 0 ? 1 : 0);
 
     public void Write(ref DataStreamWriter writer)
     {
         writer.WriteByte(Input);
         writer.WriteFloat(Direction.x);
         writer.WriteFloat(Direction.y);
+        writer.WriteFloat(Direction.z);
     }
 
     public static StepInput Read(ref DataStreamReader reader)
     {
         var input = reader.ReadByte();
-        var direction = new float2(reader.ReadFloat(), reader.ReadFloat());
+        var direction = new float3(reader.ReadFloat(), reader.ReadFloat(), reader.ReadFloat());
     
         return new StepInput(){Input = input, Direction = direction};
     }
 
-    public void Collect()
+    public void Collect(Camera camera)
     {
-        if (Keyboard.current.wKey.isPressed)        Direction += new float2(0,1);
-        if (Keyboard.current.sKey.isPressed)        Direction += new float2(0,-1);
-        if (Keyboard.current.aKey.isPressed)        Direction += new float2(-1,0);
-        if (Keyboard.current.dKey.isPressed)        Direction += new float2(1,0);
-        
-        if (Keyboard.current.eKey.isPressed)        Input |= StepInput.RotRightInput;
-        if (Keyboard.current.qKey.isPressed)        Input |= StepInput.RotLeftInput;
+        if (Keyboard.current.wKey.isPressed)        Direction += (float3)camera.transform.up;
+        if (Keyboard.current.sKey.isPressed)        Direction -= (float3)camera.transform.up;
+        if (Keyboard.current.aKey.isPressed)        Direction -= (float3)camera.transform.right;
+        if (Keyboard.current.dKey.isPressed)        Direction += (float3)camera.transform.right;
         
         if (Keyboard.current.jKey.isPressed)        Input |= StepInput.S1Input;
         if (Keyboard.current.kKey.isPressed)        Input |= StepInput.S2Input;

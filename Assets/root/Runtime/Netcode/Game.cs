@@ -61,6 +61,7 @@ public class Game : IDisposable
     private EntityQuery m_SaveRequest;
     private EntityQuery m_SaveBuffer;
     private EntityQuery m_RenderSystemHalfTime;
+    public float HalfTime;
     private SystemHandle m_RenderSystemGroup;
 
     public NativeQueue<SpecialLockstepActions> RpcSendBuffer;
@@ -241,7 +242,11 @@ public class Game : IDisposable
 
         // Setup time for the frame
         m_World.SetTime(new TimeData(stepData.Step * (double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
-        if (m_ShowVisuals) m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = 0 });
+        if (m_ShowVisuals)
+        {
+            m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = 0 });
+            HalfTime = 0;
+        }
 
         // Apply extra actions
         {
@@ -285,6 +290,7 @@ public class Game : IDisposable
     public void ApplyRender(float t)
     {
         m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = t });
+        HalfTime = t;
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }
     
