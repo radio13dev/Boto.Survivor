@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Enemy
-  m_Shader: {fileID: -6465566751694194690, guid: eeefb2cc65131ef449ef858d717883ac, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 2ae63fe2680efb145bab0bfe78186f42, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -127,6 +127,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _DstBlendAlpha: 0
+    - _EdgePower: 1
+    - _EdgeScale: 2
     - _EnableExternalAlpha: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -136,11 +138,13 @@ Material:
     - _Index: 6.8
     - _LIGHTMAP_SHADOW_MIXING: 0
     - _Metallic: 0
+    - _Mod: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RingRadius: 53.9
     - _SPECULAR: 0
     - _SampleGI: 0
     - _Smoothness: 0
@@ -149,18 +153,27 @@ Material:
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
+    - _Thickness: 40
+    - _Tiling: 3
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
+    - _r1: 0
+    - _r2: 0
     m_Colors:
-    - _BaseColor: {r: 0.6175977, g: 0.33668566, b: 0.735849, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffuseColor: {r: 0.39689445, g: 0.3537736, b: 1, a: 0}
+    - _EdgeColor: {r: 1, g: 0.41176474, b: 0.8235295, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HashA: {r: 0.6415094, g: 0.15432537, b: 0.18542413, a: 1}
+    - _HashB: {r: 1, g: 0.41037738, b: 0.8219131, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Scale: {r: 10, g: 10, b: 10, a: 0}
+    - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecularColour: {r: 1, g: 0.3774762, b: 0.25, a: 0.57254905}
   m_BuildTextureStacks: []
