@@ -68,29 +68,45 @@ public class GameLaunch : MonoBehaviour
         OnLobbyJoinStart?.Invoke();
         // Start a new game, attempting to load data from the lobby code
         var newClient = gameObject.AddComponent<PingClientBehaviour>();
-        newClient.StartCoroutine(newClient.Connect(lobbyCode, 
-        OnSuccess: () =>
-        {
-            // Destroy any existing games
-            foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
-            {
-                if (gameBehaviour == newClient) continue;
-                if (gameBehaviour is PingServerBehaviour server && server.JoinCode == lobbyCode) continue;
-                Destroy((MonoBehaviour)gameBehaviour);
-            }
-        },
-        OnFailure: () =>
-        {
-            Debug.LogError($"Failed to join lobby {lobbyCode}");
-            Destroy(newClient);
-            
-            if (gameObject.GetComponents<GameHostBehaviour>().Length == 0)
-            {
-                Debug.LogWarning($"No game running, launching singleplayer game as fallback...");
-                var singleplayer = gameObject.AddComponent<SingleplayerBehaviour>();
-                singleplayer.m_Game = new Game(true);
-            }
-        }));
+        newClient.m_Game = new Game(true);
+        newClient.StartCoroutine(
+            newClient.Connect(lobbyCode, 
+                // Called after the game is downloaded from the server
+                OnGameLoad: () =>
+                {
+                    // Make the new game active
+                    Game.ClientGame = newClient.m_Game;
+                    
+                    // Destroy any existing games
+                    foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
+                    {
+                        if (gameBehaviour == newClient) continue;
+                        if (gameBehaviour is PingServerBehaviour server && server.JoinCode == lobbyCode) continue;
+                        Destroy((MonoBehaviour)gameBehaviour);
+                    }
+                },
+                // Called if a failure occurs before the game has loaded
+                OnFailureBeforeLoad: () =>
+                {
+                    Debug.LogError($"Failed to join lobby {lobbyCode}");
+                    Destroy(newClient);
+                    
+                    if (gameObject.GetComponents<GameHostBehaviour>().Length == 0)
+                    {
+                        Debug.LogWarning($"No game running, launching singleplayer game as fallback...");
+                        var singleplayer = gameObject.AddComponent<SingleplayerBehaviour>();
+                        singleplayer.m_Game = new Game(true);
+                    }
+                },
+                // Called if a failure occurs after the game has loaded
+                OnFailureAfterLoad: () =>
+                {
+                    var failedGame = newClient.m_Game;
+                    newClient.m_Game = null; // Prevents the game from being destroyed
+                    failedGame.CleanForSingleplayer();
+                    StartSingleplayer(failedGame);
+                })
+            );
     }
     
     static Task s_SignInTask;

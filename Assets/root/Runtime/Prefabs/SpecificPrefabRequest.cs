@@ -117,11 +117,6 @@ public partial struct SpecificPrefabTrackSystem : ISystem
         transforms.Dispose(state.Dependency);
         transformsLast.Dispose(state.Dependency);
     }
-
-    public void OnDestroy(ref SystemState state)
-    {
-        m_AccessArray.Dispose();
-    }
 }
 
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
@@ -147,5 +142,13 @@ public partial class SpecificPrefabCleanupSystem : SystemBase
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        using var components = m_query.ToComponentDataArray<SpecificPrefabProxy>(Allocator.Temp);
+        for (int i = 0; i < components.Length; i++)
+            if (components[i].Spawned) Object.Destroy(components[i].Spawned.Value.gameObject);
     }
 }

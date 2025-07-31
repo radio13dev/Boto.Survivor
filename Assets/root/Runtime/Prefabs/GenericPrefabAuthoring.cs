@@ -71,8 +71,12 @@ public abstract class EntityLinkMono : MonoBehaviour
         return m_linkedEntity;
     }
     
-
     public bool HasLink() => m_linkedEntity != Entity.Null;
+
+    private void OnDestroy()
+    {
+        Debug.Log($"Cleaned up.");
+    }
 }
 
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
@@ -160,11 +164,6 @@ public partial struct GenericPrefabTrackSystem : ISystem
         transforms.Dispose(state.Dependency);
         transformsLast.Dispose(state.Dependency);
     }
-
-    public void OnDestroy(ref SystemState state)
-    {
-        m_AccessArray.Dispose();
-    }
 }
 
 [BurstCompile]
@@ -205,5 +204,14 @@ public partial class GenericPrefabCleanupSystem : SystemBase
 
         ecb.Playback(EntityManager);
         ecb.Dispose();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        using var components = SystemAPI.QueryBuilder().WithAll<GenericPrefabProxy>().Build().ToComponentDataArray<GenericPrefabProxy>(Allocator.Temp);
+        Debug.Log($"Cleaning up {components.Length} destroyed GenericPrefabs");
+        for (int i = 0; i < components.Length; i++)
+            if (components[i].Spawned) Object.Destroy(components[i].Spawned.Value.gameObject);
     }
 }

@@ -8,21 +8,11 @@ public class NearFloorRingPopup : MonoBehaviour
     public RingPopup ItemPopup;
     public LootPopup LootPopup;
 
-    (World World, EntityQuery Query) m_Query;
-    
     void Update()
     {
         if (Game.ClientGame == null) return;
         
-        if (m_Query.World != Game.ClientGame.World)
-        {
-            m_Query = (Game.ClientGame.World, Game.ClientGame.World.EntityManager.CreateEntityQuery(new EntityQueryDesc()
-            {
-                All = new ComponentType[] { typeof(NearestInteractable) },
-            }));
-        }
-        
-        var nearest = m_Query.Query.GetSingleton<NearestInteractable>();
+        var nearest = Game.ClientGame.GetSingleton<NearestInteractable>();
         if (nearest.Value == Entity.Null)
         {
             Hide();
@@ -42,26 +32,25 @@ public class NearFloorRingPopup : MonoBehaviour
     private void Show(Entity nearestE)
     {
         // Determine what shots
-        var entityManager = m_Query.World.EntityManager;
-        if (entityManager.HasComponent<RingStats>(nearestE))
+        if (Game.ClientGame.World.EntityManager.HasComponent<RingStats>(nearestE))
         {
             ItemPopup.gameObject.SetActive(true);
-            ItemPopup.Focus(m_Query.World,nearestE);
+            ItemPopup.Focus(Game.ClientGame.World,nearestE);
         }
         else 
             ItemPopup.gameObject.SetActive(false);
             
-        if (entityManager.HasComponent<LootGenerator2>(nearestE))
+        if (Game.ClientGame.World.EntityManager.HasComponent<LootGenerator2>(nearestE))
         {
             LootPopup.gameObject.SetActive(true);
-            LootPopup.Focus(m_Query.World, nearestE);
+            LootPopup.Focus(Game.ClientGame.World, nearestE);
         }
         else
             LootPopup.gameObject.SetActive(false);
         
-        if (entityManager.HasComponent<LocalTransform>(nearestE))
+        if (Game.ClientGame.World.EntityManager.HasComponent<LocalTransform>(nearestE))
         {
-            var nearestT = entityManager.GetComponentData<LocalTransform>(nearestE);
+            var nearestT = Game.ClientGame.GetComponent<LocalTransform>(nearestE);
             transform.SetPositionAndRotation(nearestT.Position, nearestT.Rotation);
             transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Camera.main.transform.up);
         }

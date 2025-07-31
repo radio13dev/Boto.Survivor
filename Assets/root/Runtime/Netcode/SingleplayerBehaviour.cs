@@ -75,10 +75,11 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
             m_StepData.ExtraActionCount++;
         }
 
-        m_StepData = new FullStepData(m_Game.Step + 1, m_Inputs)
+        m_StepData = new FullStepData(m_Game.Step + 1)
         {
             ExtraActionCount = m_StepData.ExtraActionCount
         };
+        m_StepData[m_Game.PlayerIndex] = m_Inputs;
         m_Game.ApplyStepData(m_T / Game.k_ClientPingFrequency, m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
     }

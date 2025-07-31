@@ -171,7 +171,11 @@ public class Game : IDisposable
     public void Dispose()
     {
         RpcSendBuffer.Dispose();
-        if (m_World.IsCreated) m_World.Dispose();
+        if (m_World.IsCreated)
+        {
+            //m_World.DestroyAllSystemsAndLogException(out _);
+            m_World.Dispose();
+        }
     }
 
     public unsafe void SendSave(ref DataStreamWriter writer)
@@ -382,6 +386,20 @@ public class Game : IDisposable
     public T GetComponent<T>(Entity entity) where T : unmanaged, IComponentData
     {
         return World.EntityManager.GetComponentData<T>(entity);
+    }
+
+    public T GetSingleton<T>() where T : unmanaged, IComponentData
+    {
+        return World.EntityManager.GetSingleton<T>();
+    }
+
+    public void CleanForSingleplayer()
+    {
+        for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
+        {
+            if (i == PlayerIndex) continue;
+            SpecialLockstepActions.PlayerLeave(i).Apply(this);
+        }
     }
 }
 

@@ -115,17 +115,25 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         m_SpecialActionArr.Dispose();
     }
 
+
+    Action m_OnGameLoad;
+    Action m_OnFailureBeforeLoad;
+    Action m_OnFailureAfterLoad;
     /// <summary>Start establishing a connection to the server.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect(string joinCode, Action OnSuccess, Action OnFailure)
+    public IEnumerator Connect(string joinCode, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
     {
+        this.m_OnGameLoad = OnGameLoad;
+        this.m_OnFailureBeforeLoad = OnFailureBeforeLoad;
+        this.m_OnFailureAfterLoad = OnFailureAfterLoad;
+    
         var signInTask = GameLaunch.SignIn();
         while (!signInTask.IsCompleted)
             yield return null;
         if (signInTask.IsFaulted)
         {
             Debug.LogError("Failed to sign in.");
-            OnFailure?.Invoke();
+            m_OnFailureBeforeLoad?.Invoke();
             yield break;
         }
     
@@ -135,7 +143,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         if (joinTask.IsFaulted)
         {
             Debug.LogError("Failed to join the Relay allocation.");
-            OnFailure?.Invoke();
+            m_OnFailureBeforeLoad?.Invoke();
             yield break;
         }
 
@@ -145,7 +153,6 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         m_ClientDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
         m_ClientConnection.Value = new Server(m_ClientDriver.Driver.Connect());
-        OnSuccess?.Invoke();
     }
 
     // Job that will send ping messages to the server.
@@ -331,6 +338,10 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                 m_Game.LoadScenes();
 
                 Debug.Log($"... done.");
+                
+                // Done once
+                m_OnGameLoad?.Invoke();
+                m_OnGameLoad = null;
             }
 
             m_CumulativeTime += Time.deltaTime;

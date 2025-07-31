@@ -55,6 +55,7 @@ public class ServerStuffUI : MonoBehaviour
             var potentialClient = Object.FindAnyObjectByType<PingClientBehaviour>();
             if (potentialClient)
             {
+                potentialClient.m_Game.CleanForSingleplayer();
                 GameLaunch.StartSingleplayer(potentialClient.m_Game);
                 potentialClient.m_Game = null;
             }
@@ -63,6 +64,7 @@ public class ServerStuffUI : MonoBehaviour
                 var potentialServer = Object.FindAnyObjectByType<PingServerBehaviour>();
                 if (potentialServer)
                 {
+                    potentialServer.m_Game.CleanForSingleplayer();
                     GameLaunch.StartSingleplayer(potentialServer.m_Game);
                     potentialServer.m_Game = null;
                 }
