@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public unsafe class SingleplayerBehaviour : MonoBehaviour
+public unsafe class SingleplayerBehaviour : MonoBehaviour, IGameBehaviour
 {
     public bool TickEnabled = true;
 
@@ -19,15 +19,14 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         if (Game.ClientGame == null ||
             (Game.ClientGame != null && Game.ClientGame.IsReady))
         {
-            Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
             Game.ClientGame = new Game(true);
             World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
         }
-        
+
         // Build game
         yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
         m_Game = Game.ClientGame;
-        
+
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
         m_Game.LoadScenes();
         yield return new WaitUntil(() =>
@@ -36,29 +35,31 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
             m_Game.World.Update();
             return false;
         });
-        
+
         // Spawn the player
         m_Game.PlayerIndex = 0;
         m_Game.RpcSendBuffer.Enqueue(SpecialLockstepActions.PlayerJoin(0));
         ApplyStep();
-        
+
         // Complete
         m_InitComplete = true;
     }
 
     private void OnDestroy()
     {
+        m_Game?.Dispose();
         m_SpecialActionArr.Dispose();
     }
 
     FullStepData m_StepData;
     StepInput m_Inputs;
+
     private void Update()
     {
         if (!m_InitComplete) return;
-        
+
         m_Inputs.Collect(Camera.main);
-        
+
         if (TickEnabled && (m_T += Time.deltaTime) >= Game.k_ClientPingFrequency)
         {
             m_T -= Game.k_ClientPingFrequency;
@@ -68,7 +69,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
         }
         else
         {
-            m_Game.ApplyRender(m_T/Game.k_ClientPingFrequency);
+            m_Game.ApplyRender(m_T / Game.k_ClientPingFrequency);
         }
     }
 
@@ -81,12 +82,33 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour
             m_SpecialActionArr[m_StepData.ExtraActionCount] = specialAction;
             m_StepData.ExtraActionCount++;
         }
-        
+
         m_StepData = new FullStepData(m_StepData.Step + 1, m_Inputs)
         {
             ExtraActionCount = m_StepData.ExtraActionCount
         };
         m_Game.ApplyStepData(m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
+    }
+
+    [EditorButton]
+    public void Host()
+    {
+        var server = gameObject.AddComponent<PingServerBehaviour>();
+        server.m_Game = m_Game;
+        server.StartCoroutine(server.Connect(
+            OnSuccess: () =>
+            {
+                server.AddLocalPlayer();
+                m_Game = null; // Null out our game so we don't destroy the server when we destroy this component
+                Destroy(this);
+            },
+            OnFailure: () =>
+            {
+                Debug.LogError($"Failed to start server");
+                server.m_Game = null;
+                Destroy(server);
+            })
+        );
     }
 }

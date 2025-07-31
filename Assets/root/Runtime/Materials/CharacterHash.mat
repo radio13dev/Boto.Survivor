@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CharacterHash
-  m_Shader: {fileID: -6465566751694194690, guid: 2ae63fe2680efb145bab0bfe78186f42, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 1adade87e6b2fa0498e56438729c597f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -17,7 +17,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
@@ -54,6 +54,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: b2ee15c7744aecc49b7b13f788755b90, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: ccdccdad117eec447a3acfc62d7d7630, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -119,7 +123,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _DstBlendAlpha: 0
-    - _EdgeScale: 1
+    - _EdgePower: 1
+    - _EdgeScale: 1.5
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -151,10 +156,13 @@ Material:
     - _r1: 1
     - _r2: 2
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 1, g: 0.5845827, b: 0.2783019, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 1, g: 0.84659624, b: 0.11792451, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Scale: {r: 300, g: 300, b: 300, a: 0}
+    - _HashA: {r: 1, g: 0.48839837, b: 0.2028302, a: 1}
+    - _HashB: {r: 1, g: 0, b: 0.13477135, a: 1}
+    - _Scale: {r: 20, g: 20, b: 20, a: 0}
     - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []

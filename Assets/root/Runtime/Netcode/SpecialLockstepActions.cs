@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEngine;
 
 [Serializable]
 public struct SpecialLockstepActions
@@ -13,11 +14,11 @@ public struct SpecialLockstepActions
     // All rpcs have the 0b1000_0000 bit set
     public const byte CODE_Rpc_PlayerAdjustInventory= 0b1000_0000;
     // @formatter:on 
-    
+
     public byte Type;
     public byte Data;
     public byte Extension;
-    
+
     public bool IsValidClientRpc => Type >= 0b1000_0000;
 
     public void Write(ref DataStreamWriter writer)
@@ -42,31 +43,43 @@ public struct SpecialLockstepActions
         switch (Type)
         {
             case CODE_PlayerJoin:
-                var resourcesQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(GameManager.Resources)));
+            {
+                using var controlledQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
+                using var players = controlledQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if (players[i].Index == Data)
+                    {
+                        // Player already exists!
+                        Debug.Log($"Player {Data} already exists, not creating a new one...");
+                        return;
+                    }
+                }
+
+                using var resourcesQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(GameManager.Resources)));
                 var resources = resourcesQuery.GetSingleton<GameManager.Resources>();
                 var newPlayer = world.EntityManager.Instantiate(resources.SurvivorTemplate);
                 world.EntityManager.AddComponent<PlayerControlled>(newPlayer);
-                world.EntityManager.SetComponentData(newPlayer, new PlayerControlled(){ Index = Data });
-                world.EntityManager.SetComponentData(newPlayer, LocalTransform.FromPosition(20,0,0));
-                
+                world.EntityManager.SetComponentData(newPlayer, new PlayerControlled() { Index = Data });
+                world.EntityManager.SetComponentData(newPlayer, LocalTransform.FromPosition(20, 0, 0));
+
                 game.m_PlayerDataCaches.Add(new PlayerDataCache((int)Data));
                 break;
-                
+            }
             case CODE_PlayerLeave:
-                var controlledQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
-                var players = controlledQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-                var playersE = controlledQuery.ToEntityArray(Allocator.Temp);
+            {
+                using var controlledQuery = world.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
+                using var players = controlledQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
+                using var playersE = controlledQuery.ToEntityArray(Allocator.Temp);
                 for (int i = 0; i < players.Length; i++)
                 {
                     if (players[i].Index == Data)
                     {
                         world.EntityManager.DestroyEntity(playersE[i]);
-                    } 
+                    }
                 }
-                players.Dispose();
-                playersE.Dispose();
                 break;
-            
+            }
             case CODE_Rpc_PlayerAdjustInventory:
                 var rpc = world.EntityManager.CreateEntity(new ComponentType(typeof(Rpc_PlayerAdjustInventory)));
                 world.EntityManager.SetComponentData(rpc, new Rpc_PlayerAdjustInventory(Data, Extension));

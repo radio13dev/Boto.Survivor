@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
+using BovineLabs.Core.Extensions;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Collections;
@@ -16,6 +18,7 @@ public struct Client
     public StepInput InputBuffer;
     public bool HasInput;
     public bool RequestedSave;
+    public bool Disabled;
 
     public Client(NetworkConnection connection)
     {
@@ -23,20 +26,18 @@ public struct Client
         InputBuffer = default;
         HasInput = false;
         RequestedSave = false;
+        Disabled = false;
     }
 }
 
 /// <summary>Component that will listen for ping connections and answer pings.</summary>
-public unsafe class PingServerBehaviour : MonoBehaviour
+public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
 {
     public const int k_MaxPlayerCount = 4;
 
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
     public const byte CODE_SendId = 0b0000_0010;
-
-    /// <summary>UI component on which to set the join code.</summary>
-    public PingUIBehaviour PingUI;
 
     private BiggerDriver m_ServerDriver;
     private NativeArray<Client> m_ServerConnections;
@@ -51,8 +52,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
     // Handle to the job chain of the ping server. We need to keep this around so that we can
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ServerJobHandle;
-    private Game m_Game;
-    public Game Game => m_Game;
+    internal Game m_Game;
 
     private void Start()
     {
@@ -61,12 +61,18 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
+    }
+
+    public void SetupGame()
+    {
         m_Game = new Game(false);
         m_Game.LoadScenes();
     }
 
     private void OnDestroy()
     {
+        m_Game?.Dispose();
+
         if (m_ServerDriver.IsCreated)
         {
             // All jobs must be completed before we can dispose of the data they use.
@@ -83,15 +89,25 @@ public unsafe class PingServerBehaviour : MonoBehaviour
 
     /// <summary>Start establishing a connection to the server and listening for connections.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect()
+    public IEnumerator Connect(Action OnSuccess, Action OnFailure)
     {
-        var allocationTask = RelayService.Instance.CreateAllocationAsync(5, "australia-southeast1");
+        var signInTask = GameLaunch.SignIn();
+        while (!signInTask.IsCompleted)
+            yield return null;
+        if (signInTask.IsFaulted)
+        {
+            Debug.LogError($"Failed to sign in: {signInTask.Exception}");
+            OnFailure?.Invoke();
+            yield break;
+        }
+
+        var allocationTask = RelayService.Instance.CreateAllocationAsync(k_MaxPlayerCount, "australia-southeast1");
         while (!allocationTask.IsCompleted)
             yield return null;
-
         if (allocationTask.IsFaulted)
         {
-            Debug.LogError("Failed to create Relay allocation.");
+            Debug.LogError($"Failed to create Relay allocation: {allocationTask.Exception}");
+            OnFailure?.Invoke();
             yield break;
         }
 
@@ -100,16 +116,17 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         var joinCodeTask = RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
         while (!joinCodeTask.IsCompleted)
             yield return null;
-
         if (joinCodeTask.IsFaulted)
         {
-            Debug.LogError("Failed to request join code for allocation.");
+            Debug.LogError("Failed to request join code for allocation: " + joinCodeTask.Exception);
+            OnFailure?.Invoke();
             yield break;
         }
 
-        PingUI.JoinCode = joinCodeTask.Result;
+        JoinCode = joinCodeTask.Result;
         JavascriptHook.SetUrlArg("lobby", joinCodeTask.Result);
 
+        // Do this on another thread because it kills performance
         var relayServerData = allocation.ToRelayServerData("wss");
         var settings = Netcode.NetworkSettings(ref relayServerData);
 
@@ -120,17 +137,22 @@ public unsafe class PingServerBehaviour : MonoBehaviour
         if (m_ServerDriver.Driver.Bind(NetworkEndpoint.AnyIpv4) < 0)
         {
             Debug.LogError("Failed to bind the NetworkDriver.");
+            OnFailure?.Invoke();
             yield break;
         }
 
         if (m_ServerDriver.Driver.Listen() < 0)
         {
             Debug.LogError("Failed to start listening for connections.");
+            OnFailure?.Invoke();
             yield break;
         }
 
         Debug.Log("Server is now listening for connections.");
+        OnSuccess?.Invoke();
     }
+
+    public string JoinCode;
 
     // Job to clean up old connections and accept new ones.
     [BurstCompile]
@@ -149,7 +171,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                 // Find and use a new slot.
                 for (int i = 0; i < Connections.Length; i++)
                 {
-                    if (Connections[i].Connection.IsCreated) continue;
+                    if (Connections[i].Connection.IsCreated || Connections[i].Disabled) continue;
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
@@ -278,7 +300,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                 }
 
             if (saveState == SaveState.Ready) m_Game.CleanSave();
-            
+
             // Create the jobs first.
             var updateJob = new ConnectionsRelayUpdateJob
             {
@@ -297,18 +319,32 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             {
                 m_Game.Update_NoLogic();
             }
-            else if (m_ServerConnections.Length > 0)
+            else if (m_ServerConnections.Length > 0 || m_Game.PlayerIndex != -1)
             {
+                if (m_Game.PlayerIndex != -1)
+                {
+                    var old = m_ServerConnections[m_Game.PlayerIndex];
+                    old.InputBuffer.Collect(Camera.main);
+                    m_ServerConnections[m_Game.PlayerIndex] = old;
+                }
+
                 m_CumulativeTime += Time.deltaTime;
                 if (m_CumulativeTime >= Game.k_ServerPingFrequency && ClientDesyncDebugger.CanExecuteStep(m_ServerToClient.Value.Step + 1))
                 {
                     m_CumulativeTime = math.min(m_CumulativeTime - Game.k_ServerPingFrequency, Game.k_ServerPingFrequency);
-                    
+
                     eventsJobs.ServerToClient = m_ServerToClient;
 
                     // Iterate index + read inputs
-                    var old = m_ServerToClient.Value;
-                    var newStepData = new FullStepData(old.Step + 1, m_ServerConnections);
+                    var newStepData = new FullStepData(m_Game.Step + 1, m_ServerConnections);
+
+                    // If we're connected, clear our buffer.
+                    if (m_Game.PlayerIndex != -1)
+                    {
+                        var old = m_ServerConnections[m_Game.PlayerIndex];
+                        old.InputBuffer = default;
+                        m_ServerConnections[m_Game.PlayerIndex] = old;
+                    }
 
                     // Load special actions
                     m_SpecialActionList.Clear();
@@ -321,6 +357,10 @@ public unsafe class PingServerBehaviour : MonoBehaviour
                     m_Game.ApplyStepData(newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
                     NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
+                }
+                else
+                {
+                    m_Game.ApplyRender(math.clamp(m_CumulativeTime / Game.k_ServerPingFrequency, 0, 1));
                 }
             }
 
@@ -372,5 +412,22 @@ public unsafe class PingServerBehaviour : MonoBehaviour
             Debug.LogError($"Couldn't send ping answer (error code {result}).");
             return;
         }
+    }
+
+    public void AddLocalPlayer()
+    {
+        for (int i = 0; i < m_ServerConnections.Length; i++)
+        {
+            if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
+            {
+                m_SpecialActionQueue.Enqueue(SpecialLockstepActions.PlayerJoin(i));
+                m_Game.PlayerIndex = i;
+                
+                m_ServerConnections.ElementAt(i).Disabled = true;
+                return;
+            }
+        }
+
+        Debug.LogError("No free slots available for a new player.");
     }
 }

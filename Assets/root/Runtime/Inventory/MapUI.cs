@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHandler, IPointerMoveHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
 {
-    public CameraTarget Target;
     public Transform MapCameraTransform;
     public Camera MapCamera;
     
@@ -62,10 +61,10 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     {
         var now = DateTime.UtcNow;
         var timeSinceAdjust = now - m_LastAdjustTime;
-        if (m_AutoTrack)
+        if (m_AutoTrack && CameraTarget.MainTarget)
         {
             // Regular map update
-            SetCursorPosition(Target.transform.position);
+            SetCursorPosition(CameraTarget.MainTarget.transform.position);
             AlignViewToCursor();
         }
     }

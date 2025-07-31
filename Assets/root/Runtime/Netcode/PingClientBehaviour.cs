@@ -56,7 +56,7 @@ public unsafe struct BiggerDriver : IDisposable
 }
 
 /// <summary>Component responsible for sending pings to the server.</summary>
-public unsafe class PingClientBehaviour : MonoBehaviour
+public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
 {
     public const byte CODE_SendInput = 0b0000_0000;
     public const byte CODE_RequestSave = 0b0000_0001;
@@ -64,9 +64,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
     public const int k_MaxSaveSize = 200_000;
     public const int k_MaxSpecialActionCount = 4;
-
-    /// <summary>UI component to get the join code and update statistics.</summay>
-    public PingUIBehaviour PingUI;
 
     public Game Game => m_Game;
 
@@ -91,20 +88,8 @@ public unsafe class PingClientBehaviour : MonoBehaviour
     private JobHandle m_ClientJobHandle;
     private Game m_Game;
 
-    private IEnumerator Start()
+    private void Start()
     {
-        if (Game.ClientGame == null ||
-            (Game.ClientGame != null && Game.ClientGame.IsReady))
-        {
-            Debug.Log($"Running multiple singleplayer games at the same time, creating new one...");
-            Game.ClientGame = new Game(true);
-            World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
-        }
-        
-        // Build game
-        yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
-        m_Game = Game.ClientGame;
-        
         m_ClientConnection = new NativeReference<Server>(Allocator.Persistent);
         m_FrameInput = new NativeReference<StepInput>(Allocator.Persistent);
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
@@ -115,6 +100,8 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
+        m_Game?.Dispose();
+        
         if (m_ClientDriver.IsCreated)
         {
             // All jobs must be completed before we can dispose of the data they use.
@@ -132,15 +119,25 @@ public unsafe class PingClientBehaviour : MonoBehaviour
 
     /// <summary>Start establishing a connection to the server.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect()
+    public IEnumerator Connect(string joinCode, Action OnSuccess, Action OnFailure)
     {
-        var joinTask = RelayService.Instance.JoinAllocationAsync(PingUI.JoinCode);
+        var signInTask = GameLaunch.SignIn();
+        while (!signInTask.IsCompleted)
+            yield return null;
+        if (signInTask.IsFaulted)
+        {
+            Debug.LogError("Failed to sign in.");
+            OnFailure?.Invoke();
+            yield break;
+        }
+    
+        var joinTask = RelayService.Instance.JoinAllocationAsync(joinCode);
         while (!joinTask.IsCompleted)
             yield return null;
-
         if (joinTask.IsFaulted)
         {
             Debug.LogError("Failed to join the Relay allocation.");
+            OnFailure?.Invoke();
             yield break;
         }
 
@@ -313,6 +310,19 @@ public unsafe class PingClientBehaviour : MonoBehaviour
             if (m_SaveBuffer.Length != 0)
             {
                 Debug.Log($"... loading save {m_SaveBuffer.Length}...");
+                
+                if (m_Game == null)
+                {
+                    Debug.Log($"... creating game...");
+                    m_Game = new Game(true);
+                }
+                else if (m_Game.IsReady)
+                {
+                    // Loading in a new save, delete the old one.
+                    Debug.Log($"... overwriting existing game...");
+                    m_Game.Dispose();
+                    m_Game = new Game(true);    
+                }
 
                 // Load this in
                 m_Game.LoadSave(m_SaveBuffer.AsArray());

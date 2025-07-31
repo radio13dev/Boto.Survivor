@@ -31,6 +31,7 @@ public struct SpecificPrefabProxy : ICleanupComponentData
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial class SpecificPrefabSpawnSystem : SystemBase
 {
+    public Game GameReference;
     EntityQuery m_query;
 
     protected override void OnCreate()
@@ -57,7 +58,7 @@ public partial class SpecificPrefabSpawnSystem : SystemBase
                     request.ValueRO.InWorldSpace ? quaternion.identity : transform.ValueRO.Rotation
                 );
                 foreach (var link in spawned.GetComponentsInChildren<EntityLinkMono>(true))
-                    link.SetLink(entity);
+                    link.SetLink(GameReference, entity);
 
                 ecb.AddComponent(entity, new SpecificPrefabProxy()
                 {
@@ -82,59 +83,44 @@ public partial class SpecificPrefabSpawnSystem : SystemBase
 public partial struct SpecificPrefabTrackSystem : ISystem
 {
     EntityQuery m_query;
-
+    TransformAccessArray m_AccessArray;
+    
     public void OnCreate(ref SystemState state)
     {
-        m_query = SystemAPI.QueryBuilder().WithAll<LocalTransform, SpecificPrefabProxy, SpecificPrefabRequest.DynamicTag>().Build();
+        state.RequireForUpdate<RenderSystemHalfTime>();
+        m_query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, SpecificPrefabProxy, SpecificPrefabRequest.DynamicTag>().Build();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var transforms = m_query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-        var proxies = m_query.ToComponentDataArray<SpecificPrefabProxy>(Allocator.Temp);
+        var transformsLast = m_query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
+        var proxies = m_query.ToComponentDataArray<SpecificPrefabProxy>(Allocator.TempJob);
         var proxyTransforms = new Transform[proxies.Length];
         for (int i = 0; i < proxies.Length; i++)
             proxyTransforms[i] = proxies[i].Spawned.Value.transform;
-        var transformAccessArray = new TransformAccessArray(proxyTransforms);
+            
+        m_AccessArray = new TransformAccessArray(proxyTransforms);
 
         // Initialize the job data
         var job = new ApplyLocalTransformToTransform()
         {
-            transforms = transforms
+            T = SystemAPI.GetSingleton<RenderSystemHalfTime>().Value,
+            transforms = transforms,
+            transformsLast = transformsLast
         };
-
-        // If this job required a previous job to complete before it could safely begin execution,
-        // we'd use its handle here. For this simple case, there are no job dependencies,
-        // so a default JobHandle is sufficient.
-        JobHandle dependencyJobHandle = default;
 
         // Schedule a parallel-for-transform job.
         // The method takes a TransformAccessArray which contains the Transforms that will be acted on in the job.
-        JobHandle jobHandle = job.ScheduleByRef(transformAccessArray, dependencyJobHandle);
-
-        // Ensure the job has completed.
-        // It is not recommended to Complete a job immediately,
-        // since that reduces the chance of having other jobs run in parallel with this one.
-        // You optimally want to schedule a job early in a frame and then wait for it later in the frame.
-        // Ideally this job's JobHandle would be passed as a dependency to another job that consumes the
-        // output of this one. If the output of this job must be read from the main thread, you should call
-        // Complete() on this job handle just before reading it.
-        jobHandle.Complete();
-
-        // Native containers must be disposed manually.
-        transformAccessArray.Dispose();
-        proxies.Dispose();
-        transforms.Dispose();
+        state.Dependency = job.ScheduleByRef(m_AccessArray, state.Dependency);
+        proxies.Dispose(state.Dependency);
+        transforms.Dispose(state.Dependency);
+        transformsLast.Dispose(state.Dependency);
     }
 
-    public struct ApplyLocalTransformToTransform : IJobParallelForTransform
+    public void OnDestroy(ref SystemState state)
     {
-        [ReadOnly] public NativeArray<LocalTransform> transforms;
-
-        public void Execute(int index, TransformAccess transform)
-        {
-            transform.SetPositionAndRotation(transforms[index].Position, transforms[index].Rotation);
-        }
+        m_AccessArray.Dispose();
     }
 }
 

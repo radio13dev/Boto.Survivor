@@ -55,18 +55,20 @@ public class Game : IDisposable
 
     public World World => m_World;
     public int PlayerIndex = -1;
+    public long Step => m_StepController.GetSingleton<StepController>().Step;
 
     private bool m_ShowVisuals;
     private World m_World;
     private EntityQuery m_SaveRequest;
     private EntityQuery m_SaveBuffer;
     private EntityQuery m_RenderSystemHalfTime;
+    private EntityQuery m_StepController;
     public float HalfTime;
     private SystemHandle m_RenderSystemGroup;
 
     public NativeQueue<SpecialLockstepActions> RpcSendBuffer;
 
-    private EntityQuery m_PlayerQuery;
+    public EntityQuery m_PlayerQuery;
 
     private Entity m_GameManagerSceneE;
     private Entity m_GameSceneE;
@@ -122,6 +124,8 @@ public class Game : IDisposable
             .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
         systems.RemoveAll(s => s.Name == typeof(UpdateWorldTimeSystem).Name);
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
+        m_World.GetExistingSystemManaged<GenericPrefabSpawnSystem>().GameReference = this;
+        m_World.GetExistingSystemManaged<SpecificPrefabSpawnSystem>().GameReference = this;
 
         var saveRequest = new EntityQueryDesc
         {
@@ -151,15 +155,8 @@ public class Game : IDisposable
 
         RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         
-        var playerQuery = new EntityQueryDesc
-        {
-            Any = new ComponentType[]
-            {
-                typeof(PlayerControlled),
-            },
-            Options = EntityQueryOptions.Default
-        };
-        m_PlayerQuery = m_World.EntityManager.CreateEntityQuery(playerQuery);
+        m_PlayerQuery = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
+        m_StepController = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
     }
 
     public void LoadScenes()
@@ -225,16 +222,15 @@ public class Game : IDisposable
 
         // Iterate step count
         {
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
-            var stepController = query.GetSingleton<StepController>();
+            var stepController = m_StepController.GetSingleton<StepController>();
 
             if (stepData.Step != stepController.Step + 1)
             {
-                Debug.LogError($"Failed step, tried to go from step {stepController.Step} to {stepData.Step}");
+                Debug.LogWarning($"Failed step, tried to go from step {stepController.Step} to {stepData.Step}");
                 return;
             }
-
-            entityManager.SetComponentData(query.GetSingletonEntity(), new StepController()
+            
+            m_StepController.SetSingleton(new StepController()
             {
                 Step = stepData.Step
             });

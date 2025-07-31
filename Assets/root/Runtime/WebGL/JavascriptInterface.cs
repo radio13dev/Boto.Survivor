@@ -19,7 +19,7 @@ public class JavascriptHook : MonoBehaviour
 
     public void JoinLobby(string lobbyCode)
     {
-        Object.FindAnyObjectByType<PingUIBehaviour>().StartLobbyJoinCo(lobbyCode);
+        GameLaunch.JoinLobby(lobbyCode);
     }
     
     [DllImport("__Internal")]
