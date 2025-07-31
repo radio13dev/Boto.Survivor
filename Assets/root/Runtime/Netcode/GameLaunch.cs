@@ -74,7 +74,9 @@ public class GameLaunch : MonoBehaviour
             // Destroy any existing games
             foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
             {
-                if (gameBehaviour != newClient) Destroy((MonoBehaviour)gameBehaviour);
+                if (gameBehaviour == newClient) continue;
+                if (gameBehaviour is PingServerBehaviour server && server.JoinCode == lobbyCode) continue;
+                Destroy((MonoBehaviour)gameBehaviour);
             }
         },
         OnFailure: () =>
