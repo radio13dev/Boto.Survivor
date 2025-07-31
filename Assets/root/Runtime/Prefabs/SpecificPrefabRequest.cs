@@ -79,7 +79,7 @@ public partial class SpecificPrefabSpawnSystem : SystemBase
 
 [RequireMatchingQueriesForUpdate]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
-[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateInGroup(typeof(RenderSystemGroup))]
 public partial struct SpecificPrefabTrackSystem : ISystem
 {
     EntityQuery m_query;

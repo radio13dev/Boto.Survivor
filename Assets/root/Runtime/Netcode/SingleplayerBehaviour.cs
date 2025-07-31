@@ -5,27 +5,19 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-public unsafe class SingleplayerBehaviour : MonoBehaviour, IGameBehaviour
+public unsafe class SingleplayerBehaviour : GameHostBehaviour
 {
     public bool TickEnabled = true;
 
     private float m_T;
     private bool m_InitComplete;
     private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
-    private Game m_Game;
+    public Game m_Game;
 
     private IEnumerator Start()
     {
-        if (Game.ClientGame == null ||
-            (Game.ClientGame != null && Game.ClientGame.IsReady))
-        {
-            Game.ClientGame = new Game(true);
-            World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
-        }
-
         // Build game
-        yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
-        m_Game = Game.ClientGame;
+        yield return new WaitUntil(() => Game.ConstructorReady);
 
         m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
         m_Game.LoadScenes();
@@ -83,11 +75,11 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour, IGameBehaviour
             m_StepData.ExtraActionCount++;
         }
 
-        m_StepData = new FullStepData(m_StepData.Step + 1, m_Inputs)
+        m_StepData = new FullStepData(m_Game.Step + 1, m_Inputs)
         {
             ExtraActionCount = m_StepData.ExtraActionCount
         };
-        m_Game.ApplyStepData(m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+        m_Game.ApplyStepData(m_T / Game.k_ClientPingFrequency, m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
     }
 
@@ -102,6 +94,7 @@ public unsafe class SingleplayerBehaviour : MonoBehaviour, IGameBehaviour
                 server.AddLocalPlayer();
                 m_Game = null; // Null out our game so we don't destroy the server when we destroy this component
                 Destroy(this);
+                Game.ServerGame = server.m_Game;
             },
             OnFailure: () =>
             {

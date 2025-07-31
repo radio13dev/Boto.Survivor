@@ -56,7 +56,7 @@ public unsafe struct BiggerDriver : IDisposable
 }
 
 /// <summary>Component responsible for sending pings to the server.</summary>
-public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
+public unsafe class PingClientBehaviour : GameHostBehaviour
 {
     public const byte CODE_SendInput = 0b0000_0000;
     public const byte CODE_RequestSave = 0b0000_0001;
@@ -64,8 +64,6 @@ public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
 
     public const int k_MaxSaveSize = 200_000;
     public const int k_MaxSpecialActionCount = 4;
-
-    public Game Game => m_Game;
 
     // Frequency (in seconds) at which to send ping messages.
     public const int k_FrameDelay = 3;
@@ -86,7 +84,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
     // Handle to the job chain of the ping client. We need to keep this around so that we can
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ClientJobHandle;
-    private Game m_Game;
+    public Game m_Game;
 
     private void Start()
     {
@@ -275,7 +273,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
     }
 
     [EditorButton]
-    private void RequestNewSave()
+    public void RequestNewSave()
     {
         if (m_ClientDriver.IsCreated)
         {
@@ -341,7 +339,7 @@ public unsafe class PingClientBehaviour : MonoBehaviour, IGameBehaviour
                 bool ready = m_Game.IsReady;
                 if (ready && m_ServerMessageBuffer.Count > 0 && (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && ClientDesyncDebugger.CanExecuteStep(m_ServerMessageBuffer.Peek().Step) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
-                    m_Game.ApplyStepData(msg, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+                    m_Game.ApplyStepData(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1), msg, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
                 }
                 else if (!ready) m_Game.World.Update(); // Completes save loading

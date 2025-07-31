@@ -137,6 +137,6 @@ float3 projectOntoTorusDirection(float3 rayOrigin, float3 rayDir, float ringRadi
 void RaycastFromCameraToTorus_float(float3 cameraPosition, float3 worldPosition, float ringRadius, float thickness, out float3 worldPositionOnTorus)
 {
 	//worldPositionOnTorus = projectOntoTorusDirection(cameraPosition, normalize(worldPosition - cameraPosition), ringRadius, thickness);
-	worldPositionOnTorus = RaycastToTorus(worldPosition, normalize(worldPosition - cameraPosition), ringRadius, thickness, 100, 3, 0.2);
+	worldPositionOnTorus = RaycastToTorus(worldPosition, normalize(worldPosition - cameraPosition), ringRadius, thickness, 100, 3, 0.01);
 }
 #endif // SPRITE_SHEET_INCLUDED

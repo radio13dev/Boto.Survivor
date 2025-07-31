@@ -87,13 +87,13 @@ public class ClientDesyncDebugger : MonoBehaviour
         HashSet<PingClientBehaviour> toDelete = new(m_ClientStates.Keys);
         foreach (var client in FindObjectsByType<PingClientBehaviour>(FindObjectsSortMode.None))
         {
-            if (client.Game == null || !client.Game.IsReady) continue;
+            if (client.m_Game == null || !client.m_Game.IsReady) continue;
             
             if (!m_ClientStates.TryGetValue(client, out var state))
             {
                 state = m_ClientStates[client] = new StateData();
             }
-            step = math.min(step, client.Game.World.EntityManager.GetSingleton<StepController>().Step);
+            step = math.min(step, client.m_Game.World.EntityManager.GetSingleton<StepController>().Step);
             toDelete.Remove(client);
         }
         
@@ -129,7 +129,7 @@ public class ClientDesyncDebugger : MonoBehaviour
     
         public void Collect(PingClientBehaviour client)
         {
-            if (m_Points.Count > 0 && m_Points[^1].Step == client.Game.World.EntityManager.GetSingleton<StepController>().Step)
+            if (m_Points.Count > 0 && m_Points[^1].Step == client.m_Game.World.EntityManager.GetSingleton<StepController>().Step)
             {
                 // Already collected for this step
                 return;
@@ -137,10 +137,10 @@ public class ClientDesyncDebugger : MonoBehaviour
             
             var point = new Point
             {
-                Step = client.Game.World.EntityManager.GetSingleton<StepController>().Step
+                Step = client.m_Game.World.EntityManager.GetSingleton<StepController>().Step
             };
             
-            using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<PlayerControlled, LocalTransform>().WithOptions(EntityQueryOptions.Default).Build(client.Game.World.EntityManager);
+            using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<PlayerControlled, LocalTransform>().WithOptions(EntityQueryOptions.Default).Build(client.m_Game.World.EntityManager);
             var players = query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
             var transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
             

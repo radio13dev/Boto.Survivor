@@ -5,17 +5,18 @@ using UnityEngine.InputSystem;
 
 public class MotionTreeTest : MonoBehaviour
 {
+    CameraTarget m_Target;
     public Animator animator;
+
+    private void Start()
+    {
+        m_Target = GetComponentInParent<CameraTarget>();
+    }
 
     private void Update()
     {
-        float2 movement = new float2();
-        if (Keyboard.current.wKey.isPressed) movement.y += 1f;
-        if (Keyboard.current.sKey.isPressed) movement.y -= 1f;
-        if (Keyboard.current.aKey.isPressed) movement.x -= 1f;
-        if (Keyboard.current.dKey.isPressed) movement.x += 1f;
-        
-        animator.SetFloat("movement.x", movement.x);
-        animator.SetFloat("movement.y", movement.y);
+        StepInput input = m_Target.Game.GetComponent<StepInput>(m_Target.Entity);
+        animator.SetFloat("movement.x", math.length(input.Direction));
+        animator.SetFloat("movement.y", 0);
     }
 }

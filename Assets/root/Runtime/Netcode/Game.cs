@@ -210,7 +210,7 @@ public class Game : IDisposable
         m_Ready = false; // Unset ready.
     }
 
-    public unsafe void ApplyStepData(FullStepData stepData, SpecialLockstepActions* extraActionPtr)
+    public unsafe void ApplyStepData(float halfTime, FullStepData stepData, SpecialLockstepActions* extraActionPtr)
     {
         if (!m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled)
         {
@@ -240,8 +240,8 @@ public class Game : IDisposable
         m_World.SetTime(new TimeData(stepData.Step * (double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
         if (m_ShowVisuals)
         {
-            m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = 0 });
-            HalfTime = 0;
+            m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = halfTime });
+            HalfTime = halfTime;
         }
 
         // Apply extra actions
@@ -377,6 +377,11 @@ public class Game : IDisposable
             dependencies[i].Complete();
         }
         dependencies.Clear();
+    }
+
+    public T GetComponent<T>(Entity entity) where T : unmanaged, IComponentData
+    {
+        return World.EntityManager.GetComponentData<T>(entity);
     }
 }
 

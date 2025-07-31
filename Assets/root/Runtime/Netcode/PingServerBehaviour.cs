@@ -31,13 +31,15 @@ public struct Client
 }
 
 /// <summary>Component that will listen for ping connections and answer pings.</summary>
-public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
+public unsafe class PingServerBehaviour : GameHostBehaviour
 {
     public const int k_MaxPlayerCount = 4;
 
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
     public const byte CODE_SendId = 0b0000_0010;
+    
+    public static event Action OnLobbyHostStart;
 
     private BiggerDriver m_ServerDriver;
     private NativeArray<Client> m_ServerConnections;
@@ -53,6 +55,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ServerJobHandle;
     internal Game m_Game;
+    public string JoinCode;
 
     private void Start()
     {
@@ -61,12 +64,6 @@ public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
         m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
         m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
-    }
-
-    public void SetupGame()
-    {
-        m_Game = new Game(false);
-        m_Game.LoadScenes();
     }
 
     private void OnDestroy()
@@ -150,9 +147,8 @@ public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
 
         Debug.Log("Server is now listening for connections.");
         OnSuccess?.Invoke();
+        OnLobbyHostStart?.Invoke();
     }
-
-    public string JoinCode;
 
     // Job to clean up old connections and accept new ones.
     [BurstCompile]
@@ -354,7 +350,7 @@ public unsafe class PingServerBehaviour : MonoBehaviour, IGameBehaviour
                     newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
 
                     // Update server sim
-                    m_Game.ApplyStepData(newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
+                    m_Game.ApplyStepData(m_CumulativeTime/Game.k_ServerPingFrequency, newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
                     NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
                 }
