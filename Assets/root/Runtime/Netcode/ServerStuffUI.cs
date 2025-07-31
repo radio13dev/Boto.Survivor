@@ -32,6 +32,7 @@ public class ServerStuffUI : MonoBehaviour
         HostLobbyButton.SetActive(GameLaunch.IsSingleplayer);
         ConnectButton.SetActive(GameLaunch.IsSingleplayer);
         DisconnectButton.SetActive(GameLaunch.IsServer || GameLaunch.IsClient);
+        LobbyCodeButton.SetActive(GameLaunch.IsServer || GameLaunch.IsSingleplayer);
         ResyncButton.SetActive(GameLaunch.IsClient);
     }
     

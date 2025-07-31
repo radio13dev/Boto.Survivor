@@ -6,7 +6,7 @@ mergeInto(LibraryManager.library, {
       window.history.replaceState({}, '', url); // Update URL without reloading
     },
     CopyToClipboardAndShare: function (key) {
-	  await navigator.clipboard.writeText(UTF8ToString(key));
+	  navigator.clipboard.writeText(UTF8ToString(key));
     },
 	
 });

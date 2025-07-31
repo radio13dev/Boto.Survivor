@@ -145,6 +145,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         m_ClientDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
         m_ClientConnection.Value = new Server(m_ClientDriver.Driver.Connect());
+        OnSuccess?.Invoke();
     }
 
     // Job that will send ping messages to the server.
@@ -313,13 +314,15 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                 {
                     Debug.Log($"... creating game...");
                     m_Game = new Game(true);
+                    Game.ClientGame = m_Game;
                 }
                 else if (m_Game.IsReady)
                 {
                     // Loading in a new save, delete the old one.
                     Debug.Log($"... overwriting existing game...");
                     m_Game.Dispose();
-                    m_Game = new Game(true);    
+                    m_Game = new Game(true);
+                    Game.ClientGame = m_Game;
                 }
 
                 // Load this in

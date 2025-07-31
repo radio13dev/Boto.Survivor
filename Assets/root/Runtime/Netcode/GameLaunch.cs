@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -18,12 +19,18 @@ public class GameLaunch : MonoBehaviour
     public static bool IsServer => _instance && _instance.GetComponents<PingServerBehaviour>().Length > 0;
     public static bool IsClient => _instance && _instance.GetComponents<PingClientBehaviour>().Length > 0;
     public static event Action OnLobbyJoinStart;
+    
+    static Queue<Action> _actionQueue = new();
 
     private IEnumerator Start()
     {
-        _instance = this;
-        
         yield return new WaitUntil(() => Game.ConstructorReady);
+        _instance = this;
+        while (_actionQueue.Count > 0)
+        {
+            var action = _actionQueue.Dequeue();
+            action?.Invoke();
+        }
         if (gameObject.GetComponents<GameHostBehaviour>().Length > 0)
         {
             Debug.Log($"Game already launched, likely joined lobby.");
@@ -46,13 +53,19 @@ public class GameLaunch : MonoBehaviour
     public static void JoinLobby(string lobbyCode)
     {
         LastJoinCode = lobbyCode;
-        OnLobbyJoinStart?.Invoke();
-        _instance._JoinLobby(lobbyCode);
+        Execute(i => i._JoinLobby(lobbyCode));
     }
-    
+
+    private static void Execute(Action<GameLaunch> func)
+    {
+        if (!_instance) _actionQueue.Enqueue(() => func(_instance));
+        else func(_instance);
+    }
+
     [EditorButton]
     void _JoinLobby(string lobbyCode)
     {
+        OnLobbyJoinStart?.Invoke();
         // Start a new game, attempting to load data from the lobby code
         var newClient = gameObject.AddComponent<PingClientBehaviour>();
         newClient.StartCoroutine(newClient.Connect(lobbyCode, 
@@ -63,7 +76,6 @@ public class GameLaunch : MonoBehaviour
             {
                 if (gameBehaviour != newClient) Destroy((MonoBehaviour)gameBehaviour);
             }
-            Game.ClientGame = newClient.m_Game;
         },
         OnFailure: () =>
         {
