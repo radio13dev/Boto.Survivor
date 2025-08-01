@@ -11,7 +11,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
 
     private float m_T;
     private bool m_InitComplete;
-    private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
+    private NativeArray<GameRpc> m_SpecialActionArr;
     public Game m_Game;
 
     private IEnumerator Start()
@@ -19,7 +19,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
         // Build game
         yield return new WaitUntil(() => Game.ConstructorReady);
 
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
+        m_SpecialActionArr = new NativeArray<GameRpc>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
         m_Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
@@ -29,9 +29,11 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
         });
 
         // Spawn the player
-        m_Game.PlayerIndex = 0;
-        m_Game.RpcSendBuffer.Enqueue(SpecialLockstepActions.PlayerJoin(0));
-        ApplyStep();
+        if (m_Game.PlayerIndex == -1)
+        {
+            m_Game.PlayerIndex = 0;
+            m_Game.RpcSendBuffer.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)0));
+        }
 
         // Complete
         m_InitComplete = true;
@@ -80,7 +82,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
             ExtraActionCount = m_StepData.ExtraActionCount
         };
         m_StepData[m_Game.PlayerIndex] = m_Inputs;
-        m_Game.ApplyStepData(m_T / Game.k_ClientPingFrequency, m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+        m_Game.ApplyStepData(m_T / Game.k_ClientPingFrequency, m_StepData, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
         m_StepData.ExtraActionCount = 0;
     }
 

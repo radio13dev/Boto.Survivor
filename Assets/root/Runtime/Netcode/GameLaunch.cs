@@ -24,6 +24,10 @@ public class GameLaunch : MonoBehaviour
 
     private IEnumerator Start()
     {
+        DontDestroyOnLoad(this);
+        
+        GameEvents.Initialize();
+        
         yield return new WaitUntil(() => Game.ConstructorReady);
         _instance = this;
         while (_actionQueue.Count > 0)
@@ -37,6 +41,11 @@ public class GameLaunch : MonoBehaviour
             yield break;
         }
         StartSingleplayer(new Game(true));
+    }
+
+    private void OnDestroy()
+    {
+        GameEvents.Dispose();
     }
 
     public static void StartSingleplayer(Game game)

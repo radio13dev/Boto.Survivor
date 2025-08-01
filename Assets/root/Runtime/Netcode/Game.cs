@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using BovineLabs.Saving.Data;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
@@ -28,8 +30,6 @@ public enum GameType
 [Preserve]
 public class Game : IDisposable
 {
-    public static event Action<Game> OnClientGameStarted;
-
     public const float k_ClientPingFrequency = 1.0f / 60.0f;
     public const float k_ServerPingFrequency = 1.0f / 60.0f;
 
@@ -48,7 +48,6 @@ public class Game : IDisposable
         set
         {
             s_ClientGame = value;
-            OnClientGameStarted?.Invoke(s_ClientGame);
         }
     }
     static Game s_ClientGame;
@@ -66,9 +65,7 @@ public class Game : IDisposable
     public float HalfTime;
     private SystemHandle m_RenderSystemGroup;
 
-    public NativeQueue<SpecialLockstepActions> RpcSendBuffer;
-
-    public EntityQuery m_PlayerQuery;
+    public NativeQueue<GameRpc> RpcSendBuffer;
 
     private Entity m_GameManagerSceneE;
     private Entity m_GameSceneE;
@@ -106,6 +103,7 @@ public class Game : IDisposable
     public void InitSave()
     {
         m_SaveStarted = true;
+        Update_NoLogic(); // This should 'resolve' any ECBs that are pending, so we can save the current state.
         m_World.EntityManager.CreateEntity(ComponentType.ReadOnly<SaveRequest>());
     }
 
@@ -153,9 +151,8 @@ public class Game : IDisposable
             m_RenderSystemGroup = m_World.GetExistingSystem<RenderSystemGroup>();
         }
 
-        RpcSendBuffer = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
+        RpcSendBuffer = new NativeQueue<GameRpc>(Allocator.Persistent);
         
-        m_PlayerQuery = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
         m_StepController = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
     }
 
@@ -214,7 +211,7 @@ public class Game : IDisposable
         m_Ready = false; // Unset ready.
     }
 
-    public unsafe void ApplyStepData(float halfTime, FullStepData stepData, SpecialLockstepActions* extraActionPtr)
+    public unsafe void ApplyStepData(float halfTime, FullStepData stepData, GameRpc* extraActionPtr)
     {
         if (!m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled)
         {
@@ -260,20 +257,17 @@ public class Game : IDisposable
 
         // Apply inputs
         {
-            var query = entityManager.CreateEntityQuery(new ComponentType(typeof(StepInput)), new ComponentType(typeof(PlayerControlled)));
-            var entities = query.ToEntityArray(Allocator.Temp);
-            if (entities.Length > 0)
+            using var query = entityManager.CreateEntityQuery(typeof(StepInput), typeof(PlayerControlled));
+            for (int i = 0; i < stepData.Length; i++)
             {
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    var index = entityManager.GetComponentData<PlayerControlled>(entities[i]).Index;
-                    var data = stepData[index];
-                    entityManager.SetComponentData(entities[i], data);
-                }
+                query.SetSharedComponentFilter(new PlayerControlled(){ Index = i });
+                if (query.CalculateEntityCount() == 0)
+                    continue;
+                
+                using var entities = query.ToEntityArray(Allocator.Temp);
+                for (int j = 0; j < entities.Length; j++)
+                    entityManager.SetComponentData(entities[j], stepData[i]);
             }
-
-            entities.Dispose();
-            query.Dispose();
         }
 
         if (ClientDesyncDebugger.Instance && ClientDesyncDebugger.Instance.ManualUpdates)
@@ -283,8 +277,6 @@ public class Game : IDisposable
         }
         else
             m_World.Update();
-        
-        CollectDataForUI();
     }
 
     public void ApplyRender(float t)
@@ -293,41 +285,11 @@ public class Game : IDisposable
         HalfTime = t;
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }
-    
-    public Action<PlayerDataCache> OnInventoryUpdated;
-    public List<PlayerDataCache> m_PlayerDataCaches = new();
-    public void CollectDataForUI()
-    {
-        for (int i = 0; i < m_PlayerDataCaches.Count; i++)
-        {
-            if (m_PlayerDataCaches[i].Dirty)
-            {
-                m_PlayerDataCaches[i].Clean(this);
-            }
-        }
-    }
 
     private void OnLoadComplete()
     {
-        // Fetch any 'initial' cache data
-        var query = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
-        var players = query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-        for (int i = 0; i < players.Length; i++)
-            m_PlayerDataCaches.Add(new PlayerDataCache(players[i].Index));
-        players.Dispose();
-        query.Dispose();
-        
         // Also enable the simulation system group
         m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = true;
-    }
-
-
-    public static void SetCacheDirty(Entity entity)
-    {
-        Debug.Log($"Cleaning cache...");
-        foreach (var cache in ClientGame.m_PlayerDataCaches)
-            if (cache.PlayerE == entity) 
-                cache.SetDirty();
     }
 
     public void Update_NoLogic()
@@ -398,92 +360,75 @@ public class Game : IDisposable
         for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
         {
             if (i == PlayerIndex) continue;
-            SpecialLockstepActions.PlayerLeave(i).Apply(this);
+            new GameRpc(GameRpc.Code.PlayerLeave, (ulong)i).Apply(this);
         }
     }
 }
 
-[Save]
-public struct PlayerControlled : IComponentData
+public static class GameEvents
 {
-    public int Index;
-}
-
-public class PlayerDataCache
-{
-    public int PlayerIndex => m_PlayerIndex;
-    private int m_PlayerIndex;
-
-    public bool Dirty => m_Dirty;
-    private bool m_Dirty = true;
-    
-    private EntityQuery m_PlayerQuery;
-    
-    public Entity PlayerE => m_PlayerE;
-    private Entity m_PlayerE;
-    
-    public Ring[] Rings => m_Rings;
-    private Ring[] m_Rings;
-
-    public PlayerDataCache(int playerIndex)
+    public enum Type
     {
-        m_PlayerIndex = playerIndex;
-        m_Rings = new Ring[Ring.k_RingCount];
+        InventoryChanged,
+    }
+    
+    public static event Action<Type, Entity> OnEvent;
+    
+    static readonly SharedStatic<NativeQueue<(Type, Entity)>> s_EventQueue = SharedStatic<NativeQueue<(Type, Entity)>>.GetOrCreate<NativeQueue<(Type, Entity)>, EventQueueKey>();
+    private class EventQueueKey { }
+    
+    public static void Initialize()
+    {
+        s_EventQueue.Data = new NativeQueue<(Type, Entity)>(Allocator.Persistent);
+    }
+    
+    public static void Dispose()
+    {
+        s_EventQueue.Data.Dispose();
     }
 
-    public void SetDirty()
+    public static void ExecuteEvents()
     {
-        m_Dirty = true;
-    }
-
-    public void Clean(Game game)
-    {
-        var world = game.World;
-        var entityManager = world.EntityManager;
-        
-        ValidatePlayerE(entityManager);
-        if (m_PlayerE == Entity.Null)
-            return;
-                
-        m_Dirty = false;
-
-        
-        ValidateRings(entityManager);
-        game.OnInventoryUpdated?.Invoke(this);
-    }
-
-    private void ValidatePlayerE(EntityManager entityManager)
-    {
-        if (!entityManager.HasComponent<PlayerControlled>(m_PlayerE) || entityManager.GetComponentData<PlayerControlled>(m_PlayerE).Index != PlayerIndex)
+        while (s_EventQueue.Data.TryDequeue(out var eType))
         {
-            if (m_PlayerQuery == default)
-                m_PlayerQuery = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)));
-            
-            var players = m_PlayerQuery.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-            for (int i = 0; i < players.Length; i++)
-            {
-                if (players[i].Index == PlayerIndex)
-                {
-                    var playersE = m_PlayerQuery.ToEntityArray(Allocator.Temp);
-                    m_PlayerE = playersE[i];
-                    playersE.Dispose();
-                    break;
-                }
-            }
-            players.Dispose();
+            OnEvent?.Invoke(eType.Item1, eType.Item2);
         }
     }
 
-    private void ValidateRings(EntityManager entityManager)
+    public static void Trigger(Type eType, Entity entity)
     {
-        if (!entityManager.HasBuffer<Ring>(m_PlayerE))
+        s_EventQueue.Data.Enqueue((eType, entity));
+    }
+
+    public static bool TryGetComponent<T>(Entity entity, out T o) where T : unmanaged, ISharedComponentData
+    {
+        if (Game.ClientGame == null)
         {
-            m_Rings = new Ring[Ring.k_RingCount];
-            return;
+            o = default;
+            return false;
         }
-        
-        var buffer = entityManager.GetBuffer<Ring>(m_PlayerE);
-        for (int i = 0; i < buffer.Length; i++)
-            m_Rings[i] = buffer[i];
+        if (Game.ClientGame.World.EntityManager.HasComponent<T>(entity))
+        {
+            o = Game.ClientGame.World.EntityManager.GetSharedComponent<T>(entity);
+            return true;
+        }
+        o = default;
+        return false;
+    }
+
+    public static bool TryGetBuffer<T>(Entity entity, out DynamicBuffer<T> o) where T : unmanaged, IBufferElementData
+    {
+        if (Game.ClientGame == null)
+        {
+            o = default;
+            return false;
+        }
+        if (Game.ClientGame.World.EntityManager.HasBuffer<T>(entity))
+        {
+            o = Game.ClientGame.World.EntityManager.GetBuffer<T>(entity, true);
+            return true;
+        }
+        o = default;
+        return false;
     }
 }

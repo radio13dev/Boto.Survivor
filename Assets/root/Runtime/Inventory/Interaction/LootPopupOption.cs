@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class LootPopupOption : Selectable, IPointerClickHandler, ISubmitHandler
     public GameObject InteractionNotification;
     public GameObject HeldHighlight;
     public TMP_Text Description;
+    public float3 ItemPosition => transform.parent.parent.position;
 
     public void Setup(RingStats ringStats)
     {

@@ -44,8 +44,8 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     private BiggerDriver m_ServerDriver;
     private NativeArray<Client> m_ServerConnections;
     private NativeReference<FullStepData> m_ServerToClient;
-    private NativeQueue<SpecialLockstepActions> m_SpecialActionQueue;
-    private NativeList<SpecialLockstepActions> m_SpecialActionList;
+    private NativeQueue<GameRpc> m_SpecialActionQueue;
+    private NativeList<GameRpc> m_SpecialActionList;
 
     private NativeArray<byte> m_SaveBuffer;
 
@@ -62,8 +62,8 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         m_ServerConnections = new NativeArray<Client>(k_MaxPlayerCount, Allocator.Persistent);
         m_ServerToClient = new NativeReference<FullStepData>(Allocator.Persistent);
         m_SaveBuffer = new NativeArray<byte>(PingClientBehaviour.k_MaxSaveSize, Allocator.Persistent);
-        m_SpecialActionQueue = new NativeQueue<SpecialLockstepActions>(Allocator.Persistent);
-        m_SpecialActionList = new NativeList<SpecialLockstepActions>(4, Allocator.Persistent); // This can be any size
+        m_SpecialActionQueue = new NativeQueue<GameRpc>(Allocator.Persistent);
+        m_SpecialActionList = new NativeList<GameRpc>(4, Allocator.Persistent); // This can be any size
     }
 
     private void OnDestroy()
@@ -156,7 +156,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     {
         public BiggerDriver Driver;
         public NativeArray<Client> Connections;
-        public NativeQueue<SpecialLockstepActions>.ParallelWriter SpecialActionQueue;
+        public NativeQueue<GameRpc>.ParallelWriter SpecialActionQueue;
 
         public void Execute()
         {
@@ -171,7 +171,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
-                    SpecialActionQueue.Enqueue(SpecialLockstepActions.PlayerJoin(i));
+                    SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)i));
                     break;
                 }
             }
@@ -184,10 +184,10 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     {
         public NetworkDriver.Concurrent Driver;
         public NativeArray<Client> Connections;
-        public NativeQueue<SpecialLockstepActions>.ParallelWriter SpecialActionQueue;
+        public NativeQueue<GameRpc>.ParallelWriter SpecialActionQueue;
 
         [NativeDisableContainerSafetyRestriction]
-        public NativeArray<SpecialLockstepActions> SpecialActions;
+        public NativeArray<GameRpc> SpecialActions;
 
         [NativeDisableContainerSafetyRestriction]
         public NativeReference<FullStepData> ServerToClient;
@@ -213,15 +213,15 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                             connection.RequestedSave = true;
                             break;
                         case PingClientBehaviour.CODE_SendRpc:
-                            var rpc = SpecialLockstepActions.Read(ref reader);
+                            var rpc = GameRpc.Read(ref reader);
                             if (!rpc.IsValidClientRpc)
-                                Debug.Log($"{connection} sent illegal RPC: {rpc.Type} {rpc.Data} {rpc.Extension}");
-                            else if (rpc.Data != i)
-                                Debug.Log($"{connection} sent RPC for different player: {rpc.Type} {rpc.Data} {rpc.Extension}");
+                                Debug.Log($"{connection} sent illegal RPC: {rpc}");
+                            else if (rpc.PlayerId != i)
+                                Debug.Log($"{connection} sent RPC for different player: {rpc}");
                             else
                             {
                                 SpecialActionQueue.Enqueue(rpc);
-                                Debug.Log($"Received RPC: {rpc.Type} {rpc.Data} {rpc.Extension}");
+                                Debug.Log($"Received RPC: {rpc}");
                             }
 
                             break;
@@ -231,7 +231,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                 }
                 else if (eventType == NetworkEvent.Type.Disconnect)
                 {
-                    SpecialActionQueue.Enqueue(SpecialLockstepActions.PlayerLeave(i));
+                    SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerLeave, (ulong)i));
                     Connections[i] = default;
                 }
             }
@@ -246,7 +246,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                 }
 
                 writer.WriteByte(PingServerBehaviour.CODE_SendStep);
-                ServerToClient.Value.Write(ref writer, (byte)SpecialActions.Length, (SpecialLockstepActions*)SpecialActions.GetUnsafePtr());
+                ServerToClient.Value.Write(ref writer, (byte)SpecialActions.Length, (GameRpc*)SpecialActions.GetUnsafePtr());
 
                 result = Driver.EndSend(writer);
                 if (result < 0)
@@ -273,7 +273,6 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                     if (saveState == SaveState.Idle)
                     {
                         m_Game.InitSave();
-                        m_Game.Update_NoLogic();
                         goto SaveLoop;
                     }
 
@@ -350,7 +349,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                     newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
 
                     // Update server sim
-                    m_Game.ApplyStepData(m_CumulativeTime/Game.k_ServerPingFrequency, newStepData, (SpecialLockstepActions*)eventsJobs.SpecialActions.GetUnsafePtr());
+                    m_Game.ApplyStepData(m_CumulativeTime/Game.k_ServerPingFrequency, newStepData, (GameRpc*)eventsJobs.SpecialActions.GetUnsafePtr());
                     m_ServerToClient.Value = newStepData;
                     NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
                 }
@@ -416,7 +415,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         {
             if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
             {
-                m_SpecialActionQueue.Enqueue(SpecialLockstepActions.PlayerJoin(i));
+                m_SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)i));
                 m_Game.PlayerIndex = i;
                 
                 m_ServerConnections.ElementAt(i).Disabled = true;

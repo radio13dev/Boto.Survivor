@@ -1,4 +1,5 @@
 ﻿using BovineLabs.Saving;
+using Unity.Burst;
 using Unity.Entities;
 
 [Save]
@@ -19,6 +20,7 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[BurstCompile]
 public partial struct CompiledStatsSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -33,6 +35,7 @@ public partial struct CompiledStatsSystem : ISystem
     
     [RequireMatchingQueriesForUpdate]
     [WithAll(typeof(CompiledStatsDirty))]
+    [BurstCompile]
     partial struct Job : IJobEntity
     {
         public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings)
@@ -41,7 +44,7 @@ public partial struct CompiledStatsSystem : ISystem
             for (int i = 0; i < rings.Length; i++)
                 stats.Add(rings[i].Stats);
             statsDirty.ValueRW = false;
-            Game.SetCacheDirty(entity);
+            GameEvents.Trigger(GameEvents.Type.InventoryChanged, entity);
         }
     }
 }

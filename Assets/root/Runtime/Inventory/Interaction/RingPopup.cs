@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,6 +10,7 @@ public class RingPopup : Selectable, IPointerClickHandler
     public GameObject InteractionNotification;
     public GameObject HeldHighlight;
     Entity m_LastEntity;
+    public float3 ItemPosition => transform.parent.position;
 
     public void Focus(World world, Entity nearestE)
     {

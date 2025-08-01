@@ -56,7 +56,7 @@ public class ClientDesyncDebugger : MonoBehaviour
                 save.Value.Remove(key);
             }
         }
-        m_Comparison.Dispose();
+        m_Comparison?.Dispose();
     }
     
     [EditorButton]
@@ -141,13 +141,12 @@ public class ClientDesyncDebugger : MonoBehaviour
             };
             
             using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<PlayerControlled, LocalTransform>().WithOptions(EntityQueryOptions.Default).Build(client.m_Game.World.EntityManager);
-            var players = query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-            var transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+            using var entities = query.ToEntityArray(Allocator.Temp);
             
-            point.Players = new LocalTransform[players.Length];
-            for (int i = 0; i < players.Length; i++)
+            point.Players = new LocalTransform[entities.Length];
+            for (int i = 0; i < entities.Length; i++)
             {
-                point.Players[players[i].Index] = transforms[i];
+                point.Players[i] = client.m_Game.World.EntityManager.GetComponentData<LocalTransform>(entities[i]);
             }
             m_Points.Add(point);
         }

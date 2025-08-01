@@ -28,8 +28,8 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         base.OnEnable();
         HandUIController.Attach(this);
         
-        Game.OnClientGameStarted += OnGameStarted;
-        if (Game.ClientGame != null) OnGameStarted(Game.ClientGame);
+        GameEvents.OnEvent += OnGameEvent;
+        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity);
     }
 
     protected override void OnDisable()
@@ -37,22 +37,21 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         base.OnDisable();
         HandUIController.Detach(this);
         
-        Game.OnClientGameStarted -= OnGameStarted;
-        if (Game.ClientGame != null) Game.ClientGame.OnInventoryUpdated -= OnInventoryChanged;
+        GameEvents.OnEvent -= OnGameEvent;
     }
 
-    private void OnGameStarted(Game game)
+    private void OnGameEvent(GameEvents.Type eType, Entity entity)
     {
-        game.OnInventoryUpdated += OnInventoryChanged;
-        if (game.m_PlayerDataCaches.Count > game.PlayerIndex && game.PlayerIndex >= 0)
-            OnInventoryChanged(game.m_PlayerDataCaches[game.PlayerIndex]);
+        if (eType != GameEvents.Type.InventoryChanged) return;
+        if (!GameEvents.TryGetComponent<PlayerControlled>(entity, out var player)) return;
+        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (!GameEvents.TryGetBuffer<Ring>(entity, out var rings)) return;
+        OnInventoryChanged(rings);
     }
 
-    private void OnInventoryChanged(PlayerDataCache player)
+    private void OnInventoryChanged(DynamicBuffer<Ring> rings)
     {
-        if (player.PlayerIndex != Game.ClientGame.PlayerIndex) return;
-        var inventory = player.Rings;
-        Ring.gameObject.SetActive(inventory[FingerIndex].Stats.PrimaryEffect != RingPrimaryEffect.None);
+        Ring.gameObject.SetActive(rings[FingerIndex].Stats.PrimaryEffect != RingPrimaryEffect.None);
     }
 
     public override void OnSelect(BaseEventData eventData)
@@ -94,20 +93,20 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         else if (HandUIController.LastPressed is FingerUI otherfinger)
         {
             // Perform a swap + deselect both
-            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, otherfinger.FingerIndex, this.FingerIndex));
+            Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, (byte)otherfinger.FingerIndex, (byte)this.FingerIndex));
             HandUIController.LastPressed = null;
         }
         else if (HandUIController.LastPressed is RingPopup ringPopup)
         {
             // Perform a swap + deselect both
-            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, byte.MaxValue, this.FingerIndex));
+            Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, byte.MaxValue, (byte)this.FingerIndex, ringPopup.ItemPosition));
             HandUIController.LastPressed = null;
             HandUIController.SetState(HandUIController.State.Closed);
         }
         else if (HandUIController.LastPressed is LootPopupOption lootOption)
         {
             // Perform a swap + deselect both
-            Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, Rpc_PlayerAdjustInventory.GetFloorIndexByte(lootOption.OptionIndex), this.FingerIndex));
+            Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, GameRpc.GetFloorIndexByte(lootOption.OptionIndex), (byte)this.FingerIndex, lootOption.ItemPosition));
             HandUIController.LastPressed = null;
             HandUIController.SetState(HandUIController.State.Closed);
         }
@@ -140,7 +139,7 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
                 if (newState == HandUIController.State.Neutral)
                 {
                     // Do the 'drop item' transaction
-                    Game.ClientGame.RpcSendBuffer.Enqueue(SpecialLockstepActions.Rpc_PlayerAdjustInventory(Game.ClientGame.PlayerIndex, this.FingerIndex, byte.MaxValue));
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, (byte)this.FingerIndex, byte.MaxValue));
                 }
                 HandUIController.LastPressed = null;
             }

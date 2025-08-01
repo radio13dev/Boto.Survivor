@@ -72,7 +72,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     private NativeReference<StepInput> m_FrameInput;
     private NativeQueue<FullStepData> m_ServerMessageBuffer;
     private NativeQueue<GenericMessage> m_GenericMessageBuffer;
-    private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
+    private NativeArray<GameRpc> m_SpecialActionArr;
 
     private NativeList<byte> m_SaveBuffer;
 
@@ -93,7 +93,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         m_ServerMessageBuffer = new NativeQueue<FullStepData>(Allocator.Persistent);
         m_GenericMessageBuffer = new NativeQueue<GenericMessage>(Allocator.Persistent);
         m_SaveBuffer = new NativeList<byte>(Allocator.Persistent);
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(k_MaxSpecialActionCount, Allocator.Persistent);
+        m_SpecialActionArr = new NativeArray<GameRpc>(k_MaxSpecialActionCount, Allocator.Persistent);
     }
 
     private void OnDestroy()
@@ -191,7 +191,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     {
         public NetworkDriver.Concurrent Driver;
         public NetworkConnection Connection;
-        public SpecialLockstepActions Rpc;
+        public GameRpc Rpc;
 
         public void Execute()
         {
@@ -224,7 +224,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         public NativeQueue<FullStepData> ServerMessageBuffer;
         public NativeQueue<GenericMessage>.ParallelWriter GenericMessageBuffer;
         public NativeList<byte> SaveBuffer;
-        public NativeArray<SpecialLockstepActions> SpecialActionsArray;
+        public NativeArray<GameRpc> SpecialActionsArray;
         public long Now;
 
         public void Execute()
@@ -253,7 +253,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                         switch (reader.ReadByte())
                         {
                             case PingServerBehaviour.CODE_SendStep:
-                                var stepData = FullStepData.Read(ref reader, (SpecialLockstepActions*)SpecialActionsArray.GetUnsafePtr());
+                                var stepData = FullStepData.Read(ref reader, (GameRpc*)SpecialActionsArray.GetUnsafePtr());
                                 ServerMessageBuffer.Enqueue(stepData);
                                 //NetworkPing.ClientPingTimes.Data.Add((Now, (int)stepData.Step));
                                 break;
@@ -356,7 +356,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                     (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && 
                     ClientDesyncDebugger.CanExecuteStep(m_ServerMessageBuffer.Peek().Step) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
-                    m_Game.ApplyStepData(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1), msg, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
+                    m_Game.ApplyStepData(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1), msg, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
                 }
                 else if (!ready) m_Game.World.Update(); // Completes save loading

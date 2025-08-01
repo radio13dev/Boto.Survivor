@@ -83,6 +83,8 @@ public struct FullStepData
             if (index == 3) P3 = value;
         }
     }
+    
+    public int Length => PingServerBehaviour.k_MaxPlayerCount;
 
     public FullStepData(long step, NativeArray<Client> connections) : this()
     {
@@ -99,7 +101,7 @@ public struct FullStepData
 
     public bool HasData => Step != 0;
 
-    public unsafe void Write(ref DataStreamWriter writer, byte extraActionCount, SpecialLockstepActions* extraActionPtr)
+    public unsafe void Write(ref DataStreamWriter writer, byte extraActionCount, GameRpc* extraActionPtr)
     {
         writer.WriteLong(Step);
         
@@ -112,7 +114,7 @@ public struct FullStepData
                 extraActionPtr[i].Write(ref writer);
     }
 
-    public static unsafe FullStepData Read(ref DataStreamReader reader, SpecialLockstepActions* extraActionPtr)
+    public static unsafe FullStepData Read(ref DataStreamReader reader, GameRpc* extraActionPtr)
     {
         FullStepData result = new();
         result.Step = reader.ReadLong();
@@ -122,7 +124,7 @@ public struct FullStepData
         result.ExtraActionCount = reader.ReadByte();
         if (result.ExtraActionCount > 0)
             for (byte i = 0; i < result.ExtraActionCount; i++)
-                extraActionPtr[i] = SpecialLockstepActions.Read(ref reader);
+                extraActionPtr[i] = GameRpc.Read(ref reader);
                 
         return result;
     }

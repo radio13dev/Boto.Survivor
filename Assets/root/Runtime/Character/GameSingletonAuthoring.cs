@@ -7,7 +7,6 @@ using Random = Unity.Mathematics.Random;
 /// Holds all the singleton data for the running game:
 ///     StepController, SharedRandom, EnemySpawningEnabled, etc...
 /// </summary>
-[Save]
 public struct GameSingleton : IComponentData { }
 
 [Save]
@@ -23,7 +22,7 @@ public struct SharedRandom : IComponentData
 }
 
 [Save]
-public struct EnemySpawningEnabled : IComponentData { }
+public struct EnemySpawningEnabled : IComponentData, IEnableableComponent { }
 
 
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
@@ -53,10 +52,10 @@ public class GameSingletonAuthoring : MonoBehaviour
             
             AddComponent<GameSingleton>(entity);
             AddComponent<StepController>(entity);
-            AddComponent<SharedRandom>(entity);
+            AddComponent<SharedRandom>(entity, new SharedRandom(){ Random = Random.CreateFromIndex(0) });
             
-            if (authoring.EnemySpawningEnabled)
-                AddComponent<EnemySpawningEnabled>(entity);
+            AddComponent<EnemySpawningEnabled>(entity);
+            SetComponentEnabled<EnemySpawningEnabled>(entity, authoring.EnemySpawningEnabled);
         }
     }
 }
