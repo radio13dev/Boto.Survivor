@@ -9,7 +9,6 @@ public struct GameManager : IComponentData
     {
         public Entity ProjectileTemplate;
         public Entity SurvivorTemplate;
-        public Entity EnemyTemplate;
         public Entity ItemDropTemplate;
         public Entity LootDropTemplate;
         
@@ -60,13 +59,18 @@ public struct GameManager : IComponentData
     {
         public Entity Entity;
     }
+    
+    public struct Enemies : IBufferElementData
+    {
+        public Entity Entity;
+        public int Chance;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
     public GameObject ProjectileTemplate;
     public GameObject SurvivorTemplate;
-    public GameObject EnemyTemplate;
     public GameObject Projectile_Survivor_Laser;
     
     public RingItemAuthoring ItemDropTemplate;
@@ -77,6 +81,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public ParticleDatabase ParticleDatabase;
     public TerrainAuthoring[] Terrains;
     public ProjectileAuthoring[] Projectiles;
+    public EnemyCharacterAuthoring[] Enemies;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -88,7 +93,6 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             {
                 ProjectileTemplate = GetEntity(authoring.ProjectileTemplate, TransformUsageFlags.WorldSpace),
                 SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
-                EnemyTemplate = GetEntity(authoring.EnemyTemplate, TransformUsageFlags.WorldSpace),
                 Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace),
                 ItemDropTemplate = GetEntity(authoring.ItemDropTemplate, TransformUsageFlags.WorldSpace),
                 LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace)
@@ -137,6 +141,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Projectiles.Length; i++)
                 {
                     buffer.Add(new GameManager.Projectiles(){ Entity = GetEntity(authoring.Projectiles[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Enemies?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Enemies>(entity);
+                for (int i = 0; i < authoring.Enemies.Length; i++)
+                {
+                    buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace), Chance = authoring.Enemies[i].Chance });
                 }
             }
         }

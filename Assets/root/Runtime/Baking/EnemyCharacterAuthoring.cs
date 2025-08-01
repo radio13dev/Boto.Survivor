@@ -7,6 +7,9 @@ public class EnemyCharacterAuthoring : MonoBehaviour
     public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(10);
     
+    [Range(0,100)]
+    public int Chance;
+    
     partial class Baker : Baker<EnemyCharacterAuthoring>
     {
         public override void Bake(EnemyCharacterAuthoring authoring)
