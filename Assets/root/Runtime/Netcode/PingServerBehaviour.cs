@@ -38,8 +38,11 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
     public const byte CODE_SendId = 0b0000_0010;
-    
+
     public static event Action OnLobbyHostStart;
+    
+    public override bool Idle => m_Idle;
+    public string JoinCode;
 
     private BiggerDriver m_ServerDriver;
     private NativeArray<Client> m_ServerConnections;
@@ -49,13 +52,10 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     private NativeArray<byte> m_SaveBuffer;
 
-    private float m_CumulativeTime;
-
     // Handle to the job chain of the ping server. We need to keep this around so that we can
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ServerJobHandle;
-    internal Game m_Game;
-    public string JoinCode;
+    private bool m_Idle;
 
     private void Start()
     {
@@ -68,7 +68,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     private void OnDestroy()
     {
-        m_Game?.Dispose();
+        Game?.Dispose();
 
         if (m_ServerDriver.IsCreated)
         {
@@ -266,20 +266,20 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             m_ServerJobHandle.Complete();
 
             SaveLoop:
-            var saveState = m_Game.SaveState;
+            var saveState = Game.SaveState;
             for (int i = 0; i < m_ServerConnections.Length; i++)
                 if (m_ServerConnections[i].RequestedSave)
                 {
                     if (saveState == SaveState.Idle)
                     {
-                        m_Game.InitSave();
+                        Game.InitSave();
                         goto SaveLoop;
                     }
 
                     if (saveState == SaveState.Saving)
                     {
                         Debug.Log("... saving...");
-                        m_Game.Update_NoLogic();
+                        Game.Update_NoLogic();
                         goto SaveLoop;
                     }
 
@@ -294,7 +294,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                     }
                 }
 
-            if (saveState == SaveState.Ready) m_Game.CleanSave();
+            if (saveState == SaveState.Ready) Game.CleanSave();
 
             // Create the jobs first.
             var updateJob = new ConnectionsRelayUpdateJob
@@ -310,52 +310,53 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                 SpecialActionQueue = m_SpecialActionQueue.AsParallelWriter()
             };
 
-            if (!m_Game.IsReady)
+            if (!Game.IsReady)
             {
-                m_Game.Update_NoLogic();
+                Game.Update_NoLogic();
             }
-            else if (m_ServerConnections.Length > 0 || m_Game.PlayerIndex != -1)
+            else
             {
-                if (m_Game.PlayerIndex != -1)
+                m_Idle = true;
+                if (m_ServerConnections.Length > 0 || Game.PlayerIndex != -1)
                 {
-                    var old = m_ServerConnections[m_Game.PlayerIndex];
-                    old.InputBuffer.Collect(Camera.main);
-                    m_ServerConnections[m_Game.PlayerIndex] = old;
-                }
-
-                m_CumulativeTime += Time.deltaTime;
-                if (m_CumulativeTime >= Game.k_ServerPingFrequency && ClientDesyncDebugger.CanExecuteStep(m_ServerToClient.Value.Step + 1))
-                {
-                    m_CumulativeTime = math.min(m_CumulativeTime - Game.k_ServerPingFrequency, Game.k_ServerPingFrequency);
-
-                    eventsJobs.ServerToClient = m_ServerToClient;
-
-                    // Iterate index + read inputs
-                    var newStepData = new FullStepData(m_Game.Step + 1, m_ServerConnections);
-
-                    // If we're connected, clear our buffer.
-                    if (m_Game.PlayerIndex != -1)
+                    if (Game.PlayerIndex != -1)
                     {
-                        var old = m_ServerConnections[m_Game.PlayerIndex];
-                        old.InputBuffer = default;
-                        m_ServerConnections[m_Game.PlayerIndex] = old;
+                        var old = m_ServerConnections[Game.PlayerIndex];
+                        old.InputBuffer.Collect(Camera.main);
+                        m_ServerConnections[Game.PlayerIndex] = old;
                     }
 
-                    // Load special actions
-                    m_SpecialActionList.Clear();
-                    while (m_SpecialActionList.Length < PingClientBehaviour.k_MaxSpecialActionCount && m_SpecialActionQueue.TryDequeue(out var act))
-                        m_SpecialActionList.Add(act);
-                    eventsJobs.SpecialActions = m_SpecialActionList.AsArray();
-                    newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
+                    if (Game.CanStep() && ClientDesyncDebugger.CanExecuteStep(m_ServerToClient.Value.Step + 1))
+                    {
+                        eventsJobs.ServerToClient = m_ServerToClient;
 
-                    // Update server sim
-                    m_Game.ApplyStepData(m_CumulativeTime/Game.k_ServerPingFrequency, newStepData, (GameRpc*)eventsJobs.SpecialActions.GetUnsafePtr());
-                    m_ServerToClient.Value = newStepData;
-                    NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
-                }
-                else
-                {
-                    m_Game.ApplyRender(math.clamp(m_CumulativeTime / Game.k_ServerPingFrequency, 0, 1));
+                        // Iterate index + read inputs
+                        var newStepData = new FullStepData(Game.Step + 1, m_ServerConnections);
+
+                        // If we're connected, clear our buffer.
+                        if (Game.PlayerIndex != -1)
+                        {
+                            var old = m_ServerConnections[Game.PlayerIndex];
+                            old.InputBuffer = default;
+                            m_ServerConnections[Game.PlayerIndex] = old;
+                        }
+
+                        // Load special actions
+                        m_SpecialActionList.Clear();
+                        while (m_SpecialActionList.Length < PingClientBehaviour.k_MaxSpecialActionCount && m_SpecialActionQueue.TryDequeue(out var act))
+                            m_SpecialActionList.Add(act);
+                        eventsJobs.SpecialActions = m_SpecialActionList.AsArray();
+                        newStepData.ExtraActionCount = (byte)eventsJobs.SpecialActions.Length;
+
+                        // Update server sim
+                        Game.ApplyStepData(newStepData, (GameRpc*)eventsJobs.SpecialActions.GetUnsafePtr());
+                        m_ServerToClient.Value = newStepData;
+                        NetworkPing.ServerPingTimes.Data.Add((DateTime.Now, (int)newStepData.Step));
+                    }
+                    else
+                    {
+                        Game.ApplyRender();
+                    }
                 }
             }
 
@@ -378,7 +379,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         }
 
         writer.WriteByte(PingServerBehaviour.CODE_SendSave);
-        m_Game.SendSave(ref writer);
+        Game.SendSave(ref writer);
         result = Driver.Driver.EndSend(writer);
         if (result < 0)
         {
@@ -416,8 +417,8 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
             {
                 m_SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)i));
-                m_Game.PlayerIndex = i;
-                
+                Game.PlayerIndex = i;
+
                 m_ServerConnections.ElementAt(i).Disabled = true;
                 return;
             }

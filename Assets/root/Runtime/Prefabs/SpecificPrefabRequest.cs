@@ -91,6 +91,11 @@ public partial struct SpecificPrefabTrackSystem : ISystem
         m_query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, SpecificPrefabProxy, SpecificPrefabRequest.DynamicTag>().Build();
     }
 
+    public void OnDestroy(ref SystemState state)
+    {
+        if (m_AccessArray.isCreated) m_AccessArray.Dispose();
+    }
+
     public void OnUpdate(ref SystemState state)
     {
         var transforms = m_query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
@@ -100,6 +105,7 @@ public partial struct SpecificPrefabTrackSystem : ISystem
         for (int i = 0; i < proxies.Length; i++)
             proxyTransforms[i] = proxies[i].Spawned.Value.transform;
             
+        if (m_AccessArray.isCreated) m_AccessArray.Dispose();
         m_AccessArray = new TransformAccessArray(proxyTransforms);
 
         // Initialize the job data

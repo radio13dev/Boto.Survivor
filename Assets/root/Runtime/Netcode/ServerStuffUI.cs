@@ -16,86 +16,55 @@ public class ServerStuffUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameLaunch.OnLobbyJoinStart += RefreshLobbyCodeDisplay;
+        PingClientBehaviour.OnLobbyJoinStart += RefreshLobbyCodeDisplay;
         PingServerBehaviour.OnLobbyHostStart += RefreshLobbyCodeDisplay;
         RefreshLobbyCodeDisplay();
     }
 
     private void OnDisable()
     {
-        GameLaunch.OnLobbyJoinStart -= RefreshLobbyCodeDisplay;
+        PingClientBehaviour.OnLobbyJoinStart -= RefreshLobbyCodeDisplay;
         PingServerBehaviour.OnLobbyHostStart -= RefreshLobbyCodeDisplay;
     }
 
     private void Update()
     {
-        HostLobbyButton.SetActive(GameLaunch.IsSingleplayer);
-        ConnectButton.SetActive(GameLaunch.IsSingleplayer);
-        DisconnectButton.SetActive(GameLaunch.IsServer || GameLaunch.IsClient);
-        LobbyCodeButton.SetActive(GameLaunch.IsServer || GameLaunch.IsSingleplayer);
-        ResyncButton.SetActive(GameLaunch.IsClient);
+        HostLobbyButton.SetActive(GameLaunch.Main.IsSingleplayer);
+        ConnectButton.SetActive(GameLaunch.Main.IsSingleplayer);
+        DisconnectButton.SetActive(GameLaunch.Main.IsServer || GameLaunch.Main.IsClient);
+        LobbyCodeButton.SetActive(GameLaunch.Main.IsServer || GameLaunch.Main.IsSingleplayer);
+        ResyncButton.SetActive(GameLaunch.Main.IsClient);
     }
     
     public void OnHostLobbyButton()
     {
-        var potentialClient = Object.FindAnyObjectByType<SingleplayerBehaviour>();
-        if (potentialClient) potentialClient.Host();
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.CreateServer());
     }
     
     public void OnConnectButton()
     {
-        GameLaunch.JoinLobby(LobbyField.text);
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinLobby(LobbyField.text));
+        
     }
     
     public void OnDisconnectButton()
     {
-        bool shouldLaunchSingleplayer = !GameLaunch.IsSingleplayer;
-        if (shouldLaunchSingleplayer)
-        {
-            var potentialClient = Object.FindAnyObjectByType<PingClientBehaviour>();
-            if (potentialClient)
-            {
-                potentialClient.m_Game.CleanForSingleplayer();
-                GameLaunch.StartSingleplayer(potentialClient.m_Game);
-                potentialClient.m_Game = null;
-            }
-            else
-            {
-                var potentialServer = Object.FindAnyObjectByType<PingServerBehaviour>();
-                if (potentialServer)
-                {
-                    potentialServer.m_Game.CleanForSingleplayer();
-                    GameLaunch.StartSingleplayer(potentialServer.m_Game);
-                    potentialServer.m_Game = null;
-                }
-            }
-        }
-        
-        var pingClients = Object.FindObjectsByType<PingClientBehaviour>(FindObjectsSortMode.None);
-        foreach (var client in pingClients)
-            Destroy(client);
-            
-        var pingServers = Object.FindObjectsByType<PingServerBehaviour>(FindObjectsSortMode.None);
-        foreach (var server in pingServers)
-            Destroy(server);
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.Disconnect());
     }
     
     public void OnResyncButton()
     {
-        var pingClients = Object.FindObjectsByType<PingClientBehaviour>(FindObjectsSortMode.None);
-        foreach (var client in pingClients)
-            client.RequestNewSave();
+        GameLaunch.Main.Client.RequestNewSave();
     }
     
     public void RefreshLobbyCodeDisplay()
     {
-        LobbyField.text = GameLaunch.LastJoinCode;
-        LobbyCodeText.text = Object.FindAnyObjectByType<PingServerBehaviour>()?.JoinCode;
+        LobbyCodeText.text = GameLaunch.Main.Server?.JoinCode ?? GameLaunch.Main.Client?.JoinCode;
     }
     
     public void OnCopyLobbyCodeButton()
     {
-        ClipboardBridge.CopyToClipboard(Object.FindAnyObjectByType<PingServerBehaviour>()?.JoinCode ?? GameLaunch.LastJoinCode);
+        ClipboardBridge.CopyToClipboard(GameLaunch.Main.Server?.JoinCode);
         Debug.Log($"Copied lobby code: {LobbyField.text}");
     }
 }

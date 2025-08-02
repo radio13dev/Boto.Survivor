@@ -27,20 +27,33 @@ public enum GameType
     Server,
 }
 
+public interface IGameFactory
+{
+    Game Invoke();
+}
+
+public class GameFactory : IGameFactory
+{
+    public bool ShowVisuals;
+    public IStepProvider StepProvider;
+
+    public GameFactory(bool showVisuals = true, IStepProvider stepProvider = null)
+    {
+        ShowVisuals = showVisuals;
+        StepProvider = stepProvider ?? new RateStepProvider();
+    }
+
+    public Game Invoke()
+    {
+        return new Game(ShowVisuals, StepProvider);
+    }
+}
+
 [Preserve]
 public class Game : IDisposable
 {
-    public const float k_ClientPingFrequency = 1.0f / 60.0f;
-    public const float k_ServerPingFrequency = 1.0f / 60.0f;
-
+    public const double DefaultDt = 1.0f / 60.0d;
     public static bool ConstructorReady => SceneManager.Ready;
-
-    public static Game ServerGame
-    {
-        get => s_ServerGame;
-        set => s_ServerGame = value;
-    }
-    static Game s_ServerGame;
 
     public static Game ClientGame
     {
@@ -56,13 +69,13 @@ public class Game : IDisposable
     public int PlayerIndex = -1;
     public long Step => m_StepController.GetSingleton<StepController>().Step;
 
+    private IStepProvider m_StepProvider;
     private bool m_ShowVisuals;
     private World m_World;
     private EntityQuery m_SaveRequest;
     private EntityQuery m_SaveBuffer;
     private EntityQuery m_RenderSystemHalfTime;
     private EntityQuery m_StepController;
-    public float HalfTime;
     private SystemHandle m_RenderSystemGroup;
 
     public NativeQueue<GameRpc> RpcSendBuffer;
@@ -114,8 +127,10 @@ public class Game : IDisposable
         m_SaveStarted = false;
     }
 
-    public Game(bool showVisuals)
+    public Game(bool showVisuals, IStepProvider stepProvider)
     {
+        m_StepProvider = stepProvider;
+    
         Debug.Log($"Creating Game...");
         m_World = new World("Game", WorldFlags.Game);
         var systems = DefaultWorldInitialization
@@ -211,8 +226,15 @@ public class Game : IDisposable
         m_Ready = false; // Unset ready.
     }
 
-    public unsafe void ApplyStepData(float halfTime, FullStepData stepData, GameRpc* extraActionPtr)
+    public bool CanStep()
     {
+        return m_StepProvider.CanStep(this);
+    }
+
+    public unsafe void ApplyStepData(FullStepData stepData, GameRpc* extraActionPtr)
+    {
+        m_StepProvider.ExecuteStep();
+    
         if (!m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled)
         {
             Debug.LogError($"Failed step, tried to go to step {stepData.Step} but simulation disabled.");
@@ -238,11 +260,10 @@ public class Game : IDisposable
         }
 
         // Setup time for the frame
-        m_World.SetTime(new TimeData(stepData.Step * (double)Game.k_ClientPingFrequency, Game.k_ClientPingFrequency));
+        m_World.SetTime(new TimeData(stepData.Step * Game.DefaultDt, (float)Game.DefaultDt));
         if (m_ShowVisuals)
         {
-            m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = halfTime });
-            HalfTime = halfTime;
+            m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = m_StepProvider.HalfTime });
         }
 
         // Apply extra actions
@@ -279,10 +300,9 @@ public class Game : IDisposable
             m_World.Update();
     }
 
-    public void ApplyRender(float t)
+    public void ApplyRender()
     {
-        m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = t });
-        HalfTime = t;
+        m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = m_StepProvider.HalfTime });
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }
 
@@ -377,8 +397,17 @@ public static class GameEvents
     static readonly SharedStatic<NativeQueue<(Type, Entity)>> s_EventQueue = SharedStatic<NativeQueue<(Type, Entity)>>.GetOrCreate<NativeQueue<(Type, Entity)>, EventQueueKey>();
     private class EventQueueKey { }
     
+    static bool m_Initialized;
+    
     public static void Initialize()
     {
+        if (m_Initialized)
+        {
+            throw new Exception($"{nameof(GameEvents)}.{nameof(Initialize)}() ran multiple times.");
+            return;
+        }
+    
+        m_Initialized = true;
         s_EventQueue.Data = new NativeQueue<(Type, Entity)>(Allocator.Persistent);
     }
     

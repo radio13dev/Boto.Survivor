@@ -3217,7 +3217,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767886014}
   m_LocalRotation: {x: 0, y: 0, z: -8.881783e-16, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.0013823387}
+  m_LocalPosition: {x: 0, y: 0, z: 0.0013662673}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5807,7 +5807,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 209033755855378390, guid: bf2fc34c00dad504198761cc3ae51eb5, type: 2}
-  m_audioClip: {fileID: 8300000, guid: b5c8826b03b57724392319995f2ab5d1, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b5c8826b03b57724392319995f2ab5d1, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -6011,6 +6011,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1337659302}
+  - component: {fileID: 1337659309}
   - component: {fileID: 1337659308}
   - component: {fileID: 1337659307}
   m_Layer: 0
@@ -6061,6 +6062,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc566cad99103134387e96a49229ff24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::GameLaunch
+--- !u!114 &1337659309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337659301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 701d5213ba9840e7845a62bb72499917, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GameInitialize
 --- !u!1 &1338831771
 GameObject:
   m_ObjectHideFlags: 0
@@ -6511,7 +6524,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 8574689041644491879, guid: bf2fc34c00dad504198761cc3ae51eb5, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 0011288746152b044b6c723617951862, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 0011288746152b044b6c723617951862, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1

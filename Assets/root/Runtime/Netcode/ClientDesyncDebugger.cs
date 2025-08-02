@@ -19,7 +19,7 @@ using Random = UnityEngine.Random;
 public class ClientDesyncDebugger : MonoBehaviour
 {
     [FormerlySerializedAs("TextPrefab")] public DebugTextDisplay textDisplayPrefab;
-    Dictionary<PingClientBehaviour, StateData> m_ClientStates = new Dictionary<PingClientBehaviour, StateData>();
+    Dictionary<GameHostBehaviour, StateData> m_ClientStates = new Dictionary<GameHostBehaviour, StateData>();
     Dictionary<Game, Dictionary<long, List<NativeArray<byte>>>> m_GameSaves = new();
     
     public bool ManualUpdates = false;
@@ -84,16 +84,16 @@ public class ClientDesyncDebugger : MonoBehaviour
     
         // Update our client list
         long step = long.MaxValue;
-        HashSet<PingClientBehaviour> toDelete = new(m_ClientStates.Keys);
-        foreach (var client in FindObjectsByType<PingClientBehaviour>(FindObjectsSortMode.None))
+        HashSet<GameHostBehaviour> toDelete = new(m_ClientStates.Keys);
+        foreach (var client in FindObjectsByType<GameHostBehaviour>(FindObjectsSortMode.None))
         {
-            if (client.m_Game == null || !client.m_Game.IsReady) continue;
+            if (!client.Idle || client.Game == null) continue;
             
             if (!m_ClientStates.TryGetValue(client, out var state))
             {
                 state = m_ClientStates[client] = new StateData();
             }
-            step = math.min(step, client.m_Game.World.EntityManager.GetSingleton<StepController>().Step);
+            step = math.min(step, client.Game.World.EntityManager.GetSingleton<StepController>().Step);
             toDelete.Remove(client);
         }
         
@@ -108,7 +108,7 @@ public class ClientDesyncDebugger : MonoBehaviour
         int i = 0;
         foreach (var client in m_ClientStates)
         {
-            client.Value.Collect(client.Key);
+            client.Value.Collect(client.Key.Game);
             client.Value.ClearObsolete(step);
             client.Value.UpdateDisplay(textDisplayPrefab, step);
             i++;
@@ -127,9 +127,9 @@ public class ClientDesyncDebugger : MonoBehaviour
         
         List<Point> m_Points = new List<Point>();
     
-        public void Collect(PingClientBehaviour client)
+        public void Collect(Game game)
         {
-            if (m_Points.Count > 0 && m_Points[^1].Step == client.m_Game.World.EntityManager.GetSingleton<StepController>().Step)
+            if (m_Points.Count > 0 && m_Points[^1].Step == game.World.EntityManager.GetSingleton<StepController>().Step)
             {
                 // Already collected for this step
                 return;
@@ -137,16 +137,16 @@ public class ClientDesyncDebugger : MonoBehaviour
             
             var point = new Point
             {
-                Step = client.m_Game.World.EntityManager.GetSingleton<StepController>().Step
+                Step = game.World.EntityManager.GetSingleton<StepController>().Step
             };
             
-            using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<PlayerControlled, LocalTransform>().WithOptions(EntityQueryOptions.Default).Build(client.m_Game.World.EntityManager);
+            using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<PlayerControlled, LocalTransform>().WithOptions(EntityQueryOptions.Default).Build(game.World.EntityManager);
             using var entities = query.ToEntityArray(Allocator.Temp);
             
             point.Players = new LocalTransform[entities.Length];
             for (int i = 0; i < entities.Length; i++)
             {
-                point.Players[i] = client.m_Game.World.EntityManager.GetComponentData<LocalTransform>(entities[i]);
+                point.Players[i] = game.World.EntityManager.GetComponentData<LocalTransform>(entities[i]);
             }
             m_Points.Add(point);
         }
@@ -342,11 +342,12 @@ public class GameCompare : IDisposable
         {
             var i = index == -1 ? ^1 : index;
         
-            var tempSaveGame = new Game(true);
-            m_Comparisons.Add(tempSaveGame);
-            var saveData = save.Value[step][i];
-            tempSaveGame.LoadSave(saveData);
-            tempSaveGame.LoadScenes();
+            throw new NotImplementedException();
+            //var tempSaveGame = new Game(true);
+            //m_Comparisons.Add(tempSaveGame);
+            //var saveData = save.Value[step][i];
+            //tempSaveGame.LoadSave(saveData);
+            //tempSaveGame.LoadScenes();
         }
         
         m_ComparisonTask = CoroutineHost.Instance.StartCoroutine(StateLoadCo());
@@ -416,7 +417,7 @@ public class GameCompare : IDisposable
     public void Update_Render()
     {
         for (int i = 0; i < m_Comparisons.Count; i++)
-            m_Comparisons[i].ApplyRender(0);
+            m_Comparisons[i].ApplyRender();
     }
 }
 

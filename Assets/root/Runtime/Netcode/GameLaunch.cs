@@ -1,91 +1,87 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-public class GameHostBehaviour : MonoBehaviour
+public abstract class GameHostBehaviour : MonoBehaviour
 {
-    
+    public Game Game { get; set; }
+    public abstract bool Idle { get; }
+    public bool WaitingForStep => Game != null && !Game.CanStep();
 }
 
 public class GameLaunch : MonoBehaviour
 {
-    static GameLaunch _instance;
-    public static string LastJoinCode;
-    public static bool IsSingleplayer => _instance && _instance.GetComponents<SingleplayerBehaviour>().Length > 0;
-    public static bool IsServer => _instance && _instance.GetComponents<PingServerBehaviour>().Length > 0;
-    public static bool IsClient => _instance && _instance.GetComponents<PingClientBehaviour>().Length > 0;
-    public static event Action OnLobbyJoinStart;
-    
-    static Queue<Action> _actionQueue = new();
+    public static GameLaunch Main;
+
+    public bool Idle => Game.ConstructorReady && GetComponents<GameHostBehaviour>().All(b => b.Idle);
+    public bool IsSingleplayer => GetComponent<SingleplayerBehaviour>() is { } singleplayer && singleplayer && singleplayer.Idle;
+    public bool IsClient => GetComponent<PingClientBehaviour>() is { } client && client && client.Idle;
+    public bool IsServer => GetComponent<PingServerBehaviour>() is { } server && server && server.Idle;
+
+    public SingleplayerBehaviour Singleplayer => GetComponent<SingleplayerBehaviour>();
+    public PingClientBehaviour Client => GetComponent<PingClientBehaviour>();
+    public PingServerBehaviour Server => GetComponent<PingServerBehaviour>();
+
+    public bool Initialized;
+    IGameFactory m_GameFactory;
+
+    public static GameLaunch Create(IGameFactory factory)
+    {
+        var gameLaunch = new GameObject(nameof(GameLaunch), typeof(GameLaunch)).GetComponent<GameLaunch>();
+        gameLaunch.m_GameFactory = factory;
+        return gameLaunch;
+    }
 
     private IEnumerator Start()
     {
-        DontDestroyOnLoad(this);
-        
-        GameEvents.Initialize();
-        
-        yield return new WaitUntil(() => Game.ConstructorReady);
-        _instance = this;
-        while (_actionQueue.Count > 0)
-        {
-            var action = _actionQueue.Dequeue();
-            action?.Invoke();
-        }
+        Main = this;
+
+        if (!Idle) yield return new WaitUntil(() => Idle);
         if (gameObject.GetComponents<GameHostBehaviour>().Length > 0)
         {
             Debug.Log($"Game already launched, likely joined lobby.");
+            Initialized = true;
             yield break;
         }
-        StartSingleplayer(new Game(true));
+
+        yield return StartSingleplayer(m_GameFactory.Invoke());
+        Initialized = true;
     }
 
-    private void OnDestroy()
+    public IEnumerator StartSingleplayer(Game game)
     {
-        GameEvents.Dispose();
-    }
+        if (!Idle) yield return new WaitUntil(() => Idle);
 
-    public static void StartSingleplayer(Game game)
-    {
-        var oldSingleplayers = _instance.GetComponents<SingleplayerBehaviour>();
+        var oldSingleplayers = GetComponents<SingleplayerBehaviour>();
         foreach (var singleplayer in oldSingleplayers)
             Destroy(singleplayer);
-            
-        var newSingleplayer = _instance.gameObject.AddComponent<SingleplayerBehaviour>();
-        newSingleplayer.m_Game = game;
+
+        var newSingleplayer = gameObject.AddComponent<SingleplayerBehaviour>();
+        newSingleplayer.Game = game;
         Game.ClientGame = game;
-    }
-    
-    public static void JoinLobby(string lobbyCode)
-    {
-        LastJoinCode = lobbyCode;
-        Execute(i => i._JoinLobby(lobbyCode));
+
+        if (!Idle) yield return new WaitUntil(() => Idle);
     }
 
-    private static void Execute(Action<GameLaunch> func)
+    public IEnumerator JoinLobby(string lobbyCode)
     {
-        if (!_instance) _actionQueue.Enqueue(() => func(_instance));
-        else func(_instance);
-    }
+        if (!Idle) yield return new WaitUntil(() => Idle);
 
-    [EditorButton]
-    void _JoinLobby(string lobbyCode)
-    {
-        OnLobbyJoinStart?.Invoke();
         // Start a new game, attempting to load data from the lobby code
         var newClient = gameObject.AddComponent<PingClientBehaviour>();
-        newClient.m_Game = new Game(true);
         newClient.StartCoroutine(
-            newClient.Connect(lobbyCode, 
+            newClient.Connect(m_GameFactory, lobbyCode,
                 // Called after the game is downloaded from the server
                 OnGameLoad: () =>
                 {
                     // Make the new game active
-                    Game.ClientGame = newClient.m_Game;
-                    
+                    Game.ClientGame = newClient.Game;
+
                     // Destroy any existing games
                     foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
                     {
@@ -97,29 +93,59 @@ public class GameLaunch : MonoBehaviour
                 // Called if a failure occurs before the game has loaded
                 OnFailureBeforeLoad: () =>
                 {
-                    Debug.LogError($"Failed to join lobby {lobbyCode}");
                     Destroy(newClient);
-                    
-                    if (gameObject.GetComponents<GameHostBehaviour>().Length == 0)
+
+                    if (!Singleplayer)
                     {
                         Debug.LogWarning($"No game running, launching singleplayer game as fallback...");
-                        var singleplayer = gameObject.AddComponent<SingleplayerBehaviour>();
-                        singleplayer.m_Game = new Game(true);
+                        StartCoroutine(StartSingleplayer(m_GameFactory.Invoke()));
                     }
                 },
                 // Called if a failure occurs after the game has loaded
                 OnFailureAfterLoad: () =>
                 {
-                    var failedGame = newClient.m_Game;
-                    newClient.m_Game = null; // Prevents the game from being destroyed
+                    var failedGame = newClient.Game;
+                    newClient.Game = null; // Prevents the game from being destroyed
                     failedGame.CleanForSingleplayer();
-                    StartSingleplayer(failedGame);
+                    StartCoroutine(StartSingleplayer(failedGame));
                 })
-            );
+        );
+        
+        if (!Idle) yield return new WaitUntil(() => Idle);
     }
-    
+
+    public IEnumerator CreateServer()
+    {
+        if (!Idle) yield return new WaitUntil(() => Idle);
+
+        if (!Singleplayer)
+            yield return StartSingleplayer(m_GameFactory.Invoke());
+            
+        var singleplayer = Singleplayer;
+        var server = gameObject.AddComponent<PingServerBehaviour>();
+        server.Game = Singleplayer.Game;
+        server.StartCoroutine(server.Connect(
+            OnSuccess: () =>
+            {
+                server.AddLocalPlayer();
+                singleplayer.Game = null; // Null out our game so we don't destroy the server when we destroy this component
+                Destroy(singleplayer);
+                Game.ClientGame = server.Game;
+            },
+            OnFailure: () =>
+            {
+                Debug.LogError($"Failed to start server");
+                server.Game = null;
+                Destroy(server);
+            })
+        );
+        
+        if (!Idle) yield return new WaitUntil(() => Idle);
+    }
+
     static Task s_SignInTask;
     public static bool IsSignedIn { get; private set; }
+
     public static async Task SignIn()
     {
         if (s_SignInTask != null && !s_SignInTask.IsCompleted)
@@ -127,7 +153,7 @@ public class GameLaunch : MonoBehaviour
             await s_SignInTask;
             return;
         }
-        
+
         // First sign in
         if (!IsSignedIn)
         {
@@ -145,5 +171,43 @@ public class GameLaunch : MonoBehaviour
             await s_SignInTask;
             s_SignInTask = null;
         }
+    }
+
+    public IEnumerator Disconnect()
+    {
+        if (!Idle) yield return new WaitUntil(() => Idle);
+
+        Game singleplayerGame = null;
+        if (IsClient)
+        {
+            singleplayerGame?.Dispose();
+        
+            // Destroy client, use that world for our singleplayer game
+            var client = Client;
+            singleplayerGame = client.Game ?? singleplayerGame;
+            client.Game = null;
+            Destroy(client);
+            singleplayerGame?.CleanForSingleplayer();
+        }
+
+        if (IsServer)
+        {
+            singleplayerGame?.Dispose();
+        
+            // Destroy server, use that world for our singleplayer game
+            var server = Server;
+            singleplayerGame = server.Game ?? singleplayerGame;
+            server.Game = null;
+            Destroy(server);
+            singleplayerGame?.CleanForSingleplayer();
+        }
+        
+        if (singleplayerGame == null) 
+        {
+            // No game to clean, just start a new singleplayer game
+            singleplayerGame = m_GameFactory.Invoke();
+        }
+        
+        yield return StartSingleplayer(singleplayerGame);
     }
 }

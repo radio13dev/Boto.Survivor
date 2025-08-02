@@ -13,6 +13,12 @@ using Unity.Networking.Transport.Utilities;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 
+public static class ErrorMessage
+{
+    public const string SignInFail = "Failed to sign in.";
+    public const string JoinRelayFail = "Failed to join the Relay allocation.";
+}
+
 public static class Netcode
 {
     public const int k_MaxFragmentSize = 20_000_000;
@@ -67,6 +73,11 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
 
     // Frequency (in seconds) at which to send ping messages.
     public const int k_FrameDelay = 3;
+    
+    public static event Action OnLobbyJoinStart;
+    
+    public override bool Idle => m_Idle;
+    public string JoinCode;
 
     private BiggerDriver m_ClientDriver;
     private NativeReference<StepInput> m_FrameInput;
@@ -79,12 +90,12 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     // Connection and ping statistics. Values that can be modified by a job are stored in
     // NativeReferences since jobs can only modify values in native containers.
     private NativeReference<Server> m_ClientConnection;
-    private float m_CumulativeTime;
 
     // Handle to the job chain of the ping client. We need to keep this around so that we can
     // schedule the jobs in one execution of Update and complete it in the next.
     private JobHandle m_ClientJobHandle;
-    public Game m_Game;
+    private bool m_Idle;
+    private IGameFactory m_GameFactory;
 
     private void Start()
     {
@@ -98,7 +109,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
 
     private void OnDestroy()
     {
-        m_Game?.Dispose();
+        Game?.Dispose();
         
         if (m_ClientDriver.IsCreated)
         {
@@ -121,8 +132,12 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     Action m_OnFailureAfterLoad;
     /// <summary>Start establishing a connection to the server.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect(string joinCode, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
+    public IEnumerator Connect(IGameFactory gameFactory, string joinCode, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
     {
+        m_GameFactory = gameFactory;
+        JoinCode = joinCode;
+        OnLobbyJoinStart?.Invoke();
+        
         this.m_OnGameLoad = OnGameLoad;
         this.m_OnFailureBeforeLoad = OnFailureBeforeLoad;
         this.m_OnFailureAfterLoad = OnFailureAfterLoad;
@@ -132,7 +147,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             yield return null;
         if (signInTask.IsFaulted)
         {
-            Debug.LogError("Failed to sign in.");
+            Debug.LogError(ErrorMessage.SignInFail);
             m_OnFailureBeforeLoad?.Invoke();
             yield break;
         }
@@ -142,7 +157,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             yield return null;
         if (joinTask.IsFaulted)
         {
-            Debug.LogError("Failed to join the Relay allocation.");
+            Debug.LogError(ErrorMessage.JoinRelayFail);
             m_OnFailureBeforeLoad?.Invoke();
             yield break;
         }
@@ -316,26 +331,27 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             if (m_SaveBuffer.Length != 0)
             {
                 Debug.Log($"... loading save {m_SaveBuffer.Length}...");
+                m_Idle = false;
                 
-                if (m_Game == null)
+                if (Game == null)
                 {
                     Debug.Log($"... creating game...");
-                    m_Game = new Game(true);
-                    Game.ClientGame = m_Game;
+                    Game = m_GameFactory.Invoke();
+                    Game.ClientGame = Game;
                 }
-                else if (m_Game.IsReady)
+                else if (Game.IsReady)
                 {
                     // Loading in a new save, delete the old one.
                     Debug.Log($"... overwriting existing game...");
-                    m_Game.Dispose();
-                    m_Game = new Game(true);
-                    Game.ClientGame = m_Game;
+                    Game.Dispose();
+                    Game = m_GameFactory.Invoke();
+                    Game.ClientGame = Game;
                 }
 
                 // Load this in
-                m_Game.LoadSave(m_SaveBuffer.AsArray());
+                Game.LoadSave(m_SaveBuffer.AsArray());
                 m_SaveBuffer.Clear();
-                m_Game.LoadScenes();
+                Game.LoadScenes();
 
                 Debug.Log($"... done.");
                 
@@ -344,31 +360,30 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                 m_OnGameLoad = null;
             }
 
-            m_CumulativeTime += Time.deltaTime;
-            bool shouldSend = m_CumulativeTime >= Game.k_ClientPingFrequency;
-            if (shouldSend) m_CumulativeTime = math.min(m_CumulativeTime - Game.k_ClientPingFrequency, Game.k_ClientPingFrequency);
-
-            if (m_Game != null)
+            bool shouldSend = false;
+            if (Game != null)
             {
-                bool ready = m_Game.IsReady;
+                bool ready = Game.IsReady;
                 if (ready && 
                     m_ServerMessageBuffer.Count > 0 && 
-                    (shouldSend || m_ServerMessageBuffer.Count > k_FrameDelay) && 
+                    (Game.CanStep() || m_ServerMessageBuffer.Count > k_FrameDelay) && 
                     ClientDesyncDebugger.CanExecuteStep(m_ServerMessageBuffer.Peek().Step) && m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
-                    m_Game.ApplyStepData(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1), msg, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
+                    shouldSend = true;
+                    m_Idle = true;
+                    Game.ApplyStepData(msg, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
                 }
-                else if (!ready) m_Game.World.Update(); // Completes save loading
+                else if (!ready) Game.World.Update(); // Completes save loading
                 else
                 {
                     // Render between steps
-                    m_Game.ApplyRender(math.clamp(m_CumulativeTime / Game.k_ClientPingFrequency, 0, 1));
+                    Game.ApplyRender();
                 }
                 
                 while (m_GenericMessageBuffer.TryDequeue(out var message))
                 {
-                    message.Execute(m_Game);
+                    message.Execute(Game);
                 }
             }
 
@@ -397,7 +412,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             {
                 // Send off any queued rpcs
                 NetworkDriver.Concurrent concurrentDriver = m_ClientDriver.Driver.ToConcurrent();
-                while (m_Game != null && m_Game.RpcSendBuffer.TryDequeue(out var rpc))
+                while (Game != null && Game.RpcSendBuffer.TryDequeue(out var rpc))
                 {
                     m_ClientJobHandle = new PingRelayRpcJob()
                     {
@@ -424,4 +439,5 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             m_ClientJobHandle = updateJob.Schedule(m_ClientJobHandle);
         }
     }
+
 }
