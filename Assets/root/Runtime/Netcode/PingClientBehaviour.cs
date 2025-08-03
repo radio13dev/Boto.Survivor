@@ -364,13 +364,13 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             if (Game != null)
             {
                 bool ready = Game.IsReady;
+                m_Idle = ready;
                 if (ready && 
                     m_ServerMessageBuffer.Count > 0 && 
                     (Game.CanStep() || m_ServerMessageBuffer.Count > k_FrameDelay) && 
-                    ClientDesyncDebugger.CanExecuteStep(m_ServerMessageBuffer.Peek().Step) && m_ServerMessageBuffer.TryDequeue(out var msg))
+                    m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
                     shouldSend = true;
-                    m_Idle = true;
                     Game.ApplyStepData(msg, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
                 }

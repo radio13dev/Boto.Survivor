@@ -52,6 +52,11 @@ public struct StepInput : IComponentData
         if (Keyboard.current.spaceKey.isPressed)    Input |= StepInput.S3Input;
         if (Keyboard.current.shiftKey.isPressed)    Input |= StepInput.S4Input;
     }
+
+    public override string ToString()
+    {
+        return $"{Input}:{Direction}";
+    }
 }
 
 [StructLayout(layoutKind: LayoutKind.Sequential)]

@@ -1,9 +1,9 @@
 ﻿using Unity.Scenes;
 using UnityEngine;
 
-public class SceneManager : MonoBehaviour
+public class SubsceneSceneManager : MonoBehaviour
 {
-    static SceneManager m_Instance;
+    static SubsceneSceneManager m_Instance;
     
     public static bool Ready => m_Instance;
     public static SubScene GameManagerScene => m_Instance.gameManagerScene;

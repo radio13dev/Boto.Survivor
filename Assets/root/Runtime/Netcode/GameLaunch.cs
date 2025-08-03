@@ -14,10 +14,11 @@ public abstract class GameHostBehaviour : MonoBehaviour
     public bool WaitingForStep => Game != null && !Game.CanStep();
 }
 
-public class GameLaunch : MonoBehaviour
+public class GameLaunch : MonoBehaviour, IDisposable
 {
     public static GameLaunch Main;
 
+    public bool InitializedAndIdle => m_Initialized && Idle;
     public bool Idle => Game.ConstructorReady && GetComponents<GameHostBehaviour>().All(b => b.Idle);
     public bool IsSingleplayer => GetComponent<SingleplayerBehaviour>() is { } singleplayer && singleplayer && singleplayer.Idle;
     public bool IsClient => GetComponent<PingClientBehaviour>() is { } client && client && client.Idle;
@@ -27,7 +28,7 @@ public class GameLaunch : MonoBehaviour
     public PingClientBehaviour Client => GetComponent<PingClientBehaviour>();
     public PingServerBehaviour Server => GetComponent<PingServerBehaviour>();
 
-    public bool Initialized;
+    bool m_Initialized;
     IGameFactory m_GameFactory;
 
     public static GameLaunch Create(IGameFactory factory)
@@ -35,6 +36,11 @@ public class GameLaunch : MonoBehaviour
         var gameLaunch = new GameObject(nameof(GameLaunch), typeof(GameLaunch)).GetComponent<GameLaunch>();
         gameLaunch.m_GameFactory = factory;
         return gameLaunch;
+    }
+    
+    public void Dispose()
+    {
+        Destroy(gameObject);
     }
 
     private IEnumerator Start()
@@ -45,12 +51,12 @@ public class GameLaunch : MonoBehaviour
         if (gameObject.GetComponents<GameHostBehaviour>().Length > 0)
         {
             Debug.Log($"Game already launched, likely joined lobby.");
-            Initialized = true;
+            m_Initialized = true;
             yield break;
         }
 
         yield return StartSingleplayer(m_GameFactory.Invoke());
-        Initialized = true;
+        m_Initialized = true;
     }
 
     public IEnumerator StartSingleplayer(Game game)

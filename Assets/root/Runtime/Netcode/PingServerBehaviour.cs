@@ -257,6 +257,21 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             }
         }
     }
+    
+    public void SetStepInput(int connectionId, StepInput input)
+    {
+        if (connectionId < 0 || connectionId >= m_ServerConnections.Length)
+        {
+            Debug.LogError($"Invalid connection ID: {connectionId}");
+            return;
+        }
+        
+        m_ServerJobHandle.Complete();
+        
+        var connection = m_ServerConnections[connectionId];
+        connection.InputBuffer = input;
+        m_ServerConnections[connectionId] = connection;
+    }
 
     private void Update()
     {
@@ -326,7 +341,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                         m_ServerConnections[Game.PlayerIndex] = old;
                     }
 
-                    if (Game.CanStep() && ClientDesyncDebugger.CanExecuteStep(m_ServerToClient.Value.Step + 1))
+                    if (Game.CanStep())
                     {
                         eventsJobs.ServerToClient = m_ServerToClient;
 

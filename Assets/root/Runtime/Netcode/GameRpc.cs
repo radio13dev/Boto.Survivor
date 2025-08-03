@@ -26,6 +26,11 @@ public readonly struct GameRpc : IComponentData
     public Code Type => (Code)m_Type;
     public byte PlayerId => (byte)(m_Data0 & 0xFF);
 
+    public override string ToString()
+    {
+        return $"{Type}:{m_Data0}:{m_Data1}";
+    }
+
     private GameRpc(byte type, ulong data0, float3 data1)
     {
         this.m_Type = type;
@@ -94,6 +99,7 @@ public partial struct GameRpcSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<StepController>();
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<GameRpc>();
@@ -104,6 +110,7 @@ public partial struct GameRpcSystem : ISystem
         var ecb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);
         foreach (var (rpcRO, rpcE) in SystemAPI.Query<RefRO<GameRpc>>().WithEntityAccess())
         {
+            Debug.Log($"{state.WorldUnmanaged.Name} Step {SystemAPI.GetSingleton<StepController>().Step}: Executing rpc: {rpcRO.ValueRO}");
             ecb.DestroyEntity(rpcE);
 
             var rpc = rpcRO.ValueRO;
@@ -126,6 +133,7 @@ public partial struct GameRpcSystem : ISystem
                     ecb.AddSharedComponent<PlayerControlled>(newPlayer, playerTag);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
                     ecb.SetComponent(newPlayer, LocalTransform.FromPosition(20, 0, 0));
+                    Debug.Log($"Player {playerId} created.");
                     break;
                 }
                 case GameRpc.Code.PlayerLeave:
@@ -133,6 +141,7 @@ public partial struct GameRpcSystem : ISystem
                     using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled));
                     playerQuery.SetSharedComponentFilter(playerTag);
                     ecb.DestroyEntity(playerQuery, EntityQueryCaptureMode.AtPlayback);
+                    Debug.Log($"Player {playerId} removed.");
                     break;
                 }
                 case GameRpc.Code.PlayerAdjustInventory:

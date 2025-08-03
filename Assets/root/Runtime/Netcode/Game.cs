@@ -36,16 +36,18 @@ public class GameFactory : IGameFactory
 {
     public bool ShowVisuals;
     public IStepProvider StepProvider;
+    public string WorldName;
 
-    public GameFactory(bool showVisuals = true, IStepProvider stepProvider = null)
+    public GameFactory(string worldName, bool showVisuals = true, IStepProvider stepProvider = null)
     {
+        WorldName = worldName;
         ShowVisuals = showVisuals;
         StepProvider = stepProvider ?? new RateStepProvider();
     }
 
     public Game Invoke()
     {
-        return new Game(ShowVisuals, StepProvider);
+        return new Game(WorldName, ShowVisuals, StepProvider);
     }
 }
 
@@ -53,7 +55,7 @@ public class GameFactory : IGameFactory
 public class Game : IDisposable
 {
     public const double DefaultDt = 1.0f / 60.0d;
-    public static bool ConstructorReady => SceneManager.Ready;
+    public static bool ConstructorReady => SubsceneSceneManager.Ready;
 
     public static Game ClientGame
     {
@@ -92,7 +94,7 @@ public class Game : IDisposable
 
             if (m_GameManagerSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameManagerSceneE)) return false;
             if (m_GameSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameSceneE)) return false;
-
+            
             OnLoadComplete();
             return m_Ready = true;
         }
@@ -127,12 +129,12 @@ public class Game : IDisposable
         m_SaveStarted = false;
     }
 
-    public Game(bool showVisuals, IStepProvider stepProvider)
+    public Game(string worldName, bool showVisuals, IStepProvider stepProvider)
     {
         m_StepProvider = stepProvider;
     
         Debug.Log($"Creating Game...");
-        m_World = new World("Game", WorldFlags.Game);
+        m_World = new World(worldName, WorldFlags.Game);
         var systems = DefaultWorldInitialization
             .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
         systems.RemoveAll(s => s.Name == typeof(UpdateWorldTimeSystem).Name);
@@ -173,11 +175,11 @@ public class Game : IDisposable
 
     public void LoadScenes()
     {
-        Debug.Log($"Loading subscene with GUID: {SceneManager.GameManagerScene.SceneGUID}");
-        m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameManagerScene.SceneGUID);
+        Debug.Log($"Loading subscene with GUID: {SubsceneSceneManager.GameManagerScene.SceneGUID}");
+        m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SubsceneSceneManager.GameManagerScene.SceneGUID);
 
-        Debug.Log($"Loading subscene with GUID: {SceneManager.GameScene.SceneGUID}");
-        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SceneManager.GameScene.SceneGUID);
+        Debug.Log($"Loading subscene with GUID: {SubsceneSceneManager.GameScene.SceneGUID}");
+        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SubsceneSceneManager.GameScene.SceneGUID);
     }
 
     public void Dispose()
@@ -270,7 +272,7 @@ public class Game : IDisposable
         {
             if (stepData.ExtraActionCount > 0)
             {
-                Debug.Log($"Step {stepData.Step}: Applying {stepData.ExtraActionCount} extra actions");
+                Debug.Log($"{World.Name} Step {stepData.Step}: Applying {stepData.ExtraActionCount} extra actions");
                 for (byte i = 0; i < stepData.ExtraActionCount; i++)
                     extraActionPtr[i].Apply(this);
             }
@@ -283,7 +285,9 @@ public class Game : IDisposable
             {
                 query.SetSharedComponentFilter(new PlayerControlled(){ Index = i });
                 if (query.CalculateEntityCount() == 0)
+                {
                     continue;
+                }
                 
                 using var entities = query.ToEntityArray(Allocator.Temp);
                 for (int j = 0; j < entities.Length; j++)
@@ -291,13 +295,7 @@ public class Game : IDisposable
             }
         }
 
-        if (ClientDesyncDebugger.Instance && ClientDesyncDebugger.Instance.ManualUpdates)
-        {
-            ClientDesyncDebugger.Instance.UpdateGame(stepData.Step, this);
-            ClientDesyncDebugger.Instance.CleanGameSaves();
-        }
-        else
-            m_World.Update();
+        m_World.Update();
     }
 
     public void ApplyRender()
@@ -308,6 +306,8 @@ public class Game : IDisposable
 
     private void OnLoadComplete()
     {
+        // Do one more update
+        Update_NoLogic();
         // Also enable the simulation system group
         m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = true;
     }
@@ -414,6 +414,7 @@ public static class GameEvents
     public static void Dispose()
     {
         s_EventQueue.Data.Dispose();
+        m_Initialized = false;
     }
 
     public static void ExecuteEvents()
