@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1397
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 96
+  controlID: 17
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -142,11 +142,11 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 2560
-    height: 991
+    height: 757
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 34
+  controlID: 18
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -166,14 +166,14 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1534
-    height: 991
+    height: 757
   m_MinSize: {x: 51, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 15}
+  m_ActualView: {fileID: 16}
   m_Panes:
-  - {fileID: 13}
   - {fileID: 14}
   - {fileID: 15}
+  - {fileID: 16}
   m_Selected: 2
   m_LastSelected: 0
 --- !u!114 &8
@@ -194,16 +194,15 @@ MonoBehaviour:
     x: 1534
     y: 0
     width: 522
-    height: 991
+    height: 757
   m_MinSize: {x: 52, y: 76}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 16}
+  m_ActualView: {fileID: 17}
   m_Panes:
-  - {fileID: 16}
   - {fileID: 17}
   - {fileID: 18}
   m_Selected: 0
-  m_LastSelected: 2
+  m_LastSelected: 0
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -222,9 +221,9 @@ MonoBehaviour:
     x: 2056
     y: 0
     width: 504
-    height: 991
-  m_MinSize: {x: 276, y: 76}
-  m_MaxSize: {x: 4001, y: 4026}
+    height: 757
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -248,13 +247,13 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 991
+    y: 757
     width: 2560
-    height: 350
+    height: 584
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 97
+  controlID: 57
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -274,7 +273,7 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1050
-    height: 350
+    height: 584
   m_MinSize: {x: 231, y: 276}
   m_MaxSize: {x: 10001, y: 10026}
   m_ActualView: {fileID: 20}
@@ -302,16 +301,6051 @@ MonoBehaviour:
     x: 1050
     y: 0
     width: 1510
-    height: 350
+    height: 584
   m_MinSize: {x: 101, y: 126}
   m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 23}
   m_Panes:
   - {fileID: 23}
   - {fileID: 24}
+  - {fileID: 13}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 2
 --- !u!114 &13
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 13401, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.TestRunner.dll::UnityEditor.TestTools.TestRunner.TestRunnerWindow
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Test Runner
+    m_Image: {fileID: 0}
+    m_Tooltip: Test framework for running Edit mode and Play mode tests in Unity.
+      Part of the com.unity.test-framework package.
+    m_TextWithWhitespace: "Test Runner\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 1050
+    y: 836
+    width: 1509
+    height: 558
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_OverlaysVisible: 1
+  m_Spl:
+    ID: 408
+    splitterInitialOffset: 142
+    currentActiveSplitter: -1
+    realSizes:
+    - 179
+    - 309
+    relativeSizes:
+    - 0.36614174
+    - 0.63385826
+    minSizes:
+    - 32
+    - 32
+    maxSizes:
+    - 0
+    - 0
+    lastTotalSize: 488
+    splitSize: 6
+    xOffset: 0
+    m_Version: 1
+    oldRealSizes: 
+    oldMinSizes: 
+    oldMaxSizes: 
+    oldSplitSize: 0
+  m_TestTypeToolbarIndex: 1
+  m_TestListGUIs:
+  - m_Window: {fileID: 13}
+    runProgress:
+      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 2
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames:
+          - Boto.Survivor.Tests
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000001
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList:
+    - id: 1000
+      uniqueId: '[Boto.Survivor][suite]'
+      name: Boto.Survivor
+      fullName: Boto.Survivor
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    - id: 1006
+      uniqueId: '[NativeQuadtreeEditor][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/NativeQuadtreeEditor.dll][suite]'
+      name: NativeQuadtreeEditor.dll
+      fullName: C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/NativeQuadtreeEditor.dll
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1000
+      parentUniqueId: '[Boto.Survivor][suite]'
+    - id: 1002
+      uniqueId: 'NativeQuadtreeEditor.dll/[NativeQuadtreeEditor][QuadTreeTests][suite]'
+      name: QuadTreeTests
+      fullName: QuadTreeTests
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1006
+      parentUniqueId: '[NativeQuadtreeEditor][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/NativeQuadtreeEditor.dll][suite]'
+    - id: 1003
+      uniqueId: 'NativeQuadtreeEditor.dll/QuadTreeTests/[NativeQuadtreeEditor][QuadTreeTests.InsertTriggerDivideBulk]'
+      name: InsertTriggerDivideBulk
+      fullName: QuadTreeTests.InsertTriggerDivideBulk
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1002
+      parentUniqueId: 'NativeQuadtreeEditor.dll/[NativeQuadtreeEditor][QuadTreeTests][suite]'
+    - id: 1005
+      uniqueId: 'NativeQuadtreeEditor.dll/QuadTreeTests/[NativeQuadtreeEditor][QuadTreeTests.InsertTriggerDivideNonBurstBulk]'
+      name: InsertTriggerDivideNonBurstBulk
+      fullName: QuadTreeTests.InsertTriggerDivideNonBurstBulk
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1002
+      parentUniqueId: 'NativeQuadtreeEditor.dll/[NativeQuadtreeEditor][QuadTreeTests][suite]'
+    - id: 1004
+      uniqueId: 'NativeQuadtreeEditor.dll/QuadTreeTests/[NativeQuadtreeEditor][QuadTreeTests.RangeQueryAfterBulk]'
+      name: RangeQueryAfterBulk
+      fullName: QuadTreeTests.RangeQueryAfterBulk
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1002
+      parentUniqueId: 'NativeQuadtreeEditor.dll/[NativeQuadtreeEditor][QuadTreeTests][suite]'
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: ee9e3f2c
+      m_LastClickedID: 742366958
+      m_ExpandedIDs: 2ccbe201ee9e3f2cffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+  - m_Window: {fileID: 13}
+    runProgress:
+      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 2
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames:
+          - Boto.Survivor.Tests
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000001
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList:
+    - id: 1000
+      uniqueId: '[Boto.Survivor][suite]'
+      name: Boto.Survivor
+      fullName: Boto.Survivor
+      resultStatus: 1
+      duration: 46.005978
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    - id: 1030
+      uniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
+      name: Boto.Survivor.Tests.dll
+      fullName: C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll
+      resultStatus: 1
+      duration: 46.005978
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1000
+      parentUniqueId: '[Boto.Survivor][suite]'
+    - id: 1001
+      uniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+      name: DesyncTests
+      fullName: DesyncTests
+      resultStatus: 1
+      duration: 39.506622
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1030
+      parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
+    - id: 1008
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success][suite]'
+      name: DesyncTest_InputSequence_Success
+      fullName: DesyncTests.DesyncTest_InputSequence_Success
+      resultStatus: 1
+      duration: 9.25177
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1001
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1015
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success(())]'
+      name: DesyncTest_InputSequence_Success(())
+      fullName: DesyncTests.DesyncTest_InputSequence_Success(())
+      resultStatus: 1
+      duration: 3.8531916
+      messages: 
+      output: 'Creating Game...
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server
+        is now listening for connections.
+
+        Game already launched, likely
+        joined lobby.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 4362...
+
+        ... sending Id...
+
+        Creating ID message:
+        1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Cleaning up 0 destroyed GenericPrefabs
+
+        Got ID message:
+        1
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1018
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success][suite]'
+    - id: 1016
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success((0:float3(0f,
+        0f, 0f)))]'
+      name: DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
+      resultStatus: 1
+      duration: 2.6002119
+      messages: 
+      output: 'Cleaning up 0 destroyed GenericPrefabs
+
+        Cleaning up 0 destroyed
+        GenericPrefabs
+
+        Creating Game...
+
+        Creating Game...
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene with
+        GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID:
+        24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for connections.
+
+        Game
+        already launched, likely joined lobby.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 4362...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Cleaning up 0 destroyed GenericPrefabs
+
+        mockServer
+        Step 1: Applying 2 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockServer Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+        mockClient
+        Step 1: Applying 2 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1018
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success][suite]'
+    - id: 1017
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success((0:float3(1f,
+        1f, 1f)))]'
+      name: DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
+      resultStatus: 1
+      duration: 2.798367
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Creating Game...
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene with
+        GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID:
+        24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for connections.
+
+        Game
+        already launched, likely joined lobby.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 4362...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Cleaning up 0 destroyed GenericPrefabs
+
+        mockServer
+        Step 1: Applying 2 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockServer Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+        mockClient
+        Step 1: Applying 2 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1018
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success][suite]'
+    - id: 1018
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success
+      resultStatus: 1
+      duration: 22.609674
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1001
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1019
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),())]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((),())
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),())
+      resultStatus: 1
+      duration: 2.4526458
+      messages: 
+      output: 'Creating Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is
+        now listening for connections.
+
+        Game already launched, likely joined
+        lobby.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 4362...
+
+        ... sending Id...
+
+        Creating ID message:
+        1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1020
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(0f,
+        0f, 0f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(0f,
+        0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(0f,
+        0f, 0f)))
+      resultStatus: 1
+      duration: 2.5738108
+      messages: 
+      output: 'Cleaning up 0 destroyed GenericPrefabs
+
+        Cleaning up 0 destroyed
+        GenericPrefabs
+
+        Creating Game...
+
+        Loading subscene with
+        GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID:
+        24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for connections.
+
+        Game
+        already launched, likely joined lobby.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 4362...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+        mockServer Step 1: Applying 2 extra actions
+
+        mockServer
+        had no player 0.
+
+        mockServer had no player 1.
+
+        mockServer
+        had no player 2.
+
+        mockServer had no player 3.
+
+        mockServer
+        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player 0
+        created.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        mockClient Step 1: Applying
+        2 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1021
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(1f,
+        1f, 1f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(1f,
+        1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(1f,
+        1f, 1f)))
+      resultStatus: 1
+      duration: 2.4991088
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        ...
+        saving...
+
+        ... sending save...
+
+        ... wrote 4362...
+
+        ...
+        sending Id...
+
+        Creating ID message: 1
+
+        ... loading save
+        4362...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 2 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockServer Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+        mockClient
+        Step 1: Applying 2 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1022
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),())]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
+        0f)),())
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),())
+      resultStatus: 1
+      duration: 2.521099
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1023
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(0f, 0f, 0f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
+        0f)),(0:float3(0f, 0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(0f, 0f, 0f)))
+      resultStatus: 1
+      duration: 2.5372703
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 1 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is
+        now listening for connections.
+
+        Game already launched, likely joined
+        lobby.
+
+        mockServer Step 1: Applying 1 extra actions
+
+        mockServer
+        had no player 0.
+
+        mockServer had no player 1.
+
+        mockServer
+        had no player 2.
+
+        mockServer had no player 3.
+
+        mockServer
+        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player 0
+        created.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 5958...
+
+        ... sending Id...
+
+        Creating ID message:
+        1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+        mockServer Step 2: Applying 1 extra actions
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        mockClient Step 2: Applying
+        1 extra actions
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        mockClient
+        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1
+        created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1024
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(1f, 1f, 1f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
+        0f)),(0:float3(1f, 1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(1f, 1f, 1f)))
+      resultStatus: 1
+      duration: 2.5495625
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+        mockServer Step 2: Applying 1 extra actions
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        mockClient Step 2: Applying
+        1 extra actions
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        mockClient
+        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1
+        created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1025
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),())]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),())
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),())
+      resultStatus: 1
+      duration: 2.4526033
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1026
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(0f, 0f, 0f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),(0:float3(0f, 0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(0f, 0f, 0f)))
+      resultStatus: 1
+      duration: 2.5551176
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 1 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is
+        now listening for connections.
+
+        Game already launched, likely joined
+        lobby.
+
+        mockServer Step 1: Applying 1 extra actions
+
+        mockServer
+        had no player 0.
+
+        mockServer had no player 1.
+
+        mockServer
+        had no player 2.
+
+        mockServer had no player 3.
+
+        mockServer
+        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player 0
+        created.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 5958...
+
+        ... sending Id...
+
+        Creating ID message:
+        1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+        mockServer Step 2: Applying 1 extra actions
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        mockClient Step 2: Applying
+        1 extra actions
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        mockClient
+        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1
+        created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1027
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(1f, 1f, 1f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),(0:float3(1f, 1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(1f, 1f, 1f)))
+      resultStatus: 1
+      duration: 2.4684565
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Game already launched, likely
+        joined lobby.
+
+        mockServer Step 2: Applying 1 extra actions
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        mockClient Step 2: Applying
+        1 extra actions
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        mockClient
+        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1
+        created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1014
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success]'
+      name: DesyncTest_OneStepAdvanceAfterConnect_Success
+      fullName: DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success
+      resultStatus: 1
+      duration: 2.5953114
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Creating Game...
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene with
+        GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID:
+        24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for connections.
+
+        Game
+        already launched, likely joined lobby.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 4362...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 4362...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Cleaning up 0 destroyed GenericPrefabs
+
+        mockServer
+        Step 1: Applying 2 extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockServer Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+        mockClient
+        Step 1: Applying 2 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player 1 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1011
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1013
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_OneStepAdvanceBeforeConnect_Success]'
+      name: DesyncTest_OneStepAdvanceBeforeConnect_Success
+      fullName: DesyncTests.DesyncTest_OneStepAdvanceBeforeConnect_Success
+      resultStatus: 1
+      duration: 2.576976
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Creating Game...
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene with
+        GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID:
+        24b4cc9fa890cde4ba1a296216afae7d
+
+        mockServer Step 1: Applying 1
+        extra actions
+
+        mockServer had no player 0.
+
+        mockServer
+        had no player 1.
+
+        mockServer had no player 2.
+
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockClient Step 1: Applying
+        1 extra actions
+
+        mockClient had no player 0.
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        ...
+        saving...
+
+        ... sending save...
+
+        ... wrote 5958...
+
+        ...
+        sending Id...
+
+        Creating ID message: 1
+
+        ... loading save
+        5958...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned
+        up.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1011
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1012
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_ZeroStepAdvance_Success]'
+      name: DesyncTest_ZeroStepAdvance_Success
+      fullName: DesyncTests.DesyncTest_ZeroStepAdvance_Success
+      resultStatus: 1
+      duration: 2.47289
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 1 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Creating Game...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening
+        for connections.
+
+        Game already launched, likely joined lobby.
+
+        ...
+        saving...
+
+        ... sending save...
+
+        ... wrote 4362...
+
+        ...
+        sending Id...
+
+        Creating ID message: 1
+
+        ... loading save
+        4362...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Cleaning up 0 destroyed GenericPrefabs
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1011
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1023
+      uniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+      name: GameLaunchTests
+      fullName: GameLaunchTests
+      resultStatus: 1
+      duration: 6.2168565
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1030
+      parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
+    - id: 1036
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameLaunch_LobbyCodeHasServer_ClientConnect]'
+      name: GameLaunch_LobbyCodeHasServer_ClientConnect
+      fullName: GameLaunchTests.GameLaunch_LobbyCodeHasServer_ClientConnect
+      resultStatus: 1
+      duration: 2.4569125
+      messages: 
+      output: 'Creating Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        stubServer
+        Step 1: Applying 1 extra actions
+
+        stubServer had no player 0.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        Server is
+        now listening for connections.
+
+        stubServer Step 45: Applying 1 extra
+        actions
+
+        stubServer had no player 1.
+
+        stubServer had no
+        player 2.
+
+        stubServer had no player 3.
+
+        stubServer Step
+        45: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player 0 already
+        exists, not creating a new one...
+
+        Game already launched, likely
+        joined lobby.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        stubServer Step 137: Applying 1 extra actions
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer Step 137: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        ... loading save 5958...
+
+        ... creating
+        game...
+
+        Creating Game...
+
+        ... save loaded...
+
+        Loading
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        mockClient Step 137: Applying 1 extra actions
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 137: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
+
+        Game already launched, likely
+        joined lobby.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1035
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameLaunch_LobbyCodeNoServer_ClientFailureReturnToSingleplayer]'
+      name: GameLaunch_LobbyCodeNoServer_ClientFailureReturnToSingleplayer
+      fullName: GameLaunchTests.GameLaunch_LobbyCodeNoServer_ClientFailureReturnToSingleplayer
+      resultStatus: 1
+      duration: 0.1179462
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Failed to join the Relay allocation.
+
+        No
+        game running, launching singleplayer game as fallback...
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        gameLaunch
+        Step 1: Applying 1 extra actions
+
+        gameLaunch had no player 0.
+
+        gameLaunch
+        had no player 1.
+
+        gameLaunch had no player 2.
+
+        gameLaunch
+        had no player 3.
+
+        gameLaunch Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        Game already launched, likely
+        joined lobby.
+
+        gameLaunch had no player 1.
+
+        gameLaunch
+        had no player 2.
+
+        gameLaunch had no player 3.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1034
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameLaunch_NoLobbyCode_StartSingleplayer]'
+      name: GameLaunch_NoLobbyCode_StartSingleplayer
+      fullName: GameLaunchTests.GameLaunch_NoLobbyCode_StartSingleplayer
+      resultStatus: 1
+      duration: 0.089393
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        gameLaunch
+        Step 1: Applying 1 extra actions
+
+        gameLaunch had no player 0.
+
+        gameLaunch
+        had no player 1.
+
+        gameLaunch had no player 2.
+
+        gameLaunch
+        had no player 3.
+
+        gameLaunch Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1039
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameTransition_SingleplayerToClientHasServer_ClientSuccess]'
+      name: GameTransition_SingleplayerToClientHasServer_ClientSuccess
+      fullName: GameLaunchTests.GameTransition_SingleplayerToClientHasServer_ClientSuccess
+      resultStatus: 1
+      duration: 2.6433082
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        stubServer
+        Step 1: Applying 1 extra actions
+
+        stubServer had no player 0.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        Server is now listening for connections.
+
+        Game
+        already launched, likely joined lobby.
+
+        Creating Game...
+
+        stubServer
+        Step 48: Applying 1 extra actions
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        Step 48: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player
+        0 already exists, not creating a new one...
+
+        stubServer had no player
+        1.
+
+        stubServer had no player 2.
+
+        stubServer had no player
+        3.
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
+
+        mockClient Step 1: Applying 1 extra actions
+
+        mockClient
+        had no player 0.
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        mockClient
+        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+
+        Player 0
+        created.
+
+        stubServer had no player 1.
+
+        stubServer had no
+        player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 1.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        stubServer had no player 1.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        ... saving...
+
+        ...
+        sending save...
+
+        ... wrote 5958...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        mockClient had no player 1.
+
+        mockClient
+        had no player 2.
+
+        mockClient had no player 3.
+
+        stubServer
+        Step 149: Applying 1 extra actions
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        Step 149: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player
+        1 created.
+
+        stubServer had no player 2.
+
+        stubServer had
+        no player 3.
+
+        mockClient had no player 1.
+
+        mockClient had
+        no player 2.
+
+        mockClient had no player 3.
+
+        stubServer had
+        no player 2.
+
+        stubServer had no player 3.
+
+        mockClient had
+        no player 1.
+
+        mockClient had no player 2.
+
+        mockClient had
+        no player 3.
+
+        ... loading save 5958...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned
+        up.
+
+        stubServer had no player 2.
+
+        stubServer had no player
+        3.
+
+        stubServer had no player 2.
+
+        stubServer had no player
+        3.
+
+        stubServer had no player 2.
+
+        stubServer had no player
+        3.
+
+        stubServer had no player 2.
+
+        stubServer had no player
+        3.
+
+        Failed step, tried to go from step 148 to 148
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1038
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameTransition_SingleplayerToClientNoServer_ClientFailureReturnToSingleplayer]'
+      name: GameTransition_SingleplayerToClientNoServer_ClientFailureReturnToSingleplayer
+      fullName: GameLaunchTests.GameTransition_SingleplayerToClientNoServer_ClientFailureReturnToSingleplayer
+      resultStatus: 1
+      duration: 0.1129456
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Creating Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        mockGame Step
+        1: Applying 1 extra actions
+
+        mockGame had no player 0.
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+        mockGame Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        Failed to join the Relay allocation.
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1037
+      uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameTransition_SingleplayerToServer_ServerHost]'
+      name: GameTransition_SingleplayerToServer_ServerHost
+      fullName: GameLaunchTests.GameTransition_SingleplayerToServer_ServerHost
+      resultStatus: 1
+      duration: 0.7963508
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        mockGame Step
+        1: Applying 1 extra actions
+
+        mockGame had no player 0.
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+        mockGame Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        mockGame had no player 1.
+
+        mockGame
+        had no player 2.
+
+        mockGame had no player 3.
+
+        mockGame had
+        no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had no
+        player 3.
+
+        mockGame had no player 1.
+
+        mockGame had no player
+        2.
+
+        mockGame had no player 3.
+
+        Server is now listening
+        for connections.
+
+        mockGame Step 44: Applying 1 extra actions
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+        mockGame Step 44: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 already exists, not creating a new one...
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1033
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
+    - id: 1019
+      uniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
+      name: StepProviderTests
+      fullName: StepProviderTests
+      resultStatus: 1
+      duration: 0.2824986
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1030
+      parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
+    - id: 1032
+      uniqueId: 'Boto.Survivor.Tests.dll/StepProviderTests/[Boto.Survivor.Tests][StepProviderTests.StepProviderTests_SingleplayerOneStepAdvanceAfterIdle_StepOne]'
+      name: StepProviderTests_SingleplayerOneStepAdvanceAfterIdle_StepOne
+      fullName: StepProviderTests.StepProviderTests_SingleplayerOneStepAdvanceAfterIdle_StepOne
+      resultStatus: 1
+      duration: 0.0978881
+      messages: 
+      output: 'Creating Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        mockGame Step
+        1: Applying 1 extra actions
+
+        mockGame had no player 0.
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+        mockGame Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1029
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
+    - id: 1031
+      uniqueId: 'Boto.Survivor.Tests.dll/StepProviderTests/[Boto.Survivor.Tests][StepProviderTests.StepProviderTests_SingleplayerOneStepAdvanceBeforeIdle_StepOne]'
+      name: StepProviderTests_SingleplayerOneStepAdvanceBeforeIdle_StepOne
+      fullName: StepProviderTests.StepProviderTests_SingleplayerOneStepAdvanceBeforeIdle_StepOne
+      resultStatus: 1
+      duration: 0.0926628
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        mockGame Step
+        1: Applying 1 extra actions
+
+        mockGame had no player 0.
+
+        mockGame
+        had no player 1.
+
+        mockGame had no player 2.
+
+        mockGame had
+        no player 3.
+
+        mockGame Step 1: Executing rpc: PlayerJoin:0:float3(0f,
+        0f, 0f)
+
+        Player 0 created.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1029
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
+    - id: 1030
+      uniqueId: 'Boto.Survivor.Tests.dll/StepProviderTests/[Boto.Survivor.Tests][StepProviderTests.StepProviderTests_SingleplayerZeroStepAdvance_StepZero]'
+      name: StepProviderTests_SingleplayerZeroStepAdvance_StepZero
+      fullName: StepProviderTests.StepProviderTests_SingleplayerZeroStepAdvance_StepZero
+      resultStatus: 1
+      duration: 0.0919477
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1029
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
+    m_ResultText: Boto.Survivor.Tests.dll (24 tests) (46.006s)
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: e4021aab
+      m_LastClickedID: -1424358684
+      m_ExpandedIDs: e4021aab2ccbe2014bc6fd42ffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+  - m_Window: {fileID: 0}
+    runProgress:
+      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 2
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames:
+          - Boto.Survivor.Tests
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000001
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList: []
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories: []
+    m_SelectedOption: 0
+--- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -335,7 +6369,7 @@ MonoBehaviour:
     x: 0
     y: 79
     width: 1533
-    height: 965
+    height: 731
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -353,7 +6387,7 @@ MonoBehaviour:
   m_ShowGizmos: 1
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1533, y: 944}
+  m_TargetSize: {x: 1533, y: 710}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -370,8 +6404,8 @@ MonoBehaviour:
     vZoomLockedByDefault: 0
     m_HBaseRangeMin: -766.5
     m_HBaseRangeMax: 766.5
-    m_VBaseRangeMin: -472
-    m_VBaseRangeMax: 472
+    m_VBaseRangeMin: -355
+    m_VBaseRangeMax: 355
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -390,9 +6424,9 @@ MonoBehaviour:
       x: 0
       y: 21
       width: 1533
-      height: 944
+      height: 710
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 766.5, y: 472}
+    m_Translation: {x: 766.5, y: 355}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
@@ -400,19 +6434,19 @@ MonoBehaviour:
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
       x: -766.5
-      y: -472
+      y: -355
       width: 1533
-      height: 944
+      height: 710
     m_MinimalGUI: 1
   m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 1533, y: 965}
+  m_LastWindowPixelSize: {x: 1533, y: 731}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
   m_showToolbar: 1
---- !u!114 &14
+--- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -501,7 +6535,7 @@ MonoBehaviour:
   m_CurrentEditor: 1
   m_LayerEditor:
     m_SelectedLayerIndex: 0
---- !u!114 &15
+--- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -523,9 +6557,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 24
+    y: 79
     width: 1533
-    height: 965
+    height: 731
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1225,7 +7259,7 @@ MonoBehaviour:
   m_LastSceneViewRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LastSceneViewOrtho: 0
   m_Viewpoint:
-    m_SceneView: {fileID: 15}
+    m_SceneView: {fileID: 16}
     m_CameraOverscanSettings:
       m_Opacity: 50
       m_Scale: 1
@@ -1238,7 +7272,7 @@ MonoBehaviour:
     name: Contributors / Receivers
     section: Lighting
   m_ViewIsLockedToObject: 0
---- !u!114 &16
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1259,10 +7293,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1535
-    y: 24
+    x: 1534
+    y: 79
     width: 520
-    height: 965
+    height: 731
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1276,10 +7310,10 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 4475fdff00a8fdff88c5fdffd0d6fdff78e3fdff4ef5fdffb205feff500bfeffbe12fefff01bfeff9821feff1237feff143ffefffa4afeff4a53feffc468feffd275feff7a7dfeff6685feff588dfeffe495feff76abfeffdac3feff8ad9feff26e4feffbaeffeff76f6feff6cfffeff4006ffff540fffff1616fffff01dffff6427ffff6630ffff6839ffff5640ffff4247ffff3250ffff965effff4e65ffff9270ffff567affffc881ffff8889ffff708cfffff491ffffb896ffff8c99ffff229effff569effff9ca1ffff58adffff1ab2ffff72bfffffa4d2ffffc0ddffff34f1ffff10fbfffff4ffffff
+      scrollPos: {x: 0, y: 122}
+      m_SelectedIDs: f4050100
+      m_LastClickedID: 67060
+      m_ExpandedIDs: f6fdfdff9002feff3c04feff1209feffcc0ffeff4a1bfeffc067feff0cb1feff52f9feffd242ffff324dffffbc5bffff3068ffffb678ffff10b8ffffaef5fffff2faffff2afa00009cfa000052050100f405010066060100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1304,7 +7338,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: 23e5fcd12ca29144c9f70cf7e2b80231
---- !u!114 &17
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1341,43 +7375,6 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_EditorWindowInstanceKey: e79a17b76ba547c6b4d7a0ad4ff71351
---- !u!114 &18
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb0eaf7081c7fbb44a83e4908fb5bcc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Entities.Editor::Unity.Entities.Editor.SystemScheduleWindow
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Systems
-    m_Image: {fileID: 2800000, guid: 290ec3726cd9fb947b6106c3232f5b5c, type: 3}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Systems\u200B"
-  m_Pos:
-    serializedVersion: 2
-    x: 1534
-    y: 79
-    width: 520
-    height: 965
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_OverlaysVisible: 1
-  m_EditorWindowInstanceKey: cbfac19dac5e4003ac5416f4f857b0d4
 --- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1399,10 +7396,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 2057
-    y: 24
+    x: 2056
+    y: 79
     width: 503
-    height: 965
+    height: 731
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1449,9 +7446,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 24
+    y: 836
     width: 1049
-    height: 324
+    height: 558
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1474,7 +7471,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/root/Tests/Runtime
+    - Assets/root/Runtime/Prefabs
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1484,16 +7481,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/root/Tests/Runtime
+  - Assets/root/Runtime/Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Work Repos\Boto.Survivor
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 424}
-    m_SelectedIDs: 98030100
-    m_LastClickedID: 66456
-    m_ExpandedIDs: 0000000022e90000
+    scrollPos: {x: 0, y: 180}
+    m_SelectedIDs: a2f70000
+    m_LastClickedID: 63394
+    m_ExpandedIDs: 0000000022e90000b4e9000008ea00000cea000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1786,7 +7783,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 63776
+  m_LastSelectedObjectID: 67060
 --- !u!114 &23
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1808,10 +7805,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1051
-    y: 24
+    x: 1050
+    y: 836
     width: 1509
-    height: 324
+    height: 558
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0

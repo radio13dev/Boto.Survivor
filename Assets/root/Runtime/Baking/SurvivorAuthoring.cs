@@ -21,7 +21,7 @@ public class SurvivorAuthoring : MonoBehaviour
     public MovementSettings MovementSettings = new MovementSettings();
     public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(100);
-    public bool EnableLaserProjectile;
+    public RingStats[] InitialRings = new RingStats[8];
 
     partial class Baker : Baker<SurvivorAuthoring>
     {
@@ -58,7 +58,8 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new CompiledStatsDirty());
             var rings = AddBuffer<Ring>(entity);
             rings.Resize(8, NativeArrayOptions.ClearMemory);
-            if (authoring.EnableLaserProjectile) rings[0] = new Ring(){ Stats = new RingStats(){ PrimaryEffect = RingPrimaryEffect.Projectile_Ring } };
+            for (int i = 0; i < rings.Length && i < authoring.InitialRings.Length; i++)
+                rings[i] = new Ring(){ Stats = authoring.InitialRings[i] };
             
         }
     }

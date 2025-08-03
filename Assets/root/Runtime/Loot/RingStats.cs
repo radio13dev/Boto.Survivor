@@ -1,4 +1,5 @@
-﻿using BovineLabs.Saving;
+﻿using System;
+using BovineLabs.Saving;
 using Unity.Entities;
 
 [Save]
@@ -12,6 +13,7 @@ public struct Ring : IBufferElementData
 }
 
 [Save]
+[Serializable]
 public struct RingStats : IComponentData
 {
     // Primary effect

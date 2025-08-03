@@ -16,8 +16,7 @@ public partial struct ProjectileHitSystem_Push : ISystem
             if (!forceLookup.TryGetRefRW(hit.ValueRO.HitEntity, out var hitEntityF))
                 continue;
             
-            var hitEntityT = transformLookup[hit.ValueRO.HitEntity];
-            hitEntityF.ValueRW.Shift += hitEntityT.TransformDirection(movement.ValueRO.Velocity.f3z()/20);
+            hitEntityF.ValueRW.Velocity += transform.ValueRO.TransformDirection(movement.ValueRO.Velocity.f3z()*3);
         }
     }
 }
