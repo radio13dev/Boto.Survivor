@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: TerrainMap
-  m_Shader: {fileID: -6465566751694194690, guid: 12b97e20ea15a7844849d66169c21bed, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 02b4b9687bad1f34a8c03d489709040a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -29,10 +29,12 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -58,6 +60,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HashA:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HashB:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -121,6 +131,7 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BlendOp: 0
+    - _Blending: 0
     - _BumpScale: 1
     - _CastShadows: 0
     - _CheckerBoardScale: 62.97
@@ -132,14 +143,20 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _EdgePower: 1
+    - _EdgeScale: 1.5
     - _EnvironmentReflections: 1
+    - _FarDist: -10
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Index: 14
+    - _MapDivision: 1
     - _Metal_1: 0
     - _Metal_2: 0
     - _Metallic: 0
+    - _NearCamCol: 0
+    - _NearDist: -10
     - _Noise_Color_Intensity: 0
     - _Noise_Scale: 2
     - _Noise_Smoothness_Intensity: 0
@@ -147,8 +164,9 @@ Material:
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Raycast: 1
     - _ReceiveShadows: 1
-    - _RingRadius: 80
+    - _RingRadius: 160
     - _RingRadiusSq: 6400
     - _SampleGI: 0
     - _Smoothness: 0.5
@@ -159,7 +177,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _Thickness: 52.6
+    - _Thickness: 80
     - _Tiling: 0.1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -174,7 +192,12 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color_1: {r: 0.10067342, g: 0.07929869, b: 0.20754719, a: 0}
     - _Color_2: {r: 0.07710335, g: 0.05740476, b: 0.09433961, a: 0}
+    - _EdgeColor: {r: 1, g: 0.77458084, b: 0.4764151, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _HashAColor: {r: 0.3693485, g: 0.5527852, b: 0.9433962, a: 1}
+    - _HashBColor: {r: 0.8254717, g: 0.8768086, b: 1, a: 1}
+    - _NearCamCol: {r: 1, g: 0.7764707, b: 0.4745098, a: 1}
+    - _Scale: {r: 3, g: 3, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

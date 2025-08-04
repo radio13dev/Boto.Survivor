@@ -108,10 +108,12 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
         var forwardPointToroidal = alignToroidal + new float2(0, -0.1f);
         var forwardPoint = (Vector3)TorusMapper.ToroidalToCartesian(forwardPointToroidal);
         
-        MapCameraTransform.position = Vector3.zero;//Vector3.MoveTowards(MapCameraTransform.position, cameraPoint, Time.deltaTime * PositionChaseRate);
+        MapCameraTransform.position = Vector3.zero; //Vector3.MoveTowards(MapCameraTransform.position, cameraPoint, Time.deltaTime * PositionChaseRate);
         MapCameraTransform.rotation = Quaternion.RotateTowards(MapCameraTransform.rotation, Quaternion.LookRotation(worldPoint - cameraPoint, forwardPoint - worldPoint), Time.deltaTime * RotationChaseRate);
-        Debug.DrawLine(cameraPoint, worldPoint);
-        Debug.DrawLine(worldPoint, forwardPoint);
+        
+        var distFromCam = math.distance(worldPoint, MapCamera.transform.position);
+        MapCamera.nearClipPlane = distFromCam - 500;
+        MapCamera.farClipPlane = distFromCam + 500;
     }
 
     public void OnPointerMove(PointerEventData eventData)

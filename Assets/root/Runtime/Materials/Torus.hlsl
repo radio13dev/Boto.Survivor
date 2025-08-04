@@ -2,7 +2,6 @@
 #define TORUS_INCLUDED
 
 void GetToroidalCoord_float(float3 worldPosition, float3 cameraPosition, float2 gridScale, float mapDivision, float ringRadius, float thickness, out float2 toroidalPosition){
-	
 	float theta = atan2(worldPosition.z, worldPosition.x);
 	
 	float3 ringCenter = float3(ringRadius * cos(theta), 0, ringRadius * sin(theta));

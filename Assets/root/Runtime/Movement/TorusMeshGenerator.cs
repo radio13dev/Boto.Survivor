@@ -41,19 +41,26 @@ public static class TorusMeshGenerator
                 float y = (ringRadius + thickness * cosPhi) * sinTheta;
                 float z = thickness * sinPhi;
                 float3 point;
+                float3 circleCenter;
                 
                 if (upAxis == Axis.x)
+                {
                     point = new float3(z, y, x);
+                    circleCenter = new float3(0, ringRadius*sinTheta, ringRadius*cosTheta);
+                }
                 else if (upAxis == Axis.y)
+                {
                     point = new float3(x, z, y);
+                    circleCenter = new float3(ringRadius*cosTheta, 0, ringRadius*sinTheta);
+                }
                 else
+                {
                     point = new float3(x, y, z);
+                    circleCenter = new float3(ringRadius*cosTheta, ringRadius*sinTheta, 0);
+                }
                 
                 vertices[i * tubeSegments + j] = point;
                 
-                
-                // Compute the torus circle center along the main ring.
-                float3 circleCenter = new float3(ringRadius * cosTheta, ringRadius * sinTheta, 0f);
                 // The normal is the direction from the circle center to the point.
                 float3 normal = math.normalize(point - circleCenter);
                 normals[i * tubeSegments + j] = normal;

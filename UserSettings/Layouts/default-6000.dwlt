@@ -222,8 +222,8 @@ MonoBehaviour:
     y: 0
     width: 504
     height: 757
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -676,30 +676,29 @@ MonoBehaviour:
 
         ... sending Id...
 
-        Creating ID message:
-        1
+        Creating ID message: 1
 
-        ... loading save 4362...
+        ...
+        loading save 4362...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Cleaning up 0 destroyed GenericPrefabs
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Got ID message:
-        1
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Cleaning
+        up 0 destroyed GenericPrefabs
+
+        Got ID message: 1
 
 '
       stacktrace: 
@@ -996,8 +995,8 @@ MonoBehaviour:
         Loading
         subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is
-        now listening for connections.
+        Server is now
+        listening for connections.
 
         Game already launched, likely joined
         lobby.
@@ -1006,35 +1005,34 @@ MonoBehaviour:
 
         ... sending save...
 
-        ...
-        wrote 4362...
+        ... wrote
+        4362...
 
         ... sending Id...
 
-        Creating ID message:
-        1
+        Creating ID message: 1
 
-        ... loading save 4362...
+        ...
+        loading save 4362...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely
-        joined lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Game already launched, likely joined lobby.
 
 '
       stacktrace: 
@@ -1063,76 +1061,75 @@ MonoBehaviour:
 
         Creating Game...
 
-        Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for connections.
-
-        Game
-        already launched, likely joined lobby.
-
-        ... saving...
-
-        ...
-        sending save...
-
-        ... wrote 4362...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 4362...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
         Loading subscene with GUID:
         7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        ...
-        done.
-
-        Got ID message: 1
+        Server
+        is now listening for connections.
 
         Game already launched, likely
         joined lobby.
 
-        mockServer Step 1: Applying 2 extra actions
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 4362...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 4362...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Game already launched, likely joined lobby.
 
         mockServer
-        had no player 0.
+        Step 1: Applying 2 extra actions
 
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
+        mockServer had no player 0.
 
         mockServer
-        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+        had no player 1.
 
-        Player 0
-        created.
+        mockServer had no player 2.
 
-        mockServer Step 1: Executing rpc: PlayerJoin:1:float3(0f,
+        mockServer
+        had no player 3.
+
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
         0f, 0f)
+
+        Player 0 created.
+
+        mockServer Step 1: Executing
+        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
 
         Player 1 created.
 
-        mockClient Step 1: Applying
-        2 extra actions
+        mockClient
+        Step 1: Applying 2 extra actions
 
         mockClient had no player 0.
 
@@ -1196,8 +1193,8 @@ MonoBehaviour:
         Loading subscene with
         GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -1213,20 +1210,20 @@ MonoBehaviour:
 
         Creating ID message: 1
 
-        ... loading save
-        4362...
+        ... loading save 4362...
 
-        ... creating game...
+        ...
+        creating game...
 
         Creating Game...
 
-        ...
-        save loaded...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        ... save loaded...
 
         Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ... done.
 
@@ -1323,8 +1320,8 @@ MonoBehaviour:
         Loading subscene with
         GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -1348,8 +1345,8 @@ MonoBehaviour:
 
         ... saving...
 
-        ...
-        sending save...
+        ... sending
+        save...
 
         ... wrote 5958...
 
@@ -1377,8 +1374,8 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Game already launched, likely
-        joined lobby.
+        Game already launched, likely joined
+        lobby.
 
 '
       stacktrace: 
@@ -1417,8 +1414,8 @@ MonoBehaviour:
         Loading
         subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is
-        now listening for connections.
+        Server is now
+        listening for connections.
 
         Game already launched, likely joined
         lobby.
@@ -1450,61 +1447,60 @@ MonoBehaviour:
 
         ... sending Id...
 
-        Creating ID message:
-        1
+        Creating ID message: 1
 
-        ... loading save 5958...
+        ...
+        loading save 5958...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely
-        joined lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        mockServer Step 2: Applying 1 extra actions
+        ... done.
+
+        Got
+        ID message: 1
+
+        Game already launched, likely joined lobby.
 
         mockServer
-        had no player 1.
+        Step 2: Applying 1 extra actions
 
-        mockServer had no player 2.
+        mockServer had no player 1.
 
         mockServer
-        had no player 3.
-
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-        mockClient Step 2: Applying
-        1 extra actions
-
-        mockClient had no player 1.
-
-        mockClient
         had no player 2.
 
-        mockClient had no player 3.
+        mockServer had no player 3.
 
-        mockClient
+        mockServer
         Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
 
         Player 1
         created.
+
+        mockClient Step 2: Applying 1 extra actions
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
 
 '
       stacktrace: 
@@ -1548,8 +1544,8 @@ MonoBehaviour:
         Loading subscene with
         GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -1573,8 +1569,8 @@ MonoBehaviour:
 
         ... saving...
 
-        ...
-        sending save...
+        ... sending
+        save...
 
         ... wrote 5958...
 
@@ -1602,8 +1598,8 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Game already launched, likely
-        joined lobby.
+        Game already launched, likely joined
+        lobby.
 
         mockServer Step 2: Applying 1 extra actions
 
@@ -1620,21 +1616,20 @@ MonoBehaviour:
 
         Player 1 created.
 
-        mockClient Step 2: Applying
-        1 extra actions
+        mockClient Step 2: Applying 1
+        extra actions
 
         mockClient had no player 1.
 
-        mockClient
-        had no player 2.
+        mockClient had
+        no player 2.
 
         mockClient had no player 3.
 
-        mockClient
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient Step
+        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
 
-        Player 1
-        created.
+        Player 1 created.
 
 '
       stacktrace: 
@@ -1678,8 +1673,8 @@ MonoBehaviour:
         Loading subscene with
         GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -1703,8 +1698,8 @@ MonoBehaviour:
 
         ... saving...
 
-        ...
-        sending save...
+        ... sending
+        save...
 
         ... wrote 5958...
 
@@ -1732,8 +1727,8 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Game already launched, likely
-        joined lobby.
+        Game already launched, likely joined
+        lobby.
 
 '
       stacktrace: 
@@ -1772,8 +1767,8 @@ MonoBehaviour:
         Loading
         subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is
-        now listening for connections.
+        Server is now
+        listening for connections.
 
         Game already launched, likely joined
         lobby.
@@ -1805,61 +1800,60 @@ MonoBehaviour:
 
         ... sending Id...
 
-        Creating ID message:
-        1
+        Creating ID message: 1
 
-        ... loading save 5958...
+        ...
+        loading save 5958...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely
-        joined lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        mockServer Step 2: Applying 1 extra actions
+        ... done.
+
+        Got
+        ID message: 1
+
+        Game already launched, likely joined lobby.
 
         mockServer
-        had no player 1.
+        Step 2: Applying 1 extra actions
 
-        mockServer had no player 2.
+        mockServer had no player 1.
 
         mockServer
-        had no player 3.
-
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-        mockClient Step 2: Applying
-        1 extra actions
-
-        mockClient had no player 1.
-
-        mockClient
         had no player 2.
 
-        mockClient had no player 3.
+        mockServer had no player 3.
 
-        mockClient
+        mockServer
         Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
 
         Player 1
         created.
+
+        mockClient Step 2: Applying 1 extra actions
+
+        mockClient
+        had no player 1.
+
+        mockClient had no player 2.
+
+        mockClient
+        had no player 3.
+
+        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
+        0f, 0f)
+
+        Player 1 created.
 
 '
       stacktrace: 
@@ -1903,8 +1897,8 @@ MonoBehaviour:
         Loading subscene with
         GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -1928,8 +1922,8 @@ MonoBehaviour:
 
         ... saving...
 
-        ...
-        sending save...
+        ... sending
+        save...
 
         ... wrote 5958...
 
@@ -1957,8 +1951,8 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Game already launched, likely
-        joined lobby.
+        Game already launched, likely joined
+        lobby.
 
         mockServer Step 2: Applying 1 extra actions
 
@@ -1975,21 +1969,20 @@ MonoBehaviour:
 
         Player 1 created.
 
-        mockClient Step 2: Applying
-        1 extra actions
+        mockClient Step 2: Applying 1
+        extra actions
 
         mockClient had no player 1.
 
-        mockClient
-        had no player 2.
+        mockClient had
+        no player 2.
 
         mockClient had no player 3.
 
-        mockClient
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient Step
+        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
 
-        Player 1
-        created.
+        Player 1 created.
 
 '
       stacktrace: 
@@ -2169,78 +2162,77 @@ MonoBehaviour:
         Loading subscene with GUID:
         24b4cc9fa890cde4ba1a296216afae7d
 
-        mockServer Step 1: Applying 1
-        extra actions
+        mockServer Step 1: Applying 1 extra
+        actions
 
         mockServer had no player 0.
 
-        mockServer
-        had no player 1.
+        mockServer had no player
+        1.
 
         mockServer had no player 2.
 
-        mockServer
-        had no player 3.
+        mockServer had no player
+        3.
 
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
+        0f)
 
         Player 0 created.
 
-        mockClient Step 1: Applying
-        1 extra actions
+        mockClient Step 1: Applying 1 extra
+        actions
 
         mockClient had no player 0.
 
-        mockClient
-        had no player 1.
+        mockClient had no player
+        1.
 
         mockClient had no player 2.
 
-        mockClient
-        had no player 3.
+        mockClient had no player
+        3.
 
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
+        0f)
 
         Player 0 created.
 
-        Server is now listening for
-        connections.
+        Server is now listening for connections.
 
-        Game already launched, likely joined lobby.
+        Game
+        already launched, likely joined lobby.
+
+        ... saving...
 
         ...
-        saving...
-
-        ... sending save...
+        sending save...
 
         ... wrote 5958...
 
-        ...
-        sending Id...
+        ... sending Id...
 
-        Creating ID message: 1
+        Creating
+        ID message: 1
 
-        ... loading save
-        5958...
+        ... loading save 5958...
 
         ... creating game...
 
-        Creating Game...
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ...
-        save loaded...
+        done.
 
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ... done.
-
-        Got
-        ID message: 1
+        Got ID message: 1
 
         Cleaning up 1 destroyed GenericPrefabs
 
@@ -2278,19 +2270,19 @@ MonoBehaviour:
 
         Creating Game...
 
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Server is now listening
-        for connections.
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
 
         Game already launched, likely joined lobby.
 
@@ -2306,20 +2298,20 @@ MonoBehaviour:
 
         Creating ID message: 1
 
-        ... loading save
-        4362...
+        ... loading save 4362...
 
-        ... creating game...
+        ...
+        creating game...
 
         Creating Game...
 
-        ...
-        save loaded...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        ... save loaded...
 
         Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene
+        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ... done.
 
@@ -2716,26 +2708,18 @@ MonoBehaviour:
 
         stubServer had no player 1.
 
-        stubServer had no
-        player 2.
+        stubServer had no player
+        2.
 
         stubServer had no player 3.
 
-        stubServer Step
-        45: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
+        stubServer Step 45: Executing
+        rpc: PlayerJoin:0:float3(0f, 0f, 0f)
 
-        Player 0 already
-        exists, not creating a new one...
+        Player 0 already exists, not
+        creating a new one...
 
-        Game already launched, likely
-        joined lobby.
-
-        stubServer had no player 1.
-
-        stubServer
-        had no player 2.
-
-        stubServer had no player 3.
+        Game already launched, likely joined lobby.
 
         stubServer
         had no player 1.
@@ -3411,68 +3395,75 @@ MonoBehaviour:
         had no player 2.
 
         stubServer had no player 3.
+
+        stubServer
+        had no player 1.
+
+        stubServer had no player 2.
+
+        stubServer
+        had no player 3.
 
         ... saving...
 
-        ...
-        sending save...
+        ... sending save...
 
-        ... wrote 5958...
+        ...
+        wrote 5958...
 
         ... sending Id...
 
-        Creating
-        ID message: 1
-
-        stubServer Step 137: Applying 1 extra actions
+        Creating ID message: 1
 
         stubServer
-        had no player 1.
+        Step 137: Applying 1 extra actions
+
+        stubServer had no player 1.
+
+        stubServer
+        had no player 2.
+
+        stubServer had no player 3.
+
+        stubServer
+        Step 137: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+
+        Player
+        1 created.
 
         stubServer had no player 2.
 
-        stubServer
-        had no player 3.
-
-        stubServer Step 137: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
+        stubServer had no
+        player 3.
 
         stubServer had no player 2.
 
-        stubServer
-        had no player 3.
+        stubServer had no
+        player 3.
 
         stubServer had no player 2.
 
-        stubServer
-        had no player 3.
-
-        stubServer had no player 2.
-
-        stubServer
-        had no player 3.
+        stubServer had no
+        player 3.
 
         ... loading save 5958...
 
-        ... creating
-        game...
+        ... creating game...
 
-        Creating Game...
+        Creating
+        Game...
 
         ... save loaded...
 
-        Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
 
-        Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        ... done.
+        ...
+        done.
 
-        Got
-        ID message: 1
+        Got ID message: 1
 
         stubServer had no player 2.
 
@@ -3514,13 +3505,13 @@ MonoBehaviour:
 
         stubServer had no player 2.
 
-        stubServer
-        had no player 3.
+        stubServer had
+        no player 3.
 
         mockClient had no player 2.
 
-        mockClient
-        had no player 3.
+        mockClient had
+        no player 3.
 
 '
       stacktrace: 
@@ -3589,8 +3580,8 @@ MonoBehaviour:
 
         gameLaunch had no player 1.
 
-        gameLaunch
-        had no player 2.
+        gameLaunch had
+        no player 2.
 
         gameLaunch had no player 3.
 
@@ -4053,8 +4044,8 @@ MonoBehaviour:
         stubServer
         Step 48: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
 
-        Player
-        0 already exists, not creating a new one...
+        Player 0
+        already exists, not creating a new one...
 
         stubServer had no player
         1.
@@ -4117,1443 +4108,1443 @@ MonoBehaviour:
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 1.
+        stubServer had no
+        player 1.
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         stubServer had no player 1.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
@@ -5571,13 +5562,13 @@ MonoBehaviour:
 
         mockClient had no player 1.
 
-        mockClient
-        had no player 2.
+        mockClient had
+        no player 2.
 
         mockClient had no player 3.
 
-        stubServer
-        Step 149: Applying 1 extra actions
+        stubServer Step
+        149: Applying 1 extra actions
 
         stubServer had no player 1.
 
@@ -5594,28 +5585,28 @@ MonoBehaviour:
 
         stubServer had no player 2.
 
-        stubServer had
-        no player 3.
+        stubServer had no
+        player 3.
 
         mockClient had no player 1.
 
-        mockClient had
-        no player 2.
+        mockClient had no
+        player 2.
 
         mockClient had no player 3.
 
-        stubServer had
-        no player 2.
+        stubServer had no
+        player 2.
 
         stubServer had no player 3.
 
-        mockClient had
-        no player 1.
+        mockClient had no
+        player 1.
 
         mockClient had no player 2.
 
-        mockClient had
-        no player 3.
+        mockClient had no
+        player 3.
 
         ... loading save 5958...
 
@@ -6082,8 +6073,8 @@ MonoBehaviour:
 
         mockGame had no player 3.
 
-        Server is now listening
-        for connections.
+        Server is now listening for
+        connections.
 
         mockGame Step 44: Applying 1 extra actions
 
@@ -6557,7 +6548,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 1533
     height: 731
   m_SerializedDataModeController:
@@ -7133,8 +7124,8 @@ MonoBehaviour:
       containerId: overlay-container--right
       displayed: 0
       id: Scene View/Visual Effect Timeline Control
-      index: 19
-      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      index: 14
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
       floating: 0
       collapsed: 0
       snapOffset: {x: 0, y: 0}
@@ -7184,9 +7175,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -135.25061, y: 66.46733, z: -35.67143}
+    m_Target: {x: 4.5850296, y: -1.0268289, z: -10.038883}
     speed: 2
-    m_Value: {x: -135.25061, y: 66.46733, z: -35.67143}
+    m_Value: {x: 4.5850296, y: -1.0268289, z: -10.038883}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -7232,13 +7223,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.21076989, y: 0.73461425, z: -0.2686757, w: -0.5871088}
+    m_Target: {x: -0.19372866, y: -0.019719146, z: -0.0038954213, w: 0.9808558}
     speed: 2
-    m_Value: {x: -0.2106682, y: 0.73425984, z: -0.2685461, w: -0.58682555}
+    m_Value: {x: 0.19372866, y: 0.019719146, z: 0.0038954213, w: -0.9808558}
   m_Size:
-    m_Target: 10
+    m_Target: 2.0002913
     speed: 2
-    m_Value: 10
+    m_Value: 2.0002913
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -7293,8 +7284,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1534
-    y: 79
+    x: 1535
+    y: 24
     width: 520
     height: 731
   m_SerializedDataModeController:
@@ -7310,9 +7301,9 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 122}
-      m_SelectedIDs: f4050100
-      m_LastClickedID: 67060
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
       m_ExpandedIDs: f6fdfdff9002feff3c04feff1209feffcc0ffeff4a1bfeffc067feff0cb1feff52f9feffd242ffff324dffffbc5bffff3068ffffb678ffff10b8ffffaef5fffff2faffff2afa00009cfa000052050100f405010066060100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
@@ -7396,8 +7387,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 2056
-    y: 79
+    x: 2057
+    y: 24
     width: 503
     height: 731
   m_SerializedDataModeController:
@@ -7446,7 +7437,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 836
+    y: 24
     width: 1049
     height: 558
   m_SerializedDataModeController:
@@ -7490,7 +7481,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 180}
     m_SelectedIDs: a2f70000
     m_LastClickedID: 63394
-    m_ExpandedIDs: 0000000022e90000b4e9000008ea00000cea000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000420a0100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -7519,7 +7510,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000022e90000
+    m_ExpandedIDs: 00000000420a0100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -7805,8 +7796,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1050
-    y: 836
+    x: 1051
+    y: 24
     width: 1509
     height: 558
   m_SerializedDataModeController:
@@ -7886,7 +7877,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 99}
     m_SelectedIDs: 0acb0100
     m_LastClickedID: 117514
-    m_ExpandedIDs: 0000000022e90000
+    m_ExpandedIDs: 00000000420a0100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -7915,7 +7906,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000022e90000
+    m_ExpandedIDs: 00000000420a0100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
