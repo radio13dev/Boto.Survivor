@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d006169d6be21a198179c1fad6f6afdc3a8bbe39ef4440e2a2f560d24d640f71
-size 636
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59930f09355d47679d886e789fe5a04f, type: 3}
+  m_Name: Projectile
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResource
+  Material: {fileID: 2100000, guid: fdf1e6cf8ec9049438e1e369a79551f0, type: 2}
+  Mesh: {fileID: 4300000, guid: d52819d73e01d4348b8207303db85821, type: 2}
+  AnimData:
+    Frames: 0
+    TimeBetweenFrames: 0

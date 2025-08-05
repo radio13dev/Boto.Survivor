@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:88b0711a16ddff26fccca8a14a4d36093f381c183aa778fa66a0694eecd64f49
-size 649
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59930f09355d47679d886e789fe5a04f, type: 3}
+  m_Name: EnemyLarge
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResource
+  Material: {fileID: 2100000, guid: 51807fdc7d4335340b591c657c86e14a, type: 2}
+  Mesh: {fileID: -1286419819572928841, guid: efa0337645221684287f746e4aea5ef3, type: 3}
+  AnimData:
+    Frames: 0
+    TimeBetweenFrames: 0

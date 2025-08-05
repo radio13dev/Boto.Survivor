@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ee4bbc478214503a0e9bcb0787475c19ffdb78dda4be96e11dc3b5677e6f5bb7
-size 632
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59930f09355d47679d886e789fe5a04f, type: 3}
+  m_Name: Pickup
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResource
+  Material: {fileID: 2100000, guid: 19f463ac47fa7854caf3b209534fa552, type: 2}
+  Mesh: {fileID: 4300000, guid: d52819d73e01d4348b8207303db85821, type: 2}
+  AnimData:
+    Frames: 0
+    TimeBetweenFrames: 0
