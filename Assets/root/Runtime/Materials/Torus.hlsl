@@ -19,7 +19,7 @@ void GetToroidalCoord_float(float3 worldPosition, float3 cameraPosition, float2 
 		
 	// The more we travel around the torus the more 'curved' any parallel lines become.
 	// To get around this we'll lerp our x values to the nearest grid scale position
-	float camTheta = atan2(cameraPosition.z, cameraPosition.x);
+	//float camTheta = atan2(cameraPosition.z, cameraPosition.x);
 	
 	// Now transform this so that distances on the inside of the torus match distances on the outside
 	// FIRST: Determine the inner radius and outer radius
