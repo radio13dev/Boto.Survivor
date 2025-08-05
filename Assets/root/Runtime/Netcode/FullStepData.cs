@@ -42,10 +42,9 @@ public struct StepInput : IComponentData
 
     public void Collect(Camera camera)
     {
-        if (Keyboard.current.wKey.isPressed)        Direction += (float3)camera.transform.up;
-        if (Keyboard.current.sKey.isPressed)        Direction -= (float3)camera.transform.up;
-        if (Keyboard.current.aKey.isPressed)        Direction -= (float3)camera.transform.right;
-        if (Keyboard.current.dKey.isPressed)        Direction += (float3)camera.transform.right;
+        var player = GameInitialize.Inputs.Player;
+        var dir = player.Move.ReadValue<Vector2>();
+        Direction += (float3)camera.transform.right*dir.x + (float3)camera.transform.up*dir.y;
         
         if (Keyboard.current.jKey.isPressed)        Input |= StepInput.S1Input;
         if (Keyboard.current.kKey.isPressed)        Input |= StepInput.S2Input;
