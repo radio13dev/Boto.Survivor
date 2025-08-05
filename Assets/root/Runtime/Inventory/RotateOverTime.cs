@@ -7,6 +7,7 @@ public class RotateOverTime : MonoBehaviour
     [SerializeField] private AnimationCurve rotationSpeedCurve = AnimationCurve.EaseInOut(0, 30f, 1, 60f); // degrees per second
     [SerializeField] private float axisChangeSpeed = 0.5f; // how quickly the axis changes (0 = never, 1 = instant)
     [SerializeField] private float returnSpeed = 90f; // speed to rotate back to identity
+    [SerializeField] private bool randomInit = true;
 
     private float currentSpeedCurveValue;
     private Vector3 currentAxis;
@@ -17,8 +18,11 @@ public class RotateOverTime : MonoBehaviour
 
     private void Awake()
     {
-        // Start with a random rotation and axis
-        transform.rotation = Random.rotation;
+        if (randomInit)
+        {
+            // Start with a random rotation and axis
+            transform.rotation = Random.rotation;
+        }
         currentAxis = Random.onUnitSphere;
         targetAxis = Random.onUnitSphere;
     }
