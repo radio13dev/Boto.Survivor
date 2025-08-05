@@ -13,107 +13,94 @@ public static class TorusMeshGenerator
     /// <param name="tubeSegments">Number of segments around the tube.</param>
     /// <param name="vertices">Output array of vertices.</param>
     /// <param name="triangles">Output array of triangle indices.</param>
-    public static void GenerateTorusMesh(float ringRadius, float thickness, int ringSegments, int tubeSegments, Axis upAxis, out float3[] vertices, out int[] triangles, out float3[] normals, out float2[] uvs)
+    public static void GenerateTorusMesh(
+    float ringRadius, float thickness, int ringSegments, int tubeSegments, Axis upAxis,
+    out float3[] vertices, out int[] triangles, out float3[] normals, out float2[] uvs)
+{
+    int vertCountR = ringSegments + 1;
+    int vertCountT = tubeSegments + 1;
+
+    vertices = new float3[vertCountR * vertCountT];
+    normals = new float3[vertices.Length];
+    uvs = new float2[vertices.Length];
+    triangles = new int[ringSegments * tubeSegments * 6];
+
+    for (int i = 0; i < vertCountR; i++)
     {
-        // Total vertices count.
-        vertices = new float3[ringSegments * tubeSegments];
-        normals = new float3[vertices.Length];
-        uvs = new float2[vertices.Length];
-        // Each quad on the torus yields two triangles -> 6 indices per quad.
-        triangles = new int[ringSegments * tubeSegments * 6];
+        float theta = 2 * math.PI * i / ringSegments;
+        float cosTheta = math.cos(theta);
+        float sinTheta = math.sin(theta);
 
-        // Compute vertices.
-        for (int i = 0; i < ringSegments; i++)
+        for (int j = 0; j < vertCountT; j++)
         {
-            float theta = 2 * math.PI * i / ringSegments;
-            float cosTheta = math.cos(theta);
-            float sinTheta = math.sin(theta);
+            float phi = 2 * math.PI * j / tubeSegments;
+            float cosPhi = math.cos(phi);
+            float sinPhi = math.sin(phi);
 
-            for (int j = 0; j < tubeSegments; j++)
+            float x = (ringRadius + thickness * cosPhi) * cosTheta;
+            float y = (ringRadius + thickness * cosPhi) * sinTheta;
+            float z = thickness * sinPhi;
+            float3 point;
+            float3 circleCenter;
+
+            if (upAxis == Axis.x)
             {
-                float phi = 2 * math.PI * j / tubeSegments;
-                float cosPhi = math.cos(phi);
-                float sinPhi = math.sin(phi);
-
-                // Parametric equation of a torus:
-                // Position = (ringRadius + thickness * cos(phi)) * (cos(theta), sin(theta), 0) + (0, 0, thickness * sin(phi))
-                float x = (ringRadius + thickness * cosPhi) * cosTheta;
-                float y = (ringRadius + thickness * cosPhi) * sinTheta;
-                float z = thickness * sinPhi;
-                float3 point;
-                float3 circleCenter;
-                
-                if (upAxis == Axis.x)
-                {
-                    point = new float3(z, y, x);
-                    circleCenter = new float3(0, ringRadius*sinTheta, ringRadius*cosTheta);
-                }
-                else if (upAxis == Axis.y)
-                {
-                    point = new float3(x, z, y);
-                    circleCenter = new float3(ringRadius*cosTheta, 0, ringRadius*sinTheta);
-                }
-                else
-                {
-                    point = new float3(x, y, z);
-                    circleCenter = new float3(ringRadius*cosTheta, ringRadius*sinTheta, 0);
-                }
-                
-                vertices[i * tubeSegments + j] = point;
-                
-                // The normal is the direction from the circle center to the point.
-                float3 normal = math.normalize(point - circleCenter);
-                normals[i * tubeSegments + j] = normal;
-                
-                uvs[i*tubeSegments + j] = new float2((float)i/(ringSegments-1), (float)j/(tubeSegments-1));
+                point = new float3(z, y, x);
+                circleCenter = new float3(0, ringRadius * sinTheta, ringRadius * cosTheta);
             }
-        }
-
-        // Determine if triangle winding should be reversed.
-        bool flipWinding = (upAxis == Axis.y);
-        
-        // Build triangle indices.
-        int index = 0;
-        for (int i = 0; i < ringSegments; i++)
-        {
-            // Wrap the ring index.
-            int nextI = (i + 1) % ringSegments;
-
-            for (int j = 0; j < tubeSegments; j++)
+            else if (upAxis == Axis.y)
             {
-                // Wrap the tube index.
-                int nextJ = (j + 1) % tubeSegments;
-                // Four vertices of the quad:
-                int a = i * tubeSegments + j;
-                int b = nextI * tubeSegments + j;
-                int c = nextI * tubeSegments + nextJ;
-                int d = i * tubeSegments + nextJ;
+                point = new float3(x, z, y);
+                circleCenter = new float3(ringRadius * cosTheta, 0, ringRadius * sinTheta);
+            }
+            else
+            {
+                point = new float3(x, y, z);
+                circleCenter = new float3(ringRadius * cosTheta, ringRadius * sinTheta, 0);
+            }
 
-                if (flipWinding)
-                {
-                    // Flipped winding order.
-                    triangles[index++] = a;
-                    triangles[index++] = c;
-                    triangles[index++] = b;
+            int vertIndex = i * vertCountT + j;
+            vertices[vertIndex] = point;
+            normals[vertIndex] = math.normalize(point - circleCenter);
+            uvs[vertIndex] = new float2((float)i / ringSegments, (float)j / tubeSegments);
+        }
+    }
 
-                    triangles[index++] = a;
-                    triangles[index++] = d;
-                    triangles[index++] = c;
-                }
-                else
-                {
-                    // Original winding order.
-                    triangles[index++] = a;
-                    triangles[index++] = b;
-                    triangles[index++] = c;
+    bool flipWinding = (upAxis == Axis.y);
+    int index = 0;
 
-                    triangles[index++] = a;
-                    triangles[index++] = c;
-                    triangles[index++] = d;
-                }
+    for (int i = 0; i < ringSegments; i++)
+    {
+        for (int j = 0; j < tubeSegments; j++)
+        {
+            int a = i * vertCountT + j;
+            int b = (i + 1) * vertCountT + j;
+            int c = (i + 1) * vertCountT + (j + 1);
+            int d = i * vertCountT + (j + 1);
+
+            if (flipWinding)
+            {
+                triangles[index++] = a;
+                triangles[index++] = c;
+                triangles[index++] = b;
+
+                triangles[index++] = a;
+                triangles[index++] = d;
+                triangles[index++] = c;
+            }
+            else
+            {
+                triangles[index++] = a;
+                triangles[index++] = b;
+                triangles[index++] = c;
+
+                triangles[index++] = a;
+                triangles[index++] = c;
+                triangles[index++] = d;
             }
         }
     }
+}
 }
 
 
