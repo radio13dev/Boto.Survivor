@@ -24,7 +24,7 @@ public class HandUIController : MonoBehaviour
     static event Action<Selectable, Selectable> OnLastPressChanged;
     
     static State m_State = State.Closed;
-    public enum State { Closed, Neutral, Inventory, Map }
+    public enum State { Closed, Inventory, Map }
     
     public const float k_AnimTransitionTime = 0.2f;
     
@@ -74,9 +74,12 @@ public class HandUIController : MonoBehaviour
 
     private void Update()
     {
-        if (Keyboard.current.tabKey.wasPressedThisFrame)
-            if (m_State == State.Closed) SetState(State.Neutral);
-            else SetState(State.Closed);
+        if (GameInitialize.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
+            if (m_State == State.Inventory) SetState(State.Closed);
+            else SetState(State.Inventory);
+        if (GameInitialize.Inputs.UI.MapShortcut.WasPressedThisFrame())
+            if (m_State == State.Map) SetState(State.Closed);
+            else SetState(State.Map);
     }
 }
 

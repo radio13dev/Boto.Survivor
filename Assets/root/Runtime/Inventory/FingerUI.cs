@@ -136,11 +136,11 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
         {
             if (HandUIController.LastPressed == this)
             {
-                if (newState == HandUIController.State.Neutral)
-                {
-                    // Do the 'drop item' transaction
-                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, (byte)this.FingerIndex, byte.MaxValue));
-                }
+                //if (newState == HandUIController.State.Neutral)
+                //{
+                //    // Do the 'drop item' transaction
+                //    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerAdjustInventory((byte)Game.ClientGame.PlayerIndex, (byte)this.FingerIndex, byte.MaxValue));
+                //}
                 HandUIController.LastPressed = null;
             }
         }

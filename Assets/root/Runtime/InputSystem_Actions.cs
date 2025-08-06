@@ -655,6 +655,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InventoryShortcut"",
+                    ""type"": ""Button"",
+                    ""id"": ""d55196f4-be98-43a8-8e17-cb503a841ab9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MapShortcut"",
+                    ""type"": ""Button"",
+                    ""id"": ""fc57f74b-2adc-4ad9-8b20-6c256c269529"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1031,6 +1049,28 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5dda10d2-70f4-4da0-b6eb-4d6a60a7c0f2"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""InventoryShortcut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d7662940-6081-4eed-be84-0df308502195"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""MapShortcut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1121,6 +1161,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        m_UI_InventoryShortcut = m_UI.FindAction("InventoryShortcut", throwIfNotFound: true);
+        m_UI_MapShortcut = m_UI.FindAction("MapShortcut", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1396,6 +1438,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
+    private readonly InputAction m_UI_InventoryShortcut;
+    private readonly InputAction m_UI_MapShortcut;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -1447,6 +1491,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/TrackedDeviceOrientation".
         /// </summary>
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/InventoryShortcut".
+        /// </summary>
+        public InputAction @InventoryShortcut => m_Wrapper.m_UI_InventoryShortcut;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/MapShortcut".
+        /// </summary>
+        public InputAction @MapShortcut => m_Wrapper.m_UI_MapShortcut;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1503,6 +1555,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+            @InventoryShortcut.started += instance.OnInventoryShortcut;
+            @InventoryShortcut.performed += instance.OnInventoryShortcut;
+            @InventoryShortcut.canceled += instance.OnInventoryShortcut;
+            @MapShortcut.started += instance.OnMapShortcut;
+            @MapShortcut.performed += instance.OnMapShortcut;
+            @MapShortcut.canceled += instance.OnMapShortcut;
         }
 
         /// <summary>
@@ -1544,6 +1602,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+            @InventoryShortcut.started -= instance.OnInventoryShortcut;
+            @InventoryShortcut.performed -= instance.OnInventoryShortcut;
+            @InventoryShortcut.canceled -= instance.OnInventoryShortcut;
+            @MapShortcut.started -= instance.OnMapShortcut;
+            @MapShortcut.performed -= instance.OnMapShortcut;
+            @MapShortcut.canceled -= instance.OnMapShortcut;
         }
 
         /// <summary>
@@ -1790,5 +1854,19 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "InventoryShortcut" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInventoryShortcut(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MapShortcut" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMapShortcut(InputAction.CallbackContext context);
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameInitialize : MonoBehaviour
@@ -14,6 +15,7 @@ public class GameInitialize : MonoBehaviour
         
         Inputs = new InputSystem_Actions();
         Inputs.Player.Enable();
+        Inputs.UI.Enable();
         
         var mainContentScene = SceneManager.GetSceneByName("main");
         if (EnableMainContentLoad && !mainContentScene.isLoaded)
@@ -24,6 +26,11 @@ public class GameInitialize : MonoBehaviour
         {
             GameLaunch.Create(new GameFactory("main"));
         }
+    }
+
+    private void Update()
+    {
+        GameEvents.ExecuteEvents();
     }
 
     private void OnDestroy()

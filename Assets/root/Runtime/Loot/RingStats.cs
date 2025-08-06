@@ -17,6 +17,7 @@ public struct Ring : IBufferElementData
 public struct RingStats : IComponentData
 {
     // Primary effect
+    public bool IsValid => PrimaryEffect != RingPrimaryEffect.None;
     public RingPrimaryEffect PrimaryEffect;
     public float PrimaryEffectValue;
 

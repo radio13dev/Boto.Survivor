@@ -56,11 +56,18 @@ public class SurvivorAuthoring : MonoBehaviour
             // Stats
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());
+            
             var rings = AddBuffer<Ring>(entity);
-            rings.Resize(8, NativeArrayOptions.ClearMemory);
+            rings.Resize(Ring.k_RingCount, NativeArrayOptions.ClearMemory);
+            var equippedGems = AddBuffer<EquippedGem>(entity);
+            equippedGems.Resize(Ring.k_RingCount*Gem.k_GemsPerRing, NativeArrayOptions.ClearMemory);
             for (int i = 0; i < rings.Length && i < authoring.InitialRings.Length; i++)
                 rings[i] = new Ring(){ Stats = authoring.InitialRings[i] };
             
+            var inventoryGems = AddBuffer<InventoryGem>(entity);
+            inventoryGems.Add(new InventoryGem(){ Gem = new Gem() });
+            inventoryGems.Add(new InventoryGem(){ Gem = new Gem() });
+            inventoryGems.Add(new InventoryGem(){ Gem = new Gem() });
         }
     }
 }

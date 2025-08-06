@@ -23,7 +23,6 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     public float InnerAngleTransition = 0.1f;
     
     public Transform ClosedT;
-    public Transform NeatralT;
     public Transform InventoryT;
     public Transform MapT;
     ExclusiveCoroutine Co;
@@ -184,11 +183,6 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
         Transform target;
         switch (newState)
         {
-            case HandUIController.State.Closed:
-                target = ClosedT;
-                m_AutoTrack = true;
-                this.Deselect();
-                break;
             case HandUIController.State.Inventory:
                 target = InventoryT;
                 break;
@@ -196,9 +190,11 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
                 target = MapT;
                 this.Select();
                 break;
-            case HandUIController.State.Neutral:
             default:
-                target = NeatralT;
+            case HandUIController.State.Closed:
+                target = ClosedT;
+                m_AutoTrack = true;
+                this.Deselect();
                 break;
         }
 
