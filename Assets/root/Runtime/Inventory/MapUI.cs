@@ -198,6 +198,6 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
                 break;
         }
 
-        Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, target, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, CoroutineHost.Methods.LerpSmooth(transform, target, HandUIController.k_AnimTransitionTime));
     }
 }

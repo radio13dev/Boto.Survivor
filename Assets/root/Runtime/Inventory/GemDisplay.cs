@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class GemDisplay : MonoBehaviour
+public class GemDisplay : DraggableElement
 {
 	public MeshRenderer Renderer;
     Gem m_Gem;

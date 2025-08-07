@@ -5,6 +5,7 @@ public class ShiftMainCameraWhenInventoryOpen : MonoBehaviour, HandUIController.
 {
     public Vector3 InventoryOffset;
     Vector3 m_defaultOffset;
+    ExclusiveCoroutine m_Co;
 
     private void Awake()
     {
@@ -27,11 +28,11 @@ public class ShiftMainCameraWhenInventoryOpen : MonoBehaviour, HandUIController.
         {
             case HandUIController.State.Inventory:
                 // Transition to 'inventory' offset
-                transform.localPosition = m_defaultOffset + InventoryOffset;
+                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, m_defaultOffset + InventoryOffset, 0.2f, true, true));
                 break;
             default:
                 // Transition to 'default' offset
-                transform.localPosition = m_defaultOffset;
+                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, m_defaultOffset, 0.2f, true, true));
                 break;
         }
         

@@ -49,7 +49,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                 break;
         }
 
-        Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, target, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, CoroutineHost.Methods.LerpSmooth(transform, target, HandUIController.k_AnimTransitionTime));
     }
 
     private void OnGameEvent(GameEvents.Type eType, Entity entity)
