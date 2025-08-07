@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Entities;
 using UnityEngine;
@@ -24,6 +25,8 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
     {
         HandUIController.Attach(this);
         
+        UIFocus.OnFocus += OnFocus;
+        UIFocus.OnInteract += OnInteract;
         GameEvents.OnEvent += OnGameEvent;
         if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity);
     }
@@ -32,7 +35,26 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
     {
         HandUIController.Detach(this);
         
+        UIFocus.OnFocus -= OnFocus;
+        UIFocus.OnInteract -= OnInteract;
         GameEvents.OnEvent -= OnGameEvent;
+    }
+
+    private void OnFocus()
+    {
+        if (UIFocus.Focus && UIFocus.Focus.TryGetComponent<RingDisplay>(out var display))
+        {
+            var index = Array.IndexOf(RingDisplays, display);
+            if (index != -1)
+            {
+                RingFocusDisplay.UpdateRing(index, display);
+            }
+        }
+    }
+
+    private void OnInteract()
+    {
+        
     }
     
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
@@ -68,8 +90,8 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                 RingDisplays[i].UpdateRing(rings[i], equippedGemsForRing);
                 
                 // Update the focus display if this ring is focused
-                if (RingFocusDisplay.IsFocused(i))
-                    RingFocusDisplay.UpdateRing(RingDisplays[i]);
+                if (RingFocusDisplay.IsFocused(RingDisplays[i]) || RingFocusDisplay.IsFocused(null))
+                    RingFocusDisplay.UpdateRing(i, RingDisplays[i]);
             }
         }
         if (GameEvents.TryGetBuffer<InventoryGem>(entity, out var gems))
@@ -85,7 +107,8 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                     // Create a new display if it doesn't exist
                     gemDisplay = Instantiate(GemDisplayPrefab, GemDisplayPrefab.transform.parent);
                     m_InventoryGems[gems[i].Gem.ClientId] = gemDisplay;
-                    gemDisplay.UpdateGem(gems[i].Gem);
+                    gemDisplay.UpdateGem(i, gems[i].Gem);
+                    gemDisplay.SnapBackToOrigin();
                     gemDisplay.gameObject.SetActive(true);
                 }
                 else

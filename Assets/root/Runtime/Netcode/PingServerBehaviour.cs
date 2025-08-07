@@ -40,7 +40,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     public const byte CODE_SendId = 0b0000_0010;
 
     public static event Action OnLobbyHostStart;
-    
+
     public override bool Idle => m_Idle;
     public string JoinCode;
 
@@ -171,7 +171,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
-                    SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)i));
+                    SpecialActionQueue.Enqueue(new GameRpc() { Type = GameRpc.Code.PlayerJoin, PlayerId = (byte)i });
                     break;
                 }
             }
@@ -231,7 +231,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                 }
                 else if (eventType == NetworkEvent.Type.Disconnect)
                 {
-                    SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerLeave, (ulong)i));
+                    SpecialActionQueue.Enqueue(new GameRpc() { Type = GameRpc.Code.PlayerLeave, PlayerId = (byte)i });
                     Connections[i] = default;
                 }
             }
@@ -257,7 +257,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             }
         }
     }
-    
+
     public void SetStepInput(int connectionId, StepInput input)
     {
         if (connectionId < 0 || connectionId >= m_ServerConnections.Length)
@@ -265,9 +265,9 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             Debug.LogError($"Invalid connection ID: {connectionId}");
             return;
         }
-        
+
         m_ServerJobHandle.Complete();
-        
+
         var connection = m_ServerConnections[connectionId];
         connection.InputBuffer = input;
         m_ServerConnections[connectionId] = connection;
@@ -431,7 +431,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         {
             if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
             {
-                m_SpecialActionQueue.Enqueue(new GameRpc(GameRpc.Code.PlayerJoin, (ulong)i));
+                m_SpecialActionQueue.Enqueue(new GameRpc() { Type = GameRpc.Code.PlayerJoin, PlayerId = (byte)i });
                 Game.PlayerIndex = i;
 
                 m_ServerConnections.ElementAt(i).Disabled = true;

@@ -12,28 +12,25 @@ public class ElementFocus : MonoBehaviour
     private void Update()
     {
         var visualT = Visual.gameObject.transform;
-        if (!UIFocus.Focus)
-        {
-            visualT.localScale = Vector3.Lerp(visualT.localScale, Vector3.zero, Time.deltaTime*FocusScaleSpeed);
-            m_Active = false;
-            return;
-        }
-        else if (!m_Active)
-        {
-            m_Active = true;
-            transform.position = UIFocus.Focus.transform.position;
-        }
-        
-        
-        if (UIFocus.Interact)
+        if (UIFocus.Interact && !UIFocus.Focus)
         {
             transform.position = Vector3.Lerp(transform.position, UIFocus.Interact.transform.position, Time.deltaTime*Speed);
             visualT.localScale = Vector3.Lerp(visualT.localScale, FocusedScale, Time.deltaTime*FocusScaleSpeed);
         }
-        else
+        else if (UIFocus.Focus)
         {
+            if (!m_Active)
+            {
+                m_Active = true;
+                transform.position = UIFocus.Focus.transform.position;
+            }
             transform.position = Vector3.Lerp(transform.position, UIFocus.Focus.transform.position, Time.deltaTime*Speed);
             visualT.localScale = Vector3.Lerp(visualT.localScale, Vector3.one, Time.deltaTime*FocusScaleSpeed);
+        }
+        else
+        {
+            visualT.localScale = Vector3.Lerp(visualT.localScale, Vector3.zero, Time.deltaTime*FocusScaleSpeed);
+            m_Active = false;
         }
     }
 }

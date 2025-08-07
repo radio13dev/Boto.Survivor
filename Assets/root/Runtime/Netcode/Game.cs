@@ -60,11 +60,9 @@ public class Game : IDisposable
     public static Game ClientGame
     {
         get => s_ClientGame;
-        set
-        {
-            s_ClientGame = value;
-        }
+        set { s_ClientGame = value; }
     }
+
     static Game s_ClientGame;
 
     public World World => m_World;
@@ -94,7 +92,7 @@ public class Game : IDisposable
 
             if (m_GameManagerSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameManagerSceneE)) return false;
             if (m_GameSceneE == Entity.Null || !SceneSystem.IsSceneLoaded(m_World.Unmanaged, m_GameSceneE)) return false;
-            
+
             OnLoadComplete();
             return m_Ready = true;
         }
@@ -132,7 +130,7 @@ public class Game : IDisposable
     public Game(string worldName, bool showVisuals, IStepProvider stepProvider)
     {
         m_StepProvider = stepProvider;
-    
+
         Debug.Log($"Creating Game...");
         m_World = new World(worldName, WorldFlags.Game);
         var systems = DefaultWorldInitialization
@@ -169,7 +167,7 @@ public class Game : IDisposable
         }
 
         RpcSendBuffer = new NativeQueue<GameRpc>(Allocator.Persistent);
-        
+
         m_StepController = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
     }
 
@@ -236,13 +234,13 @@ public class Game : IDisposable
     public unsafe void ApplyStepData(FullStepData stepData, GameRpc* extraActionPtr)
     {
         m_StepProvider.ExecuteStep();
-    
+
         if (!m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled)
         {
             Debug.LogError($"Failed step, tried to go to step {stepData.Step} but simulation disabled.");
             return;
         }
-        
+
         var entityManager = m_World.EntityManager;
 
         // Iterate step count
@@ -254,7 +252,7 @@ public class Game : IDisposable
                 Debug.LogWarning($"Failed step, tried to go from step {stepController.Step} to {stepData.Step}");
                 return;
             }
-            
+
             m_StepController.SetSingleton(new StepController()
             {
                 Step = stepData.Step
@@ -283,12 +281,12 @@ public class Game : IDisposable
             using var query = entityManager.CreateEntityQuery(typeof(StepInput), typeof(PlayerControlled));
             for (int i = 0; i < stepData.Length; i++)
             {
-                query.SetSharedComponentFilter(new PlayerControlled(){ Index = i });
+                query.SetSharedComponentFilter(new PlayerControlled() { Index = i });
                 if (query.CalculateEntityCount() == 0)
                 {
                     continue;
                 }
-                
+
                 using var entities = query.ToEntityArray(Allocator.Temp);
                 for (int j = 0; j < entities.Length; j++)
                     entityManager.SetComponentData(entities[j], stepData[i]);
@@ -327,9 +325,8 @@ public class Game : IDisposable
         {
             Update_NoLogic();
             CompleteDependencies();
-        }
-        while (SaveState == SaveState.Saving);
-        
+        } while (SaveState == SaveState.Saving);
+
         EntityManager entityManager = m_World.EntityManager;
         var saveBufferEntities = m_SaveBuffer.ToEntityArray(Allocator.Temp);
         if (saveBufferEntities.Length > 1)
@@ -362,6 +359,7 @@ public class Game : IDisposable
         {
             dependencies[i].Complete();
         }
+
         dependencies.Clear();
     }
 
@@ -380,7 +378,7 @@ public class Game : IDisposable
         for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
         {
             if (i == PlayerIndex) continue;
-            new GameRpc(GameRpc.Code.PlayerLeave, (ulong)i).Apply(this);
+            new GameRpc() { Type = GameRpc.Code.PlayerLeave, PlayerId = (byte)i }.Apply(this);
         }
     }
 }
@@ -391,14 +389,17 @@ public static class GameEvents
     {
         InventoryChanged,
     }
-    
+
     public static event Action<Type, Entity> OnEvent;
-    
+
     static readonly SharedStatic<NativeQueue<(Type, Entity)>> s_EventQueue = SharedStatic<NativeQueue<(Type, Entity)>>.GetOrCreate<NativeQueue<(Type, Entity)>, EventQueueKey>();
-    private class EventQueueKey { }
-    
+
+    private class EventQueueKey
+    {
+    }
+
     static bool m_Initialized;
-    
+
     public static void Initialize()
     {
         if (m_Initialized)
@@ -406,11 +407,11 @@ public static class GameEvents
             throw new Exception($"{nameof(GameEvents)}.{nameof(Initialize)}() ran multiple times.");
             return;
         }
-    
+
         m_Initialized = true;
         s_EventQueue.Data = new NativeQueue<(Type, Entity)>(Allocator.Persistent);
     }
-    
+
     public static void Dispose()
     {
         s_EventQueue.Data.Dispose();
@@ -437,11 +438,13 @@ public static class GameEvents
             o = default;
             return false;
         }
+
         if (Game.ClientGame.World.EntityManager.HasComponent<T>(entity))
         {
             o = Game.ClientGame.World.EntityManager.GetSharedComponent<T>(entity);
             return true;
         }
+
         o = default;
         return false;
     }
@@ -453,11 +456,13 @@ public static class GameEvents
             o = default;
             return false;
         }
+
         if (Game.ClientGame.World.EntityManager.HasBuffer<T>(entity))
         {
             o = Game.ClientGame.World.EntityManager.GetBuffer<T>(entity, true);
             return true;
         }
+
         o = default;
         return false;
     }

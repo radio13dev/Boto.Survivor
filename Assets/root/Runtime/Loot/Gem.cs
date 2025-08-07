@@ -22,16 +22,30 @@ public struct Gem
             return _clientId;
         }
     }
+    
+    public enum Type
+    {
+        None,
+        Multishot,
+    }
+    
+    public Type GemType;
+    public bool IsValid => GemType != Type.None;
 }
 
 [Save]
 public struct InventoryGem : IBufferElementData
 {
     public Gem Gem;
+
+    public InventoryGem(Gem gem)
+    {
+        _ = gem.ClientId;
+        Gem = gem;
+    }
 }
 [Save]
 public struct EquippedGem : IBufferElementData
 {
-    public bool Equipped;
     public Gem Gem;
 }

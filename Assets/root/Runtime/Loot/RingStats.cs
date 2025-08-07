@@ -50,6 +50,32 @@ public struct RingStats : IComponentData
         ProjectileCount += stats.ProjectileCount;
         ProjectileRate += stats.ProjectileRate;
     }
+
+    public string GetTitleString()
+    {
+        switch (PrimaryEffect)
+        {
+            case RingPrimaryEffect.Projectile_Ring:
+                return "Ring of Projectiles";
+            case RingPrimaryEffect.Projectile_NearestRapid:
+                return "Rapid Ring";
+            default:
+                return "???";
+        }
+    }
+
+    public string GetDescriptionString()
+    {
+        switch (PrimaryEffect)
+        {
+            case RingPrimaryEffect.Projectile_Ring:
+                return "Launches 8 projectiles out in a ring around you";
+            case RingPrimaryEffect.Projectile_NearestRapid:
+                return "Rapidly fires at the nearest target";
+            default:
+                return "???";
+        }
+    }
 }
 
 

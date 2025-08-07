@@ -7,7 +7,7 @@ public class RingDisplay : MonoBehaviour
     public MeshRenderer NoRingDisplay;
     public MeshRenderer HasRingDisplay;
 
-    Ring m_Ring;
+    public Ring Ring { get; private set; }
     EquippedGem[] m_Gems;
     public ReadOnlyCollection<EquippedGem> Gems => Array.AsReadOnly(m_Gems);
 
@@ -18,7 +18,7 @@ public class RingDisplay : MonoBehaviour
 
     public void UpdateRing(Ring ring, ReadOnlySpan<EquippedGem> equippedGemsForRing)
     {
-        m_Ring = ring;
+        Ring = ring;
         m_Gems = equippedGemsForRing.ToArray();
         
         NoRingDisplay.gameObject.SetActive(!ring.Stats.IsValid);

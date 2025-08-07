@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -6,7 +7,8 @@ using Unity.Transforms;
 using UnityEngine;
 
 [Serializable]
-public readonly struct GameRpc : IComponentData
+[StructLayout(LayoutKind.Explicit)]
+public struct GameRpc : IComponentData
 {
     public enum Code
     {
@@ -16,52 +18,42 @@ public readonly struct GameRpc : IComponentData
 
         // Runtime Actions
         PlayerAdjustInventory = 0b0000_0000,
+        PlayerSlotInventoryGemIntoRing,
+        PlayerSwapGemSlots
     }
 
-    [SerializeField] readonly byte m_Type;
-    [SerializeField] readonly ulong m_Data0;
-    [SerializeField] readonly float3 m_Data1;
+    [SerializeField] [FieldOffset(0)] long m_WRITE0;
+    [SerializeField] [FieldOffset(8)] long m_WRITE1;
 
+    [FieldOffset(0)] byte m_Type;
+    [FieldOffset(1)] byte m_Player;
     public bool IsValidClientRpc => (m_Type & (byte)Code.PlayerJoin) != 0;
-    public Code Type => (Code)m_Type;
-    public byte PlayerId => (byte)(m_Data0 & 0xFF);
+
+    public Code Type
+    {
+        get => (Code)m_Type;
+        set => m_Type = (byte)value;
+    }
+    public byte PlayerId
+    {
+        get => m_Player;
+        set => m_Player = value;
+    }
 
     public override string ToString()
     {
-        return $"{Type}:{m_Data0}:{m_Data1}";
-    }
-
-    private GameRpc(byte type, ulong data0, float3 data1)
-    {
-        this.m_Type = type;
-        this.m_Data0 = data0;
-        this.m_Data1 = data1;
-    }
-
-    public GameRpc(Code type, ulong data, float3 data1 = default)
-    {
-        this.m_Type = (byte)type;
-        this.m_Data0 = data;
-        this.m_Data1 = data1;
+        return $"{Type}:{m_WRITE0}.{m_WRITE1}";
     }
 
     public void Write(ref DataStreamWriter writer)
     {
-        writer.WriteByte(m_Type);
-        writer.WriteULong(m_Data0);
-        writer.WriteFloat(m_Data1.x);
-        writer.WriteFloat(m_Data1.y);
-        writer.WriteFloat(m_Data1.z);
+        writer.WriteLong(m_WRITE0);
+        writer.WriteLong(m_WRITE1);
     }
 
     public static GameRpc Read(ref DataStreamReader reader)
     {
-        GameRpc result = new(
-            reader.ReadByte(), 
-            reader.ReadULong(), 
-            new float3(reader.ReadFloat(),reader.ReadFloat(),reader.ReadFloat())
-        );
-        return result;
+        return new GameRpc(){ m_WRITE0 = reader.ReadLong(), m_WRITE1 = reader.ReadLong() };
     }
 
     public void Apply(Game game)
@@ -71,22 +63,42 @@ public readonly struct GameRpc : IComponentData
     }
 
     #region Inventory Adjust
-    public byte From => (byte)((m_Data0 & 0x00_00_FF_00) >> 8);
-    public byte To => (byte)((m_Data0 & 0x00_FF_00_00) >> 16);
+    [FieldOffset(2)] public byte From;
+    [FieldOffset(3)] public byte To;
+    [FieldOffset(4)] public float3 FloorPosition;
     public bool IsToFloor => To == byte.MaxValue;
     public bool IsFromFloor => From >= Ring.k_RingCount;
     public int FromFloorIndex => From - Ring.k_RingCount;
 
-    public float3 GetFromFloorPosition() => m_Data1;
-
     public static GameRpc PlayerAdjustInventory(byte player, byte from, byte to, float3 toPosition = default)
     {
-        return new GameRpc(Code.PlayerAdjustInventory, (ulong)to << 16 | (ulong)from << 8 | (ulong)player, toPosition);
+        return new GameRpc(){ m_Type = (byte)Code.PlayerAdjustInventory, m_Player = player, From = from, To = to, FloorPosition = toPosition };
     }
 
     public static byte GetFloorIndexByte(int index)
     {
         return (byte)(Ring.k_RingCount + index);
+    }
+    #endregion
+
+    #region GemSlotting
+    [FieldOffset(2)] public int InventoryIndex;
+    [FieldOffset(2)] public int FromSlotIndex;
+    [FieldOffset(6)] public int ToSlotIndex;
+
+    public static GameRpc PlayerSlotInventoryGemIntoRing(byte player, int inventoryIndex, int toSlotIndex)
+    {
+        return new GameRpc(){ m_Type = (byte)Code.PlayerSlotInventoryGemIntoRing, m_Player = player, InventoryIndex = inventoryIndex, ToSlotIndex = toSlotIndex };
+    }
+
+    public static GameRpc PlayerSwapGemSlots(byte player, int fromSlotIndex, int toSlotIndex)
+    {
+        return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = toSlotIndex };
+    }
+
+    public static GameRpc PlayerUnslotGem(byte player, int fromSlotIndex)
+    {
+        return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = -1 };
     }
     #endregion
 }
@@ -118,6 +130,10 @@ public partial struct GameRpcSystem : ISystem
             var playerTag = new PlayerControlled() { Index = playerId };
             switch (rpc.Type)
             {
+                default:
+                    Debug.LogError($"Unhandled RPC type: {rpc.Type}");
+                    break;
+                
                 case GameRpc.Code.PlayerJoin:
                 {
                     using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled));
@@ -144,6 +160,73 @@ public partial struct GameRpcSystem : ISystem
                     Debug.Log($"Player {playerId} removed.");
                     break;
                 }
+                
+                case GameRpc.Code.PlayerSlotInventoryGemIntoRing:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(InventoryGem), typeof(EquippedGem), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<InventoryGem>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
+                    var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
+                    
+                    if (rpc.InventoryIndex < 0 || rpc.InventoryIndex >= inventory.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to use inventory item at index {rpc.InventoryIndex} but inventory only has {inventory.Length} items.");
+                        continue;
+                    }
+                    
+                    if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= equipped.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to slot into index {rpc.ToSlotIndex} but only has {equipped.Length} slots.");
+                        continue;
+                    }
+                    
+                    equipped[rpc.ToSlotIndex] = new EquippedGem(){ Gem = inventory[rpc.InventoryIndex].Gem };
+                    inventory.RemoveAtSwapBack(rpc.InventoryIndex);
+                    
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                case GameRpc.Code.PlayerSwapGemSlots:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(InventoryGem), typeof(EquippedGem), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<InventoryGem>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
+                    
+                    if (rpc.FromSlotIndex < 0 || rpc.FromSlotIndex >= equipped.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to slot from index {rpc.FromSlotIndex} but only has {equipped.Length} slots.");
+                        continue;
+                    }
+                    
+                    if (rpc.ToSlotIndex == -1)
+                    {
+                        // We're moving this item to the inventory.
+                        var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
+                        inventory.Add(new InventoryGem() { Gem = equipped[rpc.FromSlotIndex].Gem });
+                        equipped[rpc.FromSlotIndex] = default;
+                    }
+                    else
+                    {
+                        if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= equipped.Length)
+                        {
+                            Debug.LogWarning($"Player {playerId} attempted to slot into index {rpc.ToSlotIndex} but only has {equipped.Length} slots.");
+                            continue;
+                        }
+                    
+                        (equipped[rpc.ToSlotIndex], equipped[rpc.FromSlotIndex]) = (equipped[rpc.FromSlotIndex], equipped[rpc.ToSlotIndex]);
+                    }
+                    
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                    
+                
                 case GameRpc.Code.PlayerAdjustInventory:
                 {
                     using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
@@ -189,7 +272,7 @@ public partial struct GameRpcSystem : ISystem
                         float pickupD = float.MaxValue;
                         foreach (var (testPickupT, testPickupE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAny<RingStats, LootGenerator2>().WithEntityAccess())
                         {
-                            var d = math.distancesq(testPickupT.ValueRO.Position, rpc.GetFromFloorPosition());
+                            var d = math.distancesq(testPickupT.ValueRO.Position, rpc.FloorPosition);
                             if (d < pickupD)
                             {
                                 pickupE = testPickupE;

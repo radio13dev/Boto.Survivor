@@ -64,8 +64,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2691498473893475235}
   - component: {fileID: 9105382074758571072}
-  - component: {fileID: 4199221828469917856}
   - component: {fileID: 7857297845750428481}
+  - component: {fileID: 3947722476216089243}
+  - component: {fileID: 7151355522992326331}
   m_Layer: 5
   m_Name: GemDisplay
   m_TagString: Untagged
@@ -106,8 +107,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::GemDisplay
   Renderer: {fileID: 8559175693773020957}
---- !u!65 &4199221828469917856
-BoxCollider:
+--- !u!114 &7857297845750428481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2520497405379312178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9318ac62599c4e81b5f56f9e7b064760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.GUI::Focusable
+--- !u!114 &3947722476216089243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2520497405379312178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4e67bbcd030414469bb3ef3e0960a04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.GUI::DraggableElement
+--- !u!135 &7151355522992326331
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -125,20 +150,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 100, y: 100, z: 10}
+  m_Radius: 60.87
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7857297845750428481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2520497405379312178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9318ac62599c4e81b5f56f9e7b064760, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.GUI::Focusable
 --- !u!1 &5012884881950606363
 GameObject:
   m_ObjectHideFlags: 0
