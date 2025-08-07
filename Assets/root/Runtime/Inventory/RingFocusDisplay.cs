@@ -17,11 +17,6 @@ public class RingFocusDisplay : MonoBehaviour
         return m_Focused == check;
     }
 
-    public int GetEquipmentGemIndex(GemDisplay gemSlot)
-    {
-        return RingIndex*Gem.k_GemsPerRing +  Array.IndexOf(GemDisplays, gemSlot);
-    }
-
     public void UpdateRing(int index, RingDisplay ringDisplay)
     {
         RingIndex = index;
@@ -29,7 +24,9 @@ public class RingFocusDisplay : MonoBehaviour
         var gems = ringDisplay.Gems;
         for (int i = 0; i < gems.Count && i < GemDisplays.Length; i++)
         {
-            GemDisplays[i].UpdateGem(-1, gems[i].Gem);
+            GemDisplays[i].UpdateGem(index*Gem.k_GemsPerRing + i, gems[i].Gem);
+            if (UIFocus.Interact != GemDisplays[i].gameObject)
+                GemDisplays[i].SnapBackToOrigin();
         }
 
         if (m_Focused != ringDisplay)

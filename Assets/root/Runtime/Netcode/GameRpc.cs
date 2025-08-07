@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,7 +10,7 @@ using UnityEngine;
 
 [Serializable]
 [StructLayout(LayoutKind.Explicit)]
-public struct GameRpc : IComponentData
+public unsafe struct GameRpc : IComponentData
 {
     public enum Code
     {
@@ -22,11 +24,13 @@ public struct GameRpc : IComponentData
         PlayerSwapGemSlots
     }
 
+    public const int Length = sizeof(long)*2;
     [SerializeField] [FieldOffset(0)] long m_WRITE0;
     [SerializeField] [FieldOffset(8)] long m_WRITE1;
 
     [FieldOffset(0)] byte m_Type;
     [FieldOffset(1)] byte m_Player;
+    [FieldOffset(0)] fixed byte m_Data[Length];
     public bool IsValidClientRpc => (m_Type & (byte)Code.PlayerJoin) != 0;
 
     public Code Type
@@ -42,7 +46,22 @@ public struct GameRpc : IComponentData
 
     public override string ToString()
     {
-        return $"{Type}:{m_WRITE0}.{m_WRITE1}";
+        StringBuilder sb = new();
+        sb.Append($"{Type}:{PlayerId}:");
+        switch (Type)
+        {
+            case Code.PlayerJoin:
+                break;
+            case Code.PlayerLeave:
+                break;
+            case Code.PlayerSwapGemSlots:
+                sb.Append(FromSlotIndex + ":" + ToSlotIndex);
+                break;
+            case Code.PlayerSlotInventoryGemIntoRing:
+                sb.Append(InventoryIndex + ":" + ToSlotIndex);
+                break;
+        }
+        return sb.ToString();
     }
 
     public void Write(ref DataStreamWriter writer)

@@ -267,13 +267,35 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3947722476216089243, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2520497405379312178, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 735353148674062261}
   m_SourcePrefab: {fileID: 100100000, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
 --- !u!224 &7622856940016692570 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
   m_PrefabInstance: {fileID: 5517978705889976057}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7955986342294365387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2520497405379312178, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+  m_PrefabInstance: {fileID: 5517978705889976057}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &735353148674062261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7955986342294365387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50749d37b4799f34f8d1ad94df68a8e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::RingFocusGemSlot
+  DraggableGem: {fileID: 0}

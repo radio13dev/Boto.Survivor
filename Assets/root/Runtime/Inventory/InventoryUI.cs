@@ -107,7 +107,6 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                     // Create a new display if it doesn't exist
                     gemDisplay = Instantiate(GemDisplayPrefab, GemDisplayPrefab.transform.parent);
                     m_InventoryGems[gems[i].Gem.ClientId] = gemDisplay;
-                    gemDisplay.UpdateGem(i, gems[i].Gem);
                     gemDisplay.SnapBackToOrigin();
                     gemDisplay.gameObject.SetActive(true);
                 }
@@ -115,6 +114,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                 {
                     // Old ones SHOULDN'T need updating
                 }
+                gemDisplay.UpdateGem(i, gems[i].Gem);
             }
             // Remove any displays that are no longer in the inventory
             foreach (var remove in toRemove)

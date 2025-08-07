@@ -6,17 +6,16 @@ public class GemDisplay : MonoBehaviour
 {
 	public MeshRenderer Renderer;
     public Gem Gem { get; private set; }
-    public int InventoryIndex { get; private set; } = -1;
+    public int Index { get; private set; } = -1;
     
     public bool IsInInventory => !IsInSlot;
     public bool IsInSlot => GetComponentInParent<RingFocusDisplay>();
 
-    public void UpdateGem(int inventoryIndex, Gem gem)
+    public void UpdateGem(int index, Gem gem)
     {
-        InventoryIndex = inventoryIndex;
+        Index = index;
         Gem = gem;
         Renderer.gameObject.SetActive(gem.IsValid);
-        if (TryGetComponent<DraggableElement>(out var draggableElement)) draggableElement.enabled = gem.IsValid;
         // TODO: Renderer.material = m_Gem.Material;
     }
 
@@ -46,8 +45,8 @@ public class GemDisplay : MonoBehaviour
                 // Inv To Slot
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerSlotInventoryGemIntoRing((byte)Game.ClientGame.PlayerIndex, 
-                        InventoryIndex,
-                        focus.GetEquipmentGemIndex(gemSlot)
+                        this.Index,
+                        gemSlot.Index
                     ));
             }
             else
@@ -55,8 +54,8 @@ public class GemDisplay : MonoBehaviour
                 // Slot To Slot
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerSwapGemSlots((byte)Game.ClientGame.PlayerIndex, 
-                        focus.GetEquipmentGemIndex(this),
-                        focus.GetEquipmentGemIndex(gemSlot)
+                        this.Index,
+                        gemSlot.Index
                     ));
             }
         }
@@ -67,7 +66,7 @@ public class GemDisplay : MonoBehaviour
                 // Slot To Inv
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerUnslotGem((byte)Game.ClientGame.PlayerIndex, 
-                        this.GetComponentInParent<RingFocusDisplay>().GetEquipmentGemIndex(this)
+                        this.Index
                     ));
             }
             else

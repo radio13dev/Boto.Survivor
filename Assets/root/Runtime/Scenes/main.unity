@@ -241,6 +241,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GemDisplay (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2382,6 +2386,122 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e6374a9897bc5247ab2ec6e2f292242, type: 3}
+--- !u!1001 &587139441
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1862914621}
+    m_Modifications:
+    - target: {fileID: 2520497405379312178, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_Name
+      value: DraggableEquippedGem
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1075
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 432
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2520497405379312178, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 742937347}
+  m_SourcePrefab: {fileID: 100100000, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+--- !u!114 &587139442 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9105382074758571072, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+  m_PrefabInstance: {fileID: 587139441}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742937343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe721e83bedc43c1af666495ecc56ee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GemDisplay
+--- !u!224 &587139443 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2691498473893475235, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+  m_PrefabInstance: {fileID: 587139441}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &594820730
 GameObject:
   m_ObjectHideFlags: 0
@@ -3022,6 +3142,24 @@ MonoBehaviour:
   ClientPingStep: {fileID: 132005240}
   ClientExecuteTimeGraph: {fileID: 961815215}
   ClientExecuteStep: {fileID: 70459814}
+--- !u!1 &742937343 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2520497405379312178, guid: 0796f38ada391574889ca29bad9d899a, type: 3}
+  m_PrefabInstance: {fileID: 587139441}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &742937347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742937343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e81e103e1935ab4aac931e306d08c89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::RingFocusVirtualGem
+  GemDisplay: {fileID: 587139442}
 --- !u!1001 &756831311
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3034,6 +3172,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GemDisplay (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3178,7 +3320,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -142.87, y: -142.8695}
+  m_AnchoredPosition: {x: -1267, y: -143}
   m_SizeDelta: {x: 286.83997, y: 286.83997}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &767886016
@@ -5431,6 +5573,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GemDisplay (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -7165,6 +7311,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GemDisplay (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -7399,6 +7549,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GemDisplay (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -7773,6 +7927,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 356373222}
+  - {fileID: 587139443}
   - {fileID: 1286046726}
   - {fileID: 40066377}
   - {fileID: 756831312}
@@ -9004,6 +9159,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1862914621}
     m_Modifications:
+    - target: {fileID: 735353148674062261, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
+      propertyPath: DraggableGem
+      value: 
+      objectReference: {fileID: 742937347}
     - target: {fileID: 6986622526125767125, guid: ada10058afde5f145ba2271b411da8a3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
