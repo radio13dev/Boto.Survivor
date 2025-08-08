@@ -12,7 +12,7 @@ public class ElementFocus : MonoBehaviour
     private void Update()
     {
         var visualT = Visual.gameObject.transform;
-        if (UIFocus.Interact && !UIFocus.Focus)
+        if (UIFocus.Interact && (!UIFocus.Focus || !UIFocus.CheckFocus(UIFocus.Focus)))
         {
             transform.position = Vector3.Lerp(transform.position, UIFocus.Interact.transform.position, Time.deltaTime*Speed);
             visualT.localScale = Vector3.Lerp(visualT.localScale, FocusedScale, Time.deltaTime*FocusScaleSpeed);

@@ -24,7 +24,7 @@ public class RingFocusVirtualGem : MonoBehaviour
     
     private void OnDraggingEnd(PointerEventData obj)
     {
-        m_Parent.Renderer.gameObject.SetActive(m_Parent.Gem.IsValid);
+        m_Parent.Renderer.gameObject.SetActive(!m_Parent.IsDragEndValid() && m_Parent.Gem.IsValid);
         gameObject.SetActive(false);
     }
 

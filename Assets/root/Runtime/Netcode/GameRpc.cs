@@ -20,8 +20,9 @@ public unsafe struct GameRpc : IComponentData
 
         // Runtime Actions
         PlayerAdjustInventory = 0b0000_0000,
-        PlayerSlotInventoryGemIntoRing,
-        PlayerSwapGemSlots
+        PlayerSlotInventoryGemIntoRing = 0b0000_0001,
+        PlayerSwapGemSlots = 0b0000_0010,
+        PlayerSwapRingSlots = 0b0000_0011,
     }
 
     public const int Length = sizeof(long)*2;
@@ -55,10 +56,14 @@ public unsafe struct GameRpc : IComponentData
             case Code.PlayerLeave:
                 break;
             case Code.PlayerSwapGemSlots:
+            case Code.PlayerSwapRingSlots:
                 sb.Append(FromSlotIndex + ":" + ToSlotIndex);
                 break;
             case Code.PlayerSlotInventoryGemIntoRing:
                 sb.Append(InventoryIndex + ":" + ToSlotIndex);
+                break;
+            default:
+                sb.Append($"Missing.ToString()");
                 break;
         }
         return sb.ToString();
@@ -118,6 +123,13 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerUnslotGem(byte player, int fromSlotIndex)
     {
         return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = -1 };
+    }
+    #endregion
+
+    #region RingSlotting
+    public static GameRpc PlayerSwapRingSlots(byte player, int fromSlotIndex, int toSlotIndex)
+    {
+        return new GameRpc() { Type = Code.PlayerSwapRingSlots, PlayerId = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = toSlotIndex };
     }
     #endregion
 }
@@ -239,6 +251,55 @@ public partial struct GameRpcSystem : ISystem
                         }
                     
                         (equipped[rpc.ToSlotIndex], equipped[rpc.FromSlotIndex]) = (equipped[rpc.FromSlotIndex], equipped[rpc.ToSlotIndex]);
+                    }
+                    
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                case GameRpc.Code.PlayerSwapRingSlots:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(EquippedGem), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Ring>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
+                    
+                    if (rpc.FromSlotIndex < 0 || rpc.FromSlotIndex >= rings.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to slot from index {rpc.FromSlotIndex} but only has {rings.Length} slots.");
+                        continue;
+                    }
+                    
+                    if (rpc.ToSlotIndex == -1)
+                    {
+                        // Drop this on the ground
+                        rings[rpc.FromSlotIndex] = default;
+                    }
+                    else
+                    {
+                        if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= rings.Length)
+                        {
+                            Debug.LogWarning($"Player {playerId} attempted to slot into index {rpc.ToSlotIndex} but only has {rings.Length} slots.");
+                            continue;
+                        }
+                    
+                        (rings[rpc.ToSlotIndex], rings[rpc.FromSlotIndex]) = (rings[rpc.FromSlotIndex], rings[rpc.ToSlotIndex]);
+                        
+                        // Also swap the equipped gems
+                        var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
+                        for (int i = 0; i < Gem.k_GemsPerRing; i++)
+                        {
+                            var fromIndex = rpc.FromSlotIndex * Gem.k_GemsPerRing + i;
+                            var toIndex = rpc.ToSlotIndex * Gem.k_GemsPerRing + i;
+
+                            if (fromIndex < equipped.Length && toIndex < equipped.Length)
+                            {
+                                (equipped[toIndex], equipped[fromIndex]) = (equipped[fromIndex], equipped[toIndex]);
+                            }
+                        }
+                        
+                        Debug.Log($"Swapped slots {rpc.FromSlotIndex} and {rpc.ToSlotIndex}");
                     }
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);

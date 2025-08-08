@@ -52,6 +52,23 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         }
     }
 
+    private void Update()
+    {
+        
+    }
+
+    public float InnerCursorRadius;
+    public float InnerLeniencyRadius;
+    public float OuterLeniencyRadius;
+    public float OuterCursorRadius;
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, InnerCursorRadius);
+        Gizmos.DrawWireSphere(transform.position, InnerLeniencyRadius);
+        Gizmos.DrawWireSphere(transform.position, OuterLeniencyRadius);
+        Gizmos.DrawWireSphere(transform.position, OuterCursorRadius);
+    }
+
     private void OnInteract()
     {
         
@@ -87,7 +104,8 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
             {
                 // Get the 'subset' of gems that this ring uses
                 var equippedGemsForRing = equippedGems.AsNativeArray().AsReadOnlySpan().Slice(i*Gem.k_GemsPerRing, Gem.k_GemsPerRing);
-                RingDisplays[i].UpdateRing(rings[i], equippedGemsForRing);
+                RingDisplays[i].UpdateRing(i, rings[i], equippedGemsForRing);
+                RingDisplays[i].SnapBackToOrigin();
                 
                 // Update the focus display if this ring is focused
                 if (RingFocusDisplay.IsFocused(RingDisplays[i]) || RingFocusDisplay.IsFocused(null))
@@ -107,7 +125,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                     // Create a new display if it doesn't exist
                     gemDisplay = Instantiate(GemDisplayPrefab, GemDisplayPrefab.transform.parent);
                     m_InventoryGems[gems[i].Gem.ClientId] = gemDisplay;
-                    gemDisplay.SnapBackToOrigin();
+                    gemDisplay.SnapBackToRandom();
                     gemDisplay.gameObject.SetActive(true);
                 }
                 else

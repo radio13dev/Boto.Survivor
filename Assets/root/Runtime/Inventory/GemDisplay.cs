@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class GemDisplay : MonoBehaviour
+public class GemDisplay : MonoBehaviour, IFocusFilter
 {
 	public MeshRenderer Renderer;
     public Gem Gem { get; private set; }
@@ -39,7 +39,6 @@ public class GemDisplay : MonoBehaviour
     {
         if (UIFocus.Focus && UIFocus.Focus.TryGetComponent<GemDisplay>(out var gemSlot) && gemSlot.IsInSlot)
         {
-            var focus = gemSlot.GetComponentInParent<RingFocusDisplay>();
             if (this.IsInInventory)
             {
                 // Inv To Slot
@@ -76,6 +75,8 @@ public class GemDisplay : MonoBehaviour
             }
         }
     }
+    
+    public bool IsDragEndValid() => (UIFocus.Focus && UIFocus.Focus.TryGetComponent<GemDisplay>(out var gemSlot) && gemSlot.IsInSlot) || (this.IsInSlot);
 
     public void SnapBackToOrigin()
     {
@@ -90,5 +91,25 @@ public class GemDisplay : MonoBehaviour
             // Snap back to center of slot (the below method uses the lightweight physics stuff)
             transform.SetDisplacedLocalPosition(Vector3.zero);
         }
+    }
+    public void SnapBackToRandom()
+    {
+        if (IsInInventory)
+        {
+            // Snap back to a random nearby spot in the inventory
+            var inventoryContainer = GetComponentInParent<InventoryContainer>();
+            transform.SetDisplacedWorldPosition(inventoryContainer.GetRandomPosition());
+        }
+        else
+        {
+            // Snap back to center of slot (the below method uses the lightweight physics stuff)
+            transform.SetDisplacedLocalPosition(Vector3.zero);
+        }
+    }
+
+    public bool CheckFocusFilter(GameObject go)
+    {
+        if (go.TryGetComponent<RingDisplay>(out _)) return false;
+        return true;
     }
 }

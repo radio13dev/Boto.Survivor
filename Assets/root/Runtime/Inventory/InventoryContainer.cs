@@ -28,4 +28,9 @@ public class InventoryContainer : MonoBehaviour
         
         return bestC.ClosestPoint(bestP + Random.insideUnitSphere*ScatterRange);
     }
+    public Vector3 GetRandomPosition()
+    {
+        if (Bounds.Length == 0) return transform.position;
+        return Bounds[Random.Range(0, Bounds.Length)].ClosestPoint(transform.position + Random.insideUnitSphere * ScatterRange);
+    }
 }
