@@ -24,6 +24,7 @@ public class ParticleOnDamageAuthoring : MonoBehaviour
 }
 
 [UpdateInGroup(typeof(ProjectileSystemGroup))]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct ProjectileHitSystem_Particle : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -35,13 +36,19 @@ public partial struct ProjectileHitSystem_Particle : ISystem
     {
         var particles = SystemAPI.GetSingletonBuffer<GameManager.Particles>(true);
         var particleOnDamageLookup = SystemAPI.GetComponentLookup<ParticleOnDamage>(true);
-        foreach (var (hit, transform) in SystemAPI.Query<RefRO<ProjectileHit>, RefRO<LocalTransform>>())
+        foreach (var (transform, projE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<ProjectileHit>().WithEntityAccess())
         {
-            if (!particleOnDamageLookup.TryGetRefRO(hit.ValueRO.HitEntity, out var particleOnDamage)) continue;
-            if (particleOnDamage.ValueRO.ParticleIndex < 0 || particleOnDamage.ValueRO.ParticleIndex >= particles.Length) continue;
-            var particlePrefab = particles[particleOnDamage.ValueRO.ParticleIndex];
-            var particle = particlePrefab.Prefab.Value.GetFromPool();
-            particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
+            if (!SystemAPI.HasBuffer<ProjectileHitEntity>(projE)) continue;
+            
+            var hit = SystemAPI.GetBuffer<ProjectileHitEntity>(projE);
+            for (int i = 0; i < hit.Length; i++)
+            {
+                if (!particleOnDamageLookup.TryGetRefRO(hit[i].Value, out var particleOnDamage)) continue;
+                if (particleOnDamage.ValueRO.ParticleIndex < 0 || particleOnDamage.ValueRO.ParticleIndex >= particles.Length) continue;
+                var particlePrefab = particles[particleOnDamage.ValueRO.ParticleIndex];
+                var particle = particlePrefab.Prefab.Value.GetFromPool();
+                particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
+            }
         }
     }
 }

@@ -137,7 +137,8 @@ public unsafe struct GameRpc : IComponentData
 /// <summary>
 /// RPCs are executed in the initialization system group because their data can't be saved.
 /// </summary>
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+[UpdateBefore(typeof(PlayerControlledSystem))]
 public partial struct GameRpcSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -177,7 +178,6 @@ public partial struct GameRpcSystem : ISystem
 
                     var resources = SystemAPI.GetSingleton<GameManager.Resources>();
                     var newPlayer = ecb.Instantiate(resources.SurvivorTemplate);
-                    ecb.AddSharedComponent<PlayerControlled>(newPlayer, playerTag);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
                     ecb.SetComponent(newPlayer, LocalTransform.FromPosition(20, 0, 0));
                     Debug.Log($"Player {playerId} created.");

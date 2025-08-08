@@ -57,6 +57,7 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());
             
+            // Rings and inventory
             var rings = AddBuffer<Ring>(entity);
             rings.Resize(Ring.k_RingCount, NativeArrayOptions.ClearMemory);
             var equippedGems = AddBuffer<EquippedGem>(entity);
@@ -68,7 +69,26 @@ public class SurvivorAuthoring : MonoBehaviour
             inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
             inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
             inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
+            
+            // Loop triggers
+            AddBuffer<ProjectileLoopTriggerQueue>(entity);
         }
+    }
+}
+
+/// <summary>
+/// Convenient link between player ID and the entity that controls it.
+/// </summary>
+/// <remarks>
+/// Entity values are different between games, so this is the only way to reference a specific player.
+/// </remarks>
+public struct PlayerControlledLink : IBufferElementData
+{
+    public Entity Value;
+
+    public PlayerControlledLink(Entity value)
+    {
+        this.Value = value;
     }
 }
 
@@ -78,6 +98,7 @@ public partial struct PlayerControlledSystem : ISystem
     EntityQuery m_Query;
     public void OnCreate(ref SystemState state)
     {
+        state.EntityManager.CreateSingletonBuffer<PlayerControlledLink>();
         m_Query = SystemAPI.QueryBuilder().WithAll<PlayerControlledSaveable>().WithNone<PlayerControlled>().Build();
         state.RequireForUpdate(m_Query);
     }
@@ -87,6 +108,14 @@ public partial struct PlayerControlledSystem : ISystem
         using var entities = m_Query.ToEntityArray(Allocator.Temp);
         using var ids = m_Query.ToComponentDataArray<PlayerControlledSaveable>(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
+        {
             state.EntityManager.AddSharedComponent(entities[i], new PlayerControlled(){ Index = ids[i].Index });
+            
+            var playerControlledLink = SystemAPI.GetSingletonBuffer<PlayerControlledLink>();
+            if (playerControlledLink.Length <= ids[i].Index)
+                playerControlledLink.Resize(ids[i].Index + 1, NativeArrayOptions.ClearMemory);
+            playerControlledLink[ids[i].Index] = new PlayerControlledLink(entities[i]);
+            Debug.Log($"Added playerid {ids[i].Index} to entity {entities[i]}");
+        }
     }
 }

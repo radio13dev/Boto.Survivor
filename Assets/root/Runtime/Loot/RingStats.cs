@@ -17,7 +17,7 @@ public struct Ring : IBufferElementData
 public struct RingStats : IComponentData
 {
     // Primary effect
-    public bool IsValid => PrimaryEffect != RingPrimaryEffect.None;
+    public bool IsValid => PrimaryEffect != RingPrimaryEffect.None && PrimaryEffect != RingPrimaryEffect.Length;
     public RingPrimaryEffect PrimaryEffect;
 
     public string GetTitleString()

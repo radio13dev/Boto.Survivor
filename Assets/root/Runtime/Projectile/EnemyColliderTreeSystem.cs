@@ -146,12 +146,12 @@ namespace Collisions
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
             public unsafe void Execute([EntityIndexInChunk] int Key, Entity projectileE, in LocalTransform transform, in Collider collider, 
-                ref ProjectileHit projectileHit, EnabledRefRW<ProjectileHit> projectileHitState)
+               in DynamicBuffer<ProjectileIgnoreEntity> projectileIgnoreEntities, ref DynamicBuffer<ProjectileHitEntity> projectileHitEntities, EnabledRefRW<ProjectileHit> projectileHitState)
             {
                 var adjustedAABB2D = collider.Add(transform.Position);
-                fixed (ProjectileHit* projectileHit_ptr = &projectileHit)
+                fixed (DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr = &projectileHitEntities)
                 {
-                    var visitor = new CollisionVisitor(projectileE, projectileHit_ptr, projectileHitState);
+                    var visitor = new CollisionVisitor(projectileE, projectileIgnoreEntities, projectileHit_ptr, projectileHitState);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
@@ -159,12 +159,16 @@ namespace Collisions
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
             {
                 Entity _projectileE;
-                ProjectileHit* _projectileHit_ptr;
+                DynamicBuffer<ProjectileIgnoreEntity> _projectileIgnore_ptr;
+                DynamicBuffer<ProjectileHitEntity>* _projectileHit_ptr;
                 EnabledRefRW<ProjectileHit> _projectileHitState;
 
-                public CollisionVisitor(Entity projectileE, ProjectileHit* projectileHit_ptr, EnabledRefRW<ProjectileHit> projectileHitState)
+                public CollisionVisitor(Entity projectileE, 
+                    DynamicBuffer<ProjectileIgnoreEntity> projectileIgnore_ptr, DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr, 
+                    EnabledRefRW<ProjectileHit> projectileHitState)
                 {
                     _projectileE = projectileE;
+                    _projectileIgnore_ptr = projectileIgnore_ptr;
                     _projectileHit_ptr = projectileHit_ptr;
                     _projectileHitState = projectileHitState;
                 }
@@ -172,7 +176,15 @@ namespace Collisions
                 public bool OnVisit(Entity enemyE, AABB objBounds, AABB queryRange)
                 {
                     if (!objBounds.Overlaps(queryRange)) return true;
-                    _projectileHit_ptr->HitEntity = enemyE;
+                    
+                    for (int i = 0; i < _projectileIgnore_ptr.Length; i++)
+                    {
+                        if (_projectileIgnore_ptr[i].Value == enemyE)
+                        {
+                            return true; // Ignore this entity
+                        }
+                    }
+                    _projectileHit_ptr->Add(new ProjectileHitEntity(enemyE));
                     _projectileHitState.ValueRW = true;
                     return true;
                 }

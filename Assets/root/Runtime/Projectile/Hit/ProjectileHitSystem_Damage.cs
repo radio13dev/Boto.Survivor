@@ -8,13 +8,26 @@ public partial struct ProjectileHitSystem_Damage : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var healthLookup = SystemAPI.GetComponentLookup<Health>(false);
-        foreach (var hit in SystemAPI.Query<RefRO<ProjectileHit>>())
+        state.Dependency = new Job()
         {
-            if (!healthLookup.TryGetRefRW(hit.ValueRO.HitEntity, out var hitEntityH))
-                continue;
-            
-            hitEntityH.ValueRW.Value--;
+            HealthLookup = SystemAPI.GetComponentLookup<Health>(false)
+        }.Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    partial struct Job : IJobEntity
+    {
+        public ComponentLookup<Health> HealthLookup;
+    
+        public void Execute(in DynamicBuffer<ProjectileHitEntity> hits)
+        {
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (HealthLookup.TryGetRefRW(hits[i].Value, out var otherEntityF))
+                {
+                    otherEntityF.ValueRW.Value--;
+                }
+            }
         }
     }
 }

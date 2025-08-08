@@ -9,14 +9,26 @@ public partial struct ProjectileHitSystem_Push : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var forceLookup = SystemAPI.GetComponentLookup<Force>(false);
-        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
-        foreach (var (hit, movement, transform) in SystemAPI.Query<RefRO<ProjectileHit>, RefRO<SurfaceMovement>, RefRO<LocalTransform>>())
+        state.Dependency = new Job()
         {
-            if (!forceLookup.TryGetRefRW(hit.ValueRO.HitEntity, out var hitEntityF))
-                continue;
-            
-            hitEntityF.ValueRW.Velocity += transform.ValueRO.TransformDirection(movement.ValueRO.Velocity.f3z()*3);
+            ForceLookup = SystemAPI.GetComponentLookup<Force>(false)
+        }.Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    partial struct Job : IJobEntity
+    {
+        public ComponentLookup<Force> ForceLookup;
+    
+        public void Execute(in SurfaceMovement movement, in LocalTransform hitT, in DynamicBuffer<ProjectileHitEntity> hits)
+        {
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (ForceLookup.TryGetRefRW(hits[i].Value, out var otherEntityF))
+                {
+                    otherEntityF.ValueRW.Velocity += hitT.TransformDirection(movement.Velocity.f3z() * 3);
+                }
+            }
         }
     }
 }
