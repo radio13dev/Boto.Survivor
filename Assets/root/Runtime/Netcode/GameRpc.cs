@@ -214,7 +214,9 @@ public partial struct GameRpcSystem : ISystem
                         continue;
                     }
                     
-                    equipped[rpc.ToSlotIndex] = new EquippedGem(){ Gem = inventory[rpc.InventoryIndex].Gem };
+                    if (equipped[rpc.ToSlotIndex].Gem.IsValid)
+                        inventory.Add(new InventoryGem(equipped[rpc.ToSlotIndex].Gem));
+                    equipped[rpc.ToSlotIndex] = new EquippedGem(inventory[rpc.InventoryIndex].Gem);
                     inventory.RemoveAtSwapBack(rpc.InventoryIndex);
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
@@ -239,7 +241,7 @@ public partial struct GameRpcSystem : ISystem
                     {
                         // We're moving this item to the inventory.
                         var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
-                        inventory.Add(new InventoryGem() { Gem = equipped[rpc.FromSlotIndex].Gem });
+                        inventory.Add(new InventoryGem(equipped[rpc.FromSlotIndex].Gem));
                         equipped[rpc.FromSlotIndex] = default;
                     }
                     else

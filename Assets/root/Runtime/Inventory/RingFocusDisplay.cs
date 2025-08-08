@@ -8,7 +8,7 @@ public class RingFocusDisplay : MonoBehaviour
     public Transform Visual;
     public GemDisplay[] GemDisplays;
     RingDisplay m_Focused;
-    public int RingIndex { get; private set; }
+    public int RingIndex;
     ExclusiveCoroutine m_RotCo;
     ExclusiveCoroutine m_ScaleCo;
 
@@ -32,8 +32,6 @@ public class RingFocusDisplay : MonoBehaviour
         if (m_Focused != ringDisplay)
         {
             m_Focused = ringDisplay;
-            var rot = 180f + 360f * index / Ring.k_RingCount;
-            m_RotCo.StartCoroutine(this, CoroutineHost.Methods.Lerp(Visual, Quaternion.Euler(rot, 90, 90), 0.2f, true, true));
             m_ScaleCo.StartCoroutine(this, ScaleGemsFromZero(0.2f));
         }
     }

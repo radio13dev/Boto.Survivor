@@ -48,4 +48,10 @@ public struct InventoryGem : IBufferElementData
 public struct EquippedGem : IBufferElementData
 {
     public Gem Gem;
+    
+    public EquippedGem(Gem gem)
+    {
+        _ = gem.ClientId;
+        Gem = gem;
+    }
 }

@@ -3292,7 +3292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1266.9998, y: -143}
+  m_AnchoredPosition: {x: -1267, y: -143}
   m_SizeDelta: {x: 286.83997, y: 286.83997}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &767886016
@@ -5780,6 +5780,17 @@ MonoBehaviour:
   - {fileID: 413303660}
   - {fileID: 1377672983}
   RingFocusDisplay: {fileID: 1862914622}
+  InnerCursorRadius: 350.53
+  InnerLeniencyRadius: 376.3
+  OuterLeniencyRadius: 464.27
+  OuterCursorRadius: 495.06
+  Offset: -90
+  Offset2: 0
+  OffsetDir: {x: 1, y: 0, z: 0}
+  OffsetDirF: {x: 0, y: 0, z: 1}
+  _CurRotAng: 0
+  _LeanRotAng: 0
+  _TargetRotAng: 0
 --- !u!1001 &1286046725
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6051,10 +6062,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -7730,7 +7741,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.49999997, y: -9.313226e-10}
+  m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1661717499
 MonoBehaviour:
   m_ObjectHideFlags: 0
