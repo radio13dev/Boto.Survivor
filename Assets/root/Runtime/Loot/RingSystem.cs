@@ -24,7 +24,8 @@ public partial struct RingSystem : ISystem
             ecb = delayedEcb.AsParallelWriter(),
             Time = SystemAPI.Time.ElapsedTime,
             Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(),
-            EnemyColliderTree = state.WorldUnmanaged.GetUnsafeSystemRef<EnemyColliderTreeSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<EnemyColliderTreeSystem>()).Tree
+            EnemyColliderTree = state.WorldUnmanaged.GetUnsafeSystemRef<EnemyColliderTreeSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<EnemyColliderTreeSystem>()).Tree,
+            SharedRandom = SystemAPI.GetSingleton<SharedRandom>().Random
         }.Schedule(state.Dependency);
     }
 
@@ -35,16 +36,18 @@ public partial struct RingSystem : ISystem
         [ReadOnly] public double Time;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
         [ReadOnly] public NativeOctree<Entity> EnemyColliderTree;
+        [ReadOnly] public Random SharedRandom;
 
         [BurstCompile]
-        public void Execute([EntityIndexInChunk] int Key, in LocalTransform transform, in Movement movement, in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings)
+        public void Execute([EntityIndexInChunk] int Key, in LocalTransform transform, in Movement movement, in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems)
         {
+            var r = SharedRandom;
             for (int i = 0; i < rings.Length; ++i)
             {
                 ref var ring = ref rings.ElementAt(i);
                 if (!ring.Stats.PrimaryEffect.IsTimed()) continue;
 
-                var cooldown = ring.Stats.PrimaryEffect.GetCooldown(compiledStats.CombinedRingStats.ProjectileRate);
+                var cooldown = ring.Stats.PrimaryEffect.GetCooldown(compiledStats.ProjectileRate);
                 var activateTime = ring.LastActivateTime + cooldown;
                 if (activateTime > Time) continue;
 
@@ -52,10 +55,25 @@ public partial struct RingSystem : ISystem
                 ring.LastActivateTime = Time;
 
                 // Get shared stats
-                float projectileSpeed = ring.Stats.PrimaryEffect.GetProjectileSpeed(compiledStats.CombinedRingStats.ProjectileSpeed);
-                float projectileDuration = ring.Stats.PrimaryEffect.GetProjectileDuration(compiledStats.CombinedRingStats.ProjectileDuration);
-                float projectileDamage = ring.Stats.PrimaryEffect.GetProjectileDamage(compiledStats.CombinedRingStats.ProjectileSpeed);
-                float projectileSize = ring.Stats.PrimaryEffect.GetProjectileSize(compiledStats.CombinedRingStats.ProjectileDuration);
+                float projectileSpeed = ring.Stats.PrimaryEffect.GetProjectileSpeed(compiledStats.ProjectileSpeed);
+                float projectileDuration = ring.Stats.PrimaryEffect.GetProjectileDuration(compiledStats.ProjectileDuration);
+                float projectileDamage = ring.Stats.PrimaryEffect.GetProjectileDamage(compiledStats.ProjectileSpeed);
+                float projectileSize = ring.Stats.PrimaryEffect.GetProjectileSize(compiledStats.ProjectileDuration);
+                
+                // Get gem mods
+                int mod_ProjectileCount= 0;
+                
+                var gemMin = i*Gem.k_GemsPerRing;
+                var gemMax = (i + 1)*Gem.k_GemsPerRing;
+                for (int gemIndex = gemMin; gemIndex < gemMax; gemIndex++)
+                {
+                    switch (equippedGems[gemIndex].Gem.GemType)
+                    {
+                        case Gem.Type.Multishot:
+                            mod_ProjectileCount++;
+                            break;
+                    }
+                }
 
                 // Fire projectiles
                 switch (ring.Stats.PrimaryEffect)
@@ -70,7 +88,7 @@ public partial struct RingSystem : ISystem
                         var template = Projectiles[0];
                         var projectileCount = 8;
                         var angStep = math.PI2 / projectileCount;
-                        var loopCount = 1 + compiledStats.CombinedRingStats.ProjectileCount;
+                        var loopCount = 1 + mod_ProjectileCount;
 
                         // Instantiate all projectiles at once
                         var allProjectiles = new NativeArray<Entity>(projectileCount * loopCount, Allocator.Temp);
@@ -106,7 +124,7 @@ public partial struct RingSystem : ISystem
 
                         var template = Projectiles[0];
                         var projectileCount = 1;
-                        var loopCount = 1 + compiledStats.CombinedRingStats.ProjectileCount;
+                        var loopCount = 1 + mod_ProjectileCount;
 
                         var visitor = new EnemyColliderTree.NearestVisitor();
                         var distance = new EnemyColliderTree.DistanceProvider();
@@ -120,7 +138,7 @@ public partial struct RingSystem : ISystem
                         {
                             var projectileE = ecb.Instantiate(Key, template.Entity);
                             var projectileT = transform;
-                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), -math.PIHALF), quaternion.LookRotationSafe(dir, transform.Up()));
+                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), r.NextFloat(-0.05f, 0.05f) - math.PIHALF), quaternion.LookRotationSafe(dir, transform.Up()));
                             projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
                             projectileT.Scale = projectileSize;
                             ecb.SetComponent(Key, projectileE, projectileT);

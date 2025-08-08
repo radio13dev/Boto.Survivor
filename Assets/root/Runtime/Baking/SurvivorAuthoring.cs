@@ -65,9 +65,9 @@ public class SurvivorAuthoring : MonoBehaviour
                 rings[i] = new Ring(){ Stats = authoring.InitialRings[i] };
             
             var inventoryGems = AddBuffer<InventoryGem>(entity);
-            inventoryGems.Add(new InventoryGem(new Gem(){ GemType = Gem.Type.Multishot }));
-            inventoryGems.Add(new InventoryGem(new Gem(){ GemType = Gem.Type.Multishot }));
-            inventoryGems.Add(new InventoryGem(new Gem(){ GemType = Gem.Type.Multishot }));
+            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
+            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
+            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
         }
     }
 }

@@ -5,12 +5,11 @@ using Unity.Entities;
 [Save]
 public struct CompiledStats : IComponentData
 {
-    public RingStats CombinedRingStats;
-
-    public void Add(RingStats stats)
-    {
-        CombinedRingStats.Add(stats);
-    }
+    public float ProjectileRate;
+    public float ProjectileSpeed;
+    public float ProjectileDuration;
+    public float ProjectileSize;
+    public float ProjectileDamage;
 }
 
 [Save]
@@ -38,11 +37,11 @@ public partial struct CompiledStatsSystem : ISystem
     [BurstCompile]
     partial struct Job : IJobEntity
     {
-        public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings)
+        public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings, in DynamicBuffer<EquippedGem> gems)
         {
             stats = new();
-            for (int i = 0; i < rings.Length; i++)
-                stats.Add(rings[i].Stats);
+            //for (int i = 0; i < rings.Length; i++)
+            //    stats.Add(rings[i].Stats);
             statsDirty.ValueRW = false;
             GameEvents.Trigger(GameEvents.Type.InventoryChanged, entity);
         }

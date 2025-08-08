@@ -19,37 +19,6 @@ public struct RingStats : IComponentData
     // Primary effect
     public bool IsValid => PrimaryEffect != RingPrimaryEffect.None;
     public RingPrimaryEffect PrimaryEffect;
-    public float PrimaryEffectValue;
-
-    // Projectile mods
-    public float Size;
-    public float Damage;
-    public float ProjectileSpeed;
-    public float ProjectileDuration;
-
-    // Character mods
-    public float Speed;
-    public float Regen;
-    public float MaxHealth;
-    public int ProjectileCount;
-    public float ProjectileRate;
-
-    // Extra effect
-    public RingSecondaryEffect SecondaryEffect;
-    public float SecondaryEffectValue;
-
-    public void Add(RingStats stats)
-    {
-        Size += stats.Size;
-        Damage += stats.Damage;
-        ProjectileSpeed += stats.ProjectileSpeed;
-        ProjectileDuration += stats.ProjectileDuration;
-        Speed += stats.Speed;
-        Regen += stats.Regen;
-        MaxHealth += stats.MaxHealth;
-        ProjectileCount += stats.ProjectileCount;
-        ProjectileRate += stats.ProjectileRate;
-    }
 
     public string GetTitleString()
     {
