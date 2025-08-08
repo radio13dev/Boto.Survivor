@@ -77,7 +77,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         int curIndex = RingFocusDisplay.RingIndex;
         var curRotAng = curIndex * stepRot;
 
-        var targetRotAng = Vector3.SignedAngle(Vector3.up, mousePosWorld - RingFocusDisplay.transform.position, Vector3.forward);
+        var targetRotAng = -Vector3.SignedAngle(Vector3.up, mousePosWorld - RingFocusDisplay.transform.position, Vector3.forward);
         var targetIndex = ((int)math.round(targetRotAng / stepRot) + Ring.k_RingCount) % Ring.k_RingCount;
 
         var distScale = math.max(
@@ -87,7 +87,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         distScale = math.clamp(1.0f - distScale, 0, 1);
 
         var leanRotAng = Mathf.MoveTowardsAngle(curRotAng, targetRotAng, (stepRot / 2) * math.abs(Mathf.DeltaAngle(curRotAng, targetRotAng) / 180f) * distScale);
-        Quaternion leanRot = Quaternion.Euler(-180f + -leanRotAng, 90, 90).normalized;
+        Quaternion leanRot = Quaternion.Euler(180f + leanRotAng, 90, 90).normalized;
 
         RingFocusDisplay.Visual.localRotation = Quaternion.Slerp(RingFocusDisplay.Visual.localRotation, leanRot, Time.deltaTime * 10f);
 
