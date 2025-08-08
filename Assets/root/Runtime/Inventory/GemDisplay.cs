@@ -110,6 +110,7 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
     public bool CheckFocusFilter(GameObject go)
     {
         if (go.TryGetComponent<RingDisplay>(out _)) return false;
+        if (go.TryGetComponent<GemDisplay>(out var otherGem)) return otherGem.IsInSlot;
         return true;
     }
 }

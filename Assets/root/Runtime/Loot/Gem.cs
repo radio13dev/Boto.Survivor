@@ -29,8 +29,28 @@ public struct Gem
         Multishot,
     }
     
-    public Type GemType;
     public bool IsValid => GemType != Type.None;
+    
+    public Type GemType;
+    public int Size;
+    
+    public Gem(Type gemType, int size)
+    {
+        GemType = gemType;
+        Size = size;
+        _clientId = 0; // Reset client ID for new gem
+    }
+
+    public string GetTitleString()
+    {
+        switch (GemType)
+        {
+            case Type.Multishot:
+                return "Multishot Gem";
+            default:
+                return GemType.ToString() + " Gem (default text)";
+        }
+    }
 }
 
 [Save]

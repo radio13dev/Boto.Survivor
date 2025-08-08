@@ -33,9 +33,14 @@ public class DescriptionUI : MonoBehaviour
 
     private void OnFocus()
     {
-        if (UIFocus.Interact && !UIFocus.Focus) return;
-    
-        if (!UIFocus.Focus)
+        GameObject interact = UIFocus.Interact;
+        GameObject focus = null;
+        if (UIFocus.Interact && (!UIFocus.Focus || !UIFocus.CheckFocus(UIFocus.Focus)))
+            focus = interact;
+        else
+            focus = UIFocus.Focus;
+        
+        if (!focus)
         {
             Visual.gameObject.SetActive(false);
             return;
@@ -46,9 +51,9 @@ public class DescriptionUI : MonoBehaviour
         }
         
         StringBuilder sb = new();
-        if (UIFocus.Focus.TryGetComponent<GemDisplay>(out var gem))
+        if (focus.TryGetComponent<GemDisplay>(out var gem))
         {
-            if (gem.GetComponentInParent<RingFocusDisplay>())
+            if (gem.IsInSlot)
             {
                 // Equipped
                 sb.AppendLine("(Equipped)".Color(Color.gray).Size(30));
@@ -61,28 +66,41 @@ public class DescriptionUI : MonoBehaviour
             
             if (gem.Gem.IsValid)
             {
-            
-                if (UIFocus.Interact && UIFocus.Interact.TryGetComponent<GemDisplay>(out var heldGem))
+                if (interact && interact != focus && interact.TryGetComponent<GemDisplay>(out var heldGem))
                 {
-                    sb.AppendLine("COMBINE".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
-                    sb.AppendLine("Multishot Gem".Size(36));
-                    sb.AppendLine(("Size: " + "1".Color(Palette.GemSize(1)) + "→" + "2".Color(Palette.GemSize(2))).Size(30));
+                    if (gem.Gem.ClientId != heldGem.Gem.ClientId)
+                    {
+                        sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                    }
+                    else if (focus == null)
+                    {
+                        sb.AppendLine("UNSOCKET".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                    }
                 }
-                else
-                {
-                    sb.AppendLine("Multishot Gem".Size(36));
-                    sb.AppendLine("Size: 1".Size(30));
-                }
+                
+                sb.AppendLine(gem.Gem.GetTitleString().Size(36));
+                sb.AppendLine($"Size: {gem.Gem.Size.Color(Palette.GemSize(gem.Gem.Size))}".Size(30));
+            }
+            else if (interact && interact.TryGetComponent<GemDisplay>(out var heldGem))
+            {
+                sb.AppendLine("INSERT".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                sb.AppendLine(heldGem.Gem.GetTitleString().Size(36));
+                sb.AppendLine($"Size: {heldGem.Gem.Size.Color(Palette.GemSize(gem.Gem.Size))}".Size(30));
             }
             else
             {
                 sb.AppendLine("Empty Slot".Color(new Color(0.2f,0.2f,0.2f)).Size(30));
             }
         }
-        else if (UIFocus.Focus.TryGetComponent<RingDisplay>(out var ring))
+        else if (focus.TryGetComponent<RingDisplay>(out var ring))
         {
             // Inventory
             sb.AppendLine("(Rings)".Color(Color.gray).Size(30));
+            
+            if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
+            {
+                sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+            }
             if (ring.Ring.Stats.IsValid)
             {
                 sb.AppendLine($"{ring.Ring.Stats.GetTitleString()}".Size(36));
