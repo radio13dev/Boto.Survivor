@@ -7,23 +7,21 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Gem1
-  m_Shader: {fileID: -6465566751694194690, guid: 140db0078e2b3114b9dab0d39832c97d, type: 3}
+  m_Name: Gem 4
+  m_Shader: {fileID: -6465566751694194690, guid: 60ed2d7aab43fa64aa16680d77f1f8b8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap:
-    RenderType: Transparent
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
   - SHADOWCASTER
-  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -125,10 +123,10 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EdgePower: 1
-    - _EdgeScale: 1.7
+    - _EdgeScale: 1.5
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -150,24 +148,27 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
+    - _Surface: 0
     - _Thickness: 52.6
     - _Tiling: 0.1
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - _ZWriteControl: 0
     - _r1: 1
     - _r2: 2
     m_Colors:
-    - _BaseColor: {r: 0.60408956, g: 0.41438237, b: 0.9056604, a: 1}
+    - _A: {r: 0.39962196, g: 0, b: 1, a: 1}
+    - _B: {r: 1, g: 0, b: 0.8608513, a: 1}
+    - _BaseColor: {r: 0, g: 0, b: 0, a: 1}
+    - _C: {r: 0, g: 0.9301076, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DiffuseColor: {r: 0.25943398, g: 1, b: 0.97460383, a: 1}
-    - _EdgeColor: {r: 1, g: 0.7725491, b: 0.47058827, a: 1}
+    - _DiffuseColor: {r: 0.2588235, g: 1, b: 0.35708147, a: 1}
+    - _EdgeColor: {r: 1, g: 0.7923569, b: 0.2971698, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HashA: {r: 1, g: 0.48839837, b: 0.2028302, a: 1}
     - _HashB: {r: 1, g: 0, b: 0.13477135, a: 1}
