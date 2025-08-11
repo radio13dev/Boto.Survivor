@@ -1,0 +1,73 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class WorldClickTool : MonoBehaviour
+{
+    public GameObject Visual;
+    public ClickMode Mode;
+    public bool Active;
+
+    public enum ClickMode
+    {
+        PlaceDummy,
+        PlaceEnemy,
+        PlaceEnemyLarge,
+        PlaceGem
+    }
+
+    private void Awake()
+    {
+        if (TryGetComponent<Toggle>(out var toggle))
+            SetActive(toggle.isOn);
+    }
+
+    private void OnDisable()
+    {
+        if (TryGetComponent<Toggle>(out var toggle))
+            toggle.isOn = false;
+    }
+
+    public void SetActive(bool active)
+    {
+        Active = active;
+        if (!active) Visual.gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!Active) return;
+
+        if (GameInitialize.Inputs.UI.RightClick.WasPressedThisFrame())
+        {
+            if (TryGetComponent<Toggle>(out var toggle))
+                toggle.isOn = false;
+            else
+                SetActive(false);
+            return;
+        }
+
+        Visual.gameObject.SetActive(TorusCollider.IsMouseOver);
+        if (!TorusCollider.IsMouseOver) return;
+
+        Visual.transform.SetPositionAndRotation(TorusCollider.LastRaycast.pointerCurrentRaycast.worldPosition,
+            Quaternion.LookRotation(Camera.main.transform.up, TorusCollider.LastRaycast.pointerCurrentRaycast.worldNormal));
+
+        if (GameInitialize.Inputs.UI.Click.WasPressedThisFrame())
+            switch (Mode)
+            {
+                case ClickMode.PlaceDummy:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 2));
+                    break;
+                case ClickMode.PlaceEnemy:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 0));
+                    break;
+                case ClickMode.PlaceEnemyLarge:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 1));
+                    break;
+                case ClickMode.PlaceGem:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceGem((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));
+                    break;
+            }
+    }
+}

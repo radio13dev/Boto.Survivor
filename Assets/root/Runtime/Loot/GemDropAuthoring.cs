@@ -9,7 +9,7 @@ public class GemDropAuthoring : MonoBehaviour
         public override void Bake(GemDropAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent<Gem>(entity);
+            AddComponent<GemDrop>(entity);
         }
     }
 }

@@ -99,7 +99,6 @@ public partial struct EnemySpawnSystem : ISystem
                         
                     var enemy = ecb.Instantiate(key, enemies[i].Entity);
                     ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos + r.NextFloat3(-0.5f, 0.5f)));
-                    ecb.SetComponent(key, enemy, new NetworkId());
                     spawned++;
                 }
                 

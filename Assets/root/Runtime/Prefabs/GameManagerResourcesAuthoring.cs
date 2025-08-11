@@ -110,7 +110,8 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
                 Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace),
                 ItemDropTemplate = GetEntity(authoring.ItemDropTemplate, TransformUsageFlags.WorldSpace),
-                LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace)
+                LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace),
+                GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace)
             });
             
             if (authoring.SpecificPrefabDatabase)
@@ -180,7 +181,12 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                     buffer.Resize(Enum.GetValues(typeof(Gem.Type)).Length , NativeArrayOptions.ClearMemory);
                     foreach (var kvp in authoring.GemVisuals)
                     {
-                        buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value) } ;
+                        var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
+                        if (index == -1)
+                        {
+                            Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
+                        }
+                        buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = index } ;
                     }
                 }
             }

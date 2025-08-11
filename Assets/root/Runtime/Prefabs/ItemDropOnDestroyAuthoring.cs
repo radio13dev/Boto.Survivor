@@ -76,9 +76,9 @@ public partial struct ItemDropOnDestroySystem : ISystem
         {
             ecb = delayedEcb,
             baseRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
-            rotationalInertiaLookup = SystemAPI.GetComponentLookup<RotationalInertia>(true),
             movementLookup = SystemAPI.GetComponentLookup<Movement>(true),
-            GemDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate
+            GemDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate,
+            GemVisuals = SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true)
         }.Schedule(state.Dependency);
     }
     
@@ -87,7 +87,6 @@ public partial struct ItemDropOnDestroySystem : ISystem
     {
         public EntityCommandBuffer ecb;
         [ReadOnly] public Random baseRandom;
-        [ReadOnly] public ComponentLookup<RotationalInertia> rotationalInertiaLookup;
         [ReadOnly] public ComponentLookup<Movement> movementLookup;
         [ReadOnly] public Entity GemDropTemplate;
         [ReadOnly] public DynamicBuffer<GameManager.GemVisual> GemVisuals;
@@ -108,30 +107,11 @@ public partial struct ItemDropOnDestroySystem : ISystem
                         case Drop.DropType.Gem:
                             newDropE = ecb.Instantiate(GemDropTemplate);
                             var gem = Gem.Generate(ref random);
-                            ecb.SetComponent(newDropE, new GemDrop()
-                            {
-                                Gem = gem
-                            });
-                            ecb.SetSharedComponent(newDropE, new InstancedResourceRequest(GemVisuals[(int)gem.GemType].InstancedResourceIndex));
+                            Gem.SetupEntity(newDropE, ref random, ref ecb, transform, movementLookup[entity], gem, GemVisuals);
                             break;
                         default:
                             Debug.LogError($"Unknown drop type {items[i].Drop} on entity {entity}");
                             continue;
-                    }
-                    ecb.SetComponent(newDropE, transform);
-                
-                    if (rotationalInertiaLookup.HasComponent(GemDropTemplate))
-                    {
-                        var newDropInertia = new RotationalInertia();
-                        newDropInertia.Set(random.NextFloat3(), 1);
-                        ecb.SetComponent(newDropE, newDropInertia);
-                    }
-                
-                    if (movementLookup.HasComponent(GemDropTemplate) && movementLookup.TryGetComponent(entity, out var movement))
-                    {
-                        var newDropMovement = new Movement();
-                        newDropMovement.Velocity = movement.Velocity + (math.length(movement.Velocity)/2 + 1) * random.NextFloat3();
-                        ecb.SetComponent(newDropE, newDropMovement);
                     }
                 }
             }

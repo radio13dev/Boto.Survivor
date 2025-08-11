@@ -45,9 +45,10 @@ public struct LocalTransformComparer : IComparer<int>
 
     public int Compare(int x, int y)
     {
+        if (x == y) return 0;
         int c = math.hash(m_Transforms[x].ToMatrix())
             .CompareTo(math.hash(m_Transforms[y].ToMatrix()));
-        if (c == 0 && x != y) Debug.LogError($"Two transforms at same position: {x}:{m_Transforms[x]} and {y}:{m_Transforms[y]}");
+        if (c == 0) Debug.LogError($"Two transforms at same position: {x}:{m_Transforms[x]} and {y}:{m_Transforms[y]}");
         return c;
     }
 }

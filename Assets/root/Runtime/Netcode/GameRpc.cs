@@ -7,6 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 [StructLayout(LayoutKind.Explicit)]
@@ -19,10 +20,16 @@ public unsafe struct GameRpc : IComponentData
         PlayerLeave = 0b1000_0001,
 
         // Runtime Actions
+        [Obsolete]
         PlayerAdjustInventory = 0b0000_0000,
+        
         PlayerSlotInventoryGemIntoRing = 0b0000_0001,
         PlayerSwapGemSlots = 0b0000_0010,
         PlayerSwapRingSlots = 0b0000_0011,
+        
+        // Admin Actions
+        AdminPlaceEnemy = 0b0100_0000, // Admin action flag
+        AdminPlaceGem = 0b0100_0001,
     }
 
     public const int Length = sizeof(long)*2;
@@ -87,16 +94,16 @@ public unsafe struct GameRpc : IComponentData
     }
 
     #region Inventory Adjust
-    [FieldOffset(2)] public byte From;
-    [FieldOffset(3)] public byte To;
-    [FieldOffset(4)] public float3 FloorPosition;
-    public bool IsToFloor => To == byte.MaxValue;
-    public bool IsFromFloor => From >= Ring.k_RingCount;
-    public int FromFloorIndex => From - Ring.k_RingCount;
+    [FieldOffset(2)] public byte OBSOLETE_From;
+    [FieldOffset(3)] public byte OBSOLETE_To;
+    [FieldOffset(4)] public float3 OBSOLETE_FloorPosition;
+    public bool IsToFloor => OBSOLETE_To == byte.MaxValue;
+    public bool IsFromFloor => OBSOLETE_From >= Ring.k_RingCount;
+    public int FromFloorIndex => OBSOLETE_From - Ring.k_RingCount;
 
     public static GameRpc PlayerAdjustInventory(byte player, byte from, byte to, float3 toPosition = default)
     {
-        return new GameRpc(){ m_Type = (byte)Code.PlayerAdjustInventory, m_Player = player, From = from, To = to, FloorPosition = toPosition };
+        return new GameRpc(){ m_Type = (byte)Code.PlayerAdjustInventory, m_Player = player, OBSOLETE_From = from, OBSOLETE_To = to, OBSOLETE_FloorPosition = toPosition };
     }
 
     public static byte GetFloorIndexByte(int index)
@@ -130,6 +137,21 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerSwapRingSlots(byte player, int fromSlotIndex, int toSlotIndex)
     {
         return new GameRpc() { Type = Code.PlayerSwapRingSlots, PlayerId = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = toSlotIndex };
+    }
+    #endregion
+
+    #region Admin
+    [FieldOffset(2)] public int SpawnType;
+    [FieldOffset(6)] public float3 PlacePosition;
+    
+    public static GameRpc AdminPlaceEnemy(byte player, Vector3 placePosition, int spawnType)
+    {
+        return new GameRpc() { Type = Code.AdminPlaceEnemy, PlayerId = player, SpawnType = spawnType, PlacePosition = placePosition };
+    }
+
+    public static GameRpc AdminPlaceGem(byte player, Vector3 placePosition)
+    {
+        return new GameRpc() { Type = Code.AdminPlaceGem, PlayerId = player, PlacePosition = placePosition };
     }
     #endregion
 }
@@ -322,7 +344,7 @@ public partial struct GameRpcSystem : ISystem
                     if (rpc.IsToFloor)
                     {
                         // Validate the 'from' movement
-                        var from = rpc.From;
+                        var from = rpc.OBSOLETE_From;
                         if (from >= inventory.Length)
                             continue; // Invalid 'from' index
 
@@ -345,7 +367,7 @@ public partial struct GameRpcSystem : ISystem
                     else if (rpc.IsFromFloor)
                     {
                         // Validate the 'to' movement
-                        var to = rpc.To;
+                        var to = rpc.OBSOLETE_To;
                         if (to >= inventory.Length)
                             continue; // Invalid 'to' index
 
@@ -354,7 +376,7 @@ public partial struct GameRpcSystem : ISystem
                         float pickupD = float.MaxValue;
                         foreach (var (testPickupT, testPickupE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAny<RingStats, LootGenerator2>().WithEntityAccess())
                         {
-                            var d = math.distancesq(testPickupT.ValueRO.Position, rpc.FloorPosition);
+                            var d = math.distancesq(testPickupT.ValueRO.Position, rpc.OBSOLETE_FloorPosition);
                             if (d < pickupD)
                             {
                                 pickupE = testPickupE;
@@ -396,8 +418,8 @@ public partial struct GameRpcSystem : ISystem
                     }
                     else
                     {
-                        var from = rpc.From;
-                        var to = rpc.To;
+                        var from = rpc.OBSOLETE_From;
+                        var to = rpc.OBSOLETE_To;
 
                         // Validate the 'from' and 'to' movement
                         if (from >= inventory.Length)
@@ -410,6 +432,32 @@ public partial struct GameRpcSystem : ISystem
                     }
 
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                
+                case GameRpc.Code.AdminPlaceEnemy:
+                {
+                    var enemies = SystemAPI.GetSingletonBuffer<GameManager.Enemies>();
+                    if (rpc.SpawnType < 0 || rpc.SpawnType >= enemies.Length)
+                    {
+                        Debug.LogWarning($"{rpc.SpawnType} is not a valid enemy.");
+                        break;
+                    }
+                    
+                    var enemy = state.EntityManager.Instantiate(enemies[rpc.SpawnType].Entity);
+                    state.EntityManager.SetComponentData(enemy, LocalTransform.FromPosition(rpc.PlacePosition));
+                    break;
+                }
+                
+                case GameRpc.Code.AdminPlaceGem:
+                {
+                    var gemTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate;
+                    var gemE = ecb.Instantiate(gemTemplate);
+                    
+                    var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                    var gem = Gem.Generate(ref r);
+                    Debug.Log($"Generated: {gem.GemType} gem");
+                    Gem.SetupEntity(gemE, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
                     break;
                 }
             }

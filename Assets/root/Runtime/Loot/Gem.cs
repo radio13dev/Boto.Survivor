@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using BovineLabs.Saving;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using Random = Unity.Mathematics.Random;
 
 [Serializable]
@@ -33,7 +35,8 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
         None,
         Multishot,
         Homing,
-        Pierce
+        Pierce,
+        Length
     }
 
     public bool IsValid => GemType != Type.None;
@@ -99,8 +102,28 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
     {
         return new Gem()
         {
-            GemType = Type.Multishot
+            GemType = (Type)random.NextInt(1, (int)Type.Length)
         };
+    }
+
+    public static void SetupEntity(Entity entity, ref Random random, ref EntityCommandBuffer ecb, LocalTransform transform, Movement movement, Gem gem, DynamicBuffer<GameManager.GemVisual> gemVisuals)
+    {
+        ecb.SetComponent(entity, new GemDrop()
+        {
+            Gem = gem
+        });
+        ecb.SetSharedComponent(entity, new InstancedResourceRequest(gemVisuals[(int)gem.GemType].InstancedResourceIndex));
+        
+        ecb.SetComponent(entity, transform);
+        
+        var newDropInertia = new RotationalInertia();
+        newDropInertia.Set(random.NextFloat3(), 1);
+        ecb.SetComponent(entity, newDropInertia);
+        
+        
+        var newDropMovement = new Movement();
+        newDropMovement.Velocity = movement.Velocity + (math.length(movement.Velocity)/2 + 1) * random.NextFloat3();
+        ecb.SetComponent(entity, newDropMovement);
     }
 }
 
