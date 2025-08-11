@@ -34,7 +34,7 @@ namespace Collisions
     {
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate<GameManager.Terrain>();
             state.RequireForUpdate<TerrainInit>();
         }
@@ -44,7 +44,7 @@ namespace Collisions
             var bounds = TorusMapper.MapBounds;
             var options = SystemAPI.GetSingletonBuffer<GameManager.Terrain>();
             Random r = Random.CreateFromIndex(unchecked((uint)SystemAPI.Time.ElapsedTime));
-            var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+            var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             foreach ((var terrainSpawner, var terrainSpawnerE) in SystemAPI.Query<RefRO<TerrainInit>>().WithEntityAccess())
             {
                 Debug.Log($"Init terrain: {terrainSpawner.ValueRO.TerrainSpawnAttempts}");

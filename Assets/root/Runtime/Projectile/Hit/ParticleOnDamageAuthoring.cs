@@ -29,6 +29,7 @@ public partial struct ProjectileHitSystem_Particle : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<NetworkIdMapping>();
         state.RequireForUpdate<GameManager.Particles>();
     }
 
@@ -36,6 +37,7 @@ public partial struct ProjectileHitSystem_Particle : ISystem
     {
         var particles = SystemAPI.GetSingletonBuffer<GameManager.Particles>(true);
         var particleOnDamageLookup = SystemAPI.GetComponentLookup<ParticleOnDamage>(true);
+        var networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>();
         foreach (var (transform, projE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<ProjectileHit>().WithEntityAccess())
         {
             if (!SystemAPI.HasBuffer<ProjectileHitEntity>(projE)) continue;
@@ -43,7 +45,7 @@ public partial struct ProjectileHitSystem_Particle : ISystem
             var hit = SystemAPI.GetBuffer<ProjectileHitEntity>(projE);
             for (int i = 0; i < hit.Length; i++)
             {
-                if (!particleOnDamageLookup.TryGetRefRO(hit[i].Value, out var particleOnDamage)) continue;
+                if (!particleOnDamageLookup.TryGetRefRO(networkIdMapping[hit[i].Value], out var particleOnDamage)) continue;
                 if (particleOnDamage.ValueRO.ParticleIndex < 0 || particleOnDamage.ValueRO.ParticleIndex >= particles.Length) continue;
                 var particlePrefab = particles[particleOnDamage.ValueRO.ParticleIndex];
                 var particle = particlePrefab.Prefab.Value.GetFromPool();

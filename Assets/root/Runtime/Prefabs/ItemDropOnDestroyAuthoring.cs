@@ -64,14 +64,14 @@ public partial struct ItemDropOnDestroySystem : ISystem
     {
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<SharedRandom>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ItemDropOnDestroy, DestroyFlag>().Build();
         state.RequireForUpdate(m_CleanupQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         state.Dependency = new Job()
         {
             ecb = delayedEcb,

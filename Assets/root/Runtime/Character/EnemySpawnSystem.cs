@@ -71,32 +71,39 @@ public partial struct EnemySpawnSystem : ISystem
                     Debug.Log($"Hit max spawn count in frame: {spawned}");
                     break;
                 }
+                
+                var r = spawner.random;
             
                 // Spawn chance scales with time, so that the longer the game runs, the more enemies spawn.
                 double enemiesPerSecond = (8*Time/1000);
                 enemiesPerSecond *= enemiesPerSecond;
                 enemiesPerSecond += 0.3d;
                 spawner.nextSpawnTime += 1/enemiesPerSecond;
-                spawner.nextSpawnTime += spawner.random.NextFloat(-0.5f,0.5f); // A little randomness is the spice of life
+                spawner.nextSpawnTime += r.NextFloat(-0.5f,0.5f); // A little randomness is the spice of life
             
                 var rPos = t.Position;
-                var rDir = math.normalizesafe(spawner.random.NextFloat2(min, max), max) * spawner.SpawnRadius;
+                var rDir = math.normalizesafe(r.NextFloat2(min, max), max) * spawner.SpawnRadius;
                 rPos += t.TransformDirection(rDir.f3z());
             
                 for (int i = 0; i < PlayerTransforms.Length; i++)
                     if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)
+                    {
+                        spawner.random = r;
                         return;
+                    }
             
                 for (int i = 0; i < enemies.Length; i++)
                 {
-                    if (enemies[i].Chance <= spawner.random.NextInt(100))
+                    if (enemies[i].Chance <= r.NextInt(100))
                         continue;
                         
                     var enemy = ecb.Instantiate(key, enemies[i].Entity);
-                    ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos));
+                    ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos + r.NextFloat3(-0.5f, 0.5f)));
                     ecb.SetComponent(key, enemy, new NetworkId());
                     spawned++;
                 }
+                
+                spawner.random = r;
             }
         }
     }

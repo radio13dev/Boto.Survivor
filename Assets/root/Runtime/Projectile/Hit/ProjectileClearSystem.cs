@@ -16,7 +16,6 @@ public partial struct ProjectileClearSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        delayedEcb.AddComponent<DestroyFlag>(m_CleanupQuery, EntityQueryCaptureMode.AtPlayback);
+        state.EntityManager.AddComponent<DestroyFlag>(m_CleanupQuery);
     }
 }

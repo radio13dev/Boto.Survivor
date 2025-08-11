@@ -56,6 +56,8 @@ public class GameSingletonAuthoring : MonoBehaviour
             
             AddComponent<EnemySpawningEnabled>(entity);
             SetComponentEnabled<EnemySpawningEnabled>(entity, authoring.EnemySpawningEnabled);
+            
+            AddComponent<NetworkIdIterator>(entity);
         }
     }
 }

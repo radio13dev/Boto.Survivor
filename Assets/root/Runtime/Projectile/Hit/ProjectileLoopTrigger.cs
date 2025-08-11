@@ -3,6 +3,7 @@ using Collisions;
 using NativeTrees;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -53,6 +54,7 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<NetworkIdMapping>();
         state.RequireForUpdate<PlayerControlledLink>();
     }
     
@@ -64,7 +66,9 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
         {
             Players = SystemAPI.GetSingletonBuffer<PlayerControlledLink>(true),
             LoopQueueLookup = SystemAPI.GetBufferLookup<ProjectileLoopTriggerQueue>(false),
-            TransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true)
+            TransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
+            networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
+            
         }.Schedule(state.Dependency);
     }
     
@@ -74,6 +78,7 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
         [ReadOnly] public DynamicBuffer<PlayerControlledLink> Players;
         public BufferLookup<ProjectileLoopTriggerQueue> LoopQueueLookup;
         [ReadOnly] public ComponentLookup<LocalTransform> TransformLookup;
+        [ReadOnly] public NetworkIdMapping networkIdMapping;
     
         public void Execute(in LocalTransform projT, in ProjectileLoopTrigger loop, in SurfaceMovement projSurfaceMov, in DynamicBuffer<ProjectileHitEntity> hits)
         {
@@ -89,7 +94,7 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
             for (int i = 0; i < hits.Length; i++)
             {
                 // Get the information about the entity we hit
-                if (!TransformLookup.TryGetComponent(hits[i].Value, out var hitT))
+                if (!TransformLookup.TryGetComponent(networkIdMapping[hits[i].Value], out var hitT))
                 {
                     avgT.Position += projT.Position/hits.Length;
                     continue;

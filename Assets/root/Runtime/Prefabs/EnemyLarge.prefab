@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2943698238182725417}
   - component: {fileID: 2038396025834592094}
   - component: {fileID: 4914384556312185599}
+  - component: {fileID: -2345145132516463796}
   m_Layer: 0
   m_Name: EnemyLarge
   m_TagString: Untagged
@@ -160,3 +161,15 @@ MonoBehaviour:
     Chance: 5
     MinCount: 1
     MaxCount: 1
+--- !u!114 &-2345145132516463796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90949429c2e4d25b0e2dbf93203af24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::NetworkIdAuthoring

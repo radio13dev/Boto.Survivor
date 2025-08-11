@@ -35,14 +35,14 @@ public partial struct EntityOnDestroySystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SharedRandom>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<EntityOnDestroy, DestroyFlag>().Build();
         state.RequireForUpdate(m_CleanupQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<EntityOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
             .WithAll<DestroyFlag>()
             )

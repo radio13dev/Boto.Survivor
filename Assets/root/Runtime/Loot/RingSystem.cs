@@ -16,13 +16,13 @@ public partial struct RingSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SharedRandom>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<GameManager.Projectiles>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         state.Dependency = new Job()
         {
             ecb = delayedEcb.AsParallelWriter(),
@@ -39,7 +39,7 @@ public partial struct RingSystem : ISystem
         public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public double Time;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
-        [ReadOnly] public NativeOctree<Entity> EnemyColliderTree;
+        [ReadOnly] public NativeOctree<(Entity, NetworkId)> EnemyColliderTree;
         [ReadOnly] public Random SharedRandom;
 
         [BurstCompile]
@@ -66,7 +66,7 @@ public partial struct RingSystem : ISystem
 
             if (triggerQueue.Length > 0)
             {
-                NativeList<Entity> ignoreBuffer = new NativeList<Entity>(4, Allocator.Temp);
+                NativeList<(Entity, NetworkId)> ignoreBuffer = new NativeList<(Entity, NetworkId)>(4, Allocator.Temp);
                 for (int i = 0; i < triggerQueue.Length; i++)
                 {
                     var trigger = triggerQueue[i];
@@ -85,7 +85,7 @@ public partial struct RingSystem : ISystem
 
         private void ActivateRing(int ringIndex, int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement,
             in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems,
-            in NativeList<Entity> ignoreNearbyBuffer)
+            in NativeList<(Entity, NetworkId)> ignoreNearbyBuffer)
         {
             var r = SharedRandom;
             ref var ring = ref rings.ElementAt(ringIndex);
