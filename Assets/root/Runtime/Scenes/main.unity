@@ -7266,9 +7266,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1237834043}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 23dbffa9b8a184c4e949fa6ce7d8f4dd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.PhysicsRaycaster
+  m_EditorClassIdentifier: Boto.Survivor::UIPhysicsRaycaster
   m_EventMask:
     serializedVersion: 2
     m_Bits: 32
@@ -7460,9 +7460,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1250010759}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c49b4cc203aa6414fae5c798d1d0e7d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 190ffcd921981554bad6f90fc0daa738, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.PhysicsRaycaster
+  m_EditorClassIdentifier: Boto.Survivor::TorusWorldPhysicsRaycaster
   m_EventMask:
     serializedVersion: 2
     m_Bits: 1
@@ -7952,7 +7952,7 @@ GameObject:
   - component: {fileID: 1338831775}
   - component: {fileID: 1338831774}
   - component: {fileID: 1338831773}
-  - component: {fileID: 1338831772}
+  - component: {fileID: 1338831776}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -7960,23 +7960,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1338831772
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1338831771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
-  m_BlockingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
 --- !u!114 &1338831773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8048,6 +8031,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1338831776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338831771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69f4c772865d427b99b76aa09f74dc35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::UIGraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &1351923547
 PrefabInstance:
   m_ObjectHideFlags: 0
