@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BovineLabs.Saving;
 using Collisions;
 using Unity.Collections;
@@ -64,7 +65,7 @@ public partial struct CollectableClearSystem : ISystem
     
         public void Execute([ChunkIndexInQuery] int key, Entity collectableE, in Collectable collectable, 
             EnabledRefRW<Collected> collected, EnabledRefRW<Grounded> grounded,
-            in LocalTransform collectableT, ref Force force)
+            in LocalTransform collectableT, ref Force force, in Movement movement)
         {
             if (collected.ValueRO)
             {
@@ -89,8 +90,57 @@ public partial struct CollectableClearSystem : ISystem
             }
             
             var dir = math.normalizesafe(dif);
+            force.Velocity -= movement.Velocity*dt;
             force.Velocity += dir*k_MaxCollectableSpeed*dt;
             grounded.ValueRW = false;
         }
+    }
+}
+
+[UpdateInGroup(typeof(CollectableSystemGroup))]
+public partial struct GemCollectableSystem : ISystem
+{
+    EntityQuery m_Query;
+
+    public void OnCreate(ref SystemState state)
+    {
+        m_Query = SystemAPI.QueryBuilder().WithAll<Collectable, GemDrop, Collected>().Build();
+        state.RequireForUpdate(m_Query);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        using var drops = m_Query.ToComponentDataArray<GemDrop>(Allocator.Temp);
+        using var collectedBy = m_Query.ToComponentDataArray<Collectable>(Allocator.Temp);
+        
+        // Gotta do this based on the Hash ordering of the gem drops
+        NativeArray<int> correctOrdering = new NativeArray<int>(drops.Length, Allocator.Temp);
+        for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
+        correctOrdering.Sort(new GemComparer(drops.Reinterpret<Gem>())); // Sort to change it into the order of indexes to process (should be consistent across platform)
+        
+        for (int i = 0; i < correctOrdering.Length; i++)
+        {
+            // Give currency to the entity
+            int index = correctOrdering[i];
+            if (SystemAPI.HasBuffer<InventoryGem>(collectedBy[index].CollectedBy))
+            {
+                var inventoryRW = SystemAPI.GetBuffer<InventoryGem>(collectedBy[index].CollectedBy);
+                inventoryRW.Add(new InventoryGem(drops[index].Gem));
+            }
+        }
+        
+        correctOrdering.Dispose();
+    }
+}
+
+public struct GemComparer : IComparer<int>
+{
+    NativeArray<Gem> m_Gems;
+    
+    public GemComparer(NativeArray<Gem> gems) => m_Gems = gems;
+
+    public int Compare(int x, int y)
+    {
+        return m_Gems[x].CompareTo(m_Gems[y]);
     }
 }

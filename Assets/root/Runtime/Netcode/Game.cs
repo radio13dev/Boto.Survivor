@@ -130,6 +130,7 @@ public class Game : IDisposable
     public Game(string worldName, bool showVisuals, IStepProvider stepProvider)
     {
         m_StepProvider = stepProvider;
+        m_ShowVisuals = showVisuals;
 
         Debug.Log($"Creating Game...");
         m_World = new World(worldName, WorldFlags.Game);
@@ -137,8 +138,12 @@ public class Game : IDisposable
             .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
         systems.RemoveAll(s => s.Name == typeof(UpdateWorldTimeSystem).Name);
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
-        m_World.GetExistingSystemManaged<GenericPrefabSpawnSystem>().GameReference = this;
-        m_World.GetExistingSystemManaged<SpecificPrefabSpawnSystem>().GameReference = this;
+        
+        if (m_ShowVisuals)
+        {
+            m_World.GetExistingSystemManaged<GenericPrefabSpawnSystem>().GameReference = this;
+            m_World.GetExistingSystemManaged<SpecificPrefabSpawnSystem>().GameReference = this;
+        }
 
         var saveRequest = new EntityQueryDesc
         {
@@ -159,7 +164,6 @@ public class Game : IDisposable
         };
         m_SaveBuffer = m_World.EntityManager.CreateEntityQuery(saveBuffer);
 
-        m_ShowVisuals = showVisuals;
         if (m_ShowVisuals)
         {
             m_RenderSystemHalfTime = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(RenderSystemHalfTime)));
@@ -192,6 +196,8 @@ public class Game : IDisposable
 
     public unsafe void SendSave(ref DataStreamWriter writer)
     {
+        CompleteDependencies();
+        
         EntityManager entityManager = m_World.EntityManager;
         var saveBufferEntities = m_SaveBuffer.ToEntityArray(Allocator.Temp);
         if (saveBufferEntities.Length > 1)
@@ -298,6 +304,7 @@ public class Game : IDisposable
 
     public void ApplyRender()
     {
+        if (!m_ShowVisuals) return;
         m_RenderSystemHalfTime.SetSingleton(new RenderSystemHalfTime() { Value = m_StepProvider.HalfTime });
         m_RenderSystemGroup.Update(m_World.Unmanaged);
     }

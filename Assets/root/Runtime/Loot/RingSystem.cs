@@ -149,7 +149,9 @@ public partial struct RingSystem : ISystem
                             projectileT.Scale = projectileSize;
                             ecb.SetComponent(Key, projectileE, projectileT);
 
-                            ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+                            ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
+                            //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+                            
                             ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                             ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
@@ -188,7 +190,9 @@ public partial struct RingSystem : ISystem
                         projectileT.Scale = projectileSize;
                         ecb.SetComponent(Key, projectileE, projectileT);
 
-                        ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+                        ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
+                        //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+                        
                         ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
                         ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                         ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });

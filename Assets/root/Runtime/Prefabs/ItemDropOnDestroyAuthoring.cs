@@ -11,7 +11,7 @@ using Random = Unity.Mathematics.Random;
 [Save]
 public struct ItemDropOnDestroy : IBufferElementData
 {
-    public Entity Drop;
+    public Drop.DropType Drop;
     public int Chance;
     public int MinCount;
     public int MaxCount;
@@ -28,29 +28,30 @@ public class ItemDropOnDestroyAuthoring : MonoBehaviour
             var drops = AddBuffer<ItemDropOnDestroy>(entity);
             foreach (var drop in authoring.Drops)
             {
-                if (drop.Prefab)
+                drops.Add(new ItemDropOnDestroy()
                 {
-                    drops.Add(new ItemDropOnDestroy()
-                    {
-                        Drop = GetEntity(drop.Prefab, TransformUsageFlags.WorldSpace),
-                        Chance = drop.Chance,
-                        MinCount = drop.MinCount,
-                        MaxCount = drop.MaxCount
-                    });
-                }
+                    Drop =  drop.Type,
+                    Chance = drop.Chance,
+                    MinCount = drop.MinCount,
+                    MaxCount = drop.MaxCount
+                });
             }
         }
     }
+}
     
-    [Serializable]
-    public class Drop
+[Serializable]
+public class Drop
+{
+    public enum DropType
     {
-        public GameObject Prefab;
-        [Range(0,100)]
-        public int Chance;
-        public int MinCount;
-        public int MaxCount;
+        Gem
     }
+    public DropType Type;
+    [Range(0,100)]
+    public int Chance;
+    public int MinCount;
+    public int MaxCount;
 }
 
 [UpdateBefore(typeof(DestroySystem))]
@@ -61,6 +62,7 @@ public partial struct ItemDropOnDestroySystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ItemDropOnDestroy, DestroyFlag>().Build();
@@ -75,7 +77,8 @@ public partial struct ItemDropOnDestroySystem : ISystem
             ecb = delayedEcb,
             baseRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
             rotationalInertiaLookup = SystemAPI.GetComponentLookup<RotationalInertia>(true),
-            movementLookup = SystemAPI.GetComponentLookup<Movement>(true)
+            movementLookup = SystemAPI.GetComponentLookup<Movement>(true),
+            GemDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate
         }.Schedule(state.Dependency);
     }
     
@@ -86,29 +89,45 @@ public partial struct ItemDropOnDestroySystem : ISystem
         [ReadOnly] public Random baseRandom;
         [ReadOnly] public ComponentLookup<RotationalInertia> rotationalInertiaLookup;
         [ReadOnly] public ComponentLookup<Movement> movementLookup;
+        [ReadOnly] public Entity GemDropTemplate;
+        [ReadOnly] public DynamicBuffer<GameManager.GemVisual> GemVisuals;
     
         public void Execute(Entity entity, in DynamicBuffer<ItemDropOnDestroy> items, in LocalTransform transform)
         {
             var random = baseRandom;
             for (int i = 0; i < items.Length; i++)
             {
-                if (items[i].Drop == Entity.Null) continue;
                 if (random.NextInt(100) >= items[i].Chance) continue;
                 
                 var count = random.NextInt(items[i].MinCount, items[i].MaxCount + 1);
                 for (int loop = 0; loop < count; loop++)
                 {
-                    var newDropE = ecb.Instantiate(items[i].Drop);
+                    Entity newDropE;
+                    switch (items[i].Drop)
+                    {
+                        case Drop.DropType.Gem:
+                            newDropE = ecb.Instantiate(GemDropTemplate);
+                            var gem = Gem.Generate(ref random);
+                            ecb.SetComponent(newDropE, new GemDrop()
+                            {
+                                Gem = gem
+                            });
+                            ecb.SetSharedComponent(newDropE, new InstancedResourceRequest(GemVisuals[(int)gem.GemType].InstancedResourceIndex));
+                            break;
+                        default:
+                            Debug.LogError($"Unknown drop type {items[i].Drop} on entity {entity}");
+                            continue;
+                    }
                     ecb.SetComponent(newDropE, transform);
                 
-                    if (rotationalInertiaLookup.HasComponent(items[i].Drop))
+                    if (rotationalInertiaLookup.HasComponent(GemDropTemplate))
                     {
                         var newDropInertia = new RotationalInertia();
                         newDropInertia.Set(random.NextFloat3(), 1);
                         ecb.SetComponent(newDropE, newDropInertia);
                     }
                 
-                    if (movementLookup.HasComponent(items[i].Drop) && movementLookup.TryGetComponent(entity, out var movement))
+                    if (movementLookup.HasComponent(GemDropTemplate) && movementLookup.TryGetComponent(entity, out var movement))
                     {
                         var newDropMovement = new Movement();
                         newDropMovement.Velocity = movement.Velocity + (math.length(movement.Velocity)/2 + 1) * random.NextFloat3();

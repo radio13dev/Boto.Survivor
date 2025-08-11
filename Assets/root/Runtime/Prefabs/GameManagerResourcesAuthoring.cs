@@ -1,6 +1,13 @@
+using System;
+using AYellowpaper.SerializedCollections;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public struct GameManager : IComponentData
 {
@@ -11,6 +18,7 @@ public struct GameManager : IComponentData
         public Entity SurvivorTemplate;
         public Entity ItemDropTemplate;
         public Entity LootDropTemplate;
+        public Entity GemDropTemplate;
         
         public Entity Projectile_Survivor_Laser;
     }
@@ -65,6 +73,11 @@ public struct GameManager : IComponentData
         public Entity Entity;
         public int Chance;
     }
+    
+    public struct GemVisual : IBufferElementData
+    {
+        public int InstancedResourceIndex;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
@@ -72,6 +85,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public GameObject ProjectileTemplate;
     public GameObject SurvivorTemplate;
     public GameObject Projectile_Survivor_Laser;
+    public GemDropAuthoring GemDropTemplate;
     
     public RingItemAuthoring ItemDropTemplate;
     public LootGenerator2Authoring LootDropTemplate;
@@ -82,6 +96,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public TerrainAuthoring[] Terrains;
     public ProjectileAuthoring[] Projectiles;
     public EnemyCharacterAuthoring[] Enemies;
+    public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -150,6 +165,23 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Enemies.Length; i++)
                 {
                     buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace), Chance = authoring.Enemies[i].Chance });
+                }
+            }
+            
+            if (authoring.GemVisuals?.Count > 0)
+            {
+                if (!authoring.InstancedResourcesDatabase)
+                {
+                    Debug.LogError($"Couldn't author GemVisuals, instanced resource database null.");
+                }
+                else
+                {
+                    var buffer = AddBuffer<GameManager.GemVisual>(entity);
+                    buffer.Resize(Enum.GetValues(typeof(Gem.Type)).Length , NativeArrayOptions.ClearMemory);
+                    foreach (var kvp in authoring.GemVisuals)
+                    {
+                        buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value) } ;
+                    }
                 }
             }
         }

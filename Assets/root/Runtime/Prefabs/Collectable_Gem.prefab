@@ -9,14 +9,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 240200278457971943}
+  - component: {fileID: 6121660106472816910}
+  - component: {fileID: 1100949369788378233}
   - component: {fileID: 3078662805218601296}
   - component: {fileID: 5750577854139021121}
   - component: {fileID: 1249446285491673129}
-  - component: {fileID: 651722630156716425}
   - component: {fileID: 1346623939594366831}
   - component: {fileID: -2254087907255268954}
   m_Layer: 0
-  m_Name: Currency
+  m_Name: Collectable_Gem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,6 +38,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6121660106472816910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07b8f6bf40af46229e2f0899b6d05ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GemDropAuthoring
+--- !u!114 &1100949369788378233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfe97125d9bd4a7cbebd73916dd7f7b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::CollectableAuthoring
+  CollectableMin:
+    x: -5
+    y: -5
+    z: -5
+  CollectableMax:
+    x: 5
+    y: 5
+    z: 5
 --- !u!114 &3078662805218601296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,8 +83,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 5
-    _Asset: {fileID: 11400000, guid: c7fee6b9dc62f9a4fb5b583dd6f768c4, type: 2}
+    AssetIndex: 10
+    _Asset: {fileID: 11400000, guid: 6a67ced39c905d648bf0f60497664a17, type: 2}
 --- !u!114 &5750577854139021121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,26 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
---- !u!114 &651722630156716425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69ec3c8c9b5a4c3290858a98920a151b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::CurrencyCollectableAuthoring
-  CollectableMin:
-    x: -4
-    y: -4
-    z: -4
-  CollectableMax:
-    x: 4
-    y: 4
-    z: 4
 --- !u!114 &1346623939594366831
 MonoBehaviour:
   m_ObjectHideFlags: 0

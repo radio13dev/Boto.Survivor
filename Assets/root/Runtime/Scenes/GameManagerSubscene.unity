@@ -151,6 +151,7 @@ MonoBehaviour:
   ProjectileTemplate: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   SurvivorTemplate: {fileID: 7419757055955712054, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
   Projectile_Survivor_Laser: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
+  GemDropTemplate: {fileID: 6121660106472816910, guid: 95bdde110b0b5c649a3e3671ad905766, type: 3}
   ItemDropTemplate: {fileID: 5559287972358161004, guid: 455611bfb7ab9a74388d828ca927835b, type: 3}
   LootDropTemplate: {fileID: 8172005811876368486, guid: 557e63004fd20314fbe8dc06e15f357c, type: 3}
   SpecificPrefabDatabase: {fileID: 11400000, guid: 2236ec58b14307e4f89f34b18668931c, type: 2}
@@ -163,6 +164,14 @@ MonoBehaviour:
   Enemies:
   - {fileID: 3557533656269071170, guid: c653466aa7f50c242a855e5c9a8d6911, type: 3}
   - {fileID: 3557533656269071170, guid: 3e6374a9897bc5247ab2ec6e2f292242, type: 3}
+  GemVisuals:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: 11400000, guid: 6a67ced39c905d648bf0f60497664a17, type: 2}
+    - Key: 2
+      Value: {fileID: 11400000, guid: 3ed00de4bd167324dabffea0fc2d495e, type: 2}
+    - Key: 3
+      Value: {fileID: 11400000, guid: 53b9839e62ca3424d940847c58e9419f, type: 2}
 --- !u!4 &143727263
 Transform:
   m_ObjectHideFlags: 0

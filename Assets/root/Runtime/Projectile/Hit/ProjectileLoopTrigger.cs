@@ -24,6 +24,8 @@ public struct ProjectileLoopTrigger : IComponentData
         PlayerId = playerId;
         RingIndex = ringIndex;
     }
+
+    public static readonly ProjectileLoopTrigger Empty = new ProjectileLoopTrigger(byte.MaxValue, 0, 0);
 }
 
 [Save]

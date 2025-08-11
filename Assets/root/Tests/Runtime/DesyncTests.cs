@@ -19,7 +19,7 @@ public abstract class GameTestBase
         
         if (m_TestScene == default)
             m_TestScene = EditorSceneManager.LoadSceneInPlayMode(
-                "Assets/root/Runtime/CoreScene.unity",
+                "Assets/root/Runtime/Scenes/CoreScene.unity",
                 new LoadSceneParameters(LoadSceneMode.Additive)
             );
     }
@@ -148,7 +148,7 @@ public class DesyncTests : GameTestBase
     }
 
     [UnityTest]
-    public IEnumerator DesyncTest_InputSequence_Success([ValueSource("InputSequenceValues")] InputSequence sequence)
+    public IEnumerator DesyncTest_InputSequence_Success([ValueSource(nameof(InputSequenceValues))] InputSequence sequence)
     {
         // Arrange
         var stubStepProvider = new ManualStepProvider();
@@ -175,7 +175,7 @@ public class DesyncTests : GameTestBase
     }
 
     [UnityTest]
-    public IEnumerator DesyncTest_InputSequenceConnectInputSequence_Success([ValueSource("InputSequenceValues")] InputSequence preConnectSequence,
+    public IEnumerator DesyncTest_InputSequenceConnectInputSequence_Success([ValueSource(nameof(InputSequenceValues))] InputSequence preConnectSequence,
         [ValueSource("InputSequenceValues")] InputSequence posConnectSequence)
     {
         // Arrange
@@ -207,6 +207,52 @@ public class DesyncTests : GameTestBase
             yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
             Assert.IsTrue(mockDesyncTester.GetSynced());
         }
+
+        // Assert
+        Assert.AreEqual(stubStepProvider.ManualStep, mockServer.Server.Game.Step);
+        Assert.AreEqual(stubStepProvider.ManualStep, mockClient.Client.Game.Step);
+    }
+
+    [UnityTest]
+    public IEnumerator DesyncTest_LongPlayIdle_Success()
+    {
+        const int PRE_CONNECT_STEPS = 1000;
+        const int POST_CONNECT_STEPS = 1000;
+        const int SYNC_CHECK_RATE = 100;
+    
+        // Arrange
+        var stubStepProvider = new ManualStepProvider();
+        // Advance the server to some initial pre-connect state
+        using var mockServer = GameLaunch.Create(new GameFactory("mockServer", stepProvider: stubStepProvider, showVisuals: false));
+        yield return mockServer.CreateServer(); // Start server
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep);
+        for (int i = 0; i < PRE_CONNECT_STEPS; i++)
+            stubStepProvider.AdvanceStep();
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep);
+
+        // Connect the client now
+        using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider, showVisuals: false));
+        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
+
+        // Act
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+        Assert.IsTrue(mockDesyncTester.GetSynced());
+
+        for (int i = 0; i < POST_CONNECT_STEPS; i++)
+        {
+            stubStepProvider.AdvanceStep();
+            if (i % SYNC_CHECK_RATE == 0)
+            {
+                // Check sync every SYNC_CHECK_RATE steps
+                yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+                Assert.IsTrue(mockDesyncTester.GetSynced());
+                Debug.Log($"Step: {stubStepProvider.ManualStep}");
+            }
+        }
+        
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+        Assert.IsTrue(mockDesyncTester.GetSynced());
 
         // Assert
         Assert.AreEqual(stubStepProvider.ManualStep, mockServer.Server.Game.Step);

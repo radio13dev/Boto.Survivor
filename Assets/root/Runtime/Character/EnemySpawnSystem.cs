@@ -27,7 +27,7 @@ public partial struct EnemySpawnSystem : ISystem
         state.RequireForUpdate<StepController>();
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<GameManager.Resources>();
-        state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerControlled>();
         m_PlayerTransformsQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, PlayerControlled>().Build();
         state.RequireForUpdate(m_PlayerTransformsQuery);
@@ -36,7 +36,7 @@ public partial struct EnemySpawnSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var playerTransforms = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-        var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         state.Dependency = new Job()
         {
             ecb = delayedEcb.AsParallelWriter(),
@@ -94,9 +94,9 @@ public partial struct EnemySpawnSystem : ISystem
                         
                     var enemy = ecb.Instantiate(key, enemies[i].Entity);
                     ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos));
+                    ecb.SetComponent(key, enemy, new NetworkId());
                     spawned++;
                 }
-                
             }
         }
     }

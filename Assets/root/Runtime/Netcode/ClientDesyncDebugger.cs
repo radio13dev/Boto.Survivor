@@ -19,24 +19,34 @@ using Random = UnityEngine.Random;
 public readonly struct GameState : IEquatable<GameState>
 {
     public readonly string WorldName;
+    public readonly EntityManager EntityManager;
     public readonly Dictionary<(float3, quaternion), EntityState> Entities;
-    public GameState(string worldName, Dictionary<(float3, quaternion), EntityState> entities)
-    {
-        WorldName = worldName;
-        this.Entities = entities;
-    }
     
+    private GameState(Game game)
+    {
+        WorldName = game.World.Name;
+        EntityManager = game.World.EntityManager;
+        Entities = new Dictionary<(float3, quaternion), EntityState>();
+    }
+
     public readonly struct EntityState : IEquatable<EntityState>
     {
+        public readonly Entity Entity;
         public readonly Movement Movement;
         public readonly StepInput StepInput;
         public readonly Force Force;
         
         public EntityState(EntityManager entityManager, Entity entity)
         {
+            Entity = entity;
             Movement = GetOrDefaultComponent<Movement>(entityManager, entity);
             StepInput = GetOrDefaultComponent<StepInput>(entityManager, entity); 
             Force = GetOrDefaultComponent<Force>(entityManager, entity);
+        }
+        
+        public string ToDebugString(EntityManager entityManager)
+        {
+            return $"{Entity}:{Movement}:{StepInput}:{Force}:{entityManager.Debug.GetEntityInfo(Entity)}";
         }
 
         private static T GetOrDefaultComponent<T>(EntityManager entityManager, Entity entity) where T : unmanaged, IComponentData
@@ -74,7 +84,7 @@ public readonly struct GameState : IEquatable<GameState>
 
     public static GameState Compile(Game game)
     {
-        var state = new GameState(game.World.Name, new());
+        var state = new GameState(game);
         using var query = new EntityQueryBuilder(Allocator.Temp).WithAll<LocalTransform, Savable>().WithOptions(EntityQueryOptions.Default).Build(game.World.EntityManager);
         var transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         var entities = query.ToEntityArray(Allocator.Temp);
@@ -91,25 +101,25 @@ public readonly struct GameState : IEquatable<GameState>
     public enum DifError { None, MismatchedCount, MismatchedKeys, MismatchedValues }
     public bool Dif(GameState other, out DifError error, out string mismatch)
     {
-        // Compare the two Entities dictionaries and see if they have the same keys, and the same values for each key
-        if (Entities.Count != other.Entities.Count)
-        {
-            error = DifError.MismatchedCount;
-            mismatch = $"Mismatched count: {this.Entities.Count} != {other.Entities.Count}";
-            return false;
-        }
+        //// Compare the two Entities dictionaries and see if they have the same keys, and the same values for each key
+        //if (Entities.Count != other.Entities.Count)
+        //{
+        //    error = DifError.MismatchedCount;
+        //    mismatch = $"Mismatched count: {this.Entities.Count} != {other.Entities.Count}";
+        //    return false;
+        //}
         foreach (var kvp in Entities)
         {
             if (!other.Entities.TryGetValue(kvp.Key, out var otherState))
             {
                 error = DifError.MismatchedKeys;
-                mismatch = $"Key in '{WorldName}' not found in '{other.WorldName}': {kvp.Key}:{kvp.Value}";
+                mismatch = $"Key in '{WorldName}' not found in '{other.WorldName}': {kvp.Key}:{kvp.Value.ToDebugString(EntityManager)}";
                 return false;
             }
             if (!kvp.Value.Equals(otherState))
             {
                 error = DifError.MismatchedValues;
-                mismatch = $"Mismatched values for key {kvp.Key} don't match: {kvp.Value} != {otherState}";
+                mismatch = $"Mismatched values for key {kvp.Key} don't match: {kvp.Value} != {otherState.ToDebugString(other.EntityManager)}";
                 return false;
             }
         }
@@ -118,7 +128,7 @@ public readonly struct GameState : IEquatable<GameState>
             if (!Entities.TryGetValue(kvp.Key, out var thisState))
             {
                 error = DifError.MismatchedKeys;
-                mismatch = $"Key in '{other.WorldName}' not found in '{WorldName}': {kvp.Key}:{kvp.Value}";
+                mismatch = $"Key in '{other.WorldName}' not found in '{WorldName}': {kvp.Key}:{kvp.Value.ToDebugString(other.EntityManager)}";
                 return false;
             }
         }

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8235055791634373634}
   - component: {fileID: 2943698238182725417}
   - component: {fileID: 2038396025834592094}
-  - component: {fileID: -6018945547334682560}
+  - component: {fileID: 4914384556312185599}
   m_Layer: 0
   m_Name: EnemyLarge
   m_TagString: Untagged
@@ -143,7 +143,7 @@ MonoBehaviour:
   Particle:
     AssetIndex: 7
     _Asset: {fileID: -8333230072600633316, guid: 95eb34cd54f5f7a4195a1befee0b14c0, type: 3}
---- !u!114 &-6018945547334682560
+--- !u!114 &4914384556312185599
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,11 +156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
   Drops:
-  - Prefab: {fileID: 7419757055955712054, guid: 9c1b7b8e5316a20448d87f135383f60f, type: 3}
-    Chance: 100
-    MinCount: 1
-    MaxCount: 10
-  - Prefab: {fileID: 7419757055955712054, guid: 557e63004fd20314fbe8dc06e15f357c, type: 3}
+  - Type: 0
     Chance: 5
     MinCount: 1
     MaxCount: 1

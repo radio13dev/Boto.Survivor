@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using BovineLabs.Saving;
 using Unity.Entities;
+using Random = Unity.Mathematics.Random;
 
 [Serializable]
-public struct Gem
+public struct Gem : IEquatable<Gem>, IComparable<Gem>
 {
     public const int k_GemsPerRing = 6;
+
     /// <summary>
     /// Used by the client UI to identify the gem.
     /// </summary>
@@ -13,7 +16,9 @@ public struct Gem
     /// Please don't generate more than 4 billion gems ♥
     /// </remarks>
     [NonSerialized] uint _clientId;
+
     static uint _nextClientId = 1;
+
     public uint ClientId
     {
         get
@@ -22,18 +27,56 @@ public struct Gem
             return _clientId;
         }
     }
-    
+
     public enum Type
     {
         None,
         Multishot,
+        Homing,
+        Pierce
     }
-    
+
     public bool IsValid => GemType != Type.None;
-    
+
     public Type GemType;
     public int Size;
+
+    public bool Equals(Gem other)
+    {
+        return GemType == other.GemType && Size == other.Size;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine((int)GemType, Size);
+    }
     
+    public int CompareTo(Gem other)
+    {
+        var gemTypeComparison = GemType.CompareTo(other.GemType);
+        if (gemTypeComparison != 0) return gemTypeComparison;
+        return Size.CompareTo(other.Size);
+    }
+
+    #region Equality
+
+    public override bool Equals(object obj)
+    {
+        return obj is Gem other && Equals(other);
+    }
+
+    public static bool operator ==(Gem left, Gem right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Gem left, Gem right)
+    {
+        return !left.Equals(right);
+    }
+
+    #endregion
+
     public Gem(Type gemType, int size)
     {
         GemType = gemType;
@@ -51,6 +94,14 @@ public struct Gem
                 return GemType.ToString() + " Gem (default text)";
         }
     }
+
+    public static Gem Generate(ref Random random)
+    {
+        return new Gem()
+        {
+            GemType = Type.Multishot
+        };
+    }
 }
 
 [Save]
@@ -64,11 +115,12 @@ public struct InventoryGem : IBufferElementData
         Gem = gem;
     }
 }
+
 [Save]
 public struct EquippedGem : IBufferElementData
 {
     public Gem Gem;
-    
+
     public EquippedGem(Gem gem)
     {
         _ = gem.ClientId;
