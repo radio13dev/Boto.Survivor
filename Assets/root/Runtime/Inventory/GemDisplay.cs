@@ -16,6 +16,8 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
         Index = index;
         Gem = gem;
         Renderer.gameObject.SetActive(gem.IsValid);
+        Renderer.GetComponent<MeshFilter>().mesh = gem.Mesh;
+        Renderer.material = gem.Material;
         // TODO: Renderer.material = m_Gem.Material;
     }
 

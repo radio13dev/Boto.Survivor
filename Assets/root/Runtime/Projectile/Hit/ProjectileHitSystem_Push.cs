@@ -35,7 +35,7 @@ public partial struct ProjectileHitSystem_Push : ISystem
             {
                 if (ForceLookup.TryGetRefRW(networkIdMapping[hits[i].Value], out var otherEntityF))
                 {
-                    otherEntityF.ValueRW.Velocity += hitT.TransformDirection(movement.Velocity * 3);
+                    otherEntityF.ValueRW.Velocity += movement.Velocity;
                 }
             }
         }

@@ -31,6 +31,7 @@ public class InventoryContainer : MonoBehaviour
     public Vector3 GetRandomPosition()
     {
         if (Bounds.Length == 0) return transform.position;
-        return Bounds[Random.Range(0, Bounds.Length)].ClosestPoint(transform.position + Random.insideUnitSphere * ScatterRange);
+        var bound = Bounds[Random.Range(0, Bounds.Length)];
+        return bound.ClosestPoint(bound.bounds.center + Random.insideUnitSphere * ScatterRange);
     }
 }

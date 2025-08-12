@@ -1,48 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [Serializable]
 public struct Gem : IEquatable<Gem>, IComparable<Gem>
 {
     public const int k_GemsPerRing = 6;
-
-    /// <summary>
-    /// Used by the client UI to identify the gem.
-    /// </summary>
-    /// <remarks>
-    /// Please don't generate more than 4 billion gems ♥
-    /// </remarks>
-    [NonSerialized] uint _clientId;
-
-    static uint _nextClientId = 1;
-
-    public uint ClientId
-    {
-        get
-        {
-            if (_clientId == 0) _clientId = _nextClientId++;
-            return _clientId;
-        }
-    }
-
-    public enum Type
-    {
-        None,
-        Multishot,
-        Homing,
-        Pierce,
-        Length
-    }
+    
+    #region Actual Values
 
     public bool IsValid => GemType != Type.None;
-
     public Type GemType;
     public int Size;
+    
+    public Gem(Type gemType, int size)
+    {
+        GemType = gemType;
+        Size = size;
+        _clientId = 0; // Reset client ID for new gem
+    }
 
     public bool Equals(Gem other)
     {
@@ -53,7 +35,7 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
     {
         return HashCode.Combine((int)GemType, Size);
     }
-    
+
     public int CompareTo(Gem other)
     {
         var gemTypeComparison = GemType.CompareTo(other.GemType);
@@ -79,13 +61,62 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
     }
 
     #endregion
+    #endregion
 
-    public Gem(Type gemType, int size)
+    #region Clientside
+
+    /// <summary>
+    /// Used by the client UI to identify the gem.
+    /// </summary>
+    /// <remarks>
+    /// Please don't generate more than 4 billion gems ♥
+    /// </remarks>
+    [NonSerialized] uint _clientId;
+
+    static uint _nextClientId = 1;
+
+    public uint ClientId
     {
-        GemType = gemType;
-        Size = size;
-        _clientId = 0; // Reset client ID for new gem
+        get
+        {
+            if (_clientId == 0) _clientId = _nextClientId++;
+            return _clientId;
+        }
     }
+
+    public Material Material
+    {
+        get
+        {
+            var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.GemVisual>(true);
+            var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
+            return instances[visuals[(int)GemType].InstancedResourceIndex].Instance.Value.Material;
+        }
+    }
+    
+    public Mesh Mesh
+    {
+        get
+        {
+            var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.GemVisual>(true);
+            var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
+            return instances[visuals[(int)GemType].InstancedResourceIndex].Instance.Value.Mesh;
+        }
+    }
+
+    #endregion
+
+    public enum Type
+    {
+        None,
+        Multishot,
+        Homing,
+        Pierce,
+        Length
+    }
+
+
+
 
     public string GetTitleString()
     {
@@ -106,26 +137,27 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
         };
     }
 
-    public static void SetupEntity(Entity entity, int playerId, ref Random random, ref EntityCommandBuffer ecb, LocalTransform transform, Movement movement, Gem gem, DynamicBuffer<GameManager.GemVisual> gemVisuals)
+    public static void SetupEntity(Entity entity, int playerId, ref Random random, ref EntityCommandBuffer ecb, LocalTransform transform, Movement movement, Gem gem,
+        DynamicBuffer<GameManager.GemVisual> gemVisuals)
     {
         ecb.SetComponent(entity, new GemDrop()
         {
             Gem = gem
         });
         ecb.SetSharedComponent(entity, new InstancedResourceRequest(gemVisuals[(int)gem.GemType].InstancedResourceIndex));
-        
+
         transform.Rotation = random.NextQuaternionRotation();
         ecb.SetComponent(entity, transform);
-        
+
         var newDropMovement = new Movement();
         TorusMapper.SnapToSurface(transform.Position, 0, out _, out var surfaceNormal);
-        var jumpDir = movement.Velocity + random.NextFloat(1,2) * PhysicsSettings.s_GemJump.Data * (surfaceNormal + random.NextFloat3Direction()/2);
+        var jumpDir = random.NextFloat(1, 2) * PhysicsSettings.s_GemJump.Data * (surfaceNormal + random.NextFloat3Direction() / 2); // movement.Velocity + 
         newDropMovement.Velocity = jumpDir;
         ecb.SetComponent(entity, newDropMovement);
-        
-        // Instant collect
-        ecb.SetComponent(entity, new Collectable(){ PlayerId = playerId });
-        ecb.SetComponentEnabled<Collectable>(entity, true);
+
+        // Mark who's allowed to collect this
+        ecb.SetComponent(entity, new Collectable() { PlayerId = playerId });
+        //ecb.SetComponentEnabled<Collectable>(entity, true);
     }
 }
 
