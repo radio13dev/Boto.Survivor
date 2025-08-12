@@ -44,15 +44,15 @@ namespace Collisions
             transforms.Dispose(state.Dependency);
 
             // Perform collisions
-            var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-            var parallel = delayedEcb.AsParallelWriter();
-            var a = new SurvivorCollectCollisionJob()
-            {
-                ecb = parallel,
-                tree = m_Tree,
-            }.ScheduleParallel(state.Dependency);
-            
-            state.Dependency = a;
+            //var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+            //var parallel = delayedEcb.AsParallelWriter();
+            //var a = new SurvivorCollectCollisionJob()
+            //{
+            //    ecb = parallel,
+            //    tree = m_Tree,
+            //}.ScheduleParallel(state.Dependency);
+            //
+            //state.Dependency = a;
         }
 
         public void OnDestroy(ref SystemState state)
@@ -75,6 +75,7 @@ namespace Collisions
             }
         }
 
+        /*
         /// <summary>
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
@@ -119,5 +120,6 @@ namespace Collisions
                 }
             }
         }
+            */
     }
 }

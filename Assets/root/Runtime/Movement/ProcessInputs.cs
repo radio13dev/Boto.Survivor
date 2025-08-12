@@ -59,12 +59,6 @@ public partial struct ProcessInputs : ISystem
             var up = local.Up();
             var inputForward = math.cross(up, math.cross(math.normalizesafe(input.Direction, local.Forward()), up));
             local.Rotation = quaternion.LookRotation(inputForward, up);
-            Debug.DrawLine(local.Position, local.Position + up, Color.green);
-            Debug.DrawLine(local.Position, local.Position + inputForward, Color.green);
-            
-            // Calculate movement direction of 3D input in local space
-            //var planeDir = local.InverseTransformDirection(input.Direction);
-            //planeDir = new float3(planeDir.y, 0, planeDir.z);
         
             movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
             var vel = movement.LastDirection * movementSettings.Speed * math.clamp(math.length(input.Direction), 0, 1);

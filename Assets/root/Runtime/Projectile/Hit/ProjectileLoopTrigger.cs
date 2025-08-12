@@ -36,14 +36,14 @@ public struct ProjectileLoopTriggerQueue : IBufferElementData
     public byte LoopCount;
     
     public LocalTransform HitT;
-    public SurfaceMovement ProjSurfaceMov;
+    public Movement ProjMov;
 
-    public ProjectileLoopTriggerQueue(ProjectileHit hit, LocalTransform hitT, ProjectileLoopTrigger trigger, SurfaceMovement projSurfaceMov)
+    public ProjectileLoopTriggerQueue(ProjectileHit hit, LocalTransform hitT, ProjectileLoopTrigger trigger, Movement projMov)
     {
         RingIndex = trigger.RingIndex;
         LoopCount = (byte)(trigger.LoopCount + 1);
         HitT = hitT;
-        ProjSurfaceMov = projSurfaceMov;
+        ProjMov = projMov;
     }
 }
 
@@ -80,7 +80,7 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
         [ReadOnly] public ComponentLookup<LocalTransform> TransformLookup;
         [ReadOnly] public NetworkIdMapping networkIdMapping;
     
-        public void Execute(in LocalTransform projT, in ProjectileLoopTrigger loop, in SurfaceMovement projSurfaceMov, in DynamicBuffer<ProjectileHitEntity> hits)
+        public void Execute(in LocalTransform projT, in ProjectileLoopTrigger loop, in Movement projMov, in DynamicBuffer<ProjectileHitEntity> hits)
         {
             // Early max loops hit escape
             if (loop.LoopCount >= ProjectileLoopTrigger.k_MaxLoopCount) return;
@@ -103,7 +103,7 @@ public partial struct ProjectileHitSystem_LoopTrigger : ISystem
             }
             
             // Queue this hit up to get processed by the players projectile generation step
-            queue.Add(new ProjectileLoopTriggerQueue(default, avgT, loop, projSurfaceMov));
+            queue.Add(new ProjectileLoopTriggerQueue(default, avgT, loop, projMov));
         }
     }
 }

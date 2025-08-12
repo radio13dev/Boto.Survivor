@@ -136,6 +136,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         {
             var oldTransform = transformsLast[index];
             var newTransform = transforms[index];
+            
             var p = math.lerp(oldTransform.Value.Position, newTransform.Position, t);
             var q = math.slerp(oldTransform.Value.Rotation, newTransform.Rotation, t);
             matrices[index] = LocalTransform.FromPositionRotation(p, q).ToMatrix();

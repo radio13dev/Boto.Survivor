@@ -11,7 +11,7 @@ using Collider = Collisions.Collider;
 [Save]
 public struct Collectable : IComponentData, IEnableableComponent
 {
-    public Entity CollectedBy;
+    public int PlayerId;
 }
 
 [Save]
@@ -47,7 +47,8 @@ public partial struct CollectableClearSystem : ISystem
         {
             dt = SystemAPI.Time.DeltaTime,
             ecb = delayedEcb.AsParallelWriter(),
-            m_TransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true)
+            m_TransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
+            PlayerControlledLinks = SystemAPI.GetSingletonBuffer<PlayerControlledLink>(true)
         }.ScheduleParallel(state.Dependency);
     }
     
@@ -57,10 +58,12 @@ public partial struct CollectableClearSystem : ISystem
     partial struct Job : IJobEntity
     {
         public const float k_MaxCollectableSpeed = 160;
+        public const float k_RedirectionRate = 3;
         public const float k_CollectRadius = 0.4f;
         
         [ReadOnly] public float dt;
         public EntityCommandBuffer.ParallelWriter ecb;
+        [ReadOnly] public DynamicBuffer<PlayerControlledLink> PlayerControlledLinks;
         [ReadOnly] public ComponentLookup<LocalTransform> m_TransformLookup;
     
         public void Execute([ChunkIndexInQuery] int key, Entity collectableE, in Collectable collectable, 
@@ -74,7 +77,7 @@ public partial struct CollectableClearSystem : ISystem
                 return;
             }
             
-            if (!m_TransformLookup.TryGetComponent(collectable.CollectedBy, out var target))
+            if (collectable.PlayerId < 0 || collectable.PlayerId >= PlayerControlledLinks.Length || !m_TransformLookup.TryGetComponent(PlayerControlledLinks[collectable.PlayerId].Value, out var target))
             {
                 Debug.LogWarning($"Couldn't find collection target, destroying...");
                 ecb.AddComponent<DestroyFlag>(key, collectableE);
@@ -90,7 +93,7 @@ public partial struct CollectableClearSystem : ISystem
             }
             
             var dir = math.normalizesafe(dif);
-            force.Velocity -= movement.Velocity*dt;
+            force.Velocity -= movement.Velocity*k_RedirectionRate*dt;
             force.Velocity += dir*k_MaxCollectableSpeed*dt;
             grounded.ValueRW = false;
         }
@@ -118,14 +121,22 @@ public partial struct GemCollectableSystem : ISystem
         for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
         correctOrdering.Sort(new GemComparer(drops.Reinterpret<Gem>())); // Sort to change it into the order of indexes to process (should be consistent across platform)
         
+        // Links
+        var links = SystemAPI.GetSingletonBuffer<PlayerControlledLink>(true);
+        
         for (int i = 0; i < correctOrdering.Length; i++)
         {
             // Give currency to the entity
             int index = correctOrdering[i];
-            if (SystemAPI.HasBuffer<InventoryGem>(collectedBy[index].CollectedBy))
+            int playerId = collectedBy[index].PlayerId;
+            if (playerId < 0 || playerId >= links.Length) continue;
+            
+            var playerE = links[playerId].Value;
+            if (SystemAPI.HasBuffer<InventoryGem>(playerE))
             {
-                var inventoryRW = SystemAPI.GetBuffer<InventoryGem>(collectedBy[index].CollectedBy);
+                var inventoryRW = SystemAPI.GetBuffer<InventoryGem>(playerE);
                 inventoryRW.Add(new InventoryGem(drops[index].Gem));
+                GameEvents.Trigger(GameEvents.Type.InventoryChanged, playerE);
             }
         }
         

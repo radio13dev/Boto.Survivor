@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -3127374150066105801}
   - component: {fileID: 1234742855914670883}
   - component: {fileID: 497324972839419108}
+  - component: {fileID: -6949698779435470453}
   m_Layer: 0
   m_Name: ProjectileTemplate
   m_TagString: Untagged
@@ -123,3 +124,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &-6949698779435470453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e558fdd1dc64d21a083de09e84a8063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::PhysicsAuthoring
+  PhysicsResponse:
+    Gravity: 0
+    BounceThresholdMin: 0
+    BounceResponse: 0
+    BounceFriction: 0
+    AirDrag: 0
+    AirDragLinear: 0
+    Friction: 0
+    FrictionLinear: 0
+    RotationalDrag: 0
+    RotationalDragLinear: 0
+    Radius: 0.3
+    LockToSurface: 1
+    RotateWithSurface: 1
+    IdlePivot:
+      x: 0
+      y: 0
+      z: 0
+  HasSurfaceMovement: 1

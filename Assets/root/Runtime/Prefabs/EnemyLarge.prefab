@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 2038396025834592094}
   - component: {fileID: 4914384556312185599}
   - component: {fileID: -2345145132516463796}
+  - component: {fileID: 5878207292333736380}
+  - component: {fileID: 638238371282637465}
   m_Layer: 0
   m_Name: EnemyLarge
   m_TagString: Untagged
@@ -51,19 +53,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
-  MovementSettings:
-    Speed: 2
-  PhysicsResponse:
-    Gravity: 9
-    BounceThresholdMin: 0
-    BounceResponse: 0
-    BounceFriction: 0
-    AirDrag: 0
-    AirDragLinear: 0
-    Friction: 50
-    FrictionLinear: 1
-    RotationalDrag: 0
-    RotationalDragLinear: 0
   Health:
     Value: 10
   Chance: 50
@@ -173,3 +162,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90949429c2e4d25b0e2dbf93203af24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::NetworkIdAuthoring
+--- !u!114 &5878207292333736380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b805b7df1e2046a782020a66e491a450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::StepInputAuthoring
+  MovementSettings:
+    Speed: 0
+--- !u!114 &638238371282637465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e558fdd1dc64d21a083de09e84a8063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::PhysicsAuthoring
+  PhysicsResponse:
+    Gravity: 30
+    BounceThresholdMin: 100
+    BounceResponse: 0.5
+    BounceFriction: 0.5
+    AirDrag: 1
+    AirDragLinear: 1
+    Friction: 8
+    FrictionLinear: 4
+    RotationalDrag: 1
+    RotationalDragLinear: 1
+    HasSurfaceVelocity: 0
+    SurfaceVelocity:
+      x: 0
+      y: 0
+    Radius: 0
+    LockToSurface: 1
+    RotateWithSurface: 1
+    IdlePivot:
+      x: 0
+      y: 0
+      z: 0

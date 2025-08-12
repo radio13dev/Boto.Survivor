@@ -29,18 +29,6 @@ public static class TorusMapper
     {
     }
 
-    public static readonly SharedStatic<float> RingRadiusSq = SharedStatic<float>.GetOrCreate<float, RingRadiusSqKey>();
-
-    private class RingRadiusSqKey
-    {
-    }
-
-    public static readonly SharedStatic<float> ThicknessSq = SharedStatic<float>.GetOrCreate<float, ThicknessSqKey>();
-
-    private class ThicknessSqKey
-    {
-    }
-
     public static (float2 Min, float2 Max) MapBounds
     {
         get
@@ -59,8 +47,6 @@ public static class TorusMapper
         Thickness.Data = 80f;
         XRotScale.Data = 0.005f;
         YRotScale.Data = 0.013f;
-        RingRadiusSq.Data = RingRadius.Data * RingRadius.Data;
-        ThicknessSq.Data = Thickness.Data * Thickness.Data;
     }
 
     /// <summary>
@@ -161,14 +147,14 @@ public static class TorusMapper
 
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ClampAboveSurface(float3 worldSpace, out float3 newPos, out bool clamped, out float3 normalIfClamped)
+    public static void ClampAboveSurface(float3 worldSpace, float heightOffset, out float3 newPos, out bool clamped, out float3 normalIfClamped)
     {
         var circleCenter = GetTorusCircleCenter(worldSpace);
 
         // TODO: Do a check to reduce the lengthsq comps
         float3 offset = worldSpace - circleCenter;
         var lengthsq = math.lengthsq(offset);
-        if (lengthsq >= ThicknessSq.Data)
+        if (lengthsq >= math.square(Thickness.Data + heightOffset))
         {
             clamped = false;
             normalIfClamped = offset; // This isn't actually the normal
@@ -178,7 +164,7 @@ public static class TorusMapper
 
         clamped = true;
         normalIfClamped = math.normalizesafe(offset);
-        newPos = circleCenter + normalIfClamped * Thickness.Data;
+        newPos = circleCenter + normalIfClamped * (Thickness.Data + heightOffset);
     }
 
     //[BurstCompile]
@@ -216,7 +202,7 @@ public static class TorusMapper
         
         // Determine the x-z plane distance from the ring center so we can determine phi
         var flatDistFromRing = math.length(ringCenterOffset.xz);
-        if (math.lengthsq(position.xz) < TorusMapper.RingRadiusSq.Data) flatDistFromRing = -flatDistFromRing;
+        if (math.lengthsq(position.xz) < math.square(TorusMapper.RingRadius.Data)) flatDistFromRing = -flatDistFromRing;
         
         // Calculate phi from the y component and distance from ring center.
         phi = math.atan2(position.y, flatDistFromRing);

@@ -39,27 +39,8 @@ public partial struct ParticleOnDestroySystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var particles = SystemAPI.GetSingletonBuffer<GameManager.Particles>();
-        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<ParticleOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
-            .WithAll<DestroyFlag>()
-            )
-        {
-            if (onDestroy.ValueRO.ParticleIndex < 0 || onDestroy.ValueRO.ParticleIndex >= particles.Length) continue;
-            var particlePrefab = particles[onDestroy.ValueRO.ParticleIndex];
-            var particle = particlePrefab.Prefab.Value.GetFromPool();
-            particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
-        }
-        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<ParticleOnDestroy>, RefRO<LocalTransform>, RefRO<SurfaceMovement>>()
-            .WithAll<DestroyFlag>()
-            )
-        {
-            if (onDestroy.ValueRO.ParticleIndex < 0 || onDestroy.ValueRO.ParticleIndex >= particles.Length) continue;
-            var particlePrefab = particles[onDestroy.ValueRO.ParticleIndex];
-            var particle = particlePrefab.Prefab.Value.GetFromPool();
-            particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
-        }
         foreach (var (onDestroy, transform) in SystemAPI.Query<RefRO<ParticleOnDestroy>, RefRO<LocalTransform>>()
             .WithAll<DestroyFlag>()
-            .WithNone<Movement, SurfaceMovement>()
             )
         {
             if (onDestroy.ValueRO.ParticleIndex < 0 || onDestroy.ValueRO.ParticleIndex >= particles.Length) continue;

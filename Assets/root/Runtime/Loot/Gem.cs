@@ -106,7 +106,7 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
         };
     }
 
-    public static void SetupEntity(Entity entity, ref Random random, ref EntityCommandBuffer ecb, LocalTransform transform, Movement movement, Gem gem, DynamicBuffer<GameManager.GemVisual> gemVisuals)
+    public static void SetupEntity(Entity entity, int playerId, ref Random random, ref EntityCommandBuffer ecb, LocalTransform transform, Movement movement, Gem gem, DynamicBuffer<GameManager.GemVisual> gemVisuals)
     {
         ecb.SetComponent(entity, new GemDrop()
         {
@@ -114,16 +114,18 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
         });
         ecb.SetSharedComponent(entity, new InstancedResourceRequest(gemVisuals[(int)gem.GemType].InstancedResourceIndex));
         
+        transform.Rotation = random.NextQuaternionRotation();
         ecb.SetComponent(entity, transform);
         
-        var newDropInertia = new RotationalInertia();
-        newDropInertia.Set(random.NextFloat3(), 1);
-        ecb.SetComponent(entity, newDropInertia);
-        
-        
         var newDropMovement = new Movement();
-        newDropMovement.Velocity = movement.Velocity + (math.length(movement.Velocity)/2 + 1) * random.NextFloat3();
+        TorusMapper.SnapToSurface(transform.Position, 0, out _, out var surfaceNormal);
+        var jumpDir = movement.Velocity + random.NextFloat(1,2) * PhysicsSettings.s_GemJump.Data * (surfaceNormal + random.NextFloat3Direction()/2);
+        newDropMovement.Velocity = jumpDir;
         ecb.SetComponent(entity, newDropMovement);
+        
+        // Instant collect
+        ecb.SetComponent(entity, new Collectable(){ PlayerId = playerId });
+        ecb.SetComponentEnabled<Collectable>(entity, true);
     }
 }
 

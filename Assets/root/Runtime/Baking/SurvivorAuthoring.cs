@@ -15,11 +15,8 @@ public struct PlayerControlledSaveable : IComponentData
     public int Index;
 }
 
-
 public class SurvivorAuthoring : MonoBehaviour
 {
-    public MovementSettings MovementSettings = new MovementSettings();
-    public PhysicsResponse PhysicsResponse = new PhysicsResponse();
     public Health Health = new Health(100);
     public RingStats[] InitialRings = new RingStats[8];
 
@@ -27,6 +24,12 @@ public class SurvivorAuthoring : MonoBehaviour
     {
         public override void Bake(SurvivorAuthoring authoring)
         {
+            if (!DependsOn(GetComponent<StepInputAuthoring>()))
+            {
+                Debug.LogError($"Cannot bake {authoring.gameObject}. Requires component: {nameof(StepInputAuthoring)}");
+                return;
+            }
+            
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             
             // Basic character setup
@@ -34,16 +37,6 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new SurvivorTag());
             AddComponent(entity, authoring.Health);
-            
-            // Movement and Inputs
-            AddComponent(entity, authoring.MovementSettings);
-            AddComponent<Movement>(entity);
-            AddComponent<Grounded>(entity);
-            SetComponentEnabled<Grounded>(entity, false);
-            AddComponent(entity, authoring.PhysicsResponse);
-            AddComponent<RotateWithSurface>(entity);
-            AddComponent<StepInput>(entity);
-            AddComponent<Force>(entity);
             
             // Abilities and Input Lockouts
             AddComponent(entity, new MovementInputLockout());

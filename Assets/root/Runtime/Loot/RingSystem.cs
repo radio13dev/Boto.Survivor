@@ -152,7 +152,7 @@ public partial struct RingSystem : ISystem
                             ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
                             //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
                             
-                            ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
+                            ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                             ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
 
@@ -193,7 +193,7 @@ public partial struct RingSystem : ISystem
                         ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
                         //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
                         
-                        ecb.SetComponent(Key, projectileE, new SurfaceMovement() { Velocity = new float2(projectileSpeed, 0) });
+                        ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
                         ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                         ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
 

@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [Serializable]
-[StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit, Size = 16, Pack = 2)]
 public unsafe struct GameRpc : IComponentData
 {
     public enum Code
@@ -95,8 +95,8 @@ public unsafe struct GameRpc : IComponentData
 
     #region Inventory Adjust
     [FieldOffset(2)] public byte OBSOLETE_From;
-    [FieldOffset(3)] public byte OBSOLETE_To;
-    [FieldOffset(4)] public float3 OBSOLETE_FloorPosition;
+    [FieldOffset(4)] public byte OBSOLETE_To;
+    [FieldOffset(6)] public float3 OBSOLETE_FloorPosition;
     public bool IsToFloor => OBSOLETE_To == byte.MaxValue;
     public bool IsFromFloor => OBSOLETE_From >= Ring.k_RingCount;
     public int FromFloorIndex => OBSOLETE_From - Ring.k_RingCount;
@@ -457,7 +457,7 @@ public partial struct GameRpcSystem : ISystem
                     var r = SystemAPI.GetSingleton<SharedRandom>().Random;
                     var gem = Gem.Generate(ref r);
                     Debug.Log($"Generated: {gem.GemType} gem");
-                    Gem.SetupEntity(gemE, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
+                    Gem.SetupEntity(gemE, 0, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
                     break;
                 }
             }

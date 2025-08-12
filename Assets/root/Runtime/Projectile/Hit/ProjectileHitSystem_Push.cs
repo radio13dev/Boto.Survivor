@@ -29,13 +29,13 @@ public partial struct ProjectileHitSystem_Push : ISystem
         public ComponentLookup<Force> ForceLookup;
         [ReadOnly] public NetworkIdMapping networkIdMapping;
     
-        public void Execute(in SurfaceMovement movement, in LocalTransform hitT, in DynamicBuffer<ProjectileHitEntity> hits)
+        public void Execute(in Movement movement, in LocalTransform hitT, in DynamicBuffer<ProjectileHitEntity> hits)
         {
             for (int i = 0; i < hits.Length; i++)
             {
                 if (ForceLookup.TryGetRefRW(networkIdMapping[hits[i].Value], out var otherEntityF))
                 {
-                    otherEntityF.ValueRW.Velocity += hitT.TransformDirection(movement.Velocity.f3z() * 3);
+                    otherEntityF.ValueRW.Velocity += hitT.TransformDirection(movement.Velocity * 3);
                 }
             }
         }

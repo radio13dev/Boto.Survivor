@@ -59,6 +59,7 @@ public class Drop
 public partial struct ItemDropOnDestroySystem : ISystem
 {
     EntityQuery m_CleanupQuery;
+    EntityQuery m_PlayerQuery;
 
     public void OnCreate(ref SystemState state)
     {
@@ -67,19 +68,23 @@ public partial struct ItemDropOnDestroySystem : ISystem
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ItemDropOnDestroy, DestroyFlag>().Build();
         state.RequireForUpdate(m_CleanupQuery);
+        m_PlayerQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlledSaveable>().Build();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var players = m_PlayerQuery.ToComponentDataArray<PlayerControlledSaveable>(Allocator.TempJob);
         state.Dependency = new Job()
         {
             ecb = delayedEcb,
             baseRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
             movementLookup = SystemAPI.GetComponentLookup<Movement>(true),
             GemDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate,
-            GemVisuals = SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true)
+            GemVisuals = SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true),
+            PlayerControlled = players
         }.Schedule(state.Dependency);
+        players.Dispose(state.Dependency);
     }
     
     [WithAll(typeof(DestroyFlag))]
@@ -90,6 +95,7 @@ public partial struct ItemDropOnDestroySystem : ISystem
         [ReadOnly] public ComponentLookup<Movement> movementLookup;
         [ReadOnly] public Entity GemDropTemplate;
         [ReadOnly] public DynamicBuffer<GameManager.GemVisual> GemVisuals;
+        [ReadOnly] public NativeArray<PlayerControlledSaveable> PlayerControlled;
     
         public void Execute(Entity entity, in DynamicBuffer<ItemDropOnDestroy> items, in LocalTransform transform)
         {
@@ -107,7 +113,7 @@ public partial struct ItemDropOnDestroySystem : ISystem
                         case Drop.DropType.Gem:
                             newDropE = ecb.Instantiate(GemDropTemplate);
                             var gem = Gem.Generate(ref random);
-                            Gem.SetupEntity(newDropE, ref random, ref ecb, transform, movementLookup[entity], gem, GemVisuals);
+                            Gem.SetupEntity(newDropE, PlayerControlled[random.NextInt(PlayerControlled.Length)].Index, ref random, ref ecb, transform, movementLookup[entity], gem, GemVisuals);
                             break;
                         default:
                             Debug.LogError($"Unknown drop type {items[i].Drop} on entity {entity}");

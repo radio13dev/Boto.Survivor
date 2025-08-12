@@ -19,8 +19,6 @@ public class ProjectileAuthoring : MonoBehaviour
             
             AddComponent(entity, new ProjectileLoopTrigger());
             AddComponent(entity, new DestroyAtTime());
-            AddComponent(entity, new SurfaceMovement());
-            AddComponent(entity, new LockToSurface());
             
             AddComponent<SurvivorProjectileTag>(entity);
         }
