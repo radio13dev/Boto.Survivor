@@ -7,6 +7,12 @@ using System.Runtime.InteropServices;
 public class JavascriptHook : MonoBehaviour
 {
 #if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    public static extern void SetUrlArg(string key, string value);
+#else
+    public static void SetUrlArg(string lobby, string result) {}
+#endif
+
     public void WebGPUStatus(bool status)
     {
         WebGpu.Enabled.Data = status;
@@ -19,12 +25,7 @@ public class JavascriptHook : MonoBehaviour
 
     public void JoinLobby(string lobbyCode)
     {
-        GameLaunch.JoinLobby(lobbyCode);
+        if (!GameLaunch.Main) GameLaunch.Create(new GameFactory("main"));
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinLobby(lobbyCode));
     }
-    
-    [DllImport("__Internal")]
-    public static extern void SetUrlArg(string key, string value);
-#else
-    public static void SetUrlArg(string lobby, string result) {}
-#endif
 }

@@ -73,7 +73,6 @@ MonoBehaviour:
       - rid: 7244833991145291989
       - rid: 7244833991145291993
       - rid: 7244833991145291998
-      - rid: 7244833991145291999
       - rid: 7244833991145292001
       - rid: 7244833991145292002
       - rid: 7244833991145292003
@@ -100,6 +99,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 7244833991145291975
       type: {class: Renderer2DResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:

@@ -17,12 +17,11 @@ public class GameInitialize : MonoBehaviour
         Inputs.Player.Enable();
         Inputs.UI.Enable();
         
-        var mainContentScene = SceneManager.GetSceneByName("main");
-        if (EnableMainContentLoad && !mainContentScene.isLoaded)
+        if (EnableMainContentLoad && !SceneManager.GetSceneByName("main").isLoaded)
         {
-            SceneManager.LoadSceneAsync(mainContentScene.buildIndex, LoadSceneMode.Additive);
+            SceneManager.LoadSceneAsync("main", LoadSceneMode.Additive);
         }
-        if (EnableInitGameLaunch)
+        if (EnableInitGameLaunch && !GameLaunch.Main)
         {
             GameLaunch.Create(new GameFactory("main"));
         }
