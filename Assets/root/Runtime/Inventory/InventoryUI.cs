@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Entities;
@@ -9,8 +8,8 @@ using UnityEngine.InputSystem;
 
 public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
 {
-    public Transform ClosedT;
-    public Transform InventoryT;
+    public TransitionPoint ClosedT;
+    public TransitionPoint InventoryT;
     ExclusiveCoroutine Co;
 
     Dictionary<uint, GemDisplay> m_InventoryGems = new();
@@ -54,10 +53,15 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         //}
     }
 
-    public float InnerCursorRadius;
-    public float InnerLeniencyRadius;
-    public float OuterLeniencyRadius;
-    public float OuterCursorRadius;
+    public float _InnerCursorRadius;
+    public float _InnerLeniencyRadius;
+    public float _OuterLeniencyRadius;
+    public float _OuterCursorRadius;
+    
+    public float InnerCursorRadius => _InnerCursorRadius * transform.lossyScale.x;
+    public float InnerLeniencyRadius => _InnerLeniencyRadius * transform.lossyScale.x;
+    public float OuterLeniencyRadius => _OuterLeniencyRadius * transform.lossyScale.x;
+    public float OuterCursorRadius => _OuterCursorRadius * transform.lossyScale.x;
 
     private void OnDrawGizmosSelected()
     {
@@ -105,7 +109,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
 
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
-        Transform target;
+        TransitionPoint target;
         switch (newState)
         {
             case HandUIController.State.Inventory:
@@ -117,7 +121,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                 break;
         }
 
-        Co.StartCoroutine(this, CoroutineHost.Methods.LerpSmooth(transform, target, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
     }
 
     private void OnGameEvent(GameEvents.Type eType, Entity entity)

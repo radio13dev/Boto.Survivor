@@ -22,9 +22,9 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     public float SwapInnerAngle = 2.9f;
     public float InnerAngleTransition = 0.1f;
     
-    public Transform ClosedT;
-    public Transform InventoryT;
-    public Transform MapT;
+    public TransitionPoint ClosedT;
+    public TransitionPoint InventoryT;
+    public TransitionPoint MapT;
     ExclusiveCoroutine Co;
     
     float2 m_CursorPosition;
@@ -180,7 +180,7 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
 
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
-        Transform target;
+        TransitionPoint target;
         switch (newState)
         {
             case HandUIController.State.Inventory:
@@ -198,6 +198,6 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
                 break;
         }
 
-        Co.StartCoroutine(this, CoroutineHost.Methods.LerpSmooth(transform, target, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
     }
 }

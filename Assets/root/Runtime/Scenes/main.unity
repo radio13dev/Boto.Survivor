@@ -3073,7 +3073,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 401122589}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3112,8 +3112,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9184dc243c6154d4f8050e79f6d8fff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DevToolsUI
-  ClosedT: {fileID: 2117821954}
-  InventoryT: {fileID: 399191436}
+  ClosedT:
+    _anchorMin: {x: 1, y: 0}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: 0, y: 0}
+    _sizeDelta: {x: 218.9989, y: 0}
+    _pivot: {x: 1, y: 0.5}
+    _localRotation: {x: -0, y: -0, z: -0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
+  InventoryT:
+    _anchorMin: {x: 1, y: 0}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: -1147, y: 0}
+    _sizeDelta: {x: 218.9989, y: 0}
+    _pivot: {x: 1, y: 0.5}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
 --- !u!1001 &413303654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4712,9 +4726,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 817.13, y: -142.8695}
-  m_SizeDelta: {x: 286.83997, y: 286.83997}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -1400, y: -300}
+  m_SizeDelta: {x: 300, y: 300}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &767886016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4767,9 +4781,30 @@ MonoBehaviour:
   MaxInnerAngle: 2.3
   SwapInnerAngle: 3.2
   InnerAngleTransition: 0.3
-  ClosedT: {fileID: 324750869}
-  InventoryT: {fileID: 875186098}
-  MapT: {fileID: 1276073913}
+  ClosedT:
+    _anchorMin: {x: 1, y: 1}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: -300, y: -300}
+    _sizeDelta: {x: 300, y: 300}
+    _pivot: {x: 0, y: 0}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
+  InventoryT:
+    _anchorMin: {x: 1, y: 1}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: -1400, y: -300}
+    _sizeDelta: {x: 300, y: 300}
+    _pivot: {x: 0, y: 0}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
+  MapT:
+    _anchorMin: {x: 0.5, y: 0.5}
+    _anchorMax: {x: 0.5, y: 0.5}
+    _anchoredPosition: {x: -313.6727, y: -31.6727}
+    _sizeDelta: {x: 627.3455, y: 627.3455}
+    _pivot: {x: 0, y: 0}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
 --- !u!114 &767886017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7126,7 +7161,7 @@ Camera:
   far clip plane: 150
   field of view: 10.9
   orthographic: 1
-  orthographic size: 540
+  orthographic size: 241.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -7637,7 +7672,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1281244290}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7665,8 +7700,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfa4135c72845bab00be3263ed2c22d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InventoryUI
-  ClosedT: {fileID: 1410567298}
-  InventoryT: {fileID: 1965697067}
+  ClosedT:
+    _anchorMin: {x: 1, y: 0}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: 1209, y: 0}
+    _sizeDelta: {x: 1100, y: 0}
+    _pivot: {x: 1, y: 0.5}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
+  InventoryT:
+    _anchorMin: {x: 1, y: 0}
+    _anchorMax: {x: 1, y: 1}
+    _anchoredPosition: {x: 0, y: 0}
+    _sizeDelta: {x: 1100, y: 0}
+    _pivot: {x: 1, y: 0.5}
+    _localRotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
   GemDisplayPrefab: {fileID: 8083293915888645034}
   RingDisplays:
   - {fileID: 6360333939278261743}
@@ -7678,10 +7727,10 @@ MonoBehaviour:
   - {fileID: 413303660}
   - {fileID: 1377672983}
   RingFocusDisplay: {fileID: 1862914622}
-  InnerCursorRadius: 350.53
-  InnerLeniencyRadius: 376.3
-  OuterLeniencyRadius: 464.27
-  OuterCursorRadius: 495.06
+  _InnerCursorRadius: 301.1
+  _InnerLeniencyRadius: 375
+  _OuterLeniencyRadius: 475
+  _OuterCursorRadius: 532
 --- !u!1001 &1286046725
 PrefabInstance:
   m_ObjectHideFlags: 0

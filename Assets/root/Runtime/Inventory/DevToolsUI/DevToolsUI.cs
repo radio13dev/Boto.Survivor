@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class DevToolsUI : MonoBehaviour, HandUIController.IStateChangeListener
 {
-    public Transform ClosedT;
-    public Transform InventoryT;
+    public TransitionPoint ClosedT;
+    public TransitionPoint InventoryT;
     ExclusiveCoroutine Co;
 
     private void Awake()
@@ -24,7 +24,7 @@ public class DevToolsUI : MonoBehaviour, HandUIController.IStateChangeListener
     
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
-        Transform target;
+        TransitionPoint target;
         switch (newState)
         {
             case HandUIController.State.Inventory:
@@ -36,6 +36,6 @@ public class DevToolsUI : MonoBehaviour, HandUIController.IStateChangeListener
                 break;
         }
 
-        Co.StartCoroutine(this, CoroutineHost.Methods.LerpSmooth(transform, target, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
     }
 }
