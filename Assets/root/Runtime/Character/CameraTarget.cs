@@ -25,6 +25,8 @@ public class CameraTarget : EntityLinkMono
         if (PlayerIndex == Game.PlayerIndex)
         {
             MainTarget = this;
+            GameEvents.Trigger(GameEvents.Type.InventoryChanged, Entity);
+            GameEvents.Trigger(GameEvents.Type.PlayerHealthChanged, Entity);
         }
     }
 }

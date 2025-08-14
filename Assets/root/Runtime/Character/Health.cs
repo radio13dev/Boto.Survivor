@@ -29,6 +29,7 @@ public partial struct HealthSystem : ISystem
     }
     
     [WithDisabled(typeof(DestroyFlag))]
+    [WithNone(typeof(SurvivorTag))]
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer ecb;

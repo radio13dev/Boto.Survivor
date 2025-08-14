@@ -98,7 +98,7 @@ namespace Collisions
             var b = new EnemyPushForceJob()
             {
                 tree = Tree
-            }.ScheduleParallel(state.Dependency);
+            }.ScheduleParallel(a);
             
             var c = new ProjectileHitEnemyJob()
             {
@@ -109,6 +109,7 @@ namespace Collisions
         }
 
         [BurstCompile]
+        [WithNone(typeof(SurvivorTag))]
         unsafe partial struct EnemyPushForceJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
@@ -204,6 +205,8 @@ namespace Collisions
         [WithAll(typeof(SurvivorTag))]
         unsafe partial struct EnemyDamageJob : IJobEntity
         {
+            public const float k_Knockback = 100;
+        
             public EntityCommandBuffer.ParallelWriter ecb;
             [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
 
@@ -236,14 +239,18 @@ namespace Collisions
                     _ecb = ecb;
                 }
 
-                public bool OnVisit((Entity, NetworkId) projectile, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity, NetworkId) enemy, AABB objBounds, AABB queryRange)
                 {
-                    if (_source == projectile.Item1) return true;
+                    if (_source == enemy.Item1) return true;
                     if (!objBounds.Overlaps(queryRange)) return true;
                     
                     // Flag enemy as destroyed
-                    _ecb.SetComponentEnabled<DestroyFlag>(_key, projectile.Item1, true);
-                    _force->Velocity += (queryRange.Center - objBounds.Center)/2;
+                    _ecb.SetComponentEnabled<DestroyFlag>(_key, enemy.Item1, true);
+                    
+                    // Do stuff to player
+                    _health->Value--;
+                    _force->Velocity += math.normalize(queryRange.Center - objBounds.Center)*EnemyDamageJob.k_Knockback;
+                    GameEvents.Trigger(GameEvents.Type.PlayerHealthChanged, _source);
                     return true;
                 }
             }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6129972069070815880}
   - component: {fileID: 6513735219677929566}
   - component: {fileID: 884142048074466688}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Shockwave
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4924,8 +4924,8 @@ GameObject:
   - component: {fileID: 2095606205811567574}
   - component: {fileID: 4122976383076772808}
   - component: {fileID: -8333230072600633316}
-  m_Layer: 0
-  m_Name: 'Love Hit '
+  m_Layer: 5
+  m_Name: HeartIncrease
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5203,8 +5203,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2
-      minScalar: 0.1
+      scalar: 0.6
+      minScalar: 0.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -9839,7 +9839,7 @@ GameObject:
   - component: {fileID: 276041181202258340}
   - component: {fileID: 2028343688057405488}
   - component: {fileID: 6335523123453088342}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14733,7 +14733,7 @@ GameObject:
   - component: {fileID: 7741474784666348964}
   - component: {fileID: 6007979464531723386}
   - component: {fileID: 6615398901871479760}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}

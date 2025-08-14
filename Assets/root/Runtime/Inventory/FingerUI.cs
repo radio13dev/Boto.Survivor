@@ -43,7 +43,7 @@ public class FingerUI : Selectable, IPointerClickHandler, ISubmitHandler, ICance
     private void OnGameEvent(GameEvents.Type eType, Entity entity)
     {
         if (eType != GameEvents.Type.InventoryChanged) return;
-        if (!GameEvents.TryGetComponent<PlayerControlled>(entity, out var player)) return;
+        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;
         if (!GameEvents.TryGetBuffer<Ring>(entity, out var rings)) return;
         OnInventoryChanged(rings);

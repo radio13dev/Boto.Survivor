@@ -127,7 +127,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
     private void OnGameEvent(GameEvents.Type eType, Entity entity)
     {
         if (eType != GameEvents.Type.InventoryChanged) return;
-        if (!GameEvents.TryGetComponent<PlayerControlled>(entity, out var player)) return;
+        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;
         if (GameEvents.TryGetBuffer<Ring>(entity, out var rings) && GameEvents.TryGetBuffer<EquippedGem>(entity, out var equippedGems))
         {
