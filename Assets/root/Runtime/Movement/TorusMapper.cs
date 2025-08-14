@@ -48,6 +48,14 @@ public static class TorusMapper
         XRotScale.Data = 0.005f;
         YRotScale.Data = 0.013f;
     }
+    
+    static TorusMapper()
+    {
+        RingRadius.Data = 160f;
+        Thickness.Data = 80f;
+        XRotScale.Data = 0.005f;
+        YRotScale.Data = 0.013f;
+    }
 
     /// <summary>
     /// Converts a 2D position into a 3D point on a torus surface.
