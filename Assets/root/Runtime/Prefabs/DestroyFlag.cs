@@ -1,6 +1,8 @@
-﻿using Unity.Entities;
+﻿using BovineLabs.Saving;
+using Unity.Entities;
 
-public struct DestroyFlag : IComponentData
+[Save]
+public struct DestroyFlag : IComponentData, IEnableableComponent
 {
 }
 

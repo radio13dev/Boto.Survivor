@@ -54,7 +54,7 @@ public partial struct CollectableClearSystem : ISystem
     
     [WithAll(typeof(Collectable))]
     [WithPresent(typeof(Collected), typeof(Grounded))]
-    [WithAbsent(typeof(DestroyFlag))]
+    [WithDisabled(typeof(DestroyFlag))]
     partial struct Job : IJobEntity
     {
         public const float k_MaxCollectableSpeed = 160;
@@ -68,19 +68,19 @@ public partial struct CollectableClearSystem : ISystem
     
         public void Execute([ChunkIndexInQuery] int key, Entity collectableE, in Collectable collectable, 
             EnabledRefRW<Collected> collected, EnabledRefRW<Grounded> grounded,
-            in LocalTransform collectableT, ref Force force, in Movement movement)
+            in LocalTransform collectableT, ref Force force, in Movement movement, EnabledRefRW<DestroyFlag> destroyFlag)
         {
             if (collected.ValueRO)
             {
                 // We let this entity live for 1 frame so systems can execute on it
-                ecb.AddComponent<DestroyFlag>(key, collectableE);
+                destroyFlag.ValueRW = true;
                 return;
             }
             
             if (collectable.PlayerId < 0 || collectable.PlayerId >= PlayerControlledLinks.Length || !m_TransformLookup.TryGetComponent(PlayerControlledLinks[collectable.PlayerId].Value, out var target))
             {
                 Debug.LogWarning($"Couldn't find collection target, destroying...");
-                ecb.AddComponent<DestroyFlag>(key, collectableE);
+                destroyFlag.ValueRW = true;
                 return;
             }
             

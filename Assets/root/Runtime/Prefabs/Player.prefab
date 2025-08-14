@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 1570256944004532503}
   - component: {fileID: 4341140175045690747}
   - component: {fileID: -3846072663541975928}
+  - component: {fileID: 900170924473941128}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -178,10 +179,6 @@ MonoBehaviour:
     FrictionLinear: 4
     RotationalDrag: 1
     RotationalDragLinear: 1
-    HasSurfaceVelocity: 0
-    SurfaceVelocity:
-      x: 0
-      y: 0
     Radius: 1
     LockToSurface: 1
     RotateWithSurface: 1
@@ -189,3 +186,16 @@ MonoBehaviour:
       x: 0
       y: 0
       z: 0
+  HasSurfaceMovement: 0
+--- !u!114 &900170924473941128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring

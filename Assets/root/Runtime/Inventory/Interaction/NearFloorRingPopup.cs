@@ -1,3 +1,4 @@
+using BovineLabs.Core.Extensions;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class NearFloorRingPopup : MonoBehaviour
     {
         if (Game.ClientGame == null) return;
         
-        var nearest = Game.ClientGame.GetSingleton<NearestInteractable>();
+        var nearest = Game.ClientGame.World.EntityManager.GetSingleton<NearestInteractable>();
         if (nearest.Value == Entity.Null)
         {
             Hide();
@@ -50,7 +51,7 @@ public class NearFloorRingPopup : MonoBehaviour
         
         if (Game.ClientGame.World.EntityManager.HasComponent<LocalTransform>(nearestE))
         {
-            var nearestT = Game.ClientGame.GetComponent<LocalTransform>(nearestE);
+            var nearestT = Game.ClientGame.World.EntityManager.GetComponentData<LocalTransform>(nearestE);
             transform.SetPositionAndRotation(nearestT.Position, nearestT.Rotation);
             transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Camera.main.transform.up);
         }

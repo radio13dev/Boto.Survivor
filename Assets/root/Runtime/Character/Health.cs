@@ -28,16 +28,16 @@ public partial struct HealthSystem : ISystem
         new Job(){ ecb = delayedEcb }.Schedule();
     }
     
-    [WithAbsent(typeof(DestroyFlag))]
+    [WithDisabled(typeof(DestroyFlag))]
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer ecb;
     
-        public void Execute(Entity entity, in Health health)
+        public void Execute(Entity entity, in Health health, EnabledRefRW<DestroyFlag> destroyFlag)
         {
             if (health.Value <= 0)
             {
-                ecb.AddComponent<DestroyFlag>(entity);
+                destroyFlag.ValueRW = true;
             }
         }
     }

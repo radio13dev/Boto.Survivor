@@ -12,12 +12,6 @@ public class EnemyCharacterAuthoring : MonoBehaviour
     {
         public override void Bake(EnemyCharacterAuthoring authoring)
         {
-            if (!DependsOn(GetComponent<StepInputAuthoring>()))
-            {
-                Debug.LogError($"Cannot bake {authoring.gameObject}. Requires component: {nameof(StepInputAuthoring)}");
-                return;
-            }
-            
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             
             // Basic character setup

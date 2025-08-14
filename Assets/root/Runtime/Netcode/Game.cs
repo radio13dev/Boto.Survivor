@@ -370,16 +370,6 @@ public class Game : IDisposable
         dependencies.Clear();
     }
 
-    public T GetComponent<T>(Entity entity) where T : unmanaged, IComponentData
-    {
-        return World.EntityManager.GetComponentData<T>(entity);
-    }
-
-    public T GetSingleton<T>() where T : unmanaged, IComponentData
-    {
-        return World.EntityManager.GetSingleton<T>();
-    }
-
     public void CleanForSingleplayer()
     {
         for (int i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
@@ -395,6 +385,7 @@ public static class GameEvents
     public enum Type
     {
         InventoryChanged,
+        PlayerHealthChanged
     }
 
     public static event Action<Type, Entity> OnEvent;

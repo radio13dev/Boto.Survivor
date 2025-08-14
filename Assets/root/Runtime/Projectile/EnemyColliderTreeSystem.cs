@@ -89,6 +89,12 @@ namespace Collisions
             var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
             
+            var a = new EnemyDamageJob()
+            {
+                tree = Tree,
+                ecb = parallel
+            }.ScheduleParallel(state.Dependency);
+            
             var b = new EnemyPushForceJob()
             {
                 tree = Tree
@@ -188,6 +194,56 @@ namespace Collisions
                     }
                     _projectileHit_ptr->Add(new ProjectileHitEntity(enemyE.Item2));
                     _projectileHitState.ValueRW = true;
+                    return true;
+                }
+            }
+        }
+        
+
+        [BurstCompile]
+        [WithAll(typeof(SurvivorTag))]
+        unsafe partial struct EnemyDamageJob : IJobEntity
+        {
+            public EntityCommandBuffer.ParallelWriter ecb;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
+
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force force)
+            {
+                var adjustedAABB2D = collider.Add(transform.Position);
+                fixed (Force* force_ptr = &force)
+                fixed (Health* health_ptr = &health)
+                {
+                    var visitor = new CollisionVisitor(Key, entity, force_ptr, health_ptr, ref ecb);
+                    tree.Range(adjustedAABB2D, ref visitor);
+                }
+            }
+
+
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity, NetworkId)>
+            {
+                int _key;
+                Entity _source;
+                Force* _force;
+                Health* _health;
+                EntityCommandBuffer.ParallelWriter _ecb;
+
+                public CollisionVisitor(int key, Entity source, Force* force, Health* health, ref EntityCommandBuffer.ParallelWriter ecb)
+                {
+                    _key = key;
+                    _source = source;
+                    _force = force;
+                    _health = health;
+                    _ecb = ecb;
+                }
+
+                public bool OnVisit((Entity, NetworkId) projectile, AABB objBounds, AABB queryRange)
+                {
+                    if (_source == projectile.Item1) return true;
+                    if (!objBounds.Overlaps(queryRange)) return true;
+                    
+                    // Flag enemy as destroyed
+                    _ecb.SetComponentEnabled<DestroyFlag>(_key, projectile.Item1, true);
+                    _force->Velocity += (queryRange.Center - objBounds.Center)/2;
                     return true;
                 }
             }

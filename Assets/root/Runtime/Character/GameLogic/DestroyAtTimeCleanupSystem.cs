@@ -19,10 +19,10 @@ public partial struct DestroyAtTimeCleanupSystem : ISystem
     {
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var currentTime = SystemAPI.Time.ElapsedTime;
-        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<DestroyAtTime>>().WithAbsent<DestroyFlag>().WithEntityAccess())
+        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<DestroyAtTime>>().WithDisabled<DestroyFlag>().WithEntityAccess())
         {
             if (projectile.ValueRO.DestroyTime < currentTime)
-                delayedEcb.AddComponent<DestroyFlag>(entity);
+                delayedEcb.SetComponentEnabled<DestroyFlag>(entity, true);
         }
     }
 }

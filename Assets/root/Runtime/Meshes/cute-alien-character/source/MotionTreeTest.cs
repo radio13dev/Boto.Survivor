@@ -15,7 +15,7 @@ public class MotionTreeTest : MonoBehaviour
 
     private void Update()
     {
-        StepInput input = m_Target.Game.GetComponent<StepInput>(m_Target.Entity);
+        StepInput input = m_Target.Game.World.EntityManager.GetComponentData<StepInput>(m_Target.Entity);
         animator.SetFloat("movement.x", math.length(input.Direction));
         animator.SetFloat("movement.y", 0);
     }

@@ -16,6 +16,6 @@ public partial struct ProjectileClearSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        state.EntityManager.AddComponent<DestroyFlag>(m_CleanupQuery);
+        state.EntityManager.SetComponentEnabled<DestroyFlag>(m_CleanupQuery, true);
     }
 }
