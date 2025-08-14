@@ -141,12 +141,22 @@ public unsafe struct GameRpc : IComponentData
     #endregion
 
     #region Admin
-    [FieldOffset(2)] public int SpawnType;
-    [FieldOffset(6)] public float3 PlacePosition;
-    
-    public static GameRpc AdminPlaceEnemy(byte player, Vector3 placePosition, int spawnType)
+    [Flags]
+    public enum EnemySpawnOptions
     {
-        return new GameRpc() { Type = Code.AdminPlaceEnemy, PlayerId = player, SpawnType = spawnType, PlacePosition = placePosition };
+        None,
+        InfiniteHealth = 1 << 0,
+        NoAi = 1 << 1,
+        Stationary = 1 << 2
+    }
+    
+    [FieldOffset(2)] public byte SpawnType;
+    [FieldOffset(3)] public byte SpawnOptions;
+    [FieldOffset(4)] public float3 PlacePosition;
+    
+    public static GameRpc AdminPlaceEnemy(byte player, Vector3 placePosition, byte spawnType, EnemySpawnOptions spawnOptions)
+    {
+        return new GameRpc() { Type = Code.AdminPlaceEnemy, PlayerId = player, SpawnType = spawnType, PlacePosition = placePosition, SpawnOptions = (byte)spawnOptions };
     }
 
     public static GameRpc AdminPlaceGem(byte player, Vector3 placePosition)
@@ -446,6 +456,13 @@ public partial struct GameRpcSystem : ISystem
                     
                     var enemy = state.EntityManager.Instantiate(enemies[rpc.SpawnType].Entity);
                     state.EntityManager.SetComponentData(enemy, LocalTransform.FromPosition(rpc.PlacePosition));
+                    var enemySpawnOptions = (GameRpc.EnemySpawnOptions)rpc.SpawnOptions;
+                    if (enemySpawnOptions.HasFlag(GameRpc.EnemySpawnOptions.Stationary))
+                        state.EntityManager.SetComponentData(enemy, PhysicsResponse.Stationary);
+                    if (enemySpawnOptions.HasFlag(GameRpc.EnemySpawnOptions.NoAi))
+                        state.EntityManager.SetComponentData(enemy, new MovementSettings(){ Speed = 0 });
+                    if (enemySpawnOptions.HasFlag(GameRpc.EnemySpawnOptions.InfiniteHealth))
+                        state.EntityManager.SetComponentData(enemy, new Health(){ Value = int.MaxValue });
                     break;
                 }
                 

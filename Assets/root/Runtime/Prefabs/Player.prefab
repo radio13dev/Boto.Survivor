@@ -92,11 +92,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   Min:
     x: -0.5
-    y: -1
+    y: -0.5
     z: -0.5
   Max:
     x: 0.5
-    y: 1
+    y: 0.5
     z: 0.5
 --- !u!114 &1822928595746831905
 MonoBehaviour:
@@ -179,13 +179,15 @@ MonoBehaviour:
     FrictionLinear: 4
     RotationalDrag: 1
     RotationalDragLinear: 1
-    Radius: 1
+    Radius: 0
     LockToSurface: 1
     RotateWithSurface: 1
     IdlePivot:
       x: 0
       y: 0
       z: 0
+    ForceVelocityResistance: 0
+    ForceShiftResistance: 0
   HasSurfaceMovement: 0
 --- !u!114 &900170924473941128
 MonoBehaviour:

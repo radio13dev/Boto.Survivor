@@ -85,13 +85,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   Min:
-    x: -2.8
-    y: -2.8
-    z: -2.8
+    x: -2
+    y: -2
+    z: -2
   Max:
-    x: 2.8
-    y: 2.8
-    z: 2.8
+    x: 2
+    y: 2
+    z: 2
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::StepInputAuthoring
   MovementSettings:
-    Speed: 0
+    Speed: 0.25
 --- !u!114 &638238371282637465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +207,8 @@ MonoBehaviour:
       x: 0
       y: 0
       z: 0
+    ForceVelocityResistance: 0
+    ForceShiftResistance: 0
   HasSurfaceMovement: 0
 --- !u!114 &1276742715247795018
 MonoBehaviour:

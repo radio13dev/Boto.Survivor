@@ -57,13 +57,13 @@ public class WorldClickTool : MonoBehaviour
             switch (Mode)
             {
                 case ClickMode.PlaceDummy:
-                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 2));
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 0, GameRpc.EnemySpawnOptions.Stationary | GameRpc.EnemySpawnOptions.NoAi | GameRpc.EnemySpawnOptions.InfiniteHealth));
                     break;
                 case ClickMode.PlaceEnemy:
-                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 0));
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 0, default));
                     break;
                 case ClickMode.PlaceEnemyLarge:
-                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 1));
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 1, default));
                     break;
                 case ClickMode.PlaceGem:
                     Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceGem((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));

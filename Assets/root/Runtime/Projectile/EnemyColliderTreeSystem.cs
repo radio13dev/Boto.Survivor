@@ -205,7 +205,7 @@ namespace Collisions
         [WithAll(typeof(SurvivorTag))]
         unsafe partial struct EnemyDamageJob : IJobEntity
         {
-            public const float k_Knockback = 100;
+            public const float k_Knockback = 20;
         
             public EntityCommandBuffer.ParallelWriter ecb;
             [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;

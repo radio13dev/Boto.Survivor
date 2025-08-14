@@ -112,6 +112,9 @@ public struct PhysicsResponse : IComponentData
     public bool LockToSurface;
     public bool RotateWithSurface;
     public float3 IdlePivot;
+
+    public float ForceVelocityResistance;
+    public float ForceShiftResistance;
     
     public static PhysicsResponse Default => new PhysicsResponse()
     {
@@ -134,6 +137,32 @@ public struct PhysicsResponse : IComponentData
         LockToSurface = true,
         RotateWithSurface = true,
         IdlePivot = default
+    };
+    
+    public static PhysicsResponse Stationary => new PhysicsResponse()
+    {
+        Gravity = 30,
+        BounceThresholdMin = 100,
+        BounceResponse = 0.5f,
+        BounceFriction = 0.5f,
+        
+        AirDrag = 1000f,
+        AirDragLinear = 1000f,
+        
+        Friction = 1000f,
+        FrictionLinear = 1000f,
+        
+        RotationalDrag = 1000f,
+        RotationalDragLinear = 1000f,
+        
+        Radius = 0f,
+        
+        LockToSurface = true,
+        RotateWithSurface = true,
+        IdlePivot = default,
+        
+        ForceVelocityResistance = 1,
+        ForceShiftResistance = 1,
     };
 }
 
@@ -180,8 +209,8 @@ public partial struct TorusGravitySystem : ISystem
         public void Execute(ref LocalTransform transform, ref Movement movement, ref Force force, ref RotationalInertia inertia, EnabledRefRW<Grounded> grounded, in PhysicsResponse physicsResponse)
         {
             // Force
-            movement.Velocity += force.Velocity;
-            transform.Position += force.Shift;
+            movement.Velocity += force.Velocity * (1.0f - physicsResponse.ForceVelocityResistance);
+            transform.Position += force.Shift * (1.0f - physicsResponse.ForceShiftResistance);
             
             force = new();
             
