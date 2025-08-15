@@ -4,17 +4,21 @@
 /// Destroys projectiles when hit.
 /// </summary>
 [UpdateInGroup(typeof(ProjectileSystemGroup), OrderLast = true)]
+[RequireMatchingQueriesForUpdate]
 public partial struct ProjectileClearSystem : ISystem
 {
-    EntityQuery m_CleanupQuery;
-    public void OnCreate(ref SystemState state)
-    {
-        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ProjectileHit>().WithDisabled<DestroyFlag>().Build();
-        state.RequireForUpdate(m_CleanupQuery);
-    }
-
     public void OnUpdate(ref SystemState state)
     {
-        state.EntityManager.SetComponentEnabled<DestroyFlag>(m_CleanupQuery, true);
+        state.Dependency = new Job().Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    [WithDisabled(typeof(DestroyFlag))]
+    partial struct Job : IJobEntity
+    {
+        public void Execute(EnabledRefRW<DestroyFlag> destroyFlag)
+        {
+            destroyFlag.ValueRW = true;
+        }
     }
 }

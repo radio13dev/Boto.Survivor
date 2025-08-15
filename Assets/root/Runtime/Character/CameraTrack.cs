@@ -22,10 +22,19 @@ public class CameraTrack : MonoBehaviour
     
         if (Keyboard.current.eKey.isPressed) rotOffset += Time.deltaTime * camRotSpeed;
         if (Keyboard.current.qKey.isPressed) rotOffset -= Time.deltaTime * camRotSpeed;
+        if (rotOffset > math.PI) rotOffset -= math.PI2;
+        if (rotOffset < -math.PI) rotOffset += math.PI2;
 
         var cameraTarget = CameraTarget.MainTarget.transform;
-        transform.position = Vector3.MoveTowards(transform.position, cameraTarget.position, Time.deltaTime * linearCameraChase);
-        transform.position += (cameraTarget.position - transform.position) * (Time.deltaTime * relativeCameraChase);
+        if (math.distancesq(transform.position, cameraTarget.position) > 500)
+        {
+            transform.position = cameraTarget.position;
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, cameraTarget.position, Time.deltaTime * linearCameraChase);
+            transform.position += (cameraTarget.position - transform.position) * (Time.deltaTime * relativeCameraChase);
+        }
 
         TorusMapper.GetTorusInfo(transform.position, out _, out _, out var tangent);
         tangent = math.mul(quaternion.AxisAngle(cameraTarget.up, rotOffset), tangent);

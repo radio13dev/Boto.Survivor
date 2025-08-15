@@ -47,7 +47,8 @@ public partial struct TerrainGroupInitSystem : ISystem
             var randomRot = r.NextFloat3Direction();
             var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
             
-            var groupE = options[r.NextInt(options.Length)].Entity;
+            var groupE = terrainSpawner.ValueRO.SpecificRequest;
+            if (groupE == Entity.Null) groupE = options[r.NextInt(options.Length)].Entity;
             
             LocalTransform parentT = LocalTransform.FromPositionRotation(pos, rotation);
             

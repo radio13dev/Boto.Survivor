@@ -10,11 +10,17 @@ public class TerrainGroupRequestAuthoring : MonoBehaviour
         public override void Bake(TerrainGroupRequestAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.None);
-            AddComponent<TerrainGroupRequest>(entity);
+            TerrainGroupRequest request = new();
+            if (authoring.SpecificGroup)
+                request.SpecificRequest = GetEntity(authoring.SpecificGroup, TransformUsageFlags.None);
+            else
+                request.SpecificRequest = Entity.Null;
+            AddComponent<TerrainGroupRequest>(entity, request);
         }
     }
 }
 
 public struct TerrainGroupRequest : IComponentData
 {
+    public Entity SpecificRequest;
 }
