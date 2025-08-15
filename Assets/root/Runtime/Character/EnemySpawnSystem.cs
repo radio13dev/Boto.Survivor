@@ -128,9 +128,14 @@ public partial struct EnemySpawnSystem : ISystem
             var rDir = random.NextFloat2Direction() * spawnRadius.Max;
             var rPos = zero.Position + zero.TransformDirection(rDir.f3z());
                 
+            bool failed = false;
             for (int j = 0; j < playerTransforms.Length; j++)
                 if (math.distancesq(playerTransforms[j].Position, rPos) <= spawnRadius.MinSqr)
-                    continue;
+                {
+                    failed = true;
+                    break;
+                }
+            if (failed) continue;
                 
             for (int j = 0; j < enemies.Length; j++)
             {
