@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using BovineLabs.Core.Extensions;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 public unsafe class SingleplayerBehaviour : GameHostBehaviour
 {
@@ -25,15 +28,21 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
             return false;
         });
 
+        // Complete
+        m_InitComplete = true;
+        
+        // Randomise seed
+        Game.World.EntityManager.SetSingleton(new SharedRandom(){ Random = Random.CreateFromIndex((uint)(DateTime.UtcNow.Ticks % uint.MaxValue))});
+        
+        // Do zero update
+        Update();
+
         // Spawn the player
         if (Game.PlayerIndex == -1)
         {
             Game.PlayerIndex = 0;
             Game.RpcSendBuffer.Enqueue(new GameRpc(){ Type = GameRpc.Code.PlayerJoin, PlayerId = 0 });
         }
-
-        // Complete
-        m_InitComplete = true;
     }
 
     private void OnDestroy()

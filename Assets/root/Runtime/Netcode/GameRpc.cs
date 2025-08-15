@@ -207,11 +207,41 @@ public partial struct GameRpcSystem : ISystem
                         Debug.Log($"Player {playerId} already exists, not creating a new one...");
                         continue;
                     }
+                    
+                    using var playerTransformsQ = state.EntityManager.CreateEntityQuery(typeof(SurvivorTag), typeof(LocalTransform));
+                    using var playerTransforms = playerTransformsQ.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+                    float3 avgPos = new float3(1,0,0);
+                    if (playerTransforms.Length > 0)
+                    {
+                        for (int i = 0; i < playerTransforms.Length; i++)
+                        {
+                            avgPos += playerTransforms[i].Position;
+                        }
+                        avgPos /= playerTransforms.Length;
+                    }
+                    
+                    using var spawnPointQ = state.EntityManager.CreateEntityQuery(typeof(SurvivorSpawnPoint), typeof(LocalTransform));
+                    using var spawnPoints = spawnPointQ.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+                    float3 closest = avgPos;
+                    float closestD = float.MaxValue;
+                    if (spawnPoints.Length == 0)
+                    {
+                        Debug.LogError($"Couldn't find spawn point.");
+                    }
+                    for (int i = 0; i < spawnPoints.Length; i++)
+                    {
+                        var d = math.distancesq(spawnPoints[i].Position, avgPos);
+                        if (d < closestD)
+                        {
+                            closest = spawnPoints[i].Position;
+                            closestD = d;
+                        }
+                    }
 
                     var resources = SystemAPI.GetSingleton<GameManager.Resources>();
                     var newPlayer = ecb.Instantiate(resources.SurvivorTemplate);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
-                    ecb.SetComponent(newPlayer, LocalTransform.FromPosition(20, 0, 0));
+                    ecb.SetComponent(newPlayer, LocalTransform.FromPosition(closest));
                     Debug.Log($"Player {playerId} created.");
                     break;
                 }
