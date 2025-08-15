@@ -22,7 +22,9 @@ public struct SharedRandom : IComponentData
 }
 
 [Save]
-public struct EnemySpawningEnabled : IComponentData, IEnableableComponent { }
+public struct EnemySpawningEnabled : IComponentData, IEnableableComponent
+{
+}
 
 
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]

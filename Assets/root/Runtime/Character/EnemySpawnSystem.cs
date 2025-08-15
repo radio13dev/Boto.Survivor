@@ -5,15 +5,86 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
-[Serializable]
-[Save]
-public partial struct EnemySpawner : IComponentData
+public enum EnemySpawnerMode
 {
-    [HideInInspector] public Unity.Mathematics.Random random;
-    [HideInInspector] public double nextSpawnTime;
-    public float SpawnRadius;
-    public float SpawnBlockRadiusSqr;
+    None,
+    Common,
+}
+
+public static class EnemySpawnerModeExtensions
+{
+    public static Color GetColor(this EnemySpawnerMode mode)
+    {
+        switch (mode)
+        {
+            case EnemySpawnerMode.None:
+                return Color.white*new Color(1,1,1,0.5f);
+            case EnemySpawnerMode.Common:
+            default:
+                return Color.green;
+        }
+    }
+    public static float GetEnemiesPerSecond(this EnemySpawnerMode mode, double elapsed)
+    {
+        switch (mode)
+        {
+            case EnemySpawnerMode.None:
+                return 0;
+            case EnemySpawnerMode.Common:
+                // Spawn chance scales with time, so that the longer the game runs, the more enemies spawn.
+                double enemiesPerSecond = (8*elapsed/1000);
+                enemiesPerSecond *= enemiesPerSecond;
+                enemiesPerSecond += 0.3d;
+                return (float)enemiesPerSecond;
+            default:
+                Debug.LogError($"");
+                return 0;
+        }
+    }
+    public static SpawnRadius GetSpawnRadius(this EnemySpawnerMode mode)
+    {
+        switch (mode)
+        {
+            case EnemySpawnerMode.Common:
+                return new SpawnRadius(9, 10);
+            default:
+                Debug.LogError($"");
+                return new SpawnRadius(9, 10);
+        }
+    }
+    public static bool IsValidEnemy(this EnemySpawnerMode mode, int enemy)
+    {
+        switch (mode)
+        {
+            case EnemySpawnerMode.Common:
+                return enemy == 0 || enemy == 1;
+            default:
+                return false;
+        }
+    }
+}
+
+public readonly struct SpawnRadius
+{
+    public readonly float Min;
+    public readonly float MinSqr;
+    public readonly float Max;
+    public readonly float MaxSqr;
+    
+    public SpawnRadius(float min, float max)
+    {
+        Min = min;
+        MinSqr = min*min;
+        Max = max;
+        MaxSqr = max*max;
+    }
+}
+
+public struct EnemySpawner : IComponentData
+{
+    public EnemySpawnerMode Mode;
 }
 
 [RequireMatchingQueriesForUpdate]
@@ -26,84 +97,56 @@ public partial struct EnemySpawnSystem : ISystem
         state.RequireForUpdate<EnemySpawningEnabled>();
         state.RequireForUpdate<StepController>();
         state.RequireForUpdate<SharedRandom>();
-        state.RequireForUpdate<GameManager.Resources>();
+        state.RequireForUpdate<GameManager.Enemies>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<PlayerControlled>();
-        m_PlayerTransformsQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, PlayerControlled>().Build();
+        m_PlayerTransformsQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, EnemySpawner>().Build();
         state.RequireForUpdate(m_PlayerTransformsQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        var playerTransforms = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        state.Dependency = new Job()
-        {
-            ecb = delayedEcb.AsParallelWriter(),
-            enemies = SystemAPI.GetSingletonBuffer<GameManager.Enemies>(true),
-            PlayerTransforms = playerTransforms,
-            Time = SystemAPI.Time.ElapsedTime,
-        }.Schedule(state.Dependency);
-        playerTransforms.Dispose(state.Dependency);
+        var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var sharedRandom = SystemAPI.GetSingleton<SharedRandom>();
         
-    }
-    
-    partial struct Job : IJobEntity
-    {
-        const int k_MaxSpawnedPerFrame = 10;
-    
-        static readonly float2 min = new float2(-1,-1);
-        static readonly float2 max = new float2(1,1);
-    
-        public EntityCommandBuffer.ParallelWriter ecb;
-        [ReadOnly] public DynamicBuffer<GameManager.Enemies> enemies;
-        [ReadOnly] public double Time;
-        [ReadOnly] public NativeArray<LocalTransform> PlayerTransforms;
-    
-        public void Execute([ChunkIndexInQuery] int key, in LocalTransform t, ref EnemySpawner spawner)
+        var time = SystemAPI.Time.ElapsedTime;
+        var dt = SystemAPI.Time.DeltaTime;
+        var playerTransforms = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+        var playerSpawners = m_PlayerTransformsQuery.ToComponentDataArray<EnemySpawner>(Allocator.Temp);
+        var enemies = SystemAPI.GetSingletonBuffer<GameManager.Enemies>(true);
+        for (int i = 0; i < playerTransforms.Length; i++)
         {
-            int spawned = 0;
-            while (spawner.nextSpawnTime < Time)
+            // Detect the spawner mode required for each player and do different actions for each
+            var random = sharedRandom.Random;
+            EnemySpawnerMode mode = playerSpawners[i].Mode;
+            float enemiesPerSecond = mode.GetEnemiesPerSecond(time);
+            if (random.NextFloat() > enemiesPerSecond*dt)
+                continue;
+            
+            var zero = playerTransforms[i];
+            SpawnRadius spawnRadius = mode.GetSpawnRadius();
+            var rDir = random.NextFloat2Direction() * spawnRadius.Max;
+            var rPos = zero.Position + zero.TransformDirection(rDir.f3z());
+                
+            for (int j = 0; j < playerTransforms.Length; j++)
+                if (math.distancesq(playerTransforms[j].Position, rPos) <= spawnRadius.MinSqr)
+                    continue;
+                
+            for (int j = 0; j < enemies.Length; j++)
             {
-                if (spawned >= k_MaxSpawnedPerFrame)
-                {
-                    spawner.nextSpawnTime = Time;
-                    Debug.Log($"Hit max spawn count in frame: {spawned}");
-                    break;
-                }
-                
-                var r = spawner.random;
-            
-                // Spawn chance scales with time, so that the longer the game runs, the more enemies spawn.
-                double enemiesPerSecond = (8*Time/1000);
-                enemiesPerSecond *= enemiesPerSecond;
-                enemiesPerSecond += 0.3d;
-                spawner.nextSpawnTime += 1/enemiesPerSecond;
-                spawner.nextSpawnTime += r.NextFloat(-0.5f,0.5f); // A little randomness is the spice of life
-            
-                var rPos = t.Position;
-                var rDir = math.normalizesafe(r.NextFloat2(min, max), max) * spawner.SpawnRadius;
-                rPos += t.TransformDirection(rDir.f3z());
-            
-                for (int i = 0; i < PlayerTransforms.Length; i++)
-                    if (math.distancesq(PlayerTransforms[i].Position, rPos) <= spawner.SpawnBlockRadiusSqr)
-                    {
-                        spawner.random = r;
-                        return;
-                    }
-            
-                for (int i = 0; i < enemies.Length; i++)
-                {
-                    if (enemies[i].Chance <= r.NextInt(100))
-                        continue;
+                if (!mode.IsValidEnemy(j)) 
+                    continue;
+             
+                var enemy = enemies[j];   
+                if (enemy.Chance <= random.NextInt(100))
+                    continue;
                         
-                    var enemy = ecb.Instantiate(key, enemies[i].Entity);
-                    ecb.SetComponent(key, enemy, LocalTransform.FromPosition(rPos + r.NextFloat3(-0.5f, 0.5f)));
-                    spawned++;
-                }
-                
-                spawner.random = r;
+                var enemyE = ecb.Instantiate(enemy.Entity);
+                ecb.SetComponent(enemyE, LocalTransform.FromPosition(rPos + random.NextFloat3(-0.5f, 0.5f)));
             }
         }
+        
+        playerTransforms.Dispose();
+        
     }
 }

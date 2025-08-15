@@ -78,7 +78,13 @@ public struct GameManager : IComponentData
     {
         public int InstancedResourceIndex;
     }
+    
+    public struct TerrainGroup : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
+
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
@@ -97,6 +103,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public ProjectileAuthoring[] Projectiles;
     public EnemyCharacterAuthoring[] Enemies;
     public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
+    public TerrainGroupAuthoring[] TerrainGroups;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -188,6 +195,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                         }
                         buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = index } ;
                     }
+                }
+            }
+            
+            if (authoring.TerrainGroups?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.TerrainGroup>(entity);
+                for (int i = 0; i < authoring.TerrainGroups.Length; i++)
+                {
+                    buffer.Add(new GameManager.TerrainGroup(){ Entity = GetEntity(authoring.TerrainGroups[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }

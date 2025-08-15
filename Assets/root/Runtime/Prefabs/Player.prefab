@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6061478738849763825}
   - component: {fileID: 3243524279367401719}
   - component: {fileID: 6264614865234835065}
-  - component: {fileID: 1822928595746831905}
   - component: {fileID: -2977659499843593134}
   - component: {fileID: 1570256944004532503}
   - component: {fileID: 4341140175045690747}
@@ -55,9 +54,9 @@ MonoBehaviour:
   Health:
     Value: 4
   InitialRings:
+  - PrimaryEffect: 2
   - PrimaryEffect: 0
-  - PrimaryEffect: 0
-  - PrimaryEffect: 0
+  - PrimaryEffect: 2
   - PrimaryEffect: 0
   - PrimaryEffect: 0
   - PrimaryEffect: 0
@@ -98,24 +97,6 @@ MonoBehaviour:
     x: 0.5
     y: 0.5
     z: 0.5
---- !u!114 &1822928595746831905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 190553e608ff4734a8cb3109ea829924, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerAuthoring
-  Spawner:
-    random:
-      state: 0
-    nextSpawnTime: 0
-    SpawnRadius: 50
-    SpawnBlockRadiusSqr: 2025
 --- !u!114 &-2977659499843593134
 MonoBehaviour:
   m_ObjectHideFlags: 0

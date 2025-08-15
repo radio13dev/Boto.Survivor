@@ -38,6 +38,8 @@ public class SurvivorAuthoring : MonoBehaviour
             AddComponent(entity, new SurvivorTag());
             AddComponent(entity, authoring.Health);
             
+            AddComponent<EnemySpawner>(entity);
+            
             // Abilities and Input Lockouts
             AddComponent(entity, new MovementInputLockout());
             SetComponentEnabled<MovementInputLockout>(entity, false);

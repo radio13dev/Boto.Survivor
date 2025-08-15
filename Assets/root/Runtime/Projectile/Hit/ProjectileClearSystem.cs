@@ -9,8 +9,7 @@ public partial struct ProjectileClearSystem : ISystem
     EntityQuery m_CleanupQuery;
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ProjectileHit>().WithAbsent<DestroyFlag>().Build();
+        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ProjectileHit>().WithDisabled<DestroyFlag>().Build();
         state.RequireForUpdate(m_CleanupQuery);
     }
 
