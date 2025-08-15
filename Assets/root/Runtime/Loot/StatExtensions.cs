@@ -75,8 +75,9 @@ public static class StatExtensions
         switch (primaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
+                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 2f;
             case RingPrimaryEffect.Projectile_NearestRapid:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 5f;
+                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 1f;
             default:
                 return -1;
         }
