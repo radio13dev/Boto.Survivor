@@ -28,14 +28,11 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
             return false;
         });
 
+        // Randomise seed
+        Game.InitWorld();
+        
         // Complete
         m_InitComplete = true;
-        
-        // Randomise seed
-        Game.World.EntityManager.SetSingleton(new SharedRandom(){ Random = Random.CreateFromIndex((uint)(DateTime.UtcNow.Ticks % uint.MaxValue))});
-        
-        // Do zero update
-        Update();
 
         // Spawn the player
         if (Game.PlayerIndex == -1)

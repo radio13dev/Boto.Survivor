@@ -11,3 +11,12 @@ public partial class SurvivorSimulationSystemGroup : ComponentSystemGroup
         Enabled = false; // Disable by default, enable when needed
     }
 }
+
+public partial class WorldInitSystemGroup : ComponentSystemGroup
+{
+    protected override void OnCreate()
+    {
+        base.OnCreate();
+        Enabled = false; // Disable by default, enable when needed
+    }
+}

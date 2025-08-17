@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BovineLabs.Core.Collections;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -72,6 +73,37 @@ public partial struct NetworkIdSystem : ISystem
         {
             m_Mapping = new UnsafeList<UnsafeArray<Entity>>(1, Allocator.Persistent)
         });
+    }
+    
+    public static void InitAfterLoad(EntityManager entityManager)
+    {
+        using var idQuery = entityManager.CreateEntityQuery(typeof(NetworkId));
+        using var ids = idQuery.ToComponentDataArray<NetworkId>(Allocator.Temp);
+        if (ids.Length == 0) return;
+        
+        using var idEntities = idQuery.ToEntityArray(Allocator.Temp);
+        
+        NativeArray<int> correctOrdering = new NativeArray<int>(ids.Length, Allocator.Temp);
+        for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
+        correctOrdering.Sort(new NetworkIdComparer(ids)); // Sort to change it into the order of indexes to process (should be consistent across platform)
+        
+        // Setup default offset (for the 'zero' array
+        var mapping = entityManager.GetSingleton<NetworkIdMapping>();
+        mapping.m_Offset = (int)(ids[correctOrdering[0]].Value >> NetworkIdMapping.k_MappingOffset);
+        for (int i = 0; i < correctOrdering.Length; i++)
+        {
+            // Add them to the mapping
+            var networkId = ids[correctOrdering[i]].Value;
+            int mappingIndex = (int)(networkId & ~NetworkIdMapping.k_EntitiesPerArray);
+            int mappingArray = (int)(networkId >> NetworkIdMapping.k_MappingOffset);
+            if (mappingArray >= mapping.m_Offset + mapping.m_Mapping.Length)
+            {
+                mapping.m_Mapping.Add(new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.UninitializedMemory));
+            }
+
+            mapping.m_Mapping.ElementAt(mappingArray)[mappingIndex] = idEntities[correctOrdering[i]];
+        }
+        correctOrdering.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)

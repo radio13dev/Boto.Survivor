@@ -1,4 +1,5 @@
-﻿using BovineLabs.Saving;
+﻿using System;
+using BovineLabs.Saving;
 using Unity.Entities;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;

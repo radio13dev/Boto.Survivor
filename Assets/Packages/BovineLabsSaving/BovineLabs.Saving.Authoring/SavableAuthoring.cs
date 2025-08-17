@@ -39,7 +39,7 @@ namespace BovineLabs.Saving.Authoring
 
                     foreach (var link in childrenLinks)
                     {
-                        var linkEntity = this.GetEntity(link.gameObject, TransformUsageFlags.None);
+                        var linkEntity = this.GetEntity(link.gameObject, TransformUsageFlags.Dynamic);
                         savableLinks.Add(new SavableLinks { Entity = linkEntity, LinkID = GlobalObjectId.GetGlobalObjectIdSlow(link).targetObjectId });
                     }
                 }

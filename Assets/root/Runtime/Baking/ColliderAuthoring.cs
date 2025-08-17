@@ -12,7 +12,7 @@ public class ColliderAuthoring : MonoBehaviour
     {
         public override void Bake(ColliderAuthoring authoring)
         {
-            var entity = GetEntity(authoring, TransformUsageFlags.None);
+            var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new Collisions.Collider(new AABB(authoring.Min, authoring.Max)));
         }
     }

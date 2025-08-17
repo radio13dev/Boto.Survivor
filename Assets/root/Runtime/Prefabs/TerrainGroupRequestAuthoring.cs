@@ -1,33 +1,33 @@
-﻿using Unity.Entities;
+﻿using BovineLabs.Saving;
+using BovineLabs.Saving.Data;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
 public class TerrainGroupRequestAuthoring : MonoBehaviour
 {
-    public TerrainGroupAuthoring SpecificGroup;
+    public int SpecificGroup = -1;
 
     partial class Baker : Baker<TerrainGroupRequestAuthoring>
     {
         public override void Bake(TerrainGroupRequestAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.None);
-            TerrainGroupRequest request = new();
-            if (authoring.SpecificGroup)
-                request.SpecificRequest = GetEntity(authoring.SpecificGroup, TransformUsageFlags.None);
-            else
-                request.SpecificRequest = Entity.Null;
+            TerrainGroupRequest request = new() { Index = authoring.SpecificGroup };
             AddComponent<TerrainGroupRequest>(entity, request);
         }
     }
 }
 
+[Save]
 public struct TerrainGroupRequest : IComponentData
 {
-    public Entity SpecificRequest;
+    public int Index;
 }
 
-[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[UpdateInGroup(typeof(WorldInitSystemGroup))]
 public partial struct TerrainGroupInitSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -43,9 +43,8 @@ public partial struct TerrainGroupInitSystem : ISystem
         var bounds = TorusMapper.MapBounds;
         var random = SystemAPI.GetSingleton<SharedRandom>();
         var options = SystemAPI.GetSingletonBuffer<GameManager.TerrainGroup>(true);
-        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var r = random.Random;
-        foreach ((var terrainSpawner, var terrainSpawnerE) in SystemAPI.Query<RefRO<TerrainGroupRequest>>().WithEntityAccess())
+        foreach (var terrainSpawner in SystemAPI.Query<RefRO<TerrainGroupRequest>>())
         {
             // Setup map with initial terrain
             var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
@@ -54,26 +53,29 @@ public partial struct TerrainGroupInitSystem : ISystem
             var randomRot = r.NextFloat3Direction();
             var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
             
-            var groupE = terrainSpawner.ValueRO.SpecificRequest;
-            if (groupE == Entity.Null) groupE = options[r.NextInt(options.Length)].Entity;
+            var groupE = Entity.Null; //terrainSpawner.ValueRO.SpecificRequest;
+            if (terrainSpawner.ValueRO.Index == -1) groupE = options[r.NextInt(1, options.Length)].Entity;
+            else groupE = options[terrainSpawner.ValueRO.Index].Entity;
             
+            var instGroup = state.EntityManager.Instantiate(groupE);
             LocalTransform parentT = LocalTransform.FromPositionRotation(pos, rotation);
             
-            var children = SystemAPI.GetBuffer<LinkedEntityGroup>(groupE);
-            for (int i = 1; i < children.Length; i++)
+            var children = SystemAPI.GetBuffer<SavableLinks>(instGroup);
+            for (int i = 0; i < children.Length; i++)
             {
-                var childE = children[i].Value;
-                var newTerrainE = state.EntityManager.Instantiate(childE);
+                var childE = children[i].Entity;
                 var initT = SystemAPI.GetComponent<LocalTransform>(childE);
                 var premappedT = parentT.TransformTransform(initT);
                 TorusMapper.SnapToSurface(premappedT.Position, initT.Position.y, out var finalPos, out var finalNormal);
                 var finalT = premappedT;
                 finalT.Position = finalPos;
                 finalT.Rotation = Quaternion.FromToRotation(normal, finalNormal) * finalT.Rotation;
-                state.EntityManager.SetComponentData(newTerrainE, finalT);
+                state.EntityManager.SetComponentData(childE, finalT);
             }
             
-            delayedEcb.DestroyEntity(terrainSpawnerE);
         }
+        
+        var destQ = SystemAPI.QueryBuilder().WithAll<TerrainGroupRequest>().Build();
+        state.EntityManager.DestroyEntity(destQ);
     }
 }

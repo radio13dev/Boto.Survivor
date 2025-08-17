@@ -313,6 +313,8 @@ public class Game : IDisposable
     {
         // Do one more update
         Update_NoLogic();
+        // Perform the 'init after load'
+        NetworkIdSystem.InitAfterLoad(m_World.EntityManager);
         // Also enable the simulation system group
         m_World.GetExistingSystemManaged<SurvivorSimulationSystemGroup>().Enabled = true;
     }
@@ -377,6 +379,15 @@ public class Game : IDisposable
             if (i == PlayerIndex) continue;
             new GameRpc() { Type = GameRpc.Code.PlayerLeave, PlayerId = (byte)i }.Apply(this);
         }
+    }
+
+    public void InitWorld()
+    {
+        World.EntityManager.SetSingleton(new SharedRandom(){ Random = Unity.Mathematics.Random.CreateFromIndex((uint)(DateTime.UtcNow.Ticks % uint.MaxValue))});
+        var initSystemGroup = World.GetExistingSystemManaged<WorldInitSystemGroup>();
+        initSystemGroup.Enabled = true;
+        initSystemGroup.Update();
+        initSystemGroup.Enabled = false;
     }
 }
 
