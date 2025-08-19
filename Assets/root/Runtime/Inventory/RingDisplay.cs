@@ -7,6 +7,8 @@ public class RingDisplay : MonoBehaviour
 {
     public MeshRenderer NoRingDisplay;
     public MeshRenderer HasRingDisplay;
+    public MeshRenderer RingRenderer;
+    public MeshFilter RingFilter;
 
     public int Index { get; private set; }
     public Ring Ring { get; private set; }
@@ -26,6 +28,29 @@ public class RingDisplay : MonoBehaviour
         
         NoRingDisplay.gameObject.SetActive(!ring.Stats.IsValid);
         HasRingDisplay.gameObject.SetActive(ring.Stats.IsValid);
+        
+        // Display ring
+        if (ring.Stats.IsValid)
+        {
+            RingRenderer.material = Ring.Stats.Material;
+            RingFilter.mesh = Ring.Stats.Mesh;
+        }
+    }
+    public void UpdateRing(int index, Ring ring)
+    {
+        Index = index;
+        Ring = ring;
+        m_Gems = Array.Empty<EquippedGem>();
+        
+        NoRingDisplay.gameObject.SetActive(!ring.Stats.IsValid);
+        HasRingDisplay.gameObject.SetActive(ring.Stats.IsValid);
+            
+        // Display ring
+        if (ring.Stats.IsValid)
+        {
+            RingRenderer.material = Ring.Stats.Material;
+            RingFilter.mesh = Ring.Stats.Mesh;
+        }
     }
 
     private void OnEnable()
@@ -49,12 +74,28 @@ public class RingDisplay : MonoBehaviour
         if (UIFocus.Focus && UIFocus.Focus.TryGetComponent<RingDisplay>(out var ringElement))
         {
             // Swap with this ring
-            Game.ClientGame.RpcSendBuffer.Enqueue(
-                GameRpc.PlayerSwapRingSlots((byte)Game.ClientGame.PlayerIndex, 
-                    this.Index,
-                    ringElement.Index
-                ));
-            
+            if (this.Index >= 0)
+            {
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerSwapRingSlots((byte)Game.ClientGame.PlayerIndex, 
+                        (byte)this.Index,
+                        (byte)ringElement.Index
+                    ));
+            }
+            else if (GetComponentInParent<RingPopup>() is {} worldPosPopup)
+            {
+                // This ring is actually a pickup! Slot it in somewhere
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerPickupRing((byte)Game.ClientGame.PlayerIndex, 
+                        (byte)ringElement.Index,
+                        worldPosPopup.transform.position
+                    ));
+                SnapBackToOrigin();
+            }
+            else
+            {
+                SnapBackToOrigin();
+            }
         }
         else
         {

@@ -95,7 +95,10 @@ public class DescriptionUI : MonoBehaviour
         else if (focus.TryGetComponent<RingDisplay>(out var ring))
         {
             // Inventory
-            sb.AppendLine("(Rings)".Color(Color.gray).Size(30));
+            if (ring.GetComponentInParent<RingUI>())
+                sb.AppendLine("(Rings)".Color(Color.gray).Size(30));
+            else
+                sb.AppendLine("(Pickup)".Color(Color.mediumPurple).Size(30));
             
             if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
             {

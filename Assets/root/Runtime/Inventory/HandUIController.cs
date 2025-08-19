@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -23,8 +25,11 @@ public class HandUIController : MonoBehaviour
     static event Action<State, State> OnStateChanged;
     static event Action<Selectable, Selectable> OnLastPressChanged;
     
-    static State m_State = State.Closed;
+    static LinkedList<IStateSource> m_StateSources = new();
+    static State m_StateCore = State.Closed;
+    static State m_OldState = State.Closed;
     public enum State { Closed, Inventory, Map }
+    public interface IStateSource { State GetUIState(); }
     
     public const float k_AnimTransitionTime = 0.2f;
     
@@ -39,11 +44,35 @@ public class HandUIController : MonoBehaviour
     
     public static void SetState(HandUIController.State state)
     {
-        var oldState = m_State;
-        m_State = state;
+        m_StateCore = state;
+        _RefreshState();
+    }
+
+    public static void AddStateLayer(IStateSource stateSource)
+    {
+        if (m_StateSources.Contains(stateSource)) return;
+        m_StateSources.AddLast(stateSource);
+        _RefreshState();
+    }
+
+    public static void RemoveStateLayer(IStateSource stateSource)
+    {
+        m_StateSources.Remove(stateSource);
+        _RefreshState();
+    }
+
+    private static void _RefreshState()
+    {
+        State current = m_StateCore;
+        if (m_StateCore == State.Closed && m_StateSources.Count > 0)
+            current = m_StateSources.Last.Value.GetUIState();
         
-        if (oldState != m_State || m_State == State.Closed)
-            OnStateChanged?.Invoke(oldState, m_State);
+        if (m_OldState != current || current == State.Closed)
+        {
+            var old = m_OldState;
+            m_OldState = old;
+            OnStateChanged?.Invoke(old, current);
+        }
     }
 
     public static void Attach(object listener)
@@ -51,7 +80,7 @@ public class HandUIController : MonoBehaviour
         if (listener is IStateChangeListener stateChangeListener) 
         {
             OnStateChanged += stateChangeListener.OnStateChanged;
-            stateChangeListener.OnStateChanged(State.Closed, m_State);
+            stateChangeListener.OnStateChanged(State.Closed, m_OldState);
         }
         if (listener is ILastPressListener pressListener)
         {
@@ -75,10 +104,10 @@ public class HandUIController : MonoBehaviour
     private void Update()
     {
         if (GameInitialize.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
-            if (m_State == State.Inventory) SetState(State.Closed);
+            if (m_StateCore == State.Inventory) SetState(State.Closed);
             else SetState(State.Inventory);
         if (GameInitialize.Inputs.UI.MapShortcut.WasPressedThisFrame())
-            if (m_State == State.Map) SetState(State.Closed);
+            if (m_StateCore == State.Map) SetState(State.Closed);
             else SetState(State.Map);
     }
 }

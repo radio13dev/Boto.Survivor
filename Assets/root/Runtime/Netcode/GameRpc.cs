@@ -26,6 +26,7 @@ public unsafe struct GameRpc : IComponentData
         PlayerSlotInventoryGemIntoRing = 0b0000_0001,
         PlayerSwapGemSlots = 0b0000_0010,
         PlayerSwapRingSlots = 0b0000_0011,
+        PlayerPickupRing = 0b0000_0100,
         
         // Admin Actions
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
@@ -112,31 +113,34 @@ public unsafe struct GameRpc : IComponentData
     }
     #endregion
 
-    #region GemSlotting
+    #region GemSlotting and RingSlotting
     [FieldOffset(2)] public int InventoryIndex;
-    [FieldOffset(2)] public int FromSlotIndex;
-    [FieldOffset(6)] public int ToSlotIndex;
+    [FieldOffset(2)] public byte FromSlotIndex;
+    [FieldOffset(3)] public byte ToSlotIndex;
+    [FieldOffset(4)] public float3 InteractPosition;
 
-    public static GameRpc PlayerSlotInventoryGemIntoRing(byte player, int inventoryIndex, int toSlotIndex)
+    public static GameRpc PlayerSlotInventoryGemIntoRing(byte player, byte inventoryIndex, byte toSlotIndex)
     {
         return new GameRpc(){ m_Type = (byte)Code.PlayerSlotInventoryGemIntoRing, m_Player = player, InventoryIndex = inventoryIndex, ToSlotIndex = toSlotIndex };
     }
 
-    public static GameRpc PlayerSwapGemSlots(byte player, int fromSlotIndex, int toSlotIndex)
+    public static GameRpc PlayerSwapGemSlots(byte player, byte fromSlotIndex, byte toSlotIndex)
     {
         return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = toSlotIndex };
     }
 
-    public static GameRpc PlayerUnslotGem(byte player, int fromSlotIndex)
+    public static GameRpc PlayerUnslotGem(byte player, byte fromSlotIndex)
     {
-        return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = -1 };
+        return new GameRpc(){ m_Type = (byte)Code.PlayerSwapGemSlots, m_Player = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = byte.MaxValue };
     }
-    #endregion
-
-    #region RingSlotting
-    public static GameRpc PlayerSwapRingSlots(byte player, int fromSlotIndex, int toSlotIndex)
+    
+    public static GameRpc PlayerSwapRingSlots(byte player, byte fromSlotIndex, byte toSlotIndex)
     {
         return new GameRpc() { Type = Code.PlayerSwapRingSlots, PlayerId = player, FromSlotIndex = fromSlotIndex, ToSlotIndex = toSlotIndex };
+    }
+    public static GameRpc PlayerPickupRing(byte player, byte toSlotIndex, float3 interactPosition)
+    {
+        return new GameRpc() { Type = Code.PlayerPickupRing, PlayerId = player, FromSlotIndex = byte.MaxValue, ToSlotIndex = toSlotIndex, InteractPosition = interactPosition};
     }
     #endregion
 
@@ -173,23 +177,30 @@ public unsafe struct GameRpc : IComponentData
 [UpdateBefore(typeof(PlayerControlledSystem))]
 public partial struct GameRpcSystem : ISystem
 {
+    EntityQuery m_RpcQuery;
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<StepController>();
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<GameManager.Resources>();
-        state.RequireForUpdate<GameRpc>();
+        m_RpcQuery = SystemAPI.QueryBuilder().WithAll<GameRpc>().Build();
+        state.RequireForUpdate(m_RpcQuery);
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var ecb = new EntityCommandBuffer(Allocator.Temp, PlaybackPolicy.SinglePlayback);
-        foreach (var (rpcRO, rpcE) in SystemAPI.Query<RefRO<GameRpc>>().WithEntityAccess())
+        using var rpcs = m_RpcQuery.ToComponentDataArray<GameRpc>(Allocator.Temp);
+        using var rpcsE = m_RpcQuery.ToEntityArray(Allocator.Temp);
+        
+        for (int rpcIt = 0; rpcIt < rpcs.Length; rpcIt++)
         {
-            Debug.Log($"{state.WorldUnmanaged.Name} Step {SystemAPI.GetSingleton<StepController>().Step}: Executing rpc: {rpcRO.ValueRO}");
-            ecb.DestroyEntity(rpcE);
+            var rpc = rpcs[rpcIt];
+            var rpcE = rpcsE[rpcIt];
+            
+            Debug.Log($"{state.WorldUnmanaged.Name} Step {SystemAPI.GetSingleton<StepController>().Step}: Executing rpc: {rpc}");
+            state.EntityManager.DestroyEntity(rpcE);
 
-            var rpc = rpcRO.ValueRO;
             var playerId = rpc.PlayerId;
             var playerTag = new PlayerControlled() { Index = playerId };
             switch (rpc.Type)
@@ -365,6 +376,72 @@ public partial struct GameRpcSystem : ISystem
                         
                         Debug.Log($"Swapped slots {rpc.FromSlotIndex} and {rpc.ToSlotIndex}");
                     }
+                    
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                case GameRpc.Code.PlayerPickupRing:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Ring>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var playerT = SystemAPI.GetComponent<LocalTransform>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
+
+                    if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= rings.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to slot into index {rpc.ToSlotIndex} but only has {rings.Length} slots.");
+                        continue;
+                    }
+                    
+                    // Find the nearest interactable to our interact location
+                    float bestD = float.MaxValue;
+                    RingStats bestR = default;
+                    Entity bestE = default;
+                    foreach (var (interactableT, interactableRing, interactableE) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<RingStats>>().WithAll<Interactable>().WithEntityAccess())
+                    {
+                        var d = math.distancesq(interactableT.ValueRO.Position, playerT.Position);
+                        if (d < bestD)
+                        {
+                            bestD = d;
+                            bestR = interactableRing.ValueRO;
+                            bestE = interactableE;
+                        }
+                    }
+                    //if (bestD > FindNearestInteractableSystem.k_PickupRange) // Max interact range
+                    //{
+                    //    continue; // Too far away
+                    //}
+
+                    // Equip
+                    (rings.ElementAt(rpc.ToSlotIndex).Stats, bestR) = (bestR, rings[rpc.ToSlotIndex].Stats);
+                    Debug.Log($"Picked up ring into slot {rpc.ToSlotIndex}");
+                    
+                    // Drop the item
+                    if (bestR.IsValid)
+                    {
+                        var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().RingDropTemplate;
+                        var ringDropE = ecb.Instantiate(ringDropTemplate);
+                        ecb.SetComponent(ringDropE, bestR);
+                        ecb.SetComponent(ringDropE, playerT);
+                        //ecb.SetSharedComponent(ringDropE, 
+                        //    new InstancedResourceRequest(
+                        //        SystemAPI.GetSingletonBuffer<GameManager.RingVisual>(true)[(int)bestR.PrimaryEffect].InstancedResourceIndex));
+                    }
+                    
+                    
+                    var key = state.EntityManager.GetSharedComponent<LootKey>(bestE);
+                    if (key.Value != 0)
+                    {
+                        Debug.Log($"Destroying shared loot key {key.Value}");
+                        var destroyQuery = state.EntityManager.CreateEntityQuery(typeof(Interactable), typeof(LootKey));
+                        destroyQuery.SetSharedComponentFilter(key);
+                        state.EntityManager.DestroyEntity(destroyQuery);
+                    }
+                    else
+                        state.EntityManager.DestroyEntity(bestE);
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     break;

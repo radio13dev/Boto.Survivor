@@ -21,7 +21,7 @@ public class RotateOverTime : MonoBehaviour
         if (randomInit)
         {
             // Start with a random rotation and axis
-            transform.rotation = Random.rotation;
+            transform.localRotation = Random.rotation;
         }
         currentAxis = Random.onUnitSphere;
         targetAxis = Random.onUnitSphere;
@@ -32,7 +32,7 @@ public class RotateOverTime : MonoBehaviour
         if (isSnapping || minSnapTime > 0)
         {
             // Smoothly rotate back to the identity rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation, snapRot, Time.deltaTime * returnSpeed);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, snapRot, Time.deltaTime * returnSpeed);
             minSnapTime -= Time.deltaTime;
         }
         else

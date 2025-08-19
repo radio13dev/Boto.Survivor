@@ -396,7 +396,10 @@ public static class GameEvents
     public enum Type
     {
         InventoryChanged,
-        PlayerHealthChanged
+        PlayerHealthChanged,
+        InteractableStart,
+        InteractableEnd,
+        VisualsUpdated
     }
 
     public static event Action<Type, Entity> OnEvent;

@@ -19,6 +19,7 @@ public struct GameManager : IComponentData
         public Entity ItemDropTemplate;
         public Entity LootDropTemplate;
         public Entity GemDropTemplate;
+        public Entity RingDropTemplate;
         
         public Entity Projectile_Survivor_Laser;
     }
@@ -78,6 +79,10 @@ public struct GameManager : IComponentData
     {
         public int InstancedResourceIndex;
     }
+    public struct RingVisual : IBufferElementData
+    {
+        public int InstancedResourceIndex;
+    }
     
     public struct TerrainGroup : IBufferElementData
     {
@@ -92,6 +97,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public GameObject SurvivorTemplate;
     public GameObject Projectile_Survivor_Laser;
     public GemDropAuthoring GemDropTemplate;
+    public RingDropAuthoring RingDropTemplate;
     
     public RingItemAuthoring ItemDropTemplate;
     public LootGenerator2Authoring LootDropTemplate;
@@ -103,6 +109,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public ProjectileAuthoring[] Projectiles;
     public EnemyCharacterAuthoring[] Enemies;
     public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
+    public SerializedDictionary<RingPrimaryEffect, InstancedResource> RingVisuals;
     public TerrainGroupAuthoring[] TerrainGroups;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
@@ -118,7 +125,8 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace),
                 ItemDropTemplate = GetEntity(authoring.ItemDropTemplate, TransformUsageFlags.WorldSpace),
                 LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace),
-                GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace)
+                GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace),
+                RingDropTemplate = GetEntity(authoring.RingDropTemplate, TransformUsageFlags.WorldSpace),
             });
             
             if (authoring.SpecificPrefabDatabase)
@@ -194,6 +202,28 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                             Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
                         }
                         buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = index } ;
+                    }
+                }
+            }
+            
+            if (authoring.RingVisuals?.Count > 0)
+            {
+                if (!authoring.InstancedResourcesDatabase)
+                {
+                    Debug.LogError($"Couldn't author RingVisuals, instanced resource database null.");
+                }
+                else
+                {
+                    var buffer = AddBuffer<GameManager.RingVisual>(entity);
+                    buffer.Resize(Enum.GetValues(typeof(RingPrimaryEffect)).Length , NativeArrayOptions.ClearMemory);
+                    foreach (var kvp in authoring.RingVisuals)
+                    {
+                        var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
+                        if (index == -1)
+                        {
+                            Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
+                        }
+                        buffer[(int)kvp.Key] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
                     }
                 }
             }

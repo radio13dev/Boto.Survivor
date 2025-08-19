@@ -46,8 +46,8 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
                 // Inv To Slot
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerSlotInventoryGemIntoRing((byte)Game.ClientGame.PlayerIndex, 
-                        this.Index,
-                        gemSlot.Index
+                        (byte)this.Index,
+                        (byte)gemSlot.Index
                     ));
             }
             else
@@ -55,8 +55,8 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
                 // Slot To Slot
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerSwapGemSlots((byte)Game.ClientGame.PlayerIndex, 
-                        this.Index,
-                        gemSlot.Index
+                        (byte)this.Index,
+                        (byte)gemSlot.Index
                     ));
             }
         }
@@ -67,7 +67,7 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
                 // Slot To Inv
                 Game.ClientGame.RpcSendBuffer.Enqueue(
                     GameRpc.PlayerUnslotGem((byte)Game.ClientGame.PlayerIndex, 
-                        this.Index
+                        (byte)this.Index
                     ));
             }
             else

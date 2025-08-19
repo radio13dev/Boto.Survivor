@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Children:
   - {fileID: 3}
-  - {fileID: 11}
+  - {fileID: 12}
   m_Position:
     serializedVersion: 2
     x: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 20165
+  controlID: 26781
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -49,8 +49,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 79
-    width: 1233
-    height: 924
+    width: 1464
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -104,23 +104,23 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1233
-      height: 903
-    m_Scale: {x: 0.6421875, y: 0.6421875}
-    m_Translation: {x: 616.5, y: 451.5}
+      width: 1464
+      height: 761
+    m_Scale: {x: 0.7046296, y: 0.7046296}
+    m_Translation: {x: 732, y: 380.49997}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -960.00006
-      y: -703.06573
-      width: 1920.0001
-      height: 1406.1315
+      x: -1038.8436
+      y: -540
+      width: 2077.6873
+      height: 1080
     m_MinimalGUI: 1
-  m_defaultScale: 0.6421875
-  m_LastWindowPixelSize: {x: 1233, y: 924}
+  m_defaultScale: 0.7046296
+  m_LastWindowPixelSize: {x: 1464, y: 782}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
@@ -141,18 +141,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Children:
   - {fileID: 4}
-  - {fileID: 6}
-  - {fileID: 9}
+  - {fileID: 7}
+  - {fileID: 10}
   m_Position:
     serializedVersion: 2
     x: 0
     y: 0
     width: 2560
-    height: 950
+    height: 808
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 20166
+  controlID: 26782
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -171,16 +171,17 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1234
-    height: 950
+    width: 1465
+    height: 808
   m_MinSize: {x: 51, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 2}
   m_Panes:
   - {fileID: 2}
   - {fileID: 5}
+  - {fileID: 6}
   m_Selected: 0
-  m_LastSelected: 0
+  m_LastSelected: 2
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -204,8 +205,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 79
-    width: 1585
-    height: 833
+    width: 1464
+    height: 810
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -279,25 +280,762 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 12013, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.SceneView
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Scene
+    m_Image: {fileID: 2593428753322112591, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Scene\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 79
+    width: 1464
+    height: 782
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData:
+    - dockPosition: 0
+      containerId: overlay-toolbar__top
+      displayed: 1
+      id: Tool Settings
+      index: 0
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-24.0,"y":-24.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: -24, y: -24}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 3
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-toolbar__top
+      displayed: 1
+      id: unity-grid-and-snap-toolbar
+      index: 1
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":-141.0,"y":-25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":3,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: -141, y: -25}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 3
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-toolbar__top
+      displayed: 1
+      id: unity-scene-view-toolbar
+      index: 0
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":49.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 49}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-toolbar__top
+      displayed: 0
+      id: unity-search-toolbar
+      index: 2
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":1,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 1
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-container--left
+      displayed: 1
+      id: unity-transform-toolbar
+      index: 0
+      contents: '{"m_Layout":2,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":49.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 49}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 2
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-container--left
+      displayed: 1
+      id: unity-component-tools
+      index: 1
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 197}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 2
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-container--right
+      displayed: 1
+      id: Orientation
+      index: 0
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":67.5,"y":-88.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":2,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 67.5, y: -88}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 2
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Light Settings
+      index: 0
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 25}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Camera
+      index: 1
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Cloth Constraints
+      index: 1
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Cloth Collisions
+      index: 2
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Navmesh Display
+      index: 4
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Agent Display
+      index: 5
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Obstacle Display
+      index: 6
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Occlusion Culling
+      index: 3
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Physics Debugger
+      index: 4
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Scene Visibility
+      index: 5
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Particles
+      index: 6
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":49.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 49}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Tilemap
+      index: 11
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Tilemap Palette Helper
+      index: 12
+      contents: 
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-toolbar__top
+      displayed: 0
+      id: Brush Attributes
+      index: 2
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-toolbar__top
+      displayed: 1
+      id: unity-scene-view-camera-mode-toolbar
+      index: 1
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":49.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 49}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-toolbar__left
+      displayed: 0
+      id: Terrain Tools
+      index: 0
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 0
+      containerId: overlay-toolbar__left
+      displayed: 0
+      id: Brush Masks
+      index: 1
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--left
+      displayed: 0
+      id: Scene View/Lighting Visualization Colors
+      index: 0
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 25}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Open Tile Palette
+      index: 0
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Tile Palette Clipboard
+      index: 2
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Tilemap Focus
+      index: 4
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Tile Palette Brush Pick
+      index: 7
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: APV Overlay
+      index: 10
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 1
+      id: AINavigationOverlay
+      index: 11
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 25}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 1
+      id: SceneView/CamerasOverlay
+      index: 7
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":25.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":250.0,"y":193.0},"m_SizeOverridden":true}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 25}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 250, y: 193}
+      sizeOverridden: 1
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/PBR Validation Settings
+      index: 8
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/TrailRenderer
+      index: 9
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--left
+      displayed: 1
+      id: Overlays/OverlayMenu
+      index: 1
+      contents: '{"m_Layout":1,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":49.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 49}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 1
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Visual Effect Event Tester
+      index: 11
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Visual Effect
+      index: 12
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":24.0,"y":24.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 24, y: 24}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Visual Effect Model
+      index: 13
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: unity-spline-inspector
+      index: 15
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--left
+      displayed: 0
+      id: vertx-debugging-overlay
+      index: 2
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Visual Effect Timeline Control
+      index: 14
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Folded":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":0.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    - dockPosition: 1
+      containerId: overlay-container--right
+      displayed: 0
+      id: Scene View/Sprite Swap
+      index: 20
+      contents: '{"m_Layout":4,"m_Collapsed":false,"m_Floating":false,"m_FloatingSnapOffset":{"x":0.0,"y":0.0},"m_SnapOffsetDelta":{"x":24.0,"y":0.0},"m_FloatingSnapCorner":0,"m_Size":{"x":0.0,"y":0.0},"m_SizeOverridden":false}'
+      floating: 0
+      collapsed: 0
+      snapOffset: {x: 0, y: 0}
+      snapOffsetDelta: {x: 24, y: 0}
+      snapCorner: 0
+      layout: 4
+      size: {x: 0, y: 0}
+      sizeOverridden: 0
+    m_ContainerData:
+    - containerId: overlay-toolbar__top
+      scrollOffset: 0
+    - containerId: overlay-toolbar__left
+      scrollOffset: 0
+    - containerId: overlay-container--left
+      scrollOffset: 0
+    - containerId: overlay-container--right
+      scrollOffset: 0
+    - containerId: overlay-toolbar__right
+      scrollOffset: 0
+    - containerId: overlay-toolbar__bottom
+      scrollOffset: 0
+    - containerId: Floating
+      scrollOffset: 0
+    m_OverlaysVisible: 1
+  m_WindowGUID: 31d83ea3288878846bc7a4d2c5b510f8
+  m_Gizmos: 1
+  m_OverrideSceneCullingMask: 6917529027641081856
+  m_SceneIsLit: 1
+  m_SceneLighting: 1
+  m_2DMode: 0
+  m_isRotationLocked: 0
+  m_PlayAudio: 0
+  m_AudioPlay: 0
+  m_DebugDrawModesUseInteractiveLightBakingData: 0
+  m_Position:
+    m_Target: {x: 1653.2585, y: 301.2333, z: 4.180786}
+    speed: 2
+    m_Value: {x: 1653.2585, y: 301.2333, z: 4.180786}
+  m_RenderMode: 0
+  m_CameraMode:
+    drawMode: 0
+    name: Shaded
+    section: Shading Mode
+  m_ValidateTrueMetals: 0
+  m_DoValidateTrueMetals: 0
+  m_SceneViewState:
+    m_AlwaysRefresh: 0
+    showFog: 1
+    showSkybox: 1
+    showFlares: 1
+    showImageEffects: 1
+    showParticleSystems: 1
+    showVisualEffectGraphs: 1
+    m_FxEnabled: 1
+  m_Grid:
+    xGrid:
+      m_Fade:
+        m_Target: 0
+        speed: 2
+        m_Value: 0
+      m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
+      m_Pivot: {x: 0, y: 0, z: 0}
+      m_Size: {x: 10, y: 10}
+    yGrid:
+      m_Fade:
+        m_Target: 1
+        speed: 2
+        m_Value: 1
+      m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
+      m_Pivot: {x: 0, y: 0, z: 0}
+      m_Size: {x: 10, y: 10}
+    zGrid:
+      m_Fade:
+        m_Target: 0
+        speed: 2
+        m_Value: 0
+      m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
+      m_Pivot: {x: 0, y: 0, z: 0}
+      m_Size: {x: 10, y: 10}
+    m_ShowGrid: 1
+    m_GridAxis: 1
+    m_gridOpacity: 0.5
+  m_Rotation:
+    m_Target: {x: 0.00059639575, y: -0.059057634, z: -0.00010301188, w: -0.9983152}
+    speed: 2
+    m_Value: {x: 0.00059635955, y: -0.05905405, z: -0.00010300563, w: -0.99825466}
+  m_Size:
+    m_Target: 292.9565
+    speed: 2
+    m_Value: 292.9565
+  m_Ortho:
+    m_Target: 1
+    speed: 2
+    m_Value: 1
+  m_CameraSettings:
+    m_Speed: 2
+    m_SpeedNormalized: 1
+    m_SpeedMin: 0.01
+    m_SpeedMax: 2
+    m_EasingEnabled: 1
+    m_EasingDuration: 0.4
+    m_AccelerationEnabled: 1
+    m_FieldOfViewHorizontalOrVertical: 60
+    m_NearClip: 0.03
+    m_FarClip: 10000
+    m_DynamicClip: 1
+    m_OcclusionCulling: 0
+  m_LastSceneViewRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LastSceneViewOrtho: 0
+  m_Viewpoint:
+    m_SceneView: {fileID: 6}
+    m_CameraOverscanSettings:
+      m_Opacity: 50
+      m_Scale: 1
+  m_ReplacementShader: {fileID: 0}
+  m_ReplacementString: 
+  m_SceneVisActive: 1
+  m_LastLockedObject: {fileID: 0}
+  m_LastDebugDrawMode:
+    drawMode: 35
+    name: Contributors / Receivers
+    section: Lighting
+  m_ViewIsLockedToObject: 0
+--- !u!114 &7
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: SceneHierarchyWindow
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.DockArea
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1234
+    x: 1465
     y: 0
-    width: 708
-    height: 950
+    width: 476
+    height: 808
   m_MinSize: {x: 52, y: 76}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 7}
+  m_ActualView: {fileID: 8}
   m_Panes:
-  - {fileID: 7}
   - {fileID: 8}
+  - {fileID: 9}
   m_Selected: 0
-  m_LastSelected: 0
---- !u!114 &7
+  m_LastSelected: 1
+--- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -318,10 +1056,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1234
+    x: 1465
     y: 79
-    width: 706
-    height: 924
+    width: 474
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -335,10 +1073,10 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 121}
-      m_SelectedIDs: 16f70000
+      scrollPos: {x: 0, y: 567}
+      m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: d6acffffe2acffffb6f7ffffc2f7ffff52f8ffff0efbffff10fbffff70f40000c4f50000eef50000fef5000036f6000082f60000
+      m_ExpandedIDs: 3883ffff9adbffff9cdbffff9edbffffccdfffff52f7ffff58f7ffff62f7ffff0efbffff10fbffff6cf6000052f8000090f80000a2f80000d6f80000faf800009cf90000d6f90000e8f900005efa0000cefa0000d4040100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -355,7 +1093,7 @@ MonoBehaviour:
         m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
-        m_ClientGUIView: {fileID: 4}
+        m_ClientGUIView: {fileID: 7}
       m_SearchString: 
     m_ExpandedScenes: []
     m_CurrenRootInstanceID: 0
@@ -363,7 +1101,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: 23e5fcd12ca29144c9f70cf7e2b80231
---- !u!114 &8
+--- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -384,10 +1122,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Entities Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1534
+    x: 1465
     y: 79
-    width: 520
-    height: 965
+    width: 474
+    height: 810
   m_SerializedDataModeController:
     m_DataMode: 1
     m_PreferredDataMode: 1
@@ -400,7 +1138,7 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_EditorWindowInstanceKey: e79a17b76ba547c6b4d7a0ad4ff71351
---- !u!114 &9
+--- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -415,18 +1153,18 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1942
+    x: 1941
     y: 0
-    width: 618
-    height: 950
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 10}
+    width: 619
+    height: 808
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
+  m_ActualView: {fileID: 11}
   m_Panes:
-  - {fileID: 10}
+  - {fileID: 11}
   m_Selected: 0
   m_LastSelected: 0
---- !u!114 &10
+--- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -447,10 +1185,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1942
+    x: 1941
     y: 79
-    width: 617
-    height: 924
+    width: 618
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -475,7 +1213,7 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
---- !u!114 &11
+--- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -488,20 +1226,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Children:
-  - {fileID: 12}
-  - {fileID: 16}
+  - {fileID: 13}
+  - {fileID: 17}
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 950
+    y: 808
     width: 2560
-    height: 391
+    height: 533
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 20342
+  controlID: 26926
   draggingID: 0
---- !u!114 &12
+--- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -518,18 +1256,18 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1049
-    height: 391
+    width: 1050
+    height: 533
   m_MinSize: {x: 231, y: 276}
   m_MaxSize: {x: 10001, y: 10026}
-  m_ActualView: {fileID: 13}
+  m_ActualView: {fileID: 14}
   m_Panes:
-  - {fileID: 13}
   - {fileID: 14}
   - {fileID: 15}
+  - {fileID: 16}
   m_Selected: 0
-  m_LastSelected: 2
---- !u!114 &13
+  m_LastSelected: 0
+--- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -537,10 +1275,10 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
   m_MinSize: {x: 230, y: 250}
   m_MaxSize: {x: 10000, y: 10000}
   m_TitleContent:
@@ -551,9 +1289,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 1029
-    width: 1048
-    height: 365
+    y: 887
+    width: 1049
+    height: 507
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -576,7 +1314,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/root/Runtime/Prefabs
+    - Assets/root/Runtime/Prefabs/TerrainGroups
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -586,16 +1324,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/root/Runtime/Prefabs
-  m_LastFoldersGridSize: 16
+  - Assets/root/Runtime/Prefabs/TerrainGroups
+  m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Work Repos\Boto.Survivor
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 319}
-    m_SelectedIDs: d0010100
-    m_LastClickedID: 66000
-    m_ExpandedIDs: 00000000b600010058010100bc010100d201010000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 245}
+    m_SelectedIDs: 62060100
+    m_LastClickedID: 67170
+    m_ExpandedIDs: 000000004e050100fe050100640601006606010000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -612,7 +1350,7 @@ MonoBehaviour:
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 12}
+      m_ClientGUIView: {fileID: 0}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -624,7 +1362,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000b600010000ca9a3bffffff7f
+    m_ExpandedIDs: 000000004e05010000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -650,10 +1388,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 16f70000
-    m_LastClickedInstanceID: 63254
-    m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c62300004cee00008cc70200820d01002e400900320a0300240a0300a6480100943e0100fc4801005800030064000300dc3f010028480100b04b01002a430100b44001000a3c01008042010066470100b6410100884b01007e470100044b01007c4a0100b0450100780003007c000300bc480100864901007aff0200c4ff0200c8ff0200ccff020088ff02008cff020090ff020094ff02009cff0200a4ff0200a8ff0200b0ff0200b8ff0200d2ff0200d6ff0200deff0200f6ff0200feff0200060003000a0003001a000300220003004400030030470100ec4b0100c627010018420100400003000e0003008e480100a0460100e84b0100480003004c0003001200030050000300540003005c0003006000030068000300f4430100563e0100c8410100a6460100164001006e430100e03f0100123d0100c44a01001c3f0100200a0300524a0100d8380700d636010022f102003a0a03003e0a03002a000300420a0300700003006c0003005a4801004a0a0300484401004e480100784901002c0a0300280a0300ba450100a4410100ca49010042400100b03e0100360a03008a670300906703009a6703009c670300a0670300aa670300b46703007e49010030400100104201003c4e0100404e0100424e0100fa4b01005a0f0300761d03007e3e0100ba670300b8670300b6670300bc670300b64201006e480100c0450100103f0100424a0100a6490100ce4a01000a4b0100544e0100524e0100564e01004e4e01004c4e0100504e0100484e0100464e01004a4e0100444e01003e4e0100c24801007a4b0100be490100f83f01006a470100c6470100ea4801003e400100d64701009a1c0300c8270100f440010070f9020018340100f0450100b2670300b0670300ae670300a667030084ed0100f2290100aa130100f0ef0500b6040100def600000ef70000bcfb02005a1c02005c0a01006c0a0100700a0100640a0100680a0100580a0100600a0100f6590200e4c2faffa8e4f9fffadff9ff6a0702006c07020012380100cc320100682a0100b4300100ee2f0100e41d010098220100b6390100861e010034f400000c77010092ff0000280dfeff86f00000e4f10000eeea0000dcf10000300f02009a040000800400009e0302004a3901004e26030036f6fdffd0090100fc0a01005c34010072ec0100000000004c9e020092040000dce900005c02010020970200
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 0
+    m_ExpandedInstanceIDs: 9e030200
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
       m_InstanceID: 0
@@ -661,11 +1399,11 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 54}
+    m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 16
   m_SkipHiddenPackages: 0
-  m_DirectoriesAreaWidth: 294
---- !u!114 &14
+  m_DirectoriesAreaWidth: 200
+--- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -722,7 +1460,7 @@ MonoBehaviour:
       m_OriginalEventType: 11
       m_IsRenamingFilename: 0
       m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 12}
+      m_ClientGUIView: {fileID: 13}
     m_SearchString: 
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
@@ -850,7 +1588,7 @@ MonoBehaviour:
   m_ShowReferencedBuses: 1
   m_ShowBusConnections: 0
   m_ShowBusConnectionsOfSelection: 0
---- !u!114 &15
+--- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -872,9 +1610,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 1014
+    y: 1049
     width: 1049
-    height: 380
+    height: 345
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -888,8 +1626,8 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 63140
---- !u!114 &16
+  m_LastSelectedObjectID: 64192
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -904,20 +1642,20 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1049
+    x: 1050
     y: 0
-    width: 1511
-    height: 391
+    width: 1510
+    height: 533
   m_MinSize: {x: 101, y: 126}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 17}
+  m_ActualView: {fileID: 18}
   m_Panes:
-  - {fileID: 17}
   - {fileID: 18}
   - {fileID: 19}
+  - {fileID: 20}
   m_Selected: 0
   m_LastSelected: 1
---- !u!114 &17
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -938,46 +1676,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1049
-    y: 1029
-    width: 1510
-    height: 365
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_OverlaysVisible: 1
---- !u!114 &18
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
-  m_TitleContent:
-    m_Text: Project
-    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Project\u200B"
-  m_Pos:
-    serializedVersion: 2
     x: 1050
-    y: 938
+    y: 887
     width: 1509
-    height: 456
+    height: 507
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -989,106 +1691,6 @@ MonoBehaviour:
     m_SaveData: []
     m_ContainerData: []
     m_OverlaysVisible: 1
-  m_SearchFilter:
-    m_NameFilter: 
-    m_ClassNames: []
-    m_AssetLabels: []
-    m_AssetBundleNames: []
-    m_ReferencingInstanceIDs: 
-    m_SceneHandles: 
-    m_ShowAllHits: 0
-    m_SkipHidden: 0
-    m_SearchArea: 1
-    m_Folders:
-    - Assets/root/Runtime/Prefabs/InstancedResources
-    m_Globs: []
-    m_ProductIds: 
-    m_AnyWithAssetOrigin: 0
-    m_OriginalText: 
-    m_ImportLogFlags: 0
-    m_FilterByTypeIntersection: 0
-  m_ViewMode: 1
-  m_StartGridSize: 16
-  m_LastFolders:
-  - Assets/root/Runtime/Prefabs/InstancedResources
-  m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\Work Repos\Boto.Survivor
-  m_LockTracker:
-    m_IsLocked: 1
-  m_FolderTreeState:
-    scrollPos: {x: 0, y: 67}
-    m_SelectedIDs: 12000100
-    m_LastClickedID: 65554
-    m_ExpandedIDs: 00000000b600010000ca9a3bffffff7f
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_AssetTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: 00000000b600010000ca9a3bffffff7f
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_ListAreaState:
-    m_SelectedInstanceIDs: 00f50000
-    m_LastClickedInstanceID: 62720
-    m_HadKeyboardFocusLastEvent: 0
-    m_ExpandedInstanceIDs: 9e030200
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-    m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
-    m_GridSize: 16
-  m_SkipHiddenPackages: 0
-  m_DirectoriesAreaWidth: 200
 --- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1112,9 +1714,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 1050
-    y: 836
+    y: 887
     width: 1509
-    height: 558
+    height: 507
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1127,22 +1729,22 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_Spl:
-    ID: 408
-    splitterInitialOffset: 142
+    ID: 152
+    splitterInitialOffset: 387
     currentActiveSplitter: -1
     realSizes:
-    - 179
-    - 309
+    - 359
+    - 78
     relativeSizes:
-    - 0.36614174
-    - 0.63385826
+    - 0.8215159
+    - 0.17848408
     minSizes:
     - 32
     - 32
     maxSizes:
     - 0
     - 0
-    lastTotalSize: 488
+    lastTotalSize: 437
     splitSize: 6
     xOffset: 0
     m_Version: 1
@@ -1154,7 +1756,7 @@ MonoBehaviour:
   m_TestListGUIs:
   - m_Window: {fileID: 19}
     runProgress:
-      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -1166,11 +1768,11 @@ MonoBehaviour:
           assemblyNames: []
         filters:
         - testMode: 2
-          testNames: []
+          testNames:
+          - DesyncTests
           groupNames: []
           categoryNames: []
-          assemblyNames:
-          - Boto.Survivor.Tests
+          assemblyNames: []
         runSynchronously: 0
         playerHeartbeatTimeout: 600
         orderedTestNames: []
@@ -1182,7 +1784,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 1.0000001
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList:
@@ -1321,7 +1923,7 @@ MonoBehaviour:
     m_SelectedOption: 0
   - m_Window: {fileID: 19}
     runProgress:
-      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -1333,11 +1935,11 @@ MonoBehaviour:
           assemblyNames: []
         filters:
         - testMode: 2
-          testNames: []
+          testNames:
+          - DesyncTests
           groupNames: []
           categoryNames: []
-          assemblyNames:
-          - Boto.Survivor.Tests
+          assemblyNames: []
         runSynchronously: 0
         playerHeartbeatTimeout: 600
         orderedTestNames: []
@@ -1349,7 +1951,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 1.0000001
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList:
@@ -1358,7 +1960,7 @@ MonoBehaviour:
       name: Boto.Survivor
       fullName: Boto.Survivor
       resultStatus: 1
-      duration: 46.005978
+      duration: 63.404217
       messages: 
       output: 
       stacktrace: 
@@ -1369,12 +1971,12 @@ MonoBehaviour:
       categories: []
       parentId: 
       parentUniqueId: 
-    - id: 1030
+    - id: 1031
       uniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
       name: Boto.Survivor.Tests.dll
       fullName: C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll
       resultStatus: 1
-      duration: 46.005978
+      duration: 63.404217
       messages: 
       output: 
       stacktrace: 
@@ -1390,7 +1992,7 @@ MonoBehaviour:
       name: DesyncTests
       fullName: DesyncTests
       resultStatus: 1
-      duration: 39.506622
+      duration: 56.90486
       messages: 
       output: 
       stacktrace: 
@@ -1399,14 +2001,14 @@ MonoBehaviour:
       description: 
       isSuite: 1
       categories: []
-      parentId: 1030
+      parentId: 1031
       parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
     - id: 1008
       uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequence_Success][suite]'
       name: DesyncTest_InputSequence_Success
       fullName: DesyncTests.DesyncTest_InputSequence_Success
       resultStatus: 1
-      duration: 9.25177
+      duration: 10.072186
       messages: 
       output: 
       stacktrace: 
@@ -1422,7 +2024,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success(())
       fullName: DesyncTests.DesyncTest_InputSequence_Success(())
       resultStatus: 1
-      duration: 3.8531916
+      duration: 4.5371394
       messages: 
       output: 'Creating Game...
 
@@ -1450,14 +2052,14 @@ MonoBehaviour:
         ... sending save...
 
         ...
-        wrote 4362...
+        wrote 38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -1473,10 +2075,10 @@ MonoBehaviour:
 
         ... done.
 
-        Cleaning
-        up 0 destroyed GenericPrefabs
+        Got
+        ID message: 1
 
-        Got ID message: 1
+        Cleaning up 0 destroyed GenericPrefabs
 
 '
       stacktrace: 
@@ -1494,7 +2096,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
       fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
       resultStatus: 1
-      duration: 2.6002119
+      duration: 2.715414
       messages: 
       output: 'Cleaning up 0 destroyed GenericPrefabs
 
@@ -1527,14 +2129,14 @@ MonoBehaviour:
         ...
         sending save...
 
-        ... wrote 4362...
+        ... wrote 38602...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 4362...
+        ... loading save 38602...
 
         ... creating game...
 
@@ -1558,48 +2160,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(797:7)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(798:9)
 
 '
       stacktrace: 
@@ -1617,25 +2200,58 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
       fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
       resultStatus: 1
-      duration: 2.798367
+      duration: 2.819633
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
-
-        Cleaned up.
+        Creating
+        Game...
 
         Creating Game...
 
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        ...
+        saving...
+
+        ... sending save...
+
+        ... wrote 38602...
+
+        ...
+        sending Id...
+
+        Creating ID message: 1
+
+        ... loading save 38602...
+
+        ...
+        creating game...
+
         Creating Game...
+
+        ... save loaded...
 
         Loading
         subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
@@ -1643,95 +2259,39 @@ MonoBehaviour:
         Loading subscene
         with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
+        ... done.
 
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for connections.
-
-        Game
-        already launched, likely joined lobby.
-
-        ... saving...
-
-        ...
-        sending save...
-
-        ... wrote 4362...
-
-        ... sending Id...
-
-        Creating
+        Got
         ID message: 1
-
-        ... loading save 4362...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
 
         Cleaning up 0 destroyed GenericPrefabs
 
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(795:13)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(796:15)
 
 '
       stacktrace: 
@@ -1748,7 +2308,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequenceConnectInputSequence_Success
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success
       resultStatus: 1
-      duration: 22.609674
+      duration: 23.464691
       messages: 
       output: 
       stacktrace: 
@@ -1764,7 +2324,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequenceConnectInputSequence_Success((),())
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),())
       resultStatus: 1
-      duration: 2.4526458
+      duration: 2.5925784
       messages: 
       output: 'Creating Game...
 
@@ -1784,14 +2344,14 @@ MonoBehaviour:
         ... sending save...
 
         ... wrote
-        4362...
+        38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -1830,7 +2390,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(0f,
         0f, 0f)))
       resultStatus: 1
-      duration: 2.5738108
+      duration: 2.6354208
       messages: 
       output: 'Cleaning up 0 destroyed GenericPrefabs
 
@@ -1855,14 +2415,14 @@ MonoBehaviour:
         ... sending save...
 
         ...
-        wrote 4362...
+        wrote 38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -1886,48 +2446,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(1304:9)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(1305:11)
 
 '
       stacktrace: 
@@ -1947,61 +2488,56 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(1f,
         1f, 1f)))
       resultStatus: 1
-      duration: 2.4991088
+      duration: 2.5733924
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
+        Creating
+        Game...
 
-        Cleaned up.
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Creating Game...
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Server is now
+        listening for connections.
 
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Game already launched, likely joined
+        lobby.
 
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        ...
-        saving...
+        ... saving...
 
         ... sending save...
 
-        ... wrote 4362...
+        ... wrote
+        38602...
 
-        ...
-        sending Id...
+        ... sending Id...
 
         Creating ID message: 1
 
-        ... loading save 4362...
-
         ...
-        creating game...
+        loading save 38602...
+
+        ... creating game...
 
         Creating Game...
 
-        ... save loaded...
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ... done.
 
@@ -2013,48 +2549,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(1304:13)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(1305:17)
 
 '
       stacktrace: 
@@ -2074,66 +2591,54 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
         0f, 0f)),())
       resultStatus: 1
-      duration: 2.521099
+      duration: 2.7571857
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
+        Creating
+        Game...
 
-        Cleaned up.
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Creating Game...
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Server is now
+        listening for connections.
 
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Game already launched, likely joined
+        lobby.
 
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
+        mockServer Step 1: Applying 1 extra actions
 
         mockServer
-        Step 1: Applying 1 extra actions
-
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
+
+        Added
+        playerid 0 to entity Entity(139:47)
 
         ... saving...
 
         ... sending
         save...
 
-        ... wrote 5958...
+        ... wrote 40196...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 5958...
+        ... loading save 40196...
 
         ... creating game...
 
@@ -2152,8 +2657,10 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Game already launched, likely joined
-        lobby.
+        Added playerid 0 to entity Entity(751:33)
+
+        Game
+        already launched, likely joined lobby.
 
 '
       stacktrace: 
@@ -2173,7 +2680,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
         0f, 0f)),(0:float3(0f, 0f, 0f)))
       resultStatus: 1
-      duration: 2.5372703
+      duration: 2.5781524
       messages: 
       output: 'Cleaning up 1 destroyed GenericPrefabs
 
@@ -2201,84 +2708,69 @@ MonoBehaviour:
         mockServer Step 1: Applying 1 extra actions
 
         mockServer
-        had no player 0.
+        Step 1: Executing rpc: PlayerJoin:0:
 
-        mockServer had no player 1.
+        Player 0 created.
 
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
-
-        Player 0
-        created.
+        Added
+        playerid 0 to entity Entity(139:53)
 
         ... saving...
 
-        ... sending save...
+        ... sending
+        save...
 
-        ...
-        wrote 5958...
+        ... wrote 40196...
 
         ... sending Id...
 
-        Creating ID message: 1
+        Creating
+        ID message: 1
 
-        ...
-        loading save 5958...
+        ... loading save 40196...
 
         ... creating game...
 
-        Creating Game...
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ...
-        save loaded...
+        done.
 
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Got ID message: 1
 
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Added playerid 0 to entity Entity(751:39)
 
-        ... done.
+        Game
+        already launched, likely joined lobby.
 
-        Got
-        ID message: 1
+        mockServer Step 2: Applying
+        1 extra actions
 
-        Game already launched, likely joined lobby.
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
 
-        mockServer
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:13)
+
+        mockClient
         Step 2: Applying 1 extra actions
 
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1
-        created.
-
-        mockClient Step 2: Applying 1 extra actions
-
-        mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
 
         Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:9)
 
 '
       stacktrace: 
@@ -2298,7 +2790,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
         0f, 0f)),(0:float3(1f, 1f, 1f)))
       resultStatus: 1
-      duration: 2.5495625
+      duration: 2.6758475
       messages: 
       output: 'Cleaning up 2 destroyed GenericPrefabs
 
@@ -2330,84 +2822,70 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 1 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
+        Added playerid 0 to entity
+        Entity(139:59)
+
         ... saving...
 
-        ... sending
-        save...
+        ... sending save...
 
-        ... wrote 5958...
+        ...
+        wrote 40196...
 
         ... sending Id...
 
-        Creating
-        ID message: 1
+        Creating ID message: 1
 
-        ... loading save 5958...
+        ...
+        loading save 40196...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely joined
-        lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        mockServer Step 2: Applying 1 extra actions
+        ... done.
 
-        mockServer
-        had no player 1.
+        Got
+        ID message: 1
 
-        mockServer had no player 2.
+        Added playerid 0 to entity Entity(751:45)
 
-        mockServer
-        had no player 3.
+        Game
+        already launched, likely joined lobby.
 
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
+        mockServer Step 2: Applying
+        1 extra actions
 
-        Player 1 created.
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
 
-        mockClient Step 2: Applying 1
-        extra actions
+        Player
+        1 created.
 
-        mockClient had no player 1.
+        Added playerid 1 to entity Entity(1306:17)
 
-        mockClient had
-        no player 2.
+        mockClient
+        Step 2: Applying 1 extra actions
 
-        mockClient had no player 3.
-
-        mockClient Step
-        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
 
         Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:13)
 
 '
       stacktrace: 
@@ -2427,7 +2905,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
         1f, 1f)),())
       resultStatus: 1
-      duration: 2.4526033
+      duration: 2.482214
       messages: 
       output: 'Cleaning up 2 destroyed GenericPrefabs
 
@@ -2459,54 +2937,49 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 1 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
+        Added playerid 0 to entity
+        Entity(139:65)
+
         ... saving...
 
-        ... sending
-        save...
+        ... sending save...
 
-        ... wrote 5958...
+        ...
+        wrote 40196...
 
         ... sending Id...
 
-        Creating
-        ID message: 1
+        Creating ID message: 1
 
-        ... loading save 5958...
+        ...
+        loading save 40196...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely joined
-        lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(751:51)
+
+        Game
+        already launched, likely joined lobby.
 
 '
       stacktrace: 
@@ -2526,7 +2999,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
         1f, 1f)),(0:float3(0f, 0f, 0f)))
       resultStatus: 1
-      duration: 2.5551176
+      duration: 2.5797365
       messages: 
       output: 'Cleaning up 1 destroyed GenericPrefabs
 
@@ -2554,84 +3027,69 @@ MonoBehaviour:
         mockServer Step 1: Applying 1 extra actions
 
         mockServer
-        had no player 0.
+        Step 1: Executing rpc: PlayerJoin:0:
 
-        mockServer had no player 1.
+        Player 0 created.
 
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
-
-        Player 0
-        created.
+        Added
+        playerid 0 to entity Entity(139:71)
 
         ... saving...
 
-        ... sending save...
+        ... sending
+        save...
 
-        ...
-        wrote 5958...
+        ... wrote 40196...
 
         ... sending Id...
 
-        Creating ID message: 1
+        Creating
+        ID message: 1
 
-        ...
-        loading save 5958...
+        ... loading save 40196...
 
         ... creating game...
 
-        Creating Game...
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ...
-        save loaded...
+        done.
 
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Got ID message: 1
 
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Added playerid 0 to entity Entity(751:57)
 
-        ... done.
+        Game
+        already launched, likely joined lobby.
 
-        Got
-        ID message: 1
+        mockServer Step 2: Applying
+        1 extra actions
 
-        Game already launched, likely joined lobby.
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
 
-        mockServer
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:21)
+
+        mockClient
         Step 2: Applying 1 extra actions
 
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1
-        created.
-
-        mockClient Step 2: Applying 1 extra actions
-
-        mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
 
         Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:17)
 
 '
       stacktrace: 
@@ -2651,7 +3109,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
         1f, 1f)),(0:float3(1f, 1f, 1f)))
       resultStatus: 1
-      duration: 2.4684565
+      duration: 2.590163
       messages: 
       output: 'Cleaning up 2 destroyed GenericPrefabs
 
@@ -2683,84 +3141,70 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 1 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
+        Added playerid 0 to entity
+        Entity(139:77)
+
         ... saving...
 
-        ... sending
-        save...
+        ... sending save...
 
-        ... wrote 5958...
+        ...
+        wrote 40196...
 
         ... sending Id...
 
-        Creating
-        ID message: 1
+        Creating ID message: 1
 
-        ... loading save 5958...
+        ...
+        loading save 40196...
 
         ... creating game...
 
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Creating Game...
 
         ...
-        done.
+        save loaded...
 
-        Got ID message: 1
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Game already launched, likely joined
-        lobby.
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        mockServer Step 2: Applying 1 extra actions
+        ... done.
 
-        mockServer
-        had no player 1.
+        Got
+        ID message: 1
 
-        mockServer had no player 2.
+        Added playerid 0 to entity Entity(751:63)
 
-        mockServer
-        had no player 3.
+        Game
+        already launched, likely joined lobby.
 
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
+        mockServer Step 2: Applying
+        1 extra actions
 
-        Player 1 created.
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
 
-        mockClient Step 2: Applying 1
-        extra actions
+        Player
+        1 created.
 
-        mockClient had no player 1.
+        Added playerid 1 to entity Entity(1306:25)
 
-        mockClient had
-        no player 2.
+        mockClient
+        Step 2: Applying 1 extra actions
 
-        mockClient had no player 3.
-
-        mockClient Step
-        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
 
         Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:21)
 
 '
       stacktrace: 
@@ -2772,12 +3216,12 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1028
       parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1014
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success]'
-      name: DesyncTest_OneStepAdvanceAfterConnect_Success
-      fullName: DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success
+    - id: 1019
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_LongPlayIdle_Success]'
+      name: DesyncTest_LongPlayIdle_Success
+      fullName: DesyncTests.DesyncTest_LongPlayIdle_Success
       resultStatus: 1
-      duration: 2.5953114
+      duration: 15.423015
       messages: 
       output: 'Cleaning up 2 destroyed GenericPrefabs
 
@@ -2795,103 +3239,204 @@ MonoBehaviour:
 
         Creating Game...
 
-        Creating Game...
-
-        Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
         Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
+        Server is now listening for
+        connections.
 
-        Server is now listening for connections.
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
+
+        Player 0 created.
+
+        Added playerid 0 to entity
+        Entity(105:81)
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 43510...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 43510...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(693:35)
 
         Game
         already launched, likely joined lobby.
 
-        ... saving...
+        mockServer Step 1001: Applying
+        1 extra actions
 
-        ...
-        sending save...
+        mockServer Step 1001: Executing rpc: PlayerJoin:1:
 
-        ... wrote 4362...
+        Player
+        1 created.
 
-        ... sending Id...
+        Added playerid 1 to entity Entity(1258:27)
 
-        Creating
-        ID message: 1
+        mockClient
+        Step 1001: Applying 1 extra actions
 
-        ... loading save 4362...
+        mockClient Step 1001: Executing
+        rpc: PlayerJoin:1:
 
-        ... creating game...
+        Player 1 created.
 
-        Creating
-        Game...
+        Added playerid 1 to
+        entity Entity(1269:27)
 
-        ... save loaded...
+        Step: 1001
+
+        Step: 1101
+
+        Step:
+        1201
+
+        Step: 1301
+
+        Step: 1401
+
+        Step: 1501
+
+        Step:
+        1601
+
+        Step: 1701
+
+        Step: 1801
+
+        Step: 1901
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
+    - id: 1014
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success]'
+      name: DesyncTest_OneStepAdvanceAfterConnect_Success
+      fullName: DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success
+      resultStatus: 1
+      duration: 2.8557794
+      messages: 
+      output: 'Creating Game...
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         Loading subscene with GUID:
         7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        ...
-        done.
+        Server
+        is now listening for connections.
 
-        Got ID message: 1
+        Game already launched, likely
+        joined lobby.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 38602...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 38602...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
 
         Cleaning up 0 destroyed GenericPrefabs
 
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(797:57)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(798:57)
 
 '
       stacktrace: 
@@ -2908,73 +3453,53 @@ MonoBehaviour:
       name: DesyncTest_OneStepAdvanceBeforeConnect_Success
       fullName: DesyncTests.DesyncTest_OneStepAdvanceBeforeConnect_Success
       resultStatus: 1
-      duration: 2.576976
+      duration: 2.543033
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
-
-        Cleaned up.
+        Creating
+        Game...
 
         Creating Game...
 
-        Creating Game...
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
+        mockServer Step 1: Applying
+        1 extra actions
 
-        mockServer Step 1: Applying 1 extra
-        actions
+        mockServer Step 1: Executing rpc: PlayerJoin:0:
 
-        mockServer had no player 0.
+        Player
+        0 created.
 
-        mockServer had no player
-        1.
+        Added playerid 0 to entity Entity(278:41)
 
-        mockServer had no player 2.
+        mockClient
+        Step 1: Applying 1 extra actions
 
-        mockServer had no player
-        3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
-        0f)
+        mockClient Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Applying 1 extra
-        actions
-
-        mockClient had no player 0.
-
-        mockClient had no player
-        1.
-
-        mockClient had no player 2.
-
-        mockClient had no player
-        3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
-        0f)
-
-        Player 0 created.
+        Added playerid 0 to entity
+        Entity(342:53)
 
         Server is now listening for connections.
 
@@ -2986,14 +3511,14 @@ MonoBehaviour:
         ...
         sending save...
 
-        ... wrote 5958...
+        ... wrote 40196...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 5958...
+        ... loading save 40196...
 
         ... creating game...
 
@@ -3017,6 +3542,8 @@ MonoBehaviour:
         Cleaned
         up.
 
+        Added playerid 0 to entity Entity(95:61)
+
 '
       stacktrace: 
       notRunnable: 0
@@ -3032,7 +3559,7 @@ MonoBehaviour:
       name: DesyncTest_ZeroStepAdvance_Success
       fullName: DesyncTests.DesyncTest_ZeroStepAdvance_Success
       resultStatus: 1
-      duration: 2.47289
+      duration: 2.5461564
       messages: 
       output: 'Cleaning up 1 destroyed GenericPrefabs
 
@@ -3069,14 +3596,14 @@ MonoBehaviour:
 
         ... sending save...
 
-        ... wrote 4362...
+        ... wrote 38602...
 
         ...
         sending Id...
 
         Creating ID message: 1
 
-        ... loading save 4362...
+        ... loading save 38602...
 
         ...
         creating game...
@@ -3108,7 +3635,7 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1011
       parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][DesyncTests][suite]'
-    - id: 1023
+    - id: 1024
       uniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
       name: GameLaunchTests
       fullName: GameLaunchTests
@@ -3122,7 +3649,7 @@ MonoBehaviour:
       description: 
       isSuite: 1
       categories: []
-      parentId: 1030
+      parentId: 1031
       parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
     - id: 1036
       uniqueId: 'Boto.Survivor.Tests.dll/GameLaunchTests/[Boto.Survivor.Tests][GameLaunchTests.GameLaunch_LobbyCodeHasServer_ClientConnect]'
@@ -6879,7 +7406,7 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1033
       parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][GameLaunchTests][suite]'
-    - id: 1019
+    - id: 1020
       uniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
       name: StepProviderTests
       fullName: StepProviderTests
@@ -6893,7 +7420,7 @@ MonoBehaviour:
       description: 
       isSuite: 1
       categories: []
-      parentId: 1030
+      parentId: 1031
       parentUniqueId: '[Boto.Survivor.Tests][C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll][suite]'
     - id: 1032
       uniqueId: 'Boto.Survivor.Tests.dll/StepProviderTests/[Boto.Survivor.Tests][StepProviderTests.StepProviderTests_SingleplayerOneStepAdvanceAfterIdle_StepOne]'
@@ -7013,13 +7540,13 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1029
       parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
-    m_ResultText: Boto.Survivor.Tests.dll (24 tests) (46.006s)
+    m_ResultText: DesyncTests (16 tests) (56.905s)
     m_ResultStacktrace: 
     m_TestListState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: e4021aab
-      m_LastClickedID: -1424358684
-      m_ExpandedIDs: e4021aab2ccbe2014bc6fd42ffffff7f
+      m_SelectedIDs: 0e9b03a8
+      m_LastClickedID: -1476158706
+      m_ExpandedIDs: 0e9b03a8e4021aab2ccbe201b6022f224bc6fd42ffffff7f
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -7049,7 +7576,7 @@ MonoBehaviour:
     m_SelectedOption: 0
   - m_Window: {fileID: 0}
     runProgress:
-      RunGuid: 4838ee57-7e6f-4239-991a-673ea045f1b5
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -7061,11 +7588,11 @@ MonoBehaviour:
           assemblyNames: []
         filters:
         - testMode: 2
-          testNames: []
+          testNames:
+          - DesyncTests
           groupNames: []
           categoryNames: []
-          assemblyNames:
-          - Boto.Survivor.Tests
+          assemblyNames: []
         runSynchronously: 0
         playerHeartbeatTimeout: 600
         orderedTestNames: []
@@ -7077,7 +7604,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 1.0000001
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList: []
@@ -7114,3 +7641,139 @@ MonoBehaviour:
       selectedCategories: []
       availableCategories: []
     m_SelectedOption: 0
+--- !u!114 &20
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
+  m_TitleContent:
+    m_Text: Project
+    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Project\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 1050
+    y: 915
+    width: 1509
+    height: 479
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_OverlaysVisible: 1
+  m_SearchFilter:
+    m_NameFilter: 
+    m_ClassNames: []
+    m_AssetLabels: []
+    m_AssetBundleNames: []
+    m_ReferencingInstanceIDs: 
+    m_SceneHandles: 
+    m_ShowAllHits: 0
+    m_SkipHidden: 0
+    m_SearchArea: 1
+    m_Folders:
+    - Assets/Matthew Guz/Hits Effects FREE/Prefab
+    m_Globs: []
+    m_ProductIds: 
+    m_AnyWithAssetOrigin: 0
+    m_OriginalText: 
+    m_ImportLogFlags: 0
+    m_FilterByTypeIntersection: 0
+  m_ViewMode: 1
+  m_StartGridSize: 16
+  m_LastFolders:
+  - Assets/Matthew Guz/Hits Effects FREE/Prefab
+  m_LastFoldersGridSize: -1
+  m_LastProjectPath: C:\Work Repos\Boto.Survivor
+  m_LockTracker:
+    m_IsLocked: 1
+  m_FolderTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 64840100
+    m_LastClickedID: 99428
+    m_ExpandedIDs: 000000004e05010000ca9a3bffffff7f
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_AssetTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 000000004e05010000ca9a3bffffff7f
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_ListAreaState:
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 1
+    m_ExpandedInstanceIDs: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+    m_NewAssetIndexInList: -1
+    m_ScrollPosition: {x: 0, y: 0}
+    m_GridSize: 16
+  m_SkipHiddenPackages: 0
+  m_DirectoriesAreaWidth: 200

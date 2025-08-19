@@ -1,3 +1,4 @@
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Entities;
 using UnityEditor;
@@ -11,6 +12,11 @@ public struct InstancedResourceRequest : ISharedComponentData
     public InstancedResourceRequest(int toSpawn)
     {
         ToSpawn = toSpawn;
+    }
+    
+    public GameManager.InstancedResources Get(World world)
+    {
+        return world.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true)[ToSpawn];
     }
 }
 

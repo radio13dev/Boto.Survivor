@@ -1,55 +1,39 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class RingPopup : Selectable, IPointerClickHandler
+public class RingPopup : EntityLinkMono
 {
-    public GameObject InteractionNotification;
-    public GameObject HeldHighlight;
-    Entity m_LastEntity;
-    public float3 ItemPosition => transform.parent.position;
-
-    public void Focus(World world, Entity nearestE)
+    public RingDisplay RingDisplay;
+    
+    private void OnEnable()
     {
-        if (m_LastEntity != nearestE)
-        {
-            // Update the display
-        }
+        GameEvents.OnEvent += OnGameEvent;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnEvent -= OnGameEvent;
+    }
+    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    {
+        if (eType != GameEvents.Type.VisualsUpdated) return;
+        if (entity != Entity) return;
         
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-        {
-            OnPointerClick(default);
-        }
+        OnSetLink();
     }
     
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnSetLink()
     {
-        if (HandUIController.LastPressed != this)
-        {
-            HandUIController.LastPressed = this;
-            for (int i = 0; i < FingerUI.Instances.Length; i++)
-            {
-                if (!FingerUI.Instances[i].Ring.isActiveAndEnabled)
-                {
-                    FingerUI.Instances[i].Select();
-                    return;
-                }
-            }
-            FingerUI.Instances[0].Select();
-        }
-    }
-
-    protected override void OnDisable()
-    {
-        base.OnDisable();
-        if (HandUIController.LastPressed == this)
-        {
-            HandUIController.LastPressed = null;
-            HandUIController.SetState(HandUIController.State.Closed);
-        }
-        m_LastEntity = Entity.Null;
+        base.OnSetLink();
+        
+        if (!Game.World.EntityManager.HasComponent<RingStats>(Entity)) return;
+        
+        var ringStats = Game.World.EntityManager.GetComponentData<RingStats>(Entity);
+        RingDisplay.UpdateRing(-1, new Ring(){ Stats = ringStats });
     }
 }

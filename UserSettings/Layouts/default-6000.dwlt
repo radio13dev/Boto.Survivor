@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1397
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Inspector
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 1359
+  controlID: 27
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -142,11 +142,11 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 2560
-    height: 970
+    height: 808
   m_MinSize: {x: 300, y: 50}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 1360
+  controlID: 28
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -165,16 +165,15 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1409
-    height: 970
+    width: 1465
+    height: 808
   m_MinSize: {x: 51, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 15}
   m_Panes:
-  - {fileID: 14}
-  - {fileID: 16}
-  - {fileID: 15}
   - {fileID: 13}
+  - {fileID: 14}
+  - {fileID: 15}
   m_Selected: 2
   m_LastSelected: 0
 --- !u!114 &8
@@ -187,23 +186,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: HierarchyWindow
+  m_Name: SceneHierarchyWindow
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.DockArea
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1409
+    x: 1465
     y: 0
-    width: 532
-    height: 970
-  m_MinSize: {x: 202, y: 226}
+    width: 476
+    height: 808
+  m_MinSize: {x: 52, y: 76}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 18}
+  m_ActualView: {fileID: 16}
   m_Panes:
+  - {fileID: 16}
   - {fileID: 17}
-  - {fileID: 18}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -222,12 +221,12 @@ MonoBehaviour:
     x: 1941
     y: 0
     width: 619
-    height: 970
+    height: 808
   m_MinSize: {x: 276, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 19}
+  m_ActualView: {fileID: 18}
   m_Panes:
-  - {fileID: 19}
+  - {fileID: 18}
   m_Selected: 0
   m_LastSelected: 0
 --- !u!114 &10
@@ -248,13 +247,13 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 970
+    y: 808
     width: 2560
-    height: 371
+    height: 533
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 57
+  controlID: 118
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -274,16 +273,16 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 1050
-    height: 371
+    height: 533
   m_MinSize: {x: 231, y: 276}
   m_MaxSize: {x: 10001, y: 10026}
-  m_ActualView: {fileID: 23}
+  m_ActualView: {fileID: 19}
   m_Panes:
-  - {fileID: 23}
+  - {fileID: 19}
   - {fileID: 20}
   - {fileID: 21}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 0
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -294,7 +293,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ConsoleWindow
+  m_Name: TestRunnerWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -302,1194 +301,17 @@ MonoBehaviour:
     x: 1050
     y: 0
     width: 1510
-    height: 371
-  m_MinSize: {x: 101, y: 126}
+    height: 533
+  m_MinSize: {x: 51, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 22}
+  m_ActualView: {fileID: 23}
   m_Panes:
   - {fileID: 22}
+  - {fileID: 23}
   - {fileID: 24}
-  m_Selected: 0
+  m_Selected: 1
   m_LastSelected: 0
 --- !u!114 &13
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 924ffcbe75518854f97b48776d0f1939, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ShaderGraph.Editor::UnityEditor.ShaderGraph.Drawing.MaterialGraphEditWindow
-  m_MinSize: {x: 50, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Gem_Instanced
-    m_Image: {fileID: 2800000, guid: 7129268cf102b2f45809905bcb27ce8b, type: 3}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Gem_Instanced\u200B"
-  m_Pos:
-    serializedVersion: 2
-    x: 0
-    y: 79
-    width: 1632
-    height: 1107
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_OverlaysVisible: 1
-  m_Selected: 60ed2d7aab43fa64aa16680d77f1f8b8
-  m_GraphObject: {fileID: 0}
-  m_LastSerializedFileContents: "{\n    \"m_SGVersion\": 3,\n    \"m_Type\": \"UnityEditor.ShaderGraph.GraphData\",\n   
-    \"m_ObjectId\": \"2ffcb580fef14c32ba4c46963cdca5c8\",\n    \"m_Properties\":
-    [\n        {\n            \"m_Id\": \"6f25cb1cdc8442549bf37d36bdfae942\"\n       
-    },\n        {\n            \"m_Id\": \"e56d91b8fa0b40c9b1778b80743f3722\"\n       
-    },\n        {\n            \"m_Id\": \"06876b59f49a4b90802fb84c6816dfef\"\n       
-    },\n        {\n            \"m_Id\": \"d9f433008dc64be7aa4d805f22d6b427\"\n       
-    },\n        {\n            \"m_Id\": \"80d26f77c72f4fa0b706026ee46a02ee\"\n       
-    },\n        {\n            \"m_Id\": \"4e2a53e09c764db19ad5d26eddb777bb\"\n       
-    },\n        {\n            \"m_Id\": \"75f3577da96042bea93bddc2083b1df7\"\n       
-    },\n        {\n            \"m_Id\": \"f6e9df0ae6a2454888e8626e74a4f45e\"\n       
-    }\n    ],\n    \"m_Keywords\": [],\n    \"m_Dropdowns\": [],\n    \"m_CategoryData\":
-    [\n        {\n            \"m_Id\": \"69337b9b7c4644a580a94698deb54e9e\"\n       
-    }\n    ],\n    \"m_Nodes\": [\n        {\n            \"m_Id\": \"5f85636026ed4940b15f5509c7e9c3af\"\n       
-    },\n        {\n            \"m_Id\": \"93b05e18a81b46d4a63258da25049f7f\"\n       
-    },\n        {\n            \"m_Id\": \"b3013300f09349288d429214badbe9a5\"\n       
-    },\n        {\n            \"m_Id\": \"bdc77262d5d442ef9f6ee65a82e052ca\"\n       
-    },\n        {\n            \"m_Id\": \"cfb5fa2349774e51b15b4c05202a4523\"\n       
-    },\n        {\n            \"m_Id\": \"b4d4a98569a1490c8387f2d55d267433\"\n       
-    },\n        {\n            \"m_Id\": \"fb04eea6c9f14bbcafcfd113fc73a775\"\n       
-    },\n        {\n            \"m_Id\": \"ddc15e9fce324380baf87d22911fdb72\"\n       
-    },\n        {\n            \"m_Id\": \"c8f6ab3670334b4d8c45fe9e510f0d05\"\n       
-    },\n        {\n            \"m_Id\": \"1d7c16cd677d4419815fa5592736be69\"\n       
-    },\n        {\n            \"m_Id\": \"41c7776de7d344c0b47f31b441739ad4\"\n       
-    },\n        {\n            \"m_Id\": \"92bf8686c07a45ab83394e45f22066cf\"\n       
-    },\n        {\n            \"m_Id\": \"49fbdee6b4dd4e1cb2ca14690f3cba46\"\n       
-    },\n        {\n            \"m_Id\": \"52de3ce7113848c7b5ffde70de1cc3d4\"\n       
-    },\n        {\n            \"m_Id\": \"2e8279b21c51482d9bbedb40c560e1fb\"\n       
-    },\n        {\n            \"m_Id\": \"55eef458208d4cacaae6de96f0929272\"\n       
-    },\n        {\n            \"m_Id\": \"31311fb8beea469499a2cca77b9717b0\"\n       
-    },\n        {\n            \"m_Id\": \"b45fc1f9b2114dcaa8d49a230897442d\"\n       
-    },\n        {\n            \"m_Id\": \"c763cec004b14d5482c026b0da67f2e6\"\n       
-    },\n        {\n            \"m_Id\": \"a573dc8fea54451e8aa89843d5a7c491\"\n       
-    },\n        {\n            \"m_Id\": \"9efacadc7aa34e868693dcd9395cb9fa\"\n       
-    },\n        {\n            \"m_Id\": \"80a600a3beb149948482007d55b7b4e4\"\n       
-    },\n        {\n            \"m_Id\": \"fced6a109d8d469ba18e2cd7b59edd3e\"\n       
-    },\n        {\n            \"m_Id\": \"84f6f4f592894ff78fd6580566e330bc\"\n       
-    },\n        {\n            \"m_Id\": \"71ef7444fa3d4a5694f86f6f195e136d\"\n       
-    },\n        {\n            \"m_Id\": \"91d897d7fbb345ee8a2a14dea21f3c7c\"\n       
-    },\n        {\n            \"m_Id\": \"50d503ac720e448e82d8f1c42b49f144\"\n       
-    },\n        {\n            \"m_Id\": \"0dd030866ba04d67ad2ad14c9d45b049\"\n       
-    },\n        {\n            \"m_Id\": \"3c56cdf4fc6d4605bec717113f0d54e7\"\n       
-    }\n    ],\n    \"m_GroupDatas\": [],\n    \"m_StickyNoteDatas\": [],\n    \"m_Edges\":
-    [\n        {\n            \"m_OutputSlot\": {\n                \"m_Node\": {\n                   
-    \"m_Id\": \"0dd030866ba04d67ad2ad14c9d45b049\"\n                },\n               
-    \"m_SlotId\": 1\n            },\n            \"m_InputSlot\": {\n               
-    \"m_Node\": {\n                    \"m_Id\": \"a573dc8fea54451e8aa89843d5a7c491\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"1d7c16cd677d4419815fa5592736be69\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fb04eea6c9f14bbcafcfd113fc73a775\"\n               
-    },\n                \"m_SlotId\": -2054543868\n            }\n        },\n       
-    {\n            \"m_OutputSlot\": {\n                \"m_Node\": {\n                   
-    \"m_Id\": \"2e8279b21c51482d9bbedb40c560e1fb\"\n                },\n               
-    \"m_SlotId\": 3\n            },\n            \"m_InputSlot\": {\n               
-    \"m_Node\": {\n                    \"m_Id\": \"cfb5fa2349774e51b15b4c05202a4523\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"31311fb8beea469499a2cca77b9717b0\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fb04eea6c9f14bbcafcfd113fc73a775\"\n               
-    },\n                \"m_SlotId\": 808513695\n            }\n        },\n       
-    {\n            \"m_OutputSlot\": {\n                \"m_Node\": {\n                   
-    \"m_Id\": \"3c56cdf4fc6d4605bec717113f0d54e7\"\n                },\n               
-    \"m_SlotId\": 0\n            },\n            \"m_InputSlot\": {\n               
-    \"m_Node\": {\n                    \"m_Id\": \"9efacadc7aa34e868693dcd9395cb9fa\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"49fbdee6b4dd4e1cb2ca14690f3cba46\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"2e8279b21c51482d9bbedb40c560e1fb\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"50d503ac720e448e82d8f1c42b49f144\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"0dd030866ba04d67ad2ad14c9d45b049\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"52de3ce7113848c7b5ffde70de1cc3d4\"\n                },\n                \"m_SlotId\":
-    4\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"49fbdee6b4dd4e1cb2ca14690f3cba46\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"55eef458208d4cacaae6de96f0929272\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fb04eea6c9f14bbcafcfd113fc73a775\"\n               
-    },\n                \"m_SlotId\": 1951148708\n            }\n        },\n       
-    {\n            \"m_OutputSlot\": {\n                \"m_Node\": {\n                   
-    \"m_Id\": \"71ef7444fa3d4a5694f86f6f195e136d\"\n                },\n               
-    \"m_SlotId\": 0\n            },\n            \"m_InputSlot\": {\n               
-    \"m_Node\": {\n                    \"m_Id\": \"80a600a3beb149948482007d55b7b4e4\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"80a600a3beb149948482007d55b7b4e4\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fced6a109d8d469ba18e2cd7b59edd3e\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"84f6f4f592894ff78fd6580566e330bc\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"9efacadc7aa34e868693dcd9395cb9fa\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"91d897d7fbb345ee8a2a14dea21f3c7c\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fced6a109d8d469ba18e2cd7b59edd3e\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"92bf8686c07a45ab83394e45f22066cf\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"c8f6ab3670334b4d8c45fe9e510f0d05\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"9efacadc7aa34e868693dcd9395cb9fa\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"80a600a3beb149948482007d55b7b4e4\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"a573dc8fea54451e8aa89843d5a7c491\"\n                },\n                \"m_SlotId\":
-    1\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"9efacadc7aa34e868693dcd9395cb9fa\"\n               
-    },\n                \"m_SlotId\": 3\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"a573dc8fea54451e8aa89843d5a7c491\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"80a600a3beb149948482007d55b7b4e4\"\n               
-    },\n                \"m_SlotId\": 3\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"a573dc8fea54451e8aa89843d5a7c491\"\n                },\n                \"m_SlotId\":
-    3\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"fced6a109d8d469ba18e2cd7b59edd3e\"\n               
-    },\n                \"m_SlotId\": 3\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"b45fc1f9b2114dcaa8d49a230897442d\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"50d503ac720e448e82d8f1c42b49f144\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"b4d4a98569a1490c8387f2d55d267433\"\n                },\n                \"m_SlotId\":
-    1\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"49fbdee6b4dd4e1cb2ca14690f3cba46\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"b4d4a98569a1490c8387f2d55d267433\"\n                },\n                \"m_SlotId\":
-    1\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"92bf8686c07a45ab83394e45f22066cf\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"c763cec004b14d5482c026b0da67f2e6\"\n                },\n                \"m_SlotId\":
-    0\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"b4d4a98569a1490c8387f2d55d267433\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"c8f6ab3670334b4d8c45fe9e510f0d05\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"ddc15e9fce324380baf87d22911fdb72\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"ddc15e9fce324380baf87d22911fdb72\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"bdc77262d5d442ef9f6ee65a82e052ca\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"fb04eea6c9f14bbcafcfd113fc73a775\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"52de3ce7113848c7b5ffde70de1cc3d4\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"fb04eea6c9f14bbcafcfd113fc73a775\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"ddc15e9fce324380baf87d22911fdb72\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"fb04eea6c9f14bbcafcfd113fc73a775\"\n                },\n                \"m_SlotId\":
-    3\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"c8f6ab3670334b4d8c45fe9e510f0d05\"\n               
-    },\n                \"m_SlotId\": 0\n            }\n        },\n        {\n           
-    \"m_OutputSlot\": {\n                \"m_Node\": {\n                    \"m_Id\":
-    \"fced6a109d8d469ba18e2cd7b59edd3e\"\n                },\n                \"m_SlotId\":
-    2\n            },\n            \"m_InputSlot\": {\n                \"m_Node\":
-    {\n                    \"m_Id\": \"92bf8686c07a45ab83394e45f22066cf\"\n               
-    },\n                \"m_SlotId\": 1\n            }\n        }\n    ],\n    \"m_VertexContext\":
-    {\n        \"m_Position\": {\n            \"x\": 3259.000244140625,\n           
-    \"y\": -2.000009298324585\n        },\n        \"m_Blocks\": [\n            {\n               
-    \"m_Id\": \"5f85636026ed4940b15f5509c7e9c3af\"\n            },\n            {\n               
-    \"m_Id\": \"93b05e18a81b46d4a63258da25049f7f\"\n            },\n            {\n               
-    \"m_Id\": \"b3013300f09349288d429214badbe9a5\"\n            }\n        ]\n   
-    },\n    \"m_FragmentContext\": {\n        \"m_Position\": {\n            \"x\":
-    3259.000244140625,\n            \"y\": 198.00001525878907\n        },\n       
-    \"m_Blocks\": [\n            {\n                \"m_Id\": \"bdc77262d5d442ef9f6ee65a82e052ca\"\n           
-    },\n            {\n                \"m_Id\": \"cfb5fa2349774e51b15b4c05202a4523\"\n           
-    },\n            {\n                \"m_Id\": \"41c7776de7d344c0b47f31b441739ad4\"\n           
-    }\n        ]\n    },\n    \"m_PreviewData\": {\n        \"serializedMesh\": {\n           
-    \"m_SerializedMesh\": \"{\\\"mesh\\\":{\\\"instanceID\\\":0}}\",\n           
-    \"m_Guid\": \"\"\n        },\n        \"preventRotation\": false\n    },\n   
-    \"m_Path\": \"Shader Graphs\",\n    \"m_GraphPrecision\": 0,\n    \"m_PreviewMode\":
-    2,\n    \"m_OutputNode\": {\n        \"m_Id\": \"\"\n    },\n    \"m_SubDatas\":
-    [],\n    \"m_ActiveTargets\": [\n        {\n            \"m_Id\": \"f4d12a76d4fa40b89599715f0ff4dfeb\"\n       
-    }\n    ]\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"02f163453cd64b52afafed30ffa85642\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Base\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Base\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\":
-    \"03431197be974c648e97ae1dcd550719\",\n    \"m_Id\": 2,\n    \"m_DisplayName\":
-    \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n       
-    \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n   
-    \"m_ObjectId\": \"0485e17ec9e248c693c87403f112092e\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"G\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"G\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\":
-    1,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty\",\n   
-    \"m_ObjectId\": \"06876b59f49a4b90802fb84c6816dfef\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"e30e7cba-6311-44e6-95b3-2e62c5ce0984\"\n    },\n    \"m_Name\":
-    \"EdgePower\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"EdgePower\",\n    \"m_DefaultReferenceName\": \"_EdgePower\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": 1.0,\n    \"m_FloatType\": 0,\n    \"m_RangeValues\": {\n       
-    \"x\": 0.0,\n        \"y\": 1.0\n    },\n    \"m_SliderType\": 0,\n    \"m_SliderPower\":
-    3.0,\n    \"m_EnumType\": 0,\n    \"m_CSharpEnumString\": \"\",\n    \"m_EnumNames\":
-    [\n        \"Default\"\n    ],\n    \"m_EnumValues\": [\n        0\n    ]\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.PositionMaterialSlot\",\n   
-    \"m_ObjectId\": \"08560db3fd4f4a21a9946d117f3d1212\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Position\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Position\",\n    \"m_StageCapability\": 1,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0\n    },\n    \"m_Labels\": [],\n    \"m_Space\": 0\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"0dabadc7651b4a21b36115a2cc037532\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"Blend\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Blend\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.NormalizeNode\",\n    \"m_ObjectId\": \"0dd030866ba04d67ad2ad14c9d45b049\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Normalize\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1151.0,\n            \"y\":
-    1113.0,\n            \"width\": 207.9998779296875,\n            \"height\": 278.0\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"60560d04995342c596388dbb302da063\"\n       
-    },\n        {\n            \"m_Id\": \"2e8de103f9bf41e0a86431aa9283f98e\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n   
-    \"m_ObjectId\": \"0e1c32db2ba34d50b784085bb95461a3\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"e00\": 0.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 0.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 0.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"e00\": 1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 1.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n    \"m_ObjectId\":
-    \"1502bc54e0a3426b9cea63590ceabd8f\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"EdgeColor\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n       
-    \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"1d7c16cd677d4419815fa5592736be69\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2305.999755859375,\n           
-    \"y\": 437.9999694824219,\n            \"width\": 132.0,\n            \"height\":
-    34.000030517578128\n        }\n    },\n    \"m_Slots\": [\n        {\n           
-    \"m_Id\": \"1502bc54e0a3426b9cea63590ceabd8f\"\n        }\n    ],\n    \"synonyms\":
-    [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\":
-    0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\":
-    []\n    },\n    \"m_Property\": {\n        \"m_Id\": \"e56d91b8fa0b40c9b1778b80743f3722\"\n   
-    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n   
-    \"m_ObjectId\": \"206f40f35ad34b9a9603432d2768cc30\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"2540d59f97424bf6b5bd13508a5dcbbf\",\n    \"m_Id\": 3,\n    \"m_DisplayName\":
-    \"Opacity\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Opacity\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\":
-    1.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"298baa4d6bd749d0a5f673a189755e18\",\n   
-    \"m_Id\": 808513695,\n    \"m_DisplayName\": \"EdgeScale\",\n    \"m_SlotType\":
-    0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"_EdgeScale\",\n   
-    \"m_StageCapability\": 3,\n    \"m_Value\": 1.5,\n    \"m_DefaultValue\": 0.0,\n   
-    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.ClampNode\",\n   
-    \"m_ObjectId\": \"2e8279b21c51482d9bbedb40c560e1fb\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Clamp\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 3038.999755859375,\n            \"y\": 197.99998474121095,\n           
-    \"width\": 140.0,\n            \"height\": 142.00001525878907\n        }\n   
-    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"d1be362bb501425588cb2db70fd1c481\"\n       
-    },\n        {\n            \"m_Id\": \"e66d3fa3c85f4b27b91e9bc405d6a525\"\n       
-    },\n        {\n            \"m_Id\": \"7d5a33b4af7f40d8a78345e59375e196\"\n       
-    },\n        {\n            \"m_Id\": \"39324bfecc08493fb7411bb75f302a3e\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"limit\"\n    ],\n    \"m_Precision\":
-    0,\n    \"m_PreviewExpanded\": false,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"2e8de103f9bf41e0a86431aa9283f98e\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"31311fb8beea469499a2cca77b9717b0\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2306.0,\n            \"y\":
-    181.0,\n            \"width\": 130.0,\n            \"height\": 34.0\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"8f91593d11f549388583e2aee4b7c5ae\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_Property\": {\n       
-    \"m_Id\": \"d9f433008dc64be7aa4d805f22d6b427\"\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"330fa93a93ee484a986d3b307ec364ba\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"In\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"In\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n    \"m_ObjectId\":
-    \"343bf4948e3d47c39d29a2433fb17068\",\n    \"m_Id\": 2,\n    \"m_DisplayName\":
-    \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"e00\":
-    0.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n        \"e03\": 0.0,\n       
-    \"e10\": 0.0,\n        \"e11\": 0.0,\n        \"e12\": 0.0,\n        \"e13\":
-    0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n        \"e22\": 0.0,\n       
-    \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\": 0.0,\n        \"e32\":
-    0.0,\n        \"e33\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"e00\":
-    1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n        \"e03\": 0.0,\n       
-    \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\": 0.0,\n        \"e13\":
-    0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n        \"e22\": 1.0,\n       
-    \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\": 0.0,\n        \"e32\":
-    0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"37bc77bebb9b4d12b119b602599947a5\",\n   
-    \"m_Id\": 3,\n    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"39324bfecc08493fb7411bb75f302a3e\",\n    \"m_Id\": 3,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"3942bf75998e4816a54d74addba5c9cc\",\n    \"m_Id\": 4,\n    \"m_DisplayName\":
-    \"A\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"A\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"3c56cdf4fc6d4605bec717113f0d54e7\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1743.0001220703125,\n           
-    \"y\": 420.0000305175781,\n            \"width\": 131.0001220703125,\n           
-    \"height\": 34.000030517578128\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"f47f6af9c7e14640b66b50194e1e1ad9\"\n        }\n   
-    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_Property\": {\n       
-    \"m_Id\": \"f6e9df0ae6a2454888e8626e74a4f45e\"\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n    \"m_ObjectId\":
-    \"41c7776de7d344c0b47f31b441739ad4\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"SurfaceDescription.AlphaClipThreshold\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n           
-    \"width\": 0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\":
-    [\n        {\n            \"m_Id\": \"68742ed888dd4bd19d3429f94d17da5f\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"SurfaceDescription.AlphaClipThreshold\"\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"4212d584d65241fd83fd3b7ebb198807\",\n    \"m_Id\": 1951148708,\n    \"m_DisplayName\":
-    \"EdgePower\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"_EdgePower\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.AddNode\",\n    \"m_ObjectId\": \"49fbdee6b4dd4e1cb2ca14690f3cba46\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Add\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2861.0,\n            \"y\":
-    139.0,\n            \"width\": 126.0,\n            \"height\": 118.0\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"beff2266d9ca416f8391da0fd42c6b5c\"\n       
-    },\n        {\n            \"m_Id\": \"dcb1affe2c0c4e97b91e4c38d38156ba\"\n       
-    },\n        {\n            \"m_Id\": \"b00325415c9546d89b63522d8dd67810\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"addition\",\n        \"sum\",\n       
-    \"plus\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": false,\n   
-    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n    \"m_ObjectId\":
-    \"4bee6f23b42d41c290ae307f4c16ced2\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"B\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n       
-    \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"4cc5d252327c4cf981b8ca320a0514ac\",\n   
-    \"m_Id\": 4,\n    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 3,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.ColorShaderProperty\",\n   
-    \"m_ObjectId\": \"4e2a53e09c764db19ad5d26eddb777bb\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"6980e6f7-08d5-4b21-bf6b-dc96dd6414c7\"\n    },\n    \"m_Name\":
-    \"B\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"B\",\n    \"m_DefaultReferenceName\": \"_B\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"r\": 1.0,\n        \"g\": 0.0,\n        \"b\":
-    0.9450980424880981,\n        \"a\": 1.0\n    },\n    \"isMainColor\": false,\n   
-    \"m_ColorMode\": 0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.AddNode\",\n   
-    \"m_ObjectId\": \"50d503ac720e448e82d8f1c42b49f144\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Add\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 1151.0,\n            \"y\": 767.9999389648438,\n           
-    \"width\": 207.9998779296875,\n            \"height\": 302.00006103515627\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"62493d9ee84c4c5abde1a91c3f17f460\"\n       
-    },\n        {\n            \"m_Id\": \"cc325bbd50b2466d92f910301ed31fd7\"\n       
-    },\n        {\n            \"m_Id\": \"03431197be974c648e97ae1dcd550719\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"addition\",\n        \"sum\",\n       
-    \"plus\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n   
-    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"51c3e85e743047dd8996d46e20ed09e1\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.SplitNode\",\n    \"m_ObjectId\": \"52de3ce7113848c7b5ffde70de1cc3d4\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Split\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2710.999755859375,\n           
-    \"y\": 228.99998474121095,\n            \"width\": 120.000244140625,\n           
-    \"height\": 149.00001525878907\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"330fa93a93ee484a986d3b307ec364ba\"\n        },\n       
-    {\n            \"m_Id\": \"7e03f2ccfdab4340a2bd1ea89cb805ad\"\n        },\n       
-    {\n            \"m_Id\": \"0485e17ec9e248c693c87403f112092e\"\n        },\n       
-    {\n            \"m_Id\": \"d02f9b65567a4c1a877cd0adaf7b124d\"\n        },\n       
-    {\n            \"m_Id\": \"3942bf75998e4816a54d74addba5c9cc\"\n        }\n   
-    ],\n    \"synonyms\": [\n        \"separate\"\n    ],\n    \"m_Precision\": 0,\n   
-    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"52e565d87c4046ea9970163835dadb45\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"In\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"In\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"55eef458208d4cacaae6de96f0929272\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2306.0,\n            \"y\":
-    122.0,\n            \"width\": 135.0,\n            \"height\": 34.0\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"65619708c67047b5a791c740a2a7935d\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_Property\": {\n       
-    \"m_Id\": \"06876b59f49a4b90802fb84c6816dfef\"\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"56723d9e52c645ce867f5a93cedba07d\",\n    \"m_Id\": 2,\n    \"m_DisplayName\":
-    \"Y\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Y\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": [\n        \"Y\"\n    ]\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n    \"m_ObjectId\":
-    \"5f85636026ed4940b15f5509c7e9c3af\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"VertexDescription.Position\",\n    \"m_DrawState\":
-    {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n            \"width\":
-    0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"08560db3fd4f4a21a9946d117f3d1212\"\n        }\n   
-    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"VertexDescription.Position\"\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"60560d04995342c596388dbb302da063\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"In\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"In\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n   
-    \"m_ObjectId\": \"61558de2c8d54d2ea6c20c9fa950eb39\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"e00\": 0.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 0.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 0.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"e00\": 1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 1.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"61a4965c9ff94fa9a9a4abef7911dbb1\",\n    \"m_Id\": 1,\n    \"m_DisplayName\":
-    \"X\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"X\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"62493d9ee84c4c5abde1a91c3f17f460\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"62683605b9e4412ea086d20a39d7054f\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"65619708c67047b5a791c740a2a7935d\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"EdgePower\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"68742ed888dd4bd19d3429f94d17da5f\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"Alpha Clip Threshold\",\n    \"m_SlotType\":
-    0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"AlphaClipThreshold\",\n   
-    \"m_StageCapability\": 2,\n    \"m_Value\": 0.5,\n    \"m_DefaultValue\": 0.5,\n   
-    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.CategoryData\",\n   
-    \"m_ObjectId\": \"69337b9b7c4644a580a94698deb54e9e\",\n    \"m_Name\": \"\",\n   
-    \"m_ChildObjectList\": [\n        {\n            \"m_Id\": \"6f25cb1cdc8442549bf37d36bdfae942\"\n       
-    },\n        {\n            \"m_Id\": \"e56d91b8fa0b40c9b1778b80743f3722\"\n       
-    },\n        {\n            \"m_Id\": \"06876b59f49a4b90802fb84c6816dfef\"\n       
-    },\n        {\n            \"m_Id\": \"d9f433008dc64be7aa4d805f22d6b427\"\n       
-    },\n        {\n            \"m_Id\": \"f6e9df0ae6a2454888e8626e74a4f45e\"\n       
-    },\n        {\n            \"m_Id\": \"80d26f77c72f4fa0b706026ee46a02ee\"\n       
-    },\n        {\n            \"m_Id\": \"4e2a53e09c764db19ad5d26eddb777bb\"\n       
-    },\n        {\n            \"m_Id\": \"75f3577da96042bea93bddc2083b1df7\"\n       
-    }\n    ]\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty\",\n   
-    \"m_ObjectId\": \"6f25cb1cdc8442549bf37d36bdfae942\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"7df7391d-b077-4394-83fe-7b5dd4b7cc06\"\n    },\n    \"m_Name\":
-    \"Base Map\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"Base Map\",\n    \"m_DefaultReferenceName\": \"_Base_Map\",\n    \"m_OverrideReferenceName\":
-    \"_BaseMap\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"m_SerializedTexture\": \"{\\\"texture\\\":{\\\"fileID\\\":2800000,\\\"guid\\\":\\\"e777c51a30da5d94288474e7087192e8\\\",\\\"type\\\":3}}\",\n       
-    \"m_Guid\": \"\"\n    },\n    \"isMainTexture\": true,\n    \"useTilingAndOffset\":
-    true,\n    \"useTexelSize\": true,\n    \"m_Modifiable\": true,\n    \"m_DefaultType\":
-    0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.PropertyNode\",\n   
-    \"m_ObjectId\": \"71ef7444fa3d4a5694f86f6f195e136d\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 1778.000244140625,\n            \"y\": 862.0001220703125,\n           
-    \"width\": 85.0,\n            \"height\": 33.99993896484375\n        }\n    },\n   
-    \"m_Slots\": [\n        {\n            \"m_Id\": \"4bee6f23b42d41c290ae307f4c16ced2\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_Property\": {\n       
-    \"m_Id\": \"4e2a53e09c764db19ad5d26eddb777bb\"\n    }\n}\n\n{\n    \"m_SGVersion\":
-    3,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.ColorShaderProperty\",\n   
-    \"m_ObjectId\": \"75f3577da96042bea93bddc2083b1df7\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"bb95d69a-5ab6-45bc-9e38-55cb51312414\"\n    },\n    \"m_Name\":
-    \"C\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"C\",\n    \"m_DefaultReferenceName\": \"_C\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"r\": 0.0,\n        \"g\": 0.8745098114013672,\n       
-    \"b\": 1.0,\n        \"a\": 1.0\n    },\n    \"isMainColor\": false,\n    \"m_ColorMode\":
-    0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.ColorRGBMaterialSlot\",\n   
-    \"m_ObjectId\": \"7c3a66aafbee4fd3b95087ee6782d904\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Base Color\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"BaseColor\",\n    \"m_StageCapability\":
-    2,\n    \"m_Value\": {\n        \"x\": 0.7353569269180298,\n        \"y\": 0.7353569269180298,\n       
-    \"z\": 0.7353569269180298\n    },\n    \"m_DefaultValue\": {\n        \"x\":
-    0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    },\n    \"m_Labels\": [],\n   
-    \"m_ColorMode\": 0,\n    \"m_DefaultColor\": {\n        \"r\": 0.5,\n       
-    \"g\": 0.5,\n        \"b\": 0.5,\n        \"a\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"7d5a33b4af7f40d8a78345e59375e196\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"Max\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Max\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 1.0,\n        \"y\": 1.0,\n        \"z\": 1.0,\n        \"w\":
-    1.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"7e03f2ccfdab4340a2bd1ea89cb805ad\",\n    \"m_Id\": 1,\n    \"m_DisplayName\":
-    \"R\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"R\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.BlendNode\",\n    \"m_ObjectId\": \"80a600a3beb149948482007d55b7b4e4\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Blend\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1875.0001220703125,\n           
-    \"y\": 808.0000610351563,\n            \"width\": 207.9998779296875,\n           
-    \"height\": 360.00006103515627\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"f82de6a7c7b64ef69af891343eb52ca1\"\n        },\n       
-    {\n            \"m_Id\": \"fa05868afbae41fc9481a3cf0647ad8a\"\n        },\n       
-    {\n            \"m_Id\": \"2540d59f97424bf6b5bd13508a5dcbbf\"\n        },\n       
-    {\n            \"m_Id\": \"e565183637a84ea38a9edda12cc3afb0\"\n        }\n   
-    ],\n    \"synonyms\": [\n        \"burn\",\n        \"darken\",\n        \"difference\",\n       
-    \"dodge\",\n        \"divide\",\n        \"exclusion\",\n        \"hard light\",\n       
-    \"hard mix\",\n        \"linear burn\",\n        \"linear dodge\",\n        \"linear
-    light\",\n        \"multiply\",\n        \"negate\",\n        \"overlay\",\n       
-    \"pin light\",\n        \"screen\",\n        \"soft light\",\n        \"subtract\",\n       
-    \"vivid light\",\n        \"overwrite\"\n    ],\n    \"m_Precision\": 0,\n   
-    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    },\n   
-    \"m_BlendMode\": 10\n}\n\n{\n    \"m_SGVersion\": 3,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.ColorShaderProperty\",\n   
-    \"m_ObjectId\": \"80d26f77c72f4fa0b706026ee46a02ee\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"5a65aded-bfe4-45d8-8418-a3c7963bd826\"\n    },\n    \"m_Name\":
-    \"A\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"A\",\n    \"m_DefaultReferenceName\": \"_A\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"r\": 0.16470588743686677,\n        \"g\":
-    0.0,\n        \"b\": 1.0,\n        \"a\": 1.0\n    },\n    \"isMainColor\": false,\n   
-    \"m_ColorMode\": 0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"847013ae325d4b758f824ce67738c664\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"84f6f4f592894ff78fd6580566e330bc\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1805.0001220703125,\n           
-    \"y\": 458.0000305175781,\n            \"width\": 85.0,\n            \"height\":
-    34.000030517578128\n        }\n    },\n    \"m_Slots\": [\n        {\n           
-    \"m_Id\": \"206f40f35ad34b9a9603432d2768cc30\"\n        }\n    ],\n    \"synonyms\":
-    [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\":
-    0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\":
-    []\n    },\n    \"m_Property\": {\n        \"m_Id\": \"80d26f77c72f4fa0b706026ee46a02ee\"\n   
-    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.TangentMaterialSlot\",\n   
-    \"m_ObjectId\": \"8dac397eb380455997b9c10c366cc28b\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Tangent\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Tangent\",\n    \"m_StageCapability\": 1,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0\n    },\n    \"m_Labels\": [],\n    \"m_Space\": 0\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"8f91593d11f549388583e2aee4b7c5ae\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"EdgeScale\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.PropertyNode\",\n    \"m_ObjectId\": \"91d897d7fbb345ee8a2a14dea21f3c7c\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Property\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1778.000244140625,\n           
-    \"y\": 1263.0001220703125,\n            \"width\": 85.9998779296875,\n           
-    \"height\": 34.0\n        }\n    },\n    \"m_Slots\": [\n        {\n           
-    \"m_Id\": \"b6f59db21f53451c91b66591b41509aa\"\n        }\n    ],\n    \"synonyms\":
-    [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\":
-    0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\":
-    []\n    },\n    \"m_Property\": {\n        \"m_Id\": \"75f3577da96042bea93bddc2083b1df7\"\n   
-    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.MultiplyNode\",\n   
-    \"m_ObjectId\": \"92bf8686c07a45ab83394e45f22066cf\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Multiply\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 2419.0,\n            \"y\": 602.0,\n            \"width\":
-    208.0,\n            \"height\": 302.0\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"61558de2c8d54d2ea6c20c9fa950eb39\"\n        },\n       
-    {\n            \"m_Id\": \"cc2a3ebb7a784059911a8bcf6fe87c95\"\n        },\n       
-    {\n            \"m_Id\": \"343bf4948e3d47c39d29a2433fb17068\"\n        }\n   
-    ],\n    \"synonyms\": [\n        \"multiplication\",\n        \"times\",\n       
-    \"x\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n   
-    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n    \"m_ObjectId\":
-    \"93b05e18a81b46d4a63258da25049f7f\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"VertexDescription.Normal\",\n    \"m_DrawState\":
-    {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n            \"width\":
-    0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"a03cdaeef9704c5d80f2c45dde63fd5a\"\n        }\n   
-    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"VertexDescription.Normal\"\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"973368f0631940b797505e786298a0bb\",\n   
-    \"m_Id\": 3,\n    \"m_DisplayName\": \"Opacity\",\n    \"m_SlotType\": 0,\n   
-    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"Opacity\",\n    \"m_StageCapability\":
-    3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 1.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n   
-    \"m_ObjectId\": \"9eb09d7199914c97be448c76950e3561\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"e00\": 2.0,\n        \"e01\": 2.0,\n        \"e02\": 2.0,\n       
-    \"e03\": 2.0,\n        \"e10\": 2.0,\n        \"e11\": 2.0,\n        \"e12\":
-    2.0,\n        \"e13\": 2.0,\n        \"e20\": 2.0,\n        \"e21\": 2.0,\n       
-    \"e22\": 2.0,\n        \"e23\": 2.0,\n        \"e30\": 2.0,\n        \"e31\":
-    2.0,\n        \"e32\": 2.0,\n        \"e33\": 2.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"e00\": 1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 1.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlendNode\",\n    \"m_ObjectId\":
-    \"9efacadc7aa34e868693dcd9395cb9fa\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"Blend\",\n    \"m_DrawState\": {\n        \"m_Expanded\":
-    true,\n        \"m_Position\": {\n            \"serializedVersion\": \"2\",\n           
-    \"x\": 1907.0001220703125,\n            \"y\": 396.0,\n            \"width\":
-    207.9998779296875,\n            \"height\": 360.0\n        }\n    },\n    \"m_Slots\":
-    [\n        {\n            \"m_Id\": \"02f163453cd64b52afafed30ffa85642\"\n       
-    },\n        {\n            \"m_Id\": \"c3fb80805d0245c28c9ad293e6f46744\"\n       
-    },\n        {\n            \"m_Id\": \"c448aae3964a4af387c37e3872465923\"\n       
-    },\n        {\n            \"m_Id\": \"ad8ec3f568534205b2f8bd84bc3dc50f\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"burn\",\n        \"darken\",\n       
-    \"difference\",\n        \"dodge\",\n        \"divide\",\n        \"exclusion\",\n       
-    \"hard light\",\n        \"hard mix\",\n        \"linear burn\",\n        \"linear
-    dodge\",\n        \"linear light\",\n        \"multiply\",\n        \"negate\",\n       
-    \"overlay\",\n        \"pin light\",\n        \"screen\",\n        \"soft light\",\n       
-    \"subtract\",\n        \"vivid light\",\n        \"overwrite\"\n    ],\n    \"m_Precision\":
-    0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    },\n   
-    \"m_BlendMode\": 10\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.NormalMaterialSlot\",\n   
-    \"m_ObjectId\": \"a03cdaeef9704c5d80f2c45dde63fd5a\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Normal\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Normal\",\n    \"m_StageCapability\": 1,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0\n    },\n    \"m_Labels\": [],\n    \"m_Space\": 0\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.SplitNode\",\n    \"m_ObjectId\":
-    \"a573dc8fea54451e8aa89843d5a7c491\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"Split\",\n    \"m_DrawState\": {\n        \"m_Expanded\":
-    true,\n        \"m_Position\": {\n            \"serializedVersion\": \"2\",\n           
-    \"x\": 1507.0,\n            \"y\": 862.0,\n            \"width\": 120.0,\n           
-    \"height\": 149.0\n        }\n    },\n    \"m_Slots\": [\n        {\n           
-    \"m_Id\": \"52e565d87c4046ea9970163835dadb45\"\n        },\n        {\n           
-    \"m_Id\": \"c75a43074aa94de686de7771820b0bcc\"\n        },\n        {\n           
-    \"m_Id\": \"de420bc3c1f64076af707f527fdf6e98\"\n        },\n        {\n           
-    \"m_Id\": \"37bc77bebb9b4d12b119b602599947a5\"\n        },\n        {\n           
-    \"m_Id\": \"4cc5d252327c4cf981b8ca320a0514ac\"\n        }\n    ],\n    \"synonyms\":
-    [\n        \"separate\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"ad8ec3f568534205b2f8bd84bc3dc50f\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n    \"m_ObjectId\":
-    \"adc91d11c35948a1b88fdd7b2068e402\",\n    \"m_Id\": 2,\n    \"m_DisplayName\":
-    \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"e00\":
-    0.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n        \"e03\": 0.0,\n       
-    \"e10\": 0.0,\n        \"e11\": 0.0,\n        \"e12\": 0.0,\n        \"e13\":
-    0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n        \"e22\": 0.0,\n       
-    \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\": 0.0,\n        \"e32\":
-    0.0,\n        \"e33\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"e00\":
-    1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n        \"e03\": 0.0,\n       
-    \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\": 0.0,\n        \"e13\":
-    0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n        \"e22\": 1.0,\n       
-    \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\": 0.0,\n        \"e32\":
-    0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"b00325415c9546d89b63522d8dd67810\",\n   
-    \"m_Id\": 2,\n    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n    \"m_ObjectId\":
-    \"b3013300f09349288d429214badbe9a5\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"VertexDescription.Tangent\",\n    \"m_DrawState\":
-    {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n            \"width\":
-    0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"8dac397eb380455997b9c10c366cc28b\"\n        }\n   
-    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"VertexDescription.Tangent\"\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.NormalVectorNode\",\n    \"m_ObjectId\": \"b45fc1f9b2114dcaa8d49a230897442d\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Normal Vector\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 1151.0,\n            \"y\":
-    420.0,\n            \"width\": 207.9998779296875,\n            \"height\": 313.99993896484377\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"ff3cb78f93414e32bc032ee70269ffb0\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"surface direction\"\n    ],\n    \"m_Precision\":
-    0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    2,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    },\n   
-    \"m_Space\": 2\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.RedirectNodeData\",\n   
-    \"m_ObjectId\": \"b4d4a98569a1490c8387f2d55d267433\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Redirect Node\",\n    \"m_DrawState\":
-    {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 2260.999755859375,\n            \"y\": 279.0,\n           
-    \"width\": 56.000244140625,\n            \"height\": 23.999969482421876\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"d890e5eb6921408bb97c7b94beb09c6e\"\n       
-    },\n        {\n            \"m_Id\": \"51c3e85e743047dd8996d46e20ed09e1\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n    \"m_ObjectId\":
-    \"b6f59db21f53451c91b66591b41509aa\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"C\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n       
-    \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"ba0ee24742954645ae548efa998df777\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"Alpha\",\n    \"m_SlotType\": 0,\n   
-    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"Alpha\",\n    \"m_StageCapability\":
-    2,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\": 1.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n   
-    \"m_ObjectId\": \"bdc77262d5d442ef9f6ee65a82e052ca\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"SurfaceDescription.BaseColor\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n           
-    \"width\": 0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\":
-    [\n        {\n            \"m_Id\": \"7c3a66aafbee4fd3b95087ee6782d904\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"SurfaceDescription.BaseColor\"\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"beff2266d9ca416f8391da0fd42c6b5c\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"A\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"A\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"bf9da717b0644f7c964b7c5da168a15d\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\":
-    \"c3fb80805d0245c28c9ad293e6f46744\",\n    \"m_Id\": 1,\n    \"m_DisplayName\":
-    \"Blend\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Blend\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\":
-    0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"c448aae3964a4af387c37e3872465923\",\n   
-    \"m_Id\": 3,\n    \"m_DisplayName\": \"Opacity\",\n    \"m_SlotType\": 0,\n   
-    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"Opacity\",\n    \"m_StageCapability\":
-    3,\n    \"m_Value\": 1.0,\n    \"m_DefaultValue\": 1.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n   
-    \"m_ObjectId\": \"c47c5bf672274f798af1a75242b35a9f\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"RimColor\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"RimColor\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"c5f147a24eb7402fb4ff68ee27d3cc7c\",\n    \"m_Id\": 4,\n    \"m_DisplayName\":
-    \"Strength\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Strength\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"c75a43074aa94de686de7771820b0bcc\",\n   
-    \"m_Id\": 1,\n    \"m_DisplayName\": \"R\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"R\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector3Node\",\n   
-    \"m_ObjectId\": \"c763cec004b14d5482c026b0da67f2e6\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Vector 3\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 2115.000244140625,\n            \"y\": 156.00001525878907,\n           
-    \"width\": 128.0,\n            \"height\": 125.00001525878906\n        }\n   
-    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"61a4965c9ff94fa9a9a4abef7911dbb1\"\n       
-    },\n        {\n            \"m_Id\": \"56723d9e52c645ce867f5a93cedba07d\"\n       
-    },\n        {\n            \"m_Id\": \"da4e2fd25c2748a29889648933de685b\"\n       
-    },\n        {\n            \"m_Id\": \"f76a02a56d40491a8764c81a3306b957\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"3\",\n        \"v3\",\n        \"vec3\",\n       
-    \"float3\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n   
-    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_Value\": {\n       
-    \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.MultiplyNode\",\n    \"m_ObjectId\":
-    \"c8f6ab3670334b4d8c45fe9e510f0d05\",\n    \"m_Group\": {\n        \"m_Id\":
-    \"\"\n    },\n    \"m_Name\": \"Multiply\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 2726.000244140625,\n            \"y\": 511.0000305175781,\n           
-    \"width\": 208.0,\n            \"height\": 301.9999694824219\n        }\n   
-    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"0e1c32db2ba34d50b784085bb95461a3\"\n       
-    },\n        {\n            \"m_Id\": \"9eb09d7199914c97be448c76950e3561\"\n       
-    },\n        {\n            \"m_Id\": \"adc91d11c35948a1b88fdd7b2068e402\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"multiplication\",\n        \"times\",\n       
-    \"x\"\n    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n   
-    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicValueMaterialSlot\",\n   
-    \"m_ObjectId\": \"cc2a3ebb7a784059911a8bcf6fe87c95\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"e00\": 2.0,\n        \"e01\": 2.0,\n        \"e02\": 2.0,\n       
-    \"e03\": 2.0,\n        \"e10\": 2.0,\n        \"e11\": 2.0,\n        \"e12\":
-    2.0,\n        \"e13\": 2.0,\n        \"e20\": 2.0,\n        \"e21\": 2.0,\n       
-    \"e22\": 2.0,\n        \"e23\": 2.0,\n        \"e30\": 2.0,\n        \"e31\":
-    2.0,\n        \"e32\": 2.0,\n        \"e33\": 2.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"e00\": 1.0,\n        \"e01\": 0.0,\n        \"e02\": 0.0,\n       
-    \"e03\": 0.0,\n        \"e10\": 0.0,\n        \"e11\": 1.0,\n        \"e12\":
-    0.0,\n        \"e13\": 0.0,\n        \"e20\": 0.0,\n        \"e21\": 0.0,\n       
-    \"e22\": 1.0,\n        \"e23\": 0.0,\n        \"e30\": 0.0,\n        \"e31\":
-    0.0,\n        \"e32\": 0.0,\n        \"e33\": 1.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"cc325bbd50b2466d92f910301ed31fd7\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 1.0,\n        \"y\": 1.0,\n        \"z\": 1.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.BlockNode\",\n    \"m_ObjectId\": \"cfb5fa2349774e51b15b4c05202a4523\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"SurfaceDescription.Alpha\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 0.0,\n            \"y\": 0.0,\n           
-    \"width\": 0.0,\n            \"height\": 0.0\n        }\n    },\n    \"m_Slots\":
-    [\n        {\n            \"m_Id\": \"ba0ee24742954645ae548efa998df777\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedDescriptor\":
-    \"SurfaceDescription.Alpha\"\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\": \"d02f9b65567a4c1a877cd0adaf7b124d\",\n   
-    \"m_Id\": 3,\n    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": 0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"d1be362bb501425588cb2db70fd1c481\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"In\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"In\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n    \"m_ObjectId\":
-    \"d2922f3ebdfd4e1e900082924f5acd96\",\n    \"m_Id\": 3,\n    \"m_DisplayName\":
-    \"IsRimMinus1\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"IsRimMinus1\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": 0.0,\n    \"m_DefaultValue\":
-    0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"d441e14eccb94d5db96c9ca9d2284b20\",\n   
-    \"m_Id\": 2,\n    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"d890e5eb6921408bb97c7b94beb09c6e\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 1,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty\",\n   
-    \"m_ObjectId\": \"d9f433008dc64be7aa4d805f22d6b427\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"28362589-a1be-4351-b6a4-02b8736d293e\"\n    },\n    \"m_Name\":
-    \"EdgeScale\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"EdgeScale\",\n    \"m_DefaultReferenceName\": \"_EdgeScale\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": 1.5,\n    \"m_FloatType\": 0,\n    \"m_RangeValues\": {\n       
-    \"x\": 0.0,\n        \"y\": 1.0\n    },\n    \"m_SliderType\": 0,\n    \"m_SliderPower\":
-    3.0,\n    \"m_EnumType\": 0,\n    \"m_CSharpEnumString\": \"\",\n    \"m_EnumNames\":
-    [\n        \"Default\"\n    ],\n    \"m_EnumValues\": [\n        0\n    ]\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n   
-    \"m_ObjectId\": \"da4e2fd25c2748a29889648933de685b\",\n    \"m_Id\": 3,\n   
-    \"m_DisplayName\": \"Z\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Z\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    1.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": [\n        \"Z\"\n    ]\n}\n\n{\n   
-    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"dcb1affe2c0c4e97b91e4c38d38156ba\",\n    \"m_Id\": 1,\n   
-    \"m_DisplayName\": \"B\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"B\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.AddNode\",\n    \"m_ObjectId\": \"ddc15e9fce324380baf87d22911fdb72\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Add\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2958.000244140625,\n           
-    \"y\": 438.0000305175781,\n            \"width\": 208.000244140625,\n           
-    \"height\": 302.0000305175781\n        }\n    },\n    \"m_Slots\": [\n       
-    {\n            \"m_Id\": \"62683605b9e4412ea086d20a39d7054f\"\n        },\n       
-    {\n            \"m_Id\": \"847013ae325d4b758f824ce67738c664\"\n        },\n       
-    {\n            \"m_Id\": \"d441e14eccb94d5db96c9ca9d2284b20\"\n        }\n   
-    ],\n    \"synonyms\": [\n        \"addition\",\n        \"sum\",\n        \"plus\"\n   
-    ],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\":
-    0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\":
-    []\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector1MaterialSlot\",\n   
-    \"m_ObjectId\": \"de420bc3c1f64076af707f527fdf6e98\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"G\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"G\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    0.0,\n    \"m_DefaultValue\": 0.0,\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\":
-    2,\n    \"m_Type\": \"UnityEditor.Rendering.Universal.ShaderGraph.UniversalUnlitSubTarget\",\n   
-    \"m_ObjectId\": \"e4591dfb4c7b4cf996aca4afb8a02e5d\"\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"e565183637a84ea38a9edda12cc3afb0\",\n    \"m_Id\": 2,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 3,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.ColorShaderProperty\",\n    \"m_ObjectId\":
-    \"e56d91b8fa0b40c9b1778b80743f3722\",\n    \"m_Guid\": {\n        \"m_GuidSerialized\":
-    \"9f68ba47-6cdb-4a44-a415-a885e37477a7\"\n    },\n    \"m_Name\": \"EdgeColor\",\n   
-    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\": \"EdgeColor\",\n   
-    \"m_DefaultReferenceName\": \"_EdgeColor\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"r\": 1.0,\n        \"g\": 0.794578492641449,\n       
-    \"b\": 0.37264150381088259,\n        \"a\": 1.0\n    },\n    \"isMainColor\":
-    false,\n    \"m_ColorMode\": 0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"e66d3fa3c85f4b27b91e9bc405d6a525\",\n   
-    \"m_Id\": 1,\n    \"m_DisplayName\": \"Min\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"Min\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n    \"m_ObjectId\":
-    \"f47f6af9c7e14640b66b50194e1e1ad9\",\n    \"m_Id\": 0,\n    \"m_DisplayName\":
-    \"BaseColor\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n       
-    \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 1,\n    \"m_Type\":
-    \"UnityEditor.Rendering.Universal.ShaderGraph.UniversalTarget\",\n    \"m_ObjectId\":
-    \"f4d12a76d4fa40b89599715f0ff4dfeb\",\n    \"m_Datas\": [],\n    \"m_ActiveSubTarget\":
-    {\n        \"m_Id\": \"e4591dfb4c7b4cf996aca4afb8a02e5d\"\n    },\n    \"m_AllowMaterialOverride\":
-    true,\n    \"m_SurfaceType\": 0,\n    \"m_ZTestMode\": 4,\n    \"m_ZWriteControl\":
-    0,\n    \"m_AlphaMode\": 0,\n    \"m_RenderFace\": 2,\n    \"m_AlphaClip\": false,\n   
-    \"m_CastShadows\": false,\n    \"m_ReceiveShadows\": true,\n    \"m_DisableTint\":
-    false,\n    \"m_AdditionalMotionVectorMode\": 0,\n    \"m_AlembicMotionVectors\":
-    false,\n    \"m_SupportsLODCrossFade\": false,\n    \"m_CustomEditorGUI\": \"\",\n   
-    \"m_SupportVFX\": false\n}\n\n{\n    \"m_SGVersion\": 3,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Internal.ColorShaderProperty\",\n   
-    \"m_ObjectId\": \"f6e9df0ae6a2454888e8626e74a4f45e\",\n    \"m_Guid\": {\n       
-    \"m_GuidSerialized\": \"8492b914-be41-4c5d-9573-652702b94a4b\"\n    },\n    \"m_Name\":
-    \"BaseColor\",\n    \"m_DefaultRefNameVersion\": 1,\n    \"m_RefNameGeneratedByDisplayName\":
-    \"BaseColor\",\n    \"m_DefaultReferenceName\": \"_BaseColor\",\n    \"m_OverrideReferenceName\":
-    \"\",\n    \"m_GeneratePropertyBlock\": true,\n    \"m_UseCustomSlotLabel\":
-    false,\n    \"m_CustomSlotLabel\": \"\",\n    \"m_DismissedVersion\": 0,\n   
-    \"m_Precision\": 0,\n    \"overrideHLSLDeclaration\": false,\n    \"hlslDeclarationOverride\":
-    0,\n    \"m_Hidden\": false,\n    \"m_PerRendererData\": false,\n    \"m_customAttributes\":
-    [],\n    \"m_Value\": {\n        \"r\": 0.0,\n        \"g\": 0.0,\n        \"b\":
-    0.0,\n        \"a\": 1.0\n    },\n    \"isMainColor\": false,\n    \"m_ColorMode\":
-    0\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector3MaterialSlot\",\n   
-    \"m_ObjectId\": \"f76a02a56d40491a8764c81a3306b957\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.Vector4MaterialSlot\",\n    \"m_ObjectId\": \"f7f48eff5cb34dc7932552fa3551adf5\",\n   
-    \"m_Id\": -2054543868,\n    \"m_DisplayName\": \"EdgeColor\",\n    \"m_SlotType\":
-    0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\": \"_EdgeColor\",\n   
-    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n    \"m_DefaultValue\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_Labels\": []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\": \"f82de6a7c7b64ef69af891343eb52ca1\",\n   
-    \"m_Id\": 0,\n    \"m_DisplayName\": \"Base\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\":
-    false,\n    \"m_ShaderOutputName\": \"Base\",\n    \"m_StageCapability\": 3,\n   
-    \"m_Value\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n       
-    \"w\": 0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\":
-    0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\":
-    0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n   
-    \"m_ObjectId\": \"f85cc88ccda74bd49b06b42f415e0705\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Base\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Base\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\":
-    0.0\n    },\n    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n       
-    \"z\": 0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n   
-    \"m_Type\": \"UnityEditor.ShaderGraph.DynamicVectorMaterialSlot\",\n    \"m_ObjectId\":
-    \"fa05868afbae41fc9481a3cf0647ad8a\",\n    \"m_Id\": 1,\n    \"m_DisplayName\":
-    \"Blend\",\n    \"m_SlotType\": 0,\n    \"m_Hidden\": false,\n    \"m_ShaderOutputName\":
-    \"Blend\",\n    \"m_StageCapability\": 3,\n    \"m_Value\": {\n        \"x\":
-    0.0,\n        \"y\": 0.0,\n        \"z\": 0.0,\n        \"w\": 0.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    0.0,\n        \"w\": 0.0\n    }\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\":
-    \"UnityEditor.ShaderGraph.SubGraphNode\",\n    \"m_ObjectId\": \"fb04eea6c9f14bbcafcfd113fc73a775\",\n   
-    \"m_Group\": {\n        \"m_Id\": \"\"\n    },\n    \"m_Name\": \"RimLighting\",\n   
-    \"m_DrawState\": {\n        \"m_Expanded\": true,\n        \"m_Position\": {\n           
-    \"serializedVersion\": \"2\",\n            \"x\": 2462.000244140625,\n           
-    \"y\": 332.0,\n            \"width\": 224.0,\n            \"height\": 143.00003051757813\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"4212d584d65241fd83fd3b7ebb198807\"\n       
-    },\n        {\n            \"m_Id\": \"298baa4d6bd749d0a5f673a189755e18\"\n       
-    },\n        {\n            \"m_Id\": \"f7f48eff5cb34dc7932552fa3551adf5\"\n       
-    },\n        {\n            \"m_Id\": \"c47c5bf672274f798af1a75242b35a9f\"\n       
-    },\n        {\n            \"m_Id\": \"d2922f3ebdfd4e1e900082924f5acd96\"\n       
-    },\n        {\n            \"m_Id\": \"c5f147a24eb7402fb4ff68ee27d3cc7c\"\n       
-    }\n    ],\n    \"synonyms\": [],\n    \"m_Precision\": 0,\n    \"m_PreviewExpanded\":
-    false,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\": 0,\n    \"m_CustomColors\":
-    {\n        \"m_SerializableColors\": []\n    },\n    \"m_SerializedSubGraph\":
-    \"{\\n    \\\"subGraph\\\": {\\n        \\\"fileID\\\": -5475051401550479605,\\n       
-    \\\"guid\\\": \\\"5df1cd2db1ff6c54fa1c642a731c86b3\\\",\\n        \\\"type\\\":
-    3\\n    }\\n}\",\n    \"m_PropertyGuids\": [\n        \"f482cea8-3360-4baa-82ba-f40cee6d90c7\",\n       
-    \"45766b97-51e1-4dfc-a61e-026c4fd4b854\",\n        \"bf782252-5fb5-460b-a562-e31d46391a61\"\n   
-    ],\n    \"m_PropertyIds\": [\n        1951148708,\n        808513695,\n       
-    -2054543868\n    ],\n    \"m_Dropdowns\": [],\n    \"m_DropdownSelectedEntries\":
-    []\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.BlendNode\",\n   
-    \"m_ObjectId\": \"fced6a109d8d469ba18e2cd7b59edd3e\",\n    \"m_Group\": {\n       
-    \"m_Id\": \"\"\n    },\n    \"m_Name\": \"Blend\",\n    \"m_DrawState\": {\n       
-    \"m_Expanded\": true,\n        \"m_Position\": {\n            \"serializedVersion\":
-    \"2\",\n            \"x\": 1874.0001220703125,\n            \"y\": 1202.0,\n           
-    \"width\": 207.9998779296875,\n            \"height\": 360.0001220703125\n       
-    }\n    },\n    \"m_Slots\": [\n        {\n            \"m_Id\": \"f85cc88ccda74bd49b06b42f415e0705\"\n       
-    },\n        {\n            \"m_Id\": \"0dabadc7651b4a21b36115a2cc037532\"\n       
-    },\n        {\n            \"m_Id\": \"973368f0631940b797505e786298a0bb\"\n       
-    },\n        {\n            \"m_Id\": \"bf9da717b0644f7c964b7c5da168a15d\"\n       
-    }\n    ],\n    \"synonyms\": [\n        \"burn\",\n        \"darken\",\n       
-    \"difference\",\n        \"dodge\",\n        \"divide\",\n        \"exclusion\",\n       
-    \"hard light\",\n        \"hard mix\",\n        \"linear burn\",\n        \"linear
-    dodge\",\n        \"linear light\",\n        \"multiply\",\n        \"negate\",\n       
-    \"overlay\",\n        \"pin light\",\n        \"screen\",\n        \"soft light\",\n       
-    \"subtract\",\n        \"vivid light\",\n        \"overwrite\"\n    ],\n    \"m_Precision\":
-    0,\n    \"m_PreviewExpanded\": true,\n    \"m_DismissedVersion\": 0,\n    \"m_PreviewMode\":
-    0,\n    \"m_CustomColors\": {\n        \"m_SerializableColors\": []\n    },\n   
-    \"m_BlendMode\": 10\n}\n\n{\n    \"m_SGVersion\": 0,\n    \"m_Type\": \"UnityEditor.ShaderGraph.Vector3MaterialSlot\",\n   
-    \"m_ObjectId\": \"ff3cb78f93414e32bc032ee70269ffb0\",\n    \"m_Id\": 0,\n   
-    \"m_DisplayName\": \"Out\",\n    \"m_SlotType\": 1,\n    \"m_Hidden\": false,\n   
-    \"m_ShaderOutputName\": \"Out\",\n    \"m_StageCapability\": 3,\n    \"m_Value\":
-    {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\": 1.0\n    },\n   
-    \"m_DefaultValue\": {\n        \"x\": 0.0,\n        \"y\": 0.0,\n        \"z\":
-    1.0\n    },\n    \"m_Labels\": []\n}\n\n"
-  m_AssetMaybeChangedOnDisk: 0
-  m_AssetMaybeDeleted: 0
---- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1512,8 +334,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 79
-    width: 1408
-    height: 944
+    width: 1464
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1567,29 +389,118 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1408
-      height: 923
-    m_Scale: {x: 0.73333335, y: 0.73333335}
-    m_Translation: {x: 704, y: 461.5}
+      width: 1464
+      height: 761
+    m_Scale: {x: 0.7046296, y: 0.7046296}
+    m_Translation: {x: 732, y: 380.49997}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -960
-      y: -629.3182
-      width: 1920
-      height: 1258.6364
+      x: -1038.8436
+      y: -540
+      width: 2077.6873
+      height: 1080
     m_MinimalGUI: 1
-  m_defaultScale: 0.73333335
-  m_LastWindowPixelSize: {x: 1408, y: 944}
+  m_defaultScale: 0.7046296
+  m_LastWindowPixelSize: {x: 1464, y: 782}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
   m_showToolbar: 1
+--- !u!114 &14
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12914, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.Graphs.dll::UnityEditor.Graphs.AnimatorControllerTool
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Animator
+    m_Image: {fileID: -1673928668082335149, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Animator\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 79
+    width: 1464
+    height: 810
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_OverlaysVisible: 1
+  m_ViewTransforms:
+    m_KeySerializationHelper:
+    - {fileID: -1587011843530532307, guid: ba552ba61b27c3348b9eabb8720bb6a1, type: 2}
+    - {fileID: 2277566127903827939, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
+    m_ValueSerializationHelper:
+    - e00: 1.263657
+      e01: 0
+      e02: 0
+      e03: 70.263954
+      e10: 0
+      e11: 1.263657
+      e12: 0
+      e13: 335.31335
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    - e00: 1.1277505
+      e01: 0
+      e02: 0
+      e03: 165.43048
+      e10: 0
+      e11: 1.1277505
+      e12: 0
+      e13: 541.34326
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+  m_PreviewAnimator: {fileID: 0}
+  m_AnimatorController: {fileID: 9100000, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
+  m_BreadCrumbs:
+  - m_Target: {fileID: 2277566127903827939, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
+    m_ScrollPosition: {x: 0, y: 0}
+  stateMachineGraph: {fileID: 0}
+  stateMachineGraphGUI: {fileID: 0}
+  blendTreeGraph: {fileID: 0}
+  blendTreeGraphGUI: {fileID: 0}
+  m_AutoLiveLink: 1
+  m_MiniTool: 0
+  m_LockTracker:
+    m_IsLocked: 0
+  m_CurrentEditor: 1
+  m_LayerEditor:
+    m_SelectedLayerIndex: 0
 --- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1613,8 +524,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 24
-    width: 1408
-    height: 944
+    width: 1464
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -2239,9 +1150,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 926.4937, y: 790.3288, z: -264.53903}
+    m_Target: {x: 225.13144, y: -196.21191, z: 641.24133}
     speed: 2
-    m_Value: {x: 926.4937, y: 790.3288, z: -264.53903}
+    m_Value: {x: 225.13144, y: -196.21191, z: 641.24133}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -2287,17 +1198,17 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.049473513, y: -0.01647858, z: 0.00081767235, w: 0.9986469}
+    m_Target: {x: -0.16842237, y: -0.1726194, z: 0.029920649, w: -0.9700625}
     speed: 2
-    m_Value: {x: -0.049473517, y: 0.01647858, z: -0.00081767235, w: -0.9986469}
+    m_Value: {x: -0.16842237, y: -0.1726194, z: 0.029920649, w: -0.9700625}
   m_Size:
-    m_Target: 1321.2871
+    m_Target: 524.49146
     speed: 2
-    m_Value: 1321.2871
+    m_Value: 524.49146
   m_Ortho:
-    m_Target: 1
+    m_Target: 0
     speed: 2
-    m_Value: 1
+    m_Value: 0
   m_CameraSettings:
     m_Speed: 2
     m_SpeedNormalized: 1
@@ -2336,95 +1247,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 12914, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEditor.Graphs.dll::UnityEditor.Graphs.AnimatorControllerTool
-  m_MinSize: {x: 50, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
-  m_TitleContent:
-    m_Text: Animator
-    m_Image: {fileID: -1673928668082335149, guid: 0000000000000000d000000000000000, type: 0}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Animator\u200B"
-  m_Pos:
-    serializedVersion: 2
-    x: 0
-    y: 79
-    width: 1632
-    height: 944
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_OverlaysVisible: 1
-  m_ViewTransforms:
-    m_KeySerializationHelper:
-    - {fileID: -1587011843530532307, guid: ba552ba61b27c3348b9eabb8720bb6a1, type: 2}
-    - {fileID: 2277566127903827939, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
-    m_ValueSerializationHelper:
-    - e00: 1.263657
-      e01: 0
-      e02: 0
-      e03: 70.263954
-      e10: 0
-      e11: 1.263657
-      e12: 0
-      e13: 335.31335
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    - e00: 1.1277505
-      e01: 0
-      e02: 0
-      e03: 165.43048
-      e10: 0
-      e11: 1.1277505
-      e12: 0
-      e13: 541.34326
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-  m_PreviewAnimator: {fileID: 0}
-  m_AnimatorController: {fileID: 9100000, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
-  m_BreadCrumbs:
-  - m_Target: {fileID: 2277566127903827939, guid: 3e5f46ec67ede3d43999125befcef83b, type: 2}
-    m_ScrollPosition: {x: 0, y: 0}
-  stateMachineGraph: {fileID: 0}
-  stateMachineGraphGUI: {fileID: 0}
-  blendTreeGraph: {fileID: 0}
-  blendTreeGraphGUI: {fileID: 0}
-  m_AutoLiveLink: 1
-  m_MiniTool: 0
-  m_LockTracker:
-    m_IsLocked: 0
-  m_CurrentEditor: 1
-  m_LayerEditor:
-    m_SelectedLayerIndex: 0
---- !u!114 &17
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 12061, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.SceneHierarchyWindow
@@ -2437,10 +1259,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1409
-    y: 79
-    width: 530
-    height: 944
+    x: 1466
+    y: 24
+    width: 474
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -2457,7 +1279,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: a420feff8637feff8a78feffeeb7fefff0b7feff56b8feff58b8feffdab8feffdcb8feff9a02ffffec04ffff5e09ffffba0dffff8013ffffe23dffff0a69ffff1869ffff126dffff22e8ffff0efbffff10fbffff1ef500001cf600002cf6000066f60000bef600003601010042010100
+      m_ExpandedIDs: 0eb4ffffd6e2ffff441701004e1a0100721a0100601b0100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -2474,7 +1296,7 @@ MonoBehaviour:
         m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
-        m_ClientGUIView: {fileID: 7}
+        m_ClientGUIView: {fileID: 8}
       m_SearchString: 
     m_ExpandedScenes: []
     m_CurrenRootInstanceID: 0
@@ -2482,7 +1304,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: 23e5fcd12ca29144c9f70cf7e2b80231
---- !u!114 &18
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2503,10 +1325,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Entities Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1410
-    y: 24
-    width: 530
-    height: 944
+    x: 1465
+    y: 79
+    width: 474
+    height: 810
   m_SerializedDataModeController:
     m_DataMode: 1
     m_PreferredDataMode: 1
@@ -2519,7 +1341,7 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_EditorWindowInstanceKey: e79a17b76ba547c6b4d7a0ad4ff71351
---- !u!114 &19
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2543,7 +1365,7 @@ MonoBehaviour:
     x: 1942
     y: 24
     width: 618
-    height: 944
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -2568,6 +1390,142 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
+--- !u!114 &19
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
+  m_TitleContent:
+    m_Text: Project
+    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Project\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 0
+    y: 24
+    width: 1049
+    height: 507
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_OverlaysVisible: 1
+  m_SearchFilter:
+    m_NameFilter: 
+    m_ClassNames: []
+    m_AssetLabels: []
+    m_AssetBundleNames: []
+    m_ReferencingInstanceIDs: 
+    m_SceneHandles: 
+    m_ShowAllHits: 0
+    m_SkipHidden: 0
+    m_SearchArea: 1
+    m_Folders:
+    - Assets/root/Runtime/Prefabs/TerrainGroups
+    m_Globs: []
+    m_ProductIds: 
+    m_AnyWithAssetOrigin: 0
+    m_OriginalText: 
+    m_ImportLogFlags: 0
+    m_FilterByTypeIntersection: 0
+  m_ViewMode: 1
+  m_StartGridSize: 16
+  m_LastFolders:
+  - Assets/root/Runtime/Prefabs/TerrainGroups
+  m_LastFoldersGridSize: -1
+  m_LastProjectPath: C:\Work Repos\Boto.Survivor
+  m_LockTracker:
+    m_IsLocked: 0
+  m_FolderTreeState:
+    scrollPos: {x: 0, y: 245}
+    m_SelectedIDs: 6c060100
+    m_LastClickedID: 67180
+    m_ExpandedIDs: 000000004e050100
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_AssetTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 000000004e050100
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_ListAreaState:
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 0
+    m_ExpandedInstanceIDs: 9e030200
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+    m_NewAssetIndexInList: -1
+    m_ScrollPosition: {x: 0, y: 0}
+    m_GridSize: 16
+  m_SkipHiddenPackages: 0
+  m_DirectoriesAreaWidth: 200
 --- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -2791,7 +1749,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 63020
+  m_LastSelectedObjectID: 302202
 --- !u!114 &22
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -2813,10 +1771,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1051
-    y: 24
+    x: 1050
+    y: 915
     width: 1509
-    height: 345
+    height: 479
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -2829,142 +1787,6 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
 --- !u!114 &23
-MonoBehaviour:
-  m_ObjectHideFlags: 52
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
-  m_TitleContent:
-    m_Text: Project
-    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
-    m_Tooltip: 
-    m_TextWithWhitespace: "Project\u200B"
-  m_Pos:
-    serializedVersion: 2
-    x: 0
-    y: 24
-    width: 1049
-    height: 345
-  m_SerializedDataModeController:
-    m_DataMode: 0
-    m_PreferredDataMode: 0
-    m_SupportedDataModes: 
-    isAutomatic: 1
-  m_ViewDataDictionary: {fileID: 0}
-  m_OverlayCanvas:
-    m_LastAppliedPresetName: Default
-    m_SaveData: []
-    m_ContainerData: []
-    m_OverlaysVisible: 1
-  m_SearchFilter:
-    m_NameFilter: 
-    m_ClassNames: []
-    m_AssetLabels: []
-    m_AssetBundleNames: []
-    m_ReferencingInstanceIDs: 
-    m_SceneHandles: 
-    m_ShowAllHits: 0
-    m_SkipHidden: 0
-    m_SearchArea: 1
-    m_Folders:
-    - Assets/root/Runtime/Prefabs
-    m_Globs: []
-    m_ProductIds: 
-    m_AnyWithAssetOrigin: 0
-    m_OriginalText: 
-    m_ImportLogFlags: 0
-    m_FilterByTypeIntersection: 0
-  m_ViewMode: 1
-  m_StartGridSize: 16
-  m_LastFolders:
-  - Assets/root/Runtime/Prefabs
-  m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\Work Repos\Boto.Survivor
-  m_LockTracker:
-    m_IsLocked: 1
-  m_FolderTreeState:
-    scrollPos: {x: 0, y: 472}
-    m_SelectedIDs: d8020100
-    m_LastClickedID: 66264
-    m_ExpandedIDs: 000000002a0401002c0401002e0401003004010032040100
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_AssetTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: 000000002a0401002c0401002e0401003004010032040100
-    m_RenameOverlay:
-      m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
-      m_EditFieldRect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-      m_UserData: 0
-      m_IsWaitingForDelay: 0
-      m_IsRenaming: 0
-      m_OriginalEventType: 11
-      m_IsRenamingFilename: 1
-      m_TrimLeadingAndTrailingWhitespace: 0
-      m_ClientGUIView: {fileID: 0}
-    m_SearchString: 
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-  m_ListAreaState:
-    m_SelectedInstanceIDs: 
-    m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: 9e030200
-    m_CreateAssetUtility:
-      m_EndAction: {fileID: 0}
-      m_InstanceID: 0
-      m_Path: 
-      m_Icon: {fileID: 0}
-      m_ResourceFile: 
-    m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
-    m_GridSize: 16
-  m_SkipHiddenPackages: 0
-  m_DirectoriesAreaWidth: 200
---- !u!114 &24
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2986,10 +1808,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Test Runner\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1050
-    y: 1049
+    x: 1051
+    y: 24
     width: 1509
-    height: 345
+    height: 507
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -3002,22 +1824,22 @@ MonoBehaviour:
     m_ContainerData: []
     m_OverlaysVisible: 1
   m_Spl:
-    ID: 976
-    splitterInitialOffset: 142
+    ID: 151
+    splitterInitialOffset: 387
     currentActiveSplitter: -1
     realSizes:
-    - 101
-    - 174
+    - 359
+    - 78
     relativeSizes:
-    - 0.36614174
-    - 0.63385826
+    - 0.8215159
+    - 0.17848408
     minSizes:
     - 32
     - 32
     maxSizes:
     - 0
     - 0
-    lastTotalSize: 275
+    lastTotalSize: 437
     splitSize: 6
     xOffset: 0
     m_Version: 1
@@ -3027,9 +1849,9 @@ MonoBehaviour:
     oldSplitSize: 0
   m_TestTypeToolbarIndex: 1
   m_TestListGUIs:
-  - m_Window: {fileID: 24}
+  - m_Window: {fileID: 23}
     runProgress:
-      RunGuid: 33e0a690-9428-405c-b808-4f62e82a5cdf
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -3042,7 +1864,7 @@ MonoBehaviour:
         filters:
         - testMode: 2
           testNames:
-          - DesyncTests.DesyncTest_LongPlayIdle_Success
+          - DesyncTests
           groupNames: []
           categoryNames: []
           assemblyNames: []
@@ -3057,7 +1879,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 0.9999999
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList:
@@ -3194,9 +2016,9 @@ MonoBehaviour:
       availableCategories:
       - Uncategorized
     m_SelectedOption: 0
-  - m_Window: {fileID: 24}
+  - m_Window: {fileID: 23}
     runProgress:
-      RunGuid: 33e0a690-9428-405c-b808-4f62e82a5cdf
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -3209,7 +2031,7 @@ MonoBehaviour:
         filters:
         - testMode: 2
           testNames:
-          - DesyncTests.DesyncTest_LongPlayIdle_Success
+          - DesyncTests
           groupNames: []
           categoryNames: []
           assemblyNames: []
@@ -3224,7 +2046,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 0.9999999
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList:
@@ -3233,7 +2055,7 @@ MonoBehaviour:
       name: Boto.Survivor
       fullName: Boto.Survivor
       resultStatus: 1
-      duration: 63.045994
+      duration: 63.404217
       messages: 
       output: 
       stacktrace: 
@@ -3249,7 +2071,7 @@ MonoBehaviour:
       name: Boto.Survivor.Tests.dll
       fullName: C:/Work Repos/Boto.Survivor/Library/ScriptAssemblies/Boto.Survivor.Tests.dll
       resultStatus: 1
-      duration: 63.045994
+      duration: 63.404217
       messages: 
       output: 
       stacktrace: 
@@ -3265,7 +2087,7 @@ MonoBehaviour:
       name: DesyncTests
       fullName: DesyncTests
       resultStatus: 1
-      duration: 56.54664
+      duration: 56.90486
       messages: 
       output: 
       stacktrace: 
@@ -3281,7 +2103,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success
       fullName: DesyncTests.DesyncTest_InputSequence_Success
       resultStatus: 1
-      duration: 9.25177
+      duration: 10.072186
       messages: 
       output: 
       stacktrace: 
@@ -3297,7 +2119,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success(())
       fullName: DesyncTests.DesyncTest_InputSequence_Success(())
       resultStatus: 1
-      duration: 3.8531916
+      duration: 4.5371394
       messages: 
       output: 'Creating Game...
 
@@ -3325,14 +2147,14 @@ MonoBehaviour:
         ... sending save...
 
         ...
-        wrote 4362...
+        wrote 38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -3348,10 +2170,10 @@ MonoBehaviour:
 
         ... done.
 
-        Cleaning
-        up 0 destroyed GenericPrefabs
+        Got
+        ID message: 1
 
-        Got ID message: 1
+        Cleaning up 0 destroyed GenericPrefabs
 
 '
       stacktrace: 
@@ -3369,7 +2191,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
       fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(0f, 0f, 0f)))
       resultStatus: 1
-      duration: 2.6002119
+      duration: 2.715414
       messages: 
       output: 'Cleaning up 0 destroyed GenericPrefabs
 
@@ -3402,14 +2224,14 @@ MonoBehaviour:
         ...
         sending save...
 
-        ... wrote 4362...
+        ... wrote 38602...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 4362...
+        ... loading save 38602...
 
         ... creating game...
 
@@ -3433,48 +2255,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(797:7)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(798:9)
 
 '
       stacktrace: 
@@ -3492,25 +2295,58 @@ MonoBehaviour:
       name: DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
       fullName: DesyncTests.DesyncTest_InputSequence_Success((0:float3(1f, 1f, 1f)))
       resultStatus: 1
-      duration: 2.798367
+      duration: 2.819633
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
-
-        Cleaned up.
+        Creating
+        Game...
 
         Creating Game...
 
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        ...
+        saving...
+
+        ... sending save...
+
+        ... wrote 38602...
+
+        ...
+        sending Id...
+
+        Creating ID message: 1
+
+        ... loading save 38602...
+
+        ...
+        creating game...
+
         Creating Game...
+
+        ... save loaded...
 
         Loading
         subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
@@ -3518,95 +2354,39 @@ MonoBehaviour:
         Loading subscene
         with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
+        ... done.
 
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for connections.
-
-        Game
-        already launched, likely joined lobby.
-
-        ... saving...
-
-        ...
-        sending save...
-
-        ... wrote 4362...
-
-        ... sending Id...
-
-        Creating
+        Got
         ID message: 1
-
-        ... loading save 4362...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
 
         Cleaning up 0 destroyed GenericPrefabs
 
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(795:13)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(796:15)
 
 '
       stacktrace: 
@@ -3623,7 +2403,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequenceConnectInputSequence_Success
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success
       resultStatus: 1
-      duration: 22.609674
+      duration: 23.464691
       messages: 
       output: 
       stacktrace: 
@@ -3639,7 +2419,7 @@ MonoBehaviour:
       name: DesyncTest_InputSequenceConnectInputSequence_Success((),())
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),())
       resultStatus: 1
-      duration: 2.4526458
+      duration: 2.5925784
       messages: 
       output: 'Creating Game...
 
@@ -3659,14 +2439,14 @@ MonoBehaviour:
         ... sending save...
 
         ... wrote
-        4362...
+        38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -3705,7 +2485,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(0f,
         0f, 0f)))
       resultStatus: 1
-      duration: 2.5738108
+      duration: 2.6354208
       messages: 
       output: 'Cleaning up 0 destroyed GenericPrefabs
 
@@ -3730,14 +2510,14 @@ MonoBehaviour:
         ... sending save...
 
         ...
-        wrote 4362...
+        wrote 38602...
 
         ... sending Id...
 
         Creating ID message: 1
 
         ...
-        loading save 4362...
+        loading save 38602...
 
         ... creating game...
 
@@ -3761,48 +2541,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(1304:9)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(1305:11)
 
 '
       stacktrace: 
@@ -3822,61 +2583,56 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((),(0:float3(1f,
         1f, 1f)))
       resultStatus: 1
-      duration: 2.4991088
+      duration: 2.5733924
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
+        Creating
+        Game...
 
-        Cleaned up.
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
-        Creating Game...
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
+        Server is now
+        listening for connections.
 
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        Game already launched, likely joined
+        lobby.
 
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        ...
-        saving...
+        ... saving...
 
         ... sending save...
 
-        ... wrote 4362...
+        ... wrote
+        38602...
 
-        ...
-        sending Id...
+        ... sending Id...
 
         Creating ID message: 1
 
-        ... loading save 4362...
-
         ...
-        creating game...
+        loading save 38602...
+
+        ... creating game...
 
         Creating Game...
 
-        ... save loaded...
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         ... done.
 
@@ -3888,48 +2644,29 @@ MonoBehaviour:
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(1304:13)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(1305:17)
 
 '
       stacktrace: 
@@ -3949,106 +2686,7 @@ MonoBehaviour:
       fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
         0f, 0f)),())
       resultStatus: 1
-      duration: 2.521099
-      messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
-
-        Cleaning up 2 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Cleaned
-        up.
-
-        Cleaned up.
-
-        Creating Game...
-
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 1: Applying 1 extra actions
-
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
-
-        Player 0 created.
-
-        ... saving...
-
-        ... sending
-        save...
-
-        ... wrote 5958...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 5958...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
-
-        Game already launched, likely joined
-        lobby.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1023
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
-        0f, 0f)),(0:float3(0f, 0f, 0f)))]'
-      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
-        0f)),(0:float3(0f, 0f, 0f)))
-      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
-        0f, 0f)),(0:float3(0f, 0f, 0f)))
-      resultStatus: 1
-      duration: 2.5372703
+      duration: 2.7571857
       messages: 
       output: 'Cleaning up 1 destroyed GenericPrefabs
 
@@ -4061,600 +2699,6 @@ MonoBehaviour:
 
         Creating
         Game...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now
-        listening for connections.
-
-        Game already launched, likely joined
-        lobby.
-
-        mockServer Step 1: Applying 1 extra actions
-
-        mockServer
-        had no player 0.
-
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
-
-        Player 0
-        created.
-
-        ... saving...
-
-        ... sending save...
-
-        ...
-        wrote 5958...
-
-        ... sending Id...
-
-        Creating ID message: 1
-
-        ...
-        loading save 5958...
-
-        ... creating game...
-
-        Creating Game...
-
-        ...
-        save loaded...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ... done.
-
-        Got
-        ID message: 1
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 2: Applying 1 extra actions
-
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1
-        created.
-
-        mockClient Step 2: Applying 1 extra actions
-
-        mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1024
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
-        0f, 0f)),(0:float3(1f, 1f, 1f)))]'
-      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
-        0f)),(0:float3(1f, 1f, 1f)))
-      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
-        0f, 0f)),(0:float3(1f, 1f, 1f)))
-      resultStatus: 1
-      duration: 2.5495625
-      messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
-
-        Cleaning up 2 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Cleaned
-        up.
-
-        Cleaned up.
-
-        Creating Game...
-
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 1: Applying 1 extra actions
-
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
-
-        Player 0 created.
-
-        ... saving...
-
-        ... sending
-        save...
-
-        ... wrote 5958...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 5958...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
-
-        Game already launched, likely joined
-        lobby.
-
-        mockServer Step 2: Applying 1 extra actions
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-        mockClient Step 2: Applying 1
-        extra actions
-
-        mockClient had no player 1.
-
-        mockClient had
-        no player 2.
-
-        mockClient had no player 3.
-
-        mockClient Step
-        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1 created.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1025
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),())]'
-      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
-        1f)),())
-      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),())
-      resultStatus: 1
-      duration: 2.4526033
-      messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
-
-        Cleaning up 2 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Cleaned
-        up.
-
-        Cleaned up.
-
-        Creating Game...
-
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 1: Applying 1 extra actions
-
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
-
-        Player 0 created.
-
-        ... saving...
-
-        ... sending
-        save...
-
-        ... wrote 5958...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 5958...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
-
-        Game already launched, likely joined
-        lobby.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1026
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),(0:float3(0f, 0f, 0f)))]'
-      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
-        1f)),(0:float3(0f, 0f, 0f)))
-      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),(0:float3(0f, 0f, 0f)))
-      resultStatus: 1
-      duration: 2.5551176
-      messages: 
-      output: 'Cleaning up 1 destroyed GenericPrefabs
-
-        Cleaning up 1 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Creating
-        Game...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now
-        listening for connections.
-
-        Game already launched, likely joined
-        lobby.
-
-        mockServer Step 1: Applying 1 extra actions
-
-        mockServer
-        had no player 0.
-
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f, 0f)
-
-        Player 0
-        created.
-
-        ... saving...
-
-        ... sending save...
-
-        ...
-        wrote 5958...
-
-        ... sending Id...
-
-        Creating ID message: 1
-
-        ...
-        loading save 5958...
-
-        ... creating game...
-
-        Creating Game...
-
-        ...
-        save loaded...
-
-        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading
-        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ... done.
-
-        Got
-        ID message: 1
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 2: Applying 1 extra actions
-
-        mockServer had no player 1.
-
-        mockServer
-        had no player 2.
-
-        mockServer had no player 3.
-
-        mockServer
-        Step 2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1
-        created.
-
-        mockClient Step 2: Applying 1 extra actions
-
-        mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1027
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),(0:float3(1f, 1f, 1f)))]'
-      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
-        1f)),(0:float3(1f, 1f, 1f)))
-      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
-        1f, 1f)),(0:float3(1f, 1f, 1f)))
-      resultStatus: 1
-      duration: 2.4684565
-      messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
-
-        Cleaning up 2 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Cleaned
-        up.
-
-        Cleaned up.
-
-        Creating Game...
-
-        Loading subscene
-        with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with
-        GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for
-        connections.
-
-        Game already launched, likely joined lobby.
-
-        mockServer
-        Step 1: Applying 1 extra actions
-
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
-
-        Player 0 created.
-
-        ... saving...
-
-        ... sending
-        save...
-
-        ... wrote 5958...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 5958...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
-
-        Loading subscene with GUID:
-        7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-        ...
-        done.
-
-        Got ID message: 1
-
-        Game already launched, likely joined
-        lobby.
-
-        mockServer Step 2: Applying 1 extra actions
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 2: Executing rpc: PlayerJoin:1:float3(0f,
-        0f, 0f)
-
-        Player 1 created.
-
-        mockClient Step 2: Applying 1
-        extra actions
-
-        mockClient had no player 1.
-
-        mockClient had
-        no player 2.
-
-        mockClient had no player 3.
-
-        mockClient Step
-        2: Executing rpc: PlayerJoin:1:float3(0f, 0f, 0f)
-
-        Player 1 created.
-
-'
-      stacktrace: 
-      notRunnable: 0
-      ignoredOrSkipped: 0
-      description: 
-      isSuite: 0
-      categories:
-      - Uncategorized
-      parentId: 1028
-      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
-    - id: 1019
-      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_LongPlayIdle_Success]'
-      name: DesyncTest_LongPlayIdle_Success
-      fullName: DesyncTests.DesyncTest_LongPlayIdle_Success
-      resultStatus: 1
-      duration: 17.040016
-      messages: 
-      output: 'Creating Game...
 
         Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
@@ -4675,21 +2719,21 @@ MonoBehaviour:
         Player 0 created.
 
         Added
-        playerid 0 to entity Entity(67:5)
+        playerid 0 to entity Entity(139:47)
 
         ... saving...
 
         ... sending
         save...
 
-        ... wrote 12628...
+        ... wrote 40196...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 12628...
+        ... loading save 40196...
 
         ... creating game...
 
@@ -4708,7 +2752,642 @@ MonoBehaviour:
 
         Got ID message: 1
 
-        Added playerid 0 to entity Entity(186:3)
+        Added playerid 0 to entity Entity(751:33)
+
+        Game
+        already launched, likely joined lobby.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1023
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(0f, 0f, 0f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
+        0f)),(0:float3(0f, 0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(0f, 0f, 0f)))
+      resultStatus: 1
+      duration: 2.5781524
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 1 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now
+        listening for connections.
+
+        Game already launched, likely joined
+        lobby.
+
+        mockServer Step 1: Applying 1 extra actions
+
+        mockServer
+        Step 1: Executing rpc: PlayerJoin:0:
+
+        Player 0 created.
+
+        Added
+        playerid 0 to entity Entity(139:53)
+
+        ... saving...
+
+        ... sending
+        save...
+
+        ... wrote 40196...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 40196...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Added playerid 0 to entity Entity(751:39)
+
+        Game
+        already launched, likely joined lobby.
+
+        mockServer Step 2: Applying
+        1 extra actions
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
+
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:13)
+
+        mockClient
+        Step 2: Applying 1 extra actions
+
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
+
+        Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:9)
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1024
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(1f, 1f, 1f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f, 0f,
+        0f)),(0:float3(1f, 1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(0f,
+        0f, 0f)),(0:float3(1f, 1f, 1f)))
+      resultStatus: 1
+      duration: 2.6758475
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
+
+        Player 0 created.
+
+        Added playerid 0 to entity
+        Entity(139:59)
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 40196...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 40196...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(751:45)
+
+        Game
+        already launched, likely joined lobby.
+
+        mockServer Step 2: Applying
+        1 extra actions
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
+
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:17)
+
+        mockClient
+        Step 2: Applying 1 extra actions
+
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
+
+        Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:13)
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1025
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),())]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),())
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),())
+      resultStatus: 1
+      duration: 2.482214
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
+
+        Player 0 created.
+
+        Added playerid 0 to entity
+        Entity(139:65)
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 40196...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 40196...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(751:51)
+
+        Game
+        already launched, likely joined lobby.
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1026
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(0f, 0f, 0f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),(0:float3(0f, 0f, 0f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(0f, 0f, 0f)))
+      resultStatus: 1
+      duration: 2.5797365
+      messages: 
+      output: 'Cleaning up 1 destroyed GenericPrefabs
+
+        Cleaning up 1 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Creating
+        Game...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now
+        listening for connections.
+
+        Game already launched, likely joined
+        lobby.
+
+        mockServer Step 1: Applying 1 extra actions
+
+        mockServer
+        Step 1: Executing rpc: PlayerJoin:0:
+
+        Player 0 created.
+
+        Added
+        playerid 0 to entity Entity(139:71)
+
+        ... saving...
+
+        ... sending
+        save...
+
+        ... wrote 40196...
+
+        ... sending Id...
+
+        Creating
+        ID message: 1
+
+        ... loading save 40196...
+
+        ... creating game...
+
+        Creating
+        Game...
+
+        ... save loaded...
+
+        Loading subscene with GUID:
+        7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ...
+        done.
+
+        Got ID message: 1
+
+        Added playerid 0 to entity Entity(751:57)
+
+        Game
+        already launched, likely joined lobby.
+
+        mockServer Step 2: Applying
+        1 extra actions
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
+
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:21)
+
+        mockClient
+        Step 2: Applying 1 extra actions
+
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
+
+        Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:17)
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1027
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/DesyncTest_InputSequenceConnectInputSequence_Success/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(1f, 1f, 1f)))]'
+      name: DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f, 1f,
+        1f)),(0:float3(1f, 1f, 1f)))
+      fullName: DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success((0:float3(1f,
+        1f, 1f)),(0:float3(1f, 1f, 1f)))
+      resultStatus: 1
+      duration: 2.590163
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
+
+        Player 0 created.
+
+        Added playerid 0 to entity
+        Entity(139:77)
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 40196...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 40196...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(751:63)
+
+        Game
+        already launched, likely joined lobby.
+
+        mockServer Step 2: Applying
+        1 extra actions
+
+        mockServer Step 2: Executing rpc: PlayerJoin:1:
+
+        Player
+        1 created.
+
+        Added playerid 1 to entity Entity(1306:25)
+
+        mockClient
+        Step 2: Applying 1 extra actions
+
+        mockClient Step 2: Executing rpc:
+        PlayerJoin:1:
+
+        Player 1 created.
+
+        Added playerid 1 to entity
+        Entity(1307:21)
+
+'
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1028
+      parentUniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_InputSequenceConnectInputSequence_Success][suite]'
+    - id: 1019
+      uniqueId: 'Boto.Survivor.Tests.dll/DesyncTests/[Boto.Survivor.Tests][DesyncTests.DesyncTest_LongPlayIdle_Success]'
+      name: DesyncTest_LongPlayIdle_Success
+      fullName: DesyncTests.DesyncTest_LongPlayIdle_Success
+      resultStatus: 1
+      duration: 15.423015
+      messages: 
+      output: 'Cleaning up 2 destroyed GenericPrefabs
+
+        Cleaning up 2 destroyed
+        GenericPrefabs
+
+        Cleaned up.
+
+        Cleaned up.
+
+        Cleaned
+        up.
+
+        Cleaned up.
+
+        Creating Game...
+
+        Loading subscene
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading subscene with
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        Server is now listening for
+        connections.
+
+        Game already launched, likely joined lobby.
+
+        mockServer
+        Step 1: Applying 1 extra actions
+
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
+
+        Player 0 created.
+
+        Added playerid 0 to entity
+        Entity(105:81)
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 43510...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 43510...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
+
+        Added playerid 0 to entity Entity(693:35)
 
         Game
         already launched, likely joined lobby.
@@ -4721,7 +3400,7 @@ MonoBehaviour:
         Player
         1 created.
 
-        Added playerid 1 to entity Entity(238:3)
+        Added playerid 1 to entity Entity(1258:27)
 
         mockClient
         Step 1001: Applying 1 extra actions
@@ -4732,7 +3411,7 @@ MonoBehaviour:
         Player 1 created.
 
         Added playerid 1 to
-        entity Entity(239:3)
+        entity Entity(1269:27)
 
         Step: 1001
 
@@ -4771,121 +3450,88 @@ MonoBehaviour:
       name: DesyncTest_OneStepAdvanceAfterConnect_Success
       fullName: DesyncTests.DesyncTest_OneStepAdvanceAfterConnect_Success
       resultStatus: 1
-      duration: 2.5953114
+      duration: 2.8557794
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
-
-        Cleaning up 2 destroyed
-        GenericPrefabs
-
-        Cleaned up.
-
-        Cleaned up.
-
-        Cleaned
-        up.
-
-        Cleaned up.
+      output: 'Creating Game...
 
         Creating Game...
-
-        Creating Game...
-
-        Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
-
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
-
-        Server is now listening for connections.
-
-        Game
-        already launched, likely joined lobby.
-
-        ... saving...
-
-        ...
-        sending save...
-
-        ... wrote 4362...
-
-        ... sending Id...
-
-        Creating
-        ID message: 1
-
-        ... loading save 4362...
-
-        ... creating game...
-
-        Creating
-        Game...
-
-        ... save loaded...
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         Loading subscene with GUID:
         7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        ...
-        done.
+        Server
+        is now listening for connections.
 
-        Got ID message: 1
+        Game already launched, likely
+        joined lobby.
+
+        ... saving...
+
+        ... sending save...
+
+        ...
+        wrote 38602...
+
+        ... sending Id...
+
+        Creating ID message: 1
+
+        ...
+        loading save 38602...
+
+        ... creating game...
+
+        Creating Game...
+
+        ...
+        save loaded...
+
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+
+        Loading
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+
+        ... done.
+
+        Got
+        ID message: 1
 
         Cleaning up 0 destroyed GenericPrefabs
 
         mockServer
         Step 1: Applying 2 extra actions
 
-        mockServer had no player 0.
-
-        mockServer
-        had no player 1.
-
-        mockServer had no player 2.
-
-        mockServer
-        had no player 3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        mockServer Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
         mockServer Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added playerid 0
+        to entity Entity(797:57)
 
-        mockClient
-        Step 1: Applying 2 extra actions
-
-        mockClient had no player 0.
+        mockClient Step 1: Applying 2 extra actions
 
         mockClient
-        had no player 1.
-
-        mockClient had no player 2.
-
-        mockClient
-        had no player 3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f,
-        0f, 0f)
+        Step 1: Executing rpc: PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Executing
-        rpc: PlayerJoin:1:float3(0f, 0f, 0f)
+        mockClient
+        Step 1: Executing rpc: PlayerAdjustInventory:0:Missing.ToString()
 
-        Player 1 created.
+        Added
+        playerid 0 to entity Entity(798:57)
 
 '
       stacktrace: 
@@ -4902,73 +3548,53 @@ MonoBehaviour:
       name: DesyncTest_OneStepAdvanceBeforeConnect_Success
       fullName: DesyncTests.DesyncTest_OneStepAdvanceBeforeConnect_Success
       resultStatus: 1
-      duration: 2.576976
+      duration: 2.543033
       messages: 
-      output: 'Cleaning up 2 destroyed GenericPrefabs
+      output: 'Cleaning up 1 destroyed GenericPrefabs
 
-        Cleaning up 2 destroyed
+        Cleaning up 1 destroyed
         GenericPrefabs
 
         Cleaned up.
 
         Cleaned up.
 
-        Cleaned
-        up.
-
-        Cleaned up.
+        Creating
+        Game...
 
         Creating Game...
 
-        Creating Game...
+        Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading
-        subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
+        subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
         Loading subscene
-        with GUID: 24b4cc9fa890cde4ba1a296216afae7d
+        with GUID: 7b41724212e98214f8b8777690c2a5bb
 
         Loading subscene with
-        GUID: 7b41724212e98214f8b8777690c2a5bb
+        GUID: 24b4cc9fa890cde4ba1a296216afae7d
 
-        Loading subscene with GUID:
-        24b4cc9fa890cde4ba1a296216afae7d
+        mockServer Step 1: Applying
+        1 extra actions
 
-        mockServer Step 1: Applying 1 extra
-        actions
+        mockServer Step 1: Executing rpc: PlayerJoin:0:
 
-        mockServer had no player 0.
+        Player
+        0 created.
 
-        mockServer had no player
-        1.
+        Added playerid 0 to entity Entity(278:41)
 
-        mockServer had no player 2.
+        mockClient
+        Step 1: Applying 1 extra actions
 
-        mockServer had no player
-        3.
-
-        mockServer Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
-        0f)
+        mockClient Step 1: Executing rpc:
+        PlayerJoin:0:
 
         Player 0 created.
 
-        mockClient Step 1: Applying 1 extra
-        actions
-
-        mockClient had no player 0.
-
-        mockClient had no player
-        1.
-
-        mockClient had no player 2.
-
-        mockClient had no player
-        3.
-
-        mockClient Step 1: Executing rpc: PlayerJoin:0:float3(0f, 0f,
-        0f)
-
-        Player 0 created.
+        Added playerid 0 to entity
+        Entity(342:53)
 
         Server is now listening for connections.
 
@@ -4980,14 +3606,14 @@ MonoBehaviour:
         ...
         sending save...
 
-        ... wrote 5958...
+        ... wrote 40196...
 
         ... sending Id...
 
         Creating
         ID message: 1
 
-        ... loading save 5958...
+        ... loading save 40196...
 
         ... creating game...
 
@@ -5011,6 +3637,8 @@ MonoBehaviour:
         Cleaned
         up.
 
+        Added playerid 0 to entity Entity(95:61)
+
 '
       stacktrace: 
       notRunnable: 0
@@ -5026,7 +3654,7 @@ MonoBehaviour:
       name: DesyncTest_ZeroStepAdvance_Success
       fullName: DesyncTests.DesyncTest_ZeroStepAdvance_Success
       resultStatus: 1
-      duration: 2.47289
+      duration: 2.5461564
       messages: 
       output: 'Cleaning up 1 destroyed GenericPrefabs
 
@@ -5063,14 +3691,14 @@ MonoBehaviour:
 
         ... sending save...
 
-        ... wrote 4362...
+        ... wrote 38602...
 
         ...
         sending Id...
 
         Creating ID message: 1
 
-        ... loading save 4362...
+        ... loading save 38602...
 
         ...
         creating game...
@@ -9007,117 +7635,13 @@ MonoBehaviour:
       - Uncategorized
       parentId: 1029
       parentUniqueId: 'Boto.Survivor.Tests.dll/[Boto.Survivor.Tests][StepProviderTests][suite]'
-    m_ResultText: 'DesyncTest_LongPlayIdle_Success (17.040s)
-
-      ---
-
-      Creating
-      Game...
-
-      Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-      Loading
-      subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-      Server is now listening
-      for connections.
-
-      Game already launched, likely joined lobby.
-
-      mockServer
-      Step 1: Applying 1 extra actions
-
-      mockServer Step 1: Executing rpc: PlayerJoin:0:
-
-      Player
-      0 created.
-
-      Added playerid 0 to entity Entity(67:5)
-
-      ... saving...
-
-      ...
-      sending save...
-
-      ... wrote 12628...
-
-      ... sending Id...
-
-      Creating
-      ID message: 1
-
-      ... loading save 12628...
-
-      ... creating game...
-
-      Creating
-      Game...
-
-      ... save loaded...
-
-      Loading subscene with GUID: 7b41724212e98214f8b8777690c2a5bb
-
-      Loading
-      subscene with GUID: 24b4cc9fa890cde4ba1a296216afae7d
-
-      ... done.
-
-      Got
-      ID message: 1
-
-      Added playerid 0 to entity Entity(186:3)
-
-      Game already
-      launched, likely joined lobby.
-
-      mockServer Step 1001: Applying 1 extra
-      actions
-
-      mockServer Step 1001: Executing rpc: PlayerJoin:1:
-
-      Player
-      1 created.
-
-      Added playerid 1 to entity Entity(238:3)
-
-      mockClient
-      Step 1001: Applying 1 extra actions
-
-      mockClient Step 1001: Executing
-      rpc: PlayerJoin:1:
-
-      Player 1 created.
-
-      Added playerid 1 to entity
-      Entity(239:3)
-
-      Step: 1001
-
-      Step: 1101
-
-      Step: 1201
-
-      Step:
-      1301
-
-      Step: 1401
-
-      Step: 1501
-
-      Step: 1601
-
-      Step: 1701
-
-      Step:
-      1801
-
-      Step: 1901'
+    m_ResultText: DesyncTests (16 tests) (56.905s)
     m_ResultStacktrace: 
     m_TestListState:
-      scrollPos: {x: 0, y: 60}
-      m_SelectedIDs: 99dbb7a5
-      m_LastClickedID: -1514677351
-      m_ExpandedIDs: 0e9b03a8e4021aab2ccbe2014bc6fd42ffffff7f
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 0e9b03a8
+      m_LastClickedID: -1476158706
+      m_ExpandedIDs: 0e9b03a8e4021aab2ccbe201b6022f224bc6fd42ffffff7f
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -9147,7 +7671,7 @@ MonoBehaviour:
     m_SelectedOption: 0
   - m_Window: {fileID: 0}
     runProgress:
-      RunGuid: 33e0a690-9428-405c-b808-4f62e82a5cdf
+      RunGuid: 40ed8692-4a38-4a43-86c4-2180a0a76287
       ExecutionSettings:
         m_TargetPlatform: 0
         m_HasTargetPlatform: 0
@@ -9160,7 +7684,7 @@ MonoBehaviour:
         filters:
         - testMode: 2
           testNames:
-          - DesyncTests.DesyncTest_LongPlayIdle_Success
+          - DesyncTests
           groupNames: []
           categoryNames: []
           assemblyNames: []
@@ -9175,7 +7699,7 @@ MonoBehaviour:
           disableNestedEnumeratorBugfix: 0
         randomOrderSeed: 0
       HasFinished: 1
-      Progress: 0.9999999
+      Progress: 0.9999997
       CurrentStepName: Unlock Reload Assemblies
       CurrentStageName: 
     m_NewResultList: []
@@ -9212,3 +7736,139 @@ MonoBehaviour:
       selectedCategories: []
       availableCategories: []
     m_SelectedOption: 0
+--- !u!114 &24
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 12014, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.ProjectBrowser
+  m_MinSize: {x: 230, y: 250}
+  m_MaxSize: {x: 10000, y: 10000}
+  m_TitleContent:
+    m_Text: Project
+    m_Image: {fileID: -5467254957812901981, guid: 0000000000000000d000000000000000, type: 0}
+    m_Tooltip: 
+    m_TextWithWhitespace: "Project\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 1050
+    y: 915
+    width: 1509
+    height: 479
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_OverlaysVisible: 1
+  m_SearchFilter:
+    m_NameFilter: 
+    m_ClassNames: []
+    m_AssetLabels: []
+    m_AssetBundleNames: []
+    m_ReferencingInstanceIDs: 
+    m_SceneHandles: 
+    m_ShowAllHits: 0
+    m_SkipHidden: 0
+    m_SearchArea: 1
+    m_Folders:
+    - Assets/Matthew Guz/Hits Effects FREE/Prefab
+    m_Globs: []
+    m_ProductIds: 
+    m_AnyWithAssetOrigin: 0
+    m_OriginalText: 
+    m_ImportLogFlags: 0
+    m_FilterByTypeIntersection: 0
+  m_ViewMode: 1
+  m_StartGridSize: 16
+  m_LastFolders:
+  - Assets/Matthew Guz/Hits Effects FREE/Prefab
+  m_LastFoldersGridSize: -1
+  m_LastProjectPath: C:\Work Repos\Boto.Survivor
+  m_LockTracker:
+    m_IsLocked: 1
+  m_FolderTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 64840100
+    m_LastClickedID: 99428
+    m_ExpandedIDs: 000000004e050100
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_AssetTreeState:
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 000000004e050100
+    m_RenameOverlay:
+      m_UserAcceptedRename: 0
+      m_Name: 
+      m_OriginalName: 
+      m_EditFieldRect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      m_UserData: 0
+      m_IsWaitingForDelay: 0
+      m_IsRenaming: 0
+      m_OriginalEventType: 11
+      m_IsRenamingFilename: 1
+      m_TrimLeadingAndTrailingWhitespace: 0
+      m_ClientGUIView: {fileID: 0}
+    m_SearchString: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+  m_ListAreaState:
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
+    m_HadKeyboardFocusLastEvent: 1
+    m_ExpandedInstanceIDs: 
+    m_CreateAssetUtility:
+      m_EndAction: {fileID: 0}
+      m_InstanceID: 0
+      m_Path: 
+      m_Icon: {fileID: 0}
+      m_ResourceFile: 
+    m_NewAssetIndexInList: -1
+    m_ScrollPosition: {x: 0, y: 0}
+    m_GridSize: 16
+  m_SkipHiddenPackages: 0
+  m_DirectoriesAreaWidth: 200

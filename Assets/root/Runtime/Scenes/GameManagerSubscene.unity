@@ -152,6 +152,7 @@ MonoBehaviour:
   SurvivorTemplate: {fileID: 7419757055955712054, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
   Projectile_Survivor_Laser: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   GemDropTemplate: {fileID: 6121660106472816910, guid: 95bdde110b0b5c649a3e3671ad905766, type: 3}
+  RingDropTemplate: {fileID: 4660096552810017651, guid: 97935f69511d31f4aab76f74f510d516, type: 3}
   ItemDropTemplate: {fileID: 5559287972358161004, guid: 455611bfb7ab9a74388d828ca927835b, type: 3}
   LootDropTemplate: {fileID: 8172005811876368486, guid: 557e63004fd20314fbe8dc06e15f357c, type: 3}
   SpecificPrefabDatabase: {fileID: 11400000, guid: 2236ec58b14307e4f89f34b18668931c, type: 2}
@@ -172,6 +173,12 @@ MonoBehaviour:
       Value: {fileID: 11400000, guid: 3ed00de4bd167324dabffea0fc2d495e, type: 2}
     - Key: 3
       Value: {fileID: 11400000, guid: 53b9839e62ca3424d940847c58e9419f, type: 2}
+  RingVisuals:
+    _serializedList:
+    - Key: 1
+      Value: {fileID: 11400000, guid: 980dd70db0e6e8e4386babaf63ca0a6f, type: 2}
+    - Key: 2
+      Value: {fileID: 11400000, guid: 2948f3c19be3ae5458c997c86d5b00ae, type: 2}
   TerrainGroups:
   - {fileID: 5688195340662495965, guid: 41c71b2fcdf835b47bedd6a07552f53b, type: 3}
   - {fileID: 5688195340662495965, guid: f7f1b2be214530045b70b18bbfe1db27, type: 3}
