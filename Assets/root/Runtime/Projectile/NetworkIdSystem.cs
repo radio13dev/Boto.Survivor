@@ -21,19 +21,27 @@ public struct NetworkIdMapping : IComponentData
     public const int k_MappingOffset = 8;
     public const int k_EntitiesPerArray = 2 << k_MappingOffset;
 
-    internal int m_Offset;
-    internal UnsafeList<UnsafeArray<Entity>> m_Mapping;
+    internal UnsafeList<(int offset, UnsafeArray<Entity> entities)> m_Mapping;
 
     public Entity this[NetworkId id]
     {
         get
         {
+            if (m_Mapping.Length == 0) return Entity.Null;
+            
             int mappingArray = (int)(id.Value >> k_MappingOffset);
-            if (mappingArray < m_Offset) return Entity.Null;
-            if (mappingArray >= m_Offset + m_Mapping.Length) return Entity.Null;
-
-            int mappingIndex = (int)(id.Value & ~k_EntitiesPerArray);
-            return m_Mapping[mappingArray - m_Offset][mappingIndex];
+            if (mappingArray < m_Mapping[0].offset) return Entity.Null;
+            if (mappingArray > m_Mapping[^1].offset) return Entity.Null;
+            
+            for (int arrayIndex = 0; arrayIndex < m_Mapping.Length; arrayIndex++)
+            {
+                if (m_Mapping[arrayIndex].offset == mappingArray)
+                {
+                    int mappingIndex = (int)(id.Value & ~k_EntitiesPerArray);
+                    return m_Mapping[arrayIndex].entities[mappingIndex];
+                }
+            }
+            return Entity.Null;
         }
     }
 }
@@ -71,7 +79,7 @@ public partial struct NetworkIdSystem : ISystem
         state.EntityManager.CreateSingleton<NetworkIdMapping>();
         SystemAPI.SetSingleton(new NetworkIdMapping()
         {
-            m_Mapping = new UnsafeList<UnsafeArray<Entity>>(1, Allocator.Persistent)
+            m_Mapping = new UnsafeList<(int, UnsafeArray<Entity>)>(1, Allocator.Persistent)
         });
     }
     
@@ -89,19 +97,18 @@ public partial struct NetworkIdSystem : ISystem
         
         // Setup default offset (for the 'zero' array
         var mapping = entityManager.GetSingleton<NetworkIdMapping>();
-        mapping.m_Offset = (int)(ids[correctOrdering[0]].Value >> NetworkIdMapping.k_MappingOffset);
         for (int i = 0; i < correctOrdering.Length; i++)
         {
             // Add them to the mapping
             var networkId = ids[correctOrdering[i]].Value;
             int mappingIndex = (int)(networkId & ~NetworkIdMapping.k_EntitiesPerArray);
             int mappingArray = (int)(networkId >> NetworkIdMapping.k_MappingOffset);
-            if (mappingArray >= mapping.m_Offset + mapping.m_Mapping.Length)
+            if (mappingArray > mapping.m_Mapping[^1].offset)
             {
-                mapping.m_Mapping.Add(new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.UninitializedMemory));
+                mapping.m_Mapping.Add((mappingArray, new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.UninitializedMemory)));
             }
 
-            mapping.m_Mapping.ElementAt(mappingArray)[mappingIndex] = idEntities[correctOrdering[i]];
+            mapping.m_Mapping.ElementAt(mappingArray).entities[mappingIndex] = idEntities[correctOrdering[i]];
         }
         correctOrdering.Dispose();
     }
