@@ -20,8 +20,6 @@ public unsafe struct GameRpc : IComponentData
         PlayerLeave = 0b1000_0001,
 
         // Runtime Actions
-        [Obsolete]
-        PlayerAdjustInventory = 0b0000_0000,
         
         PlayerSlotInventoryGemIntoRing = 0b0000_0001,
         PlayerSwapGemSlots = 0b0000_0010,
@@ -93,25 +91,6 @@ public unsafe struct GameRpc : IComponentData
         var rpc = game.World.EntityManager.CreateEntity(new ComponentType(typeof(GameRpc)));
         game.World.EntityManager.SetComponentData(rpc, this);
     }
-
-    #region Inventory Adjust
-    [FieldOffset(2)] public byte OBSOLETE_From;
-    [FieldOffset(4)] public byte OBSOLETE_To;
-    [FieldOffset(6)] public float3 OBSOLETE_FloorPosition;
-    public bool IsToFloor => OBSOLETE_To == byte.MaxValue;
-    public bool IsFromFloor => OBSOLETE_From >= Ring.k_RingCount;
-    public int FromFloorIndex => OBSOLETE_From - Ring.k_RingCount;
-
-    public static GameRpc PlayerAdjustInventory(byte player, byte from, byte to, float3 toPosition = default)
-    {
-        return new GameRpc(){ m_Type = (byte)Code.PlayerAdjustInventory, m_Player = player, OBSOLETE_From = from, OBSOLETE_To = to, OBSOLETE_FloorPosition = toPosition };
-    }
-
-    public static byte GetFloorIndexByte(int index)
-    {
-        return (byte)(Ring.k_RingCount + index);
-    }
-    #endregion
 
     #region GemSlotting and RingSlotting
     [FieldOffset(2)] public int InventoryIndex;
@@ -443,111 +422,6 @@ public partial struct GameRpcSystem : ISystem
                     else
                         state.EntityManager.DestroyEntity(bestE);
                     
-                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
-                    break;
-                }
-                    
-                
-                case GameRpc.Code.PlayerAdjustInventory:
-                {
-                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
-                    playerQuery.SetSharedComponentFilter(playerTag);
-                    if (!playerQuery.HasSingleton<Ring>()) continue;
-                    
-                    var playerE = playerQuery.GetSingletonEntity();
-                    var inventory = SystemAPI.GetBuffer<Ring>(playerE);
-                    var playerT = SystemAPI.GetComponent<LocalTransform>(playerE);
-
-                    if (rpc.IsToFloor)
-                    {
-                        // Validate the 'from' movement
-                        var from = rpc.OBSOLETE_From;
-                        if (from >= inventory.Length)
-                            continue; // Invalid 'from' index
-
-                        if (inventory[from].Stats.PrimaryEffect == RingPrimaryEffect.None)
-                            continue; // Nothing to drop
-
-                        // Remove item from inventory
-                        var taken = inventory[from].Stats;
-                        inventory[from] = default;
-
-                        //  and spawn it in world
-                        var resources = SystemAPI.GetSingleton<GameManager.Resources>();
-                        var ringDrop = ecb.Instantiate(resources.ItemDropTemplate);
-                        ecb.SetComponent(ringDrop, playerT);
-                        ecb.SetComponent(ringDrop, new Movement() { Velocity = SystemAPI.GetSingleton<SharedRandom>().Random.NextFloat3Direction() * 2f });
-                        ecb.SetComponent(ringDrop, taken);
-
-                        Debug.Log($"{from} from hand to floor");
-                    }
-                    else if (rpc.IsFromFloor)
-                    {
-                        // Validate the 'to' movement
-                        var to = rpc.OBSOLETE_To;
-                        if (to >= inventory.Length)
-                            continue; // Invalid 'to' index
-
-                        // Validate the 'pickup' exists
-                        Entity pickupE = Entity.Null;
-                        float pickupD = float.MaxValue;
-                        foreach (var (testPickupT, testPickupE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAny<RingStats, LootGenerator2>().WithEntityAccess())
-                        {
-                            var d = math.distancesq(testPickupT.ValueRO.Position, rpc.OBSOLETE_FloorPosition);
-                            if (d < pickupD)
-                            {
-                                pickupE = testPickupE;
-                                pickupD = d;
-                            }
-                            else if (d == pickupD)
-                            {
-                                // Desync!
-                                Debug.LogError($"Desync occured during item pickup!");
-                            }
-                        }
-
-                        if (pickupD > 2 * 2) continue; // Too far away
-
-                        // Pick it up and destroy it
-                        RingStats pickup;
-                        if (SystemAPI.HasComponent<LootGenerator2>(pickupE))
-                            pickup = SystemAPI.GetComponent<LootGenerator2>(pickupE).GetRingStats(rpc.FromFloorIndex);
-                        else
-                            pickup = SystemAPI.GetComponent<RingStats>(pickupE);
-
-                        ecb.DestroyEntity(pickupE);
-
-                        // Remove item from inventory
-                        var taken = inventory[to].Stats;
-                        inventory[to] = new Ring() { Stats = pickup };
-                        Debug.Log($"{rpc.FromFloorIndex} from floor to {to}");
-
-                        // and spawn it in world
-                        if (taken.PrimaryEffect != RingPrimaryEffect.None)
-                        {
-                            var resources = SystemAPI.GetSingleton<GameManager.Resources>();
-                            var ringDrop = ecb.Instantiate(resources.ItemDropTemplate);
-                            ecb.SetComponent(ringDrop, SystemAPI.GetComponent<LocalTransform>(playerE));
-                            ecb.SetComponent(ringDrop, new Movement() { Velocity = SystemAPI.GetSingleton<SharedRandom>().Random.NextFloat3Direction() * 2f });
-                            ecb.SetComponent(ringDrop, taken);
-                            Debug.Log($"{to} from hand to floor");
-                        }
-                    }
-                    else
-                    {
-                        var from = rpc.OBSOLETE_From;
-                        var to = rpc.OBSOLETE_To;
-
-                        // Validate the 'from' and 'to' movement
-                        if (from >= inventory.Length)
-                            continue; // Invalid 'from' index
-                        if (to >= inventory.Length)
-                            continue; // Invalid 'to' index
-
-                        (inventory[from], inventory[to]) = (inventory[to], inventory[from]);
-                        Debug.Log($"{from} from hand to {to}");
-                    }
-
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     break;
                 }

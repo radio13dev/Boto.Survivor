@@ -83,12 +83,14 @@ public partial struct RingSystem : ISystem
             }
         }
 
-        private void ActivateRing(int ringIndex, int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement,
+        private unsafe void ActivateRing(int ringIndex, int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement,
             in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems,
             in NativeList<(Entity, NetworkId)> ignoreNearbyBuffer)
         {
             var r = SharedRandom;
             ref var ring = ref rings.ElementAt(ringIndex);
+
+            PrimaryEffectStack stack = new(ref rings, ringIndex);
 
             // Get shared stats
             float projectileSpeed = ring.Stats.PrimaryEffect.GetProjectileSpeed(compiledStats.ProjectileSpeed);
@@ -112,46 +114,91 @@ public partial struct RingSystem : ISystem
             }
 
             // Fire projectiles
-            switch (ring.Stats.PrimaryEffect)
+            for (int i = 0; i < (int)RingPrimaryEffect.Length; i++)
             {
-                default:
-                    Debug.LogWarning($"Unhandled RingPrimaryEffect: {ring.Stats.PrimaryEffect}");
-                    break;
+                int power = stack.Stacks[i];
+                if (power == 0) continue;
 
-                // Fires projectiles in a ring around the player:
-                // - Slight randomization in initial spawn points and angles
-                // - ProjectileCount: TODO: Increase radial count OR DOUBLE the count of projectiles (double sounds funner)
-                case RingPrimaryEffect.Projectile_Ring:
+                RingPrimaryEffect effect = (RingPrimaryEffect)(1 << i);
+
+                switch (effect)
                 {
-                    const float Projectile_Ring_CharacterOffset = 1f;
+                    default:
+                        Debug.LogWarning($"Unhandled RingPrimaryEffect: {effect}");
+                        break;
 
-                    var template = Projectiles[0];
-                    var projectileCount = 8;
-                    var angStep = math.PI2 / projectileCount;
-                    var loopCount = 1 + mod_ProjectileCount;
-
-                    // Instantiate all projectiles at once
-                    var allProjectiles = new NativeArray<Entity>(projectileCount * loopCount, Allocator.Temp);
-                    ecb.Instantiate(Key, template.Entity, allProjectiles);
-
-                    // Then modify them 1 by 1
-                    for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                    case RingPrimaryEffect.Projectile_Ring:
                     {
-                        var ang0 = loopIt * angStep / loopCount;
-                        for (int projIt = 0; projIt < projectileCount; projIt++)
-                        {
-                            var ang = ang0 + projIt * angStep;
-                            var projectileE = allProjectiles[loopIt * projectileCount + projIt];
+                        const float Projectile_Ring_CharacterOffset = 1f;
 
+                        var template = Projectiles[0];
+                        var projectileCount = 8;
+                        var angStep = math.PI2 / projectileCount;
+                        var loopCount = 1 + mod_ProjectileCount;
+
+                        // Instantiate all projectiles at once
+                        var allProjectiles = new NativeArray<Entity>(projectileCount * loopCount, Allocator.Temp);
+                        ecb.Instantiate(Key, template.Entity, allProjectiles);
+
+                        // Then modify them 1 by 1
+                        for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                        {
+                            var ang0 = loopIt * angStep / loopCount;
+                            for (int projIt = 0; projIt < projectileCount; projIt++)
+                            {
+                                var ang = ang0 + projIt * angStep;
+                                var projectileE = allProjectiles[loopIt * projectileCount + projIt];
+
+                                var projectileT = transform;
+                                projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), ang), transform.Rotation);
+                                projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_Ring_CharacterOffset * projectileSize;
+                                projectileT.Scale = projectileSize;
+                                ecb.SetComponent(Key, projectileE, projectileT);
+
+                                ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
+                                //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+
+                                ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
+                                ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
+                                ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
+
+                                if (ignoreNearbyBuffer.IsCreated)
+                                    ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());
+                            }
+                        }
+
+                        break;
+                    }
+
+                    case RingPrimaryEffect.Projectile_NearestRapid:
+                    {
+                        const float Projectile_NearestRapid_CharacterOffset = 1f;
+
+                        var template = Projectiles[0];
+                        var projectileCount = 1;
+                        var loopCount = 1 + mod_ProjectileCount;
+
+                        var visitor = new EnemyColliderTree.NearestVisitor();
+                        var distance = new EnemyColliderTree.DistanceProvider();
+                        EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
+
+                        float3 dir;
+                        if (visitor.Hits > 0) dir = visitor.Nearest.Center - transform.Position;
+                        else dir = movement.LastDirection;
+
+                        for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                        {
+                            var projectileE = ecb.Instantiate(Key, template.Entity);
                             var projectileT = transform;
-                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), ang), transform.Rotation);
-                            projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_Ring_CharacterOffset * projectileSize;
+                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), r.NextFloat(-0.05f, 0.05f) - math.PIHALF),
+                                quaternion.LookRotationSafe(dir, transform.Up()));
+                            projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
                             projectileT.Scale = projectileSize;
                             ecb.SetComponent(Key, projectileE, projectileT);
 
                             ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
                             //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
-                            
+
                             ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                             ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
@@ -159,49 +206,49 @@ public partial struct RingSystem : ISystem
                             if (ignoreNearbyBuffer.IsCreated)
                                 ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());
                         }
+
+                        break;
                     }
 
-                    break;
-                }
-
-                case RingPrimaryEffect.Projectile_NearestRapid:
-                {
-                    const float Projectile_NearestRapid_CharacterOffset = 1f;
-
-                    var template = Projectiles[0];
-                    var projectileCount = 1;
-                    var loopCount = 1 + mod_ProjectileCount;
-
-                    var visitor = new EnemyColliderTree.NearestVisitor();
-                    var distance = new EnemyColliderTree.DistanceProvider();
-                    EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
-
-                    float3 dir;
-                    if (visitor.Hits > 0) dir = visitor.Nearest.Center - transform.Position;
-                    else dir = movement.LastDirection;
-
-                    for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                    case RingPrimaryEffect.Projectile_Seeker:
                     {
-                        var projectileE = ecb.Instantiate(Key, template.Entity);
-                        var projectileT = transform;
-                        projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), r.NextFloat(-0.05f, 0.05f) - math.PIHALF),
-                            quaternion.LookRotationSafe(dir, transform.Up()));
-                        projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
-                        projectileT.Scale = projectileSize;
-                        ecb.SetComponent(Key, projectileE, projectileT);
+                        // Check if seekers are still active
+                    
+                        var template = Projectiles[0];
+                        var projectileCount = 1;
+                        var loopCount = 1 + mod_ProjectileCount;
 
-                        ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
-                        //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
-                        
-                        ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
-                        ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
-                        ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
+                        var visitor = new EnemyColliderTree.NearestVisitor();
+                        var distance = new EnemyColliderTree.DistanceProvider();
+                        EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
 
-                        if (ignoreNearbyBuffer.IsCreated)
-                            ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());
+                        float3 dir;
+                        if (visitor.Hits > 0) dir = visitor.Nearest.Center - transform.Position;
+                        else dir = movement.LastDirection;
+
+                        for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                        {
+                            var projectileE = ecb.Instantiate(Key, template.Entity);
+                            var projectileT = transform;
+                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), r.NextFloat(-0.05f, 0.05f) - math.PIHALF),
+                                quaternion.LookRotationSafe(dir, transform.Up()));
+                            projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
+                            projectileT.Scale = projectileSize;
+                            ecb.SetComponent(Key, projectileE, projectileT);
+
+                            ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
+                            //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+
+                            ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
+                            ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
+                            ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
+
+                            if (ignoreNearbyBuffer.IsCreated)
+                                ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());
+                        }
+
+                        break;
                     }
-
-                    break;
                 }
             }
         }

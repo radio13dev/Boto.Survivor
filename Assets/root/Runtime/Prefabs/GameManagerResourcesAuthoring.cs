@@ -14,14 +14,9 @@ public struct GameManager : IComponentData
     [ChunkSerializable]
     public struct Resources : IComponentData
     {
-        public Entity ProjectileTemplate;
         public Entity SurvivorTemplate;
-        public Entity ItemDropTemplate;
-        public Entity LootDropTemplate;
         public Entity GemDropTemplate;
         public Entity RingDropTemplate;
-        
-        public Entity Projectile_Survivor_Laser;
     }
     
     public struct SpecificPrefabs : IBufferElementData
@@ -93,14 +88,9 @@ public struct GameManager : IComponentData
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
-    public GameObject ProjectileTemplate;
     public GameObject SurvivorTemplate;
-    public GameObject Projectile_Survivor_Laser;
     public GemDropAuthoring GemDropTemplate;
     public RingDropAuthoring RingDropTemplate;
-    
-    public RingItemAuthoring ItemDropTemplate;
-    public LootGenerator2Authoring LootDropTemplate;
     
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
@@ -120,11 +110,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             AddComponent(entity, new GameManager());
             AddComponent(entity, new GameManager.Resources()
             {
-                ProjectileTemplate = GetEntity(authoring.ProjectileTemplate, TransformUsageFlags.WorldSpace),
                 SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
-                Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace),
-                ItemDropTemplate = GetEntity(authoring.ItemDropTemplate, TransformUsageFlags.WorldSpace),
-                LootDropTemplate = GetEntity(authoring.LootDropTemplate, TransformUsageFlags.WorldSpace),
                 GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace),
                 RingDropTemplate = GetEntity(authoring.RingDropTemplate, TransformUsageFlags.WorldSpace),
             });

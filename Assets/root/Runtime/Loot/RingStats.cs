@@ -2,6 +2,7 @@
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
@@ -15,23 +16,72 @@ public struct Ring : IBufferElementData
     public RingStats Stats;
 }
 
+[Flags]
+public enum RingPrimaryEffect
+{
+    None = 0,
+    
+    Projectile_Ring         = 1 << 0,
+    Projectile_NearestRapid = 1 << 1,
+    Projectile_Seeker       = 1 << 2,
+    Projectile_Band         = 1 << 3,
+    
+    Projectile_Melee        = 1 << 4,
+    Projectile_Returning    = 1 << 5,
+    Projectile_Mark         = 1 << 6,
+    Projectile_Orbit        = 1 << 7,
+    
+    Length = 8
+}
+
+public unsafe struct PrimaryEffectStack
+{
+    public fixed byte Stacks[(int)RingPrimaryEffect.Length];
+
+    public PrimaryEffectStack(ref DynamicBuffer<Ring> rings, int ringIndex)
+    {
+        int main = (int)rings[ringIndex].Stats.PrimaryEffect;
+        int comp;
+        int depth;
+        int init;
+        const int mask = 1;
+        
+        for (int i = 0; i <= ringIndex; i++)
+        {
+            comp = main;
+            depth = 0;
+            init = (int)rings[i].Stats.PrimaryEffect;
+            while (comp != 0 && init != 0)
+            {
+                if ((comp & mask) != 0 && (init & mask) != 0)
+                    Stacks[depth]++;
+            
+                comp >>= 1;
+                init >>= 1;
+                depth++;
+            }
+        }
+    }
+}
+
 [Save]
 [Serializable]
 public struct RingStats : IComponentData
 {
     // Primary effect
-    public bool IsValid => PrimaryEffect != RingPrimaryEffect.None && PrimaryEffect != RingPrimaryEffect.Length;
+    public bool IsValid => PrimaryEffect != RingPrimaryEffect.None;
     public RingPrimaryEffect PrimaryEffect;
 
     public static RingStats Generate(ref Random random)
     {
         RingStats ringStats = new();
-        ringStats.PrimaryEffect = (RingPrimaryEffect)random.NextInt(1, (int)RingPrimaryEffect.Length - 1);
+        ringStats.PrimaryEffect = (RingPrimaryEffect)(1 << random.NextInt((int)RingPrimaryEffect.Length));
         return ringStats;
     }
 
     public string GetTitleString()
     {
+        
         switch (PrimaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
@@ -77,19 +127,4 @@ public struct RingStats : IComponentData
         }
     }
     #endregion
-}
-
-
-public enum RingPrimaryEffect
-{
-    None,
-    Projectile_Ring,
-    Projectile_NearestRapid,
-
-    Length
-}
-
-public enum RingSecondaryEffect
-{
-    Trigger_Left
 }
