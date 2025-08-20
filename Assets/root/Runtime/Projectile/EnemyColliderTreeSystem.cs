@@ -19,14 +19,24 @@ namespace Collisions
         [BurstCompile]
         public struct NearestVisitor : IOctreeNearestVisitor<(Entity, NetworkId)>
         {
+            public int DesiredHits;
             public int Hits;
             public AABB Nearest;
+            public (Entity, NetworkId) NearestObj;
+            public AABB Last;
+            public (Entity, NetworkId) LastObj;
 
             public bool OnVist((Entity, NetworkId) obj, AABB bounds)
             {
+                if (Hits == 0)
+                {
+                    Nearest = bounds;
+                    NearestObj = obj;
+                }
                 Hits++;
-                Nearest = bounds;
-                return false; // End checks
+                Last = bounds;
+                LastObj = obj;
+                return Hits < DesiredHits; // End checks
             }
         }
 

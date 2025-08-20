@@ -90,6 +90,18 @@ public struct RotationalInertia : IComponentData
 public struct Grounded : IComponentData, IEnableableComponent { }
 
 [Save]
+public struct PhysicsResponseRef : IComponentData
+{
+    public int ResponseIndex;
+
+    public PhysicsResponse Get()
+    {
+        // TODO: Implement this to save memory per entity
+        return PhysicsResponse.Default;
+    }
+}
+
+[Save]
 [Serializable]
 public struct PhysicsResponse : IComponentData
 {
@@ -98,6 +110,7 @@ public struct PhysicsResponse : IComponentData
     public float BounceThresholdMin;
     public float BounceResponse;
     public float BounceFriction;
+    public bool DisableGrounding;
     
     public float AirDrag;
     public float AirDragLinear;
@@ -115,8 +128,10 @@ public struct PhysicsResponse : IComponentData
 
     public float ForceVelocityResistance;
     public float ForceShiftResistance;
+    public bool LookInMoveDirection;
     
-    public static PhysicsResponse Default => new PhysicsResponse()
+    
+    public static readonly PhysicsResponse Default = new PhysicsResponse()
     {
         Gravity = 30,
         BounceThresholdMin = 100,
@@ -139,7 +154,7 @@ public struct PhysicsResponse : IComponentData
         IdlePivot = default
     };
     
-    public static PhysicsResponse Stationary => new PhysicsResponse()
+    public static readonly PhysicsResponse Stationary = new PhysicsResponse()
     {
         Gravity = 30,
         BounceThresholdMin = 100,
@@ -176,10 +191,15 @@ public partial struct TorusGravitySystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        state.Dependency = new TestJob()
+        var a = new TestJob()
         {
             dt = SystemAPI.Time.DeltaTime
         }.ScheduleParallel(state.Dependency);
+        var b = new RefJob()
+        {
+            dt = SystemAPI.Time.DeltaTime
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency = JobHandle.CombineDependencies(a,b);
         state.Dependency = new SurfaceMovementJob()
         {
             
@@ -201,6 +221,21 @@ public partial struct TorusGravitySystem : ISystem
     
     [BurstCompile]
     [WithPresent(typeof(Grounded))]
+    partial struct RefJob : IJobEntity
+    {
+        [ReadOnly] public float dt;
+        public void Execute(ref LocalTransform transform, ref Movement movement, ref Force force, ref RotationalInertia inertia, EnabledRefRW<Grounded> grounded, in PhysicsResponseRef physicsResponseRef)
+        {
+            var r = physicsResponseRef.Get();
+            new TestJob()
+            {
+                dt = dt
+            }.Execute(ref transform, ref movement, ref force, ref inertia, grounded, in r);
+        }
+    }
+    
+    [BurstCompile]
+    [WithPresent(typeof(Grounded))]
     partial struct TestJob : IJobEntity
     {
         [ReadOnly] public float dt;
@@ -216,6 +251,9 @@ public partial struct TorusGravitySystem : ISystem
             
             // Movement
             transform.Position += movement.Velocity*dt;
+            
+            if (physicsResponse.LookInMoveDirection && math.any(movement.Velocity != 0))
+                transform.Rotation = quaternion.LookRotationSafe(movement.Velocity, transform.Up());
             
             float3 surfaceNormal;
             // Gravity
@@ -272,7 +310,8 @@ public partial struct TorusGravitySystem : ISystem
                         movement.Velocity += downVelVec;
 
                         // Grounding true
-                        grounded.ValueRW = true;
+                        if (!physicsResponse.DisableGrounding)
+                            grounded.ValueRW = true;
                     }
                     
                     // Snap position to surface

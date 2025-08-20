@@ -7,28 +7,20 @@ public static class StatExtensions
     [Pure]
     public static bool IsProjectile(this RingPrimaryEffect primaryEffect)
     {
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                return true;
-            default:
-                return false;
-        }
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) return true;
+        return false;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
     public static bool IsTimed(this RingPrimaryEffect primaryEffect)
     {
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                return true;
-            default:
-                return false;
-        }
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) return true;
+        return false;
     }
     
     
@@ -37,17 +29,10 @@ public static class StatExtensions
     public static float GetCooldown(this RingPrimaryEffect primaryEffect, float modifier)
     {
         float baseCD = 1;
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-                baseCD = 1f;
-                goto default;
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                baseCD = 0.2f;
-                goto default;
-            default:
-                return baseCD*(modifier >= 0 ? 1/(1 + modifier) : 1/modifier);
-        }
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseCD = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseCD = 0.2f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseCD = 5f;
+        return baseCD*(modifier >= 0 ? 1/(1 + modifier) : 1/modifier);
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -55,59 +40,42 @@ public static class StatExtensions
     public static float GetProjectileSpeed(this RingPrimaryEffect primaryEffect, float modifier)
     {
         float baseSpeed = 10f;
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-                baseSpeed = 10f;
-                goto default;
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                baseSpeed = 20f;
-                goto default;
-            default:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSpeed;
-        }
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseSpeed = 10f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseSpeed = 20f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseSpeed = 30f;
+        return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSpeed;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
     public static float GetProjectileDuration(this RingPrimaryEffect primaryEffect, float modifier)
     {
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 2f;
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 1f;
-            default:
-                return -1;
-        }
+        float baseDuration = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseDuration = 2f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDuration = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDuration = 19f;
+        return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseDuration;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
     public static float GetProjectileDamage(this RingPrimaryEffect primaryEffect, float modifier)
     {
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 10f;
-            default:
-                return -1;
-        }
+        float baseDamage = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseDamage = 10f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDamage = 10f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDamage = 10f;
+        return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseDamage;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
     public static float GetProjectileSize(this RingPrimaryEffect primaryEffect, float modifier)
     {
-        switch (primaryEffect)
-        {
-            case RingPrimaryEffect.Projectile_Ring:
-            case RingPrimaryEffect.Projectile_NearestRapid:
-                return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * 1f;
-            default:
-                return -1;
-        }
+        float baseSize = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseSize = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseSize = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseSize = 1f;
+        return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSize;
     }
 }

@@ -67,6 +67,7 @@ public class SurvivorAuthoring : MonoBehaviour
             
             // Loop triggers
             AddBuffer<ProjectileLoopTriggerQueue>(entity);
+            AddBuffer<OwnedProjectiles>(entity);
         }
     }
 }

@@ -34,6 +34,14 @@ public enum RingPrimaryEffect
     Length = 8
 }
 
+public static class RingPrimaryEffectExtension
+{
+    public static int GetMostSigBit(this RingPrimaryEffect eff)
+    {
+        return sizeof(int)*8 - math.lzcnt((uint)eff);
+    }
+}
+
 public unsafe struct PrimaryEffectStack
 {
     public fixed byte Stacks[(int)RingPrimaryEffect.Length];
@@ -113,7 +121,7 @@ public struct RingStats : IComponentData
         {
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
-            return instances[visuals[(int)PrimaryEffect].InstancedResourceIndex].Instance.Value.Material;
+            return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Material;
         }
     }
 
@@ -123,7 +131,7 @@ public struct RingStats : IComponentData
         {
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
-            return instances[visuals[(int)PrimaryEffect].InstancedResourceIndex].Instance.Value.Mesh;
+            return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Mesh;
         }
     }
     #endregion

@@ -148,13 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc1530c6e1540a7bbd3919ae34218a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::GameManagerResourcesAuthoring
-  ProjectileTemplate: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   SurvivorTemplate: {fileID: 7419757055955712054, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
-  Projectile_Survivor_Laser: {fileID: 311269425040365492, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
   GemDropTemplate: {fileID: 6121660106472816910, guid: 95bdde110b0b5c649a3e3671ad905766, type: 3}
   RingDropTemplate: {fileID: 4660096552810017651, guid: 97935f69511d31f4aab76f74f510d516, type: 3}
-  ItemDropTemplate: {fileID: 5559287972358161004, guid: 455611bfb7ab9a74388d828ca927835b, type: 3}
-  LootDropTemplate: {fileID: 8172005811876368486, guid: 557e63004fd20314fbe8dc06e15f357c, type: 3}
   SpecificPrefabDatabase: {fileID: 11400000, guid: 2236ec58b14307e4f89f34b18668931c, type: 2}
   InstancedResourcesDatabase: {fileID: 11400000, guid: d1bd9a978272a2e438fdeec8ba9fee6c, type: 2}
   ParticleDatabase: {fileID: 11400000, guid: 3710ef55dc7ecff40a4ace5e7b7d076b, type: 2}
@@ -162,6 +158,8 @@ MonoBehaviour:
   - {fileID: 254759076134581957, guid: 95dc81180710b1c418907ef23694e7e7, type: 3}
   Projectiles:
   - {fileID: 708185384290785635, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
+  - {fileID: 708185384290785635, guid: 56e95e1e8b5c98943be8bace3fe904df, type: 3}
+  - {fileID: 708185384290785635, guid: 99249a7fbbf322c46a01b8487b9cac46, type: 3}
   Enemies:
   - {fileID: 3557533656269071170, guid: c653466aa7f50c242a855e5c9a8d6911, type: 3}
   - {fileID: 3557533656269071170, guid: 3e6374a9897bc5247ab2ec6e2f292242, type: 3}

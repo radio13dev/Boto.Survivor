@@ -17,7 +17,7 @@ public class ProjectileAuthoring : MonoBehaviour
             AddBuffer<ProjectileHitEntity>(entity);
             AddBuffer<ProjectileIgnoreEntity>(entity);
             
-            AddComponent(entity, new ProjectileLoopTrigger());
+            AddComponent(entity, ProjectileLoopTrigger.Empty);
             AddComponent(entity, new DestroyAtTime());
             
             AddComponent<SurvivorProjectileTag>(entity);

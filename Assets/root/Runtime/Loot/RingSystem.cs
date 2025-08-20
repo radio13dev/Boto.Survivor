@@ -15,6 +15,7 @@ public partial struct RingSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<NetworkIdMapping>();
         state.RequireForUpdate<SharedRandom>();
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<GameManager.Projectiles>();
@@ -27,9 +28,11 @@ public partial struct RingSystem : ISystem
         {
             ecb = delayedEcb.AsParallelWriter(),
             Time = SystemAPI.Time.ElapsedTime,
-            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(),
+            Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(true),
             EnemyColliderTree = state.WorldUnmanaged.GetUnsafeSystemRef<EnemyColliderTreeSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<EnemyColliderTreeSystem>()).Tree,
-            SharedRandom = SystemAPI.GetSingleton<SharedRandom>().Random
+            SharedRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
+            NetworkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>(),
+            LocalTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true)
         }.Schedule(state.Dependency);
     }
 
@@ -41,10 +44,13 @@ public partial struct RingSystem : ISystem
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
         [ReadOnly] public NativeOctree<(Entity, NetworkId)> EnemyColliderTree;
         [ReadOnly] public Random SharedRandom;
+        [ReadOnly] public NetworkIdMapping NetworkIdMapping;
+        [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
 
         [BurstCompile]
         public void Execute([EntityIndexInChunk] int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement, in CompiledStats compiledStats,
             ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems,
+            ref DynamicBuffer<OwnedProjectiles> ownedProjectiles,
             ref DynamicBuffer<ProjectileLoopTriggerQueue> triggerQueue)
         {
             for (int ringIndex = 0; ringIndex < rings.Length; ++ringIndex)
@@ -61,12 +67,13 @@ public partial struct RingSystem : ISystem
                 ring.LastActivateTime = Time;
 
                 // Activate the ring
-                ActivateRing(ringIndex, Key, in playerId, in transform, in movement, in compiledStats, ref rings, ref equippedGems, default);
+                ActivateRing(ringIndex, Key, in playerId, in transform, in movement, in compiledStats, ref rings, ref equippedGems, ref ownedProjectiles, default);
             }
 
             if (triggerQueue.Length > 0)
             {
                 NativeList<(Entity, NetworkId)> ignoreBuffer = new NativeList<(Entity, NetworkId)>(4, Allocator.Temp);
+                DynamicBuffer<OwnedProjectiles> fakeIgnoredProjectiles = default;
                 for (int i = 0; i < triggerQueue.Length; i++)
                 {
                     var trigger = triggerQueue[i];
@@ -76,7 +83,7 @@ public partial struct RingSystem : ISystem
 
                     ignoreBuffer.Clear();
                     EnemyColliderTree.RangeAABB(new AABB(trigger.HitT.Position - new float3(1, 1, 1), trigger.HitT.Position + new float3(1, 1, 1)), ignoreBuffer);
-                    ActivateRing(trigger.RingIndex, Key, in playerId, in trigger.HitT, in movement, in compiledStats, ref rings, ref equippedGems, in ignoreBuffer);
+                    ActivateRing(trigger.RingIndex, Key, in playerId, in trigger.HitT, in movement, in compiledStats, ref rings, ref equippedGems, ref fakeIgnoredProjectiles, in ignoreBuffer);
                 }
 
                 triggerQueue.Clear();
@@ -85,6 +92,7 @@ public partial struct RingSystem : ISystem
 
         private unsafe void ActivateRing(int ringIndex, int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement,
             in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems,
+            ref DynamicBuffer<OwnedProjectiles> ownedProjectiles,
             in NativeList<(Entity, NetworkId)> ignoreNearbyBuffer)
         {
             var r = SharedRandom;
@@ -114,12 +122,12 @@ public partial struct RingSystem : ISystem
             }
 
             // Fire projectiles
-            for (int i = 0; i < (int)RingPrimaryEffect.Length; i++)
+            for (int effectIt = 0; effectIt < (int)RingPrimaryEffect.Length; effectIt++)
             {
-                int power = stack.Stacks[i];
-                if (power == 0) continue;
+                byte tier = stack.Stacks[effectIt];
+                if (tier == 0) continue;
 
-                RingPrimaryEffect effect = (RingPrimaryEffect)(1 << i);
+                RingPrimaryEffect effect = (RingPrimaryEffect)(1 << effectIt);
 
                 switch (effect)
                 {
@@ -178,7 +186,7 @@ public partial struct RingSystem : ISystem
                         var projectileCount = 1;
                         var loopCount = 1 + mod_ProjectileCount;
 
-                        var visitor = new EnemyColliderTree.NearestVisitor();
+                        var visitor = new EnemyColliderTree.NearestVisitor(){ DesiredHits = tier };
                         var distance = new EnemyColliderTree.DistanceProvider();
                         EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
 
@@ -212,41 +220,94 @@ public partial struct RingSystem : ISystem
 
                     case RingPrimaryEffect.Projectile_Seeker:
                     {
-                        // Check if seekers are still active
-                    
-                        var template = Projectiles[0];
-                        var projectileCount = 1;
-                        var loopCount = 1 + mod_ProjectileCount;
-
-                        var visitor = new EnemyColliderTree.NearestVisitor();
-                        var distance = new EnemyColliderTree.DistanceProvider();
-                        EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
-
-                        float3 dir;
-                        if (visitor.Hits > 0) dir = visitor.Nearest.Center - transform.Position;
-                        else dir = movement.LastDirection;
-
-                        for (int loopIt = 0; loopIt < loopCount; loopIt++)
+                        // Check if seekers (of our desired tier) are still active
+                        byte requiredSeekerCount = (byte)(mod_ProjectileCount + tier + 1);
+                        
+                        // If not, rebuild those seekers
+                        var template = Projectiles[2];
+                        for (byte projSpawnIt = 0; projSpawnIt < requiredSeekerCount; projSpawnIt++)
                         {
+                            if (ownedProjectiles.IsCreated)
+                            {
+                                bool hitMatch = false;
+                                for (int ownedProjIt = 0; ownedProjIt < ownedProjectiles.Length; ownedProjIt++)
+                                {
+                                    var proj = ownedProjectiles[ownedProjIt];
+                                    if (!LocalTransformLookup.HasComponent(NetworkIdMapping[proj.NetworkId]))
+                                    {
+                                        ownedProjectiles.RemoveAtSwapBack(ownedProjIt);
+                                        ownedProjIt--;
+                                        continue;
+                                    }
+
+                                    if (proj.Key.PrimaryEffect != RingPrimaryEffect.Projectile_Seeker) continue;
+                                    if (proj.Key.Tier != tier) continue;
+                                    if (proj.Key.Index != projSpawnIt) continue;
+
+                                    hitMatch = true;
+                                    break;
+                                }
+
+                                if (hitMatch) continue;
+                            }
+                                
                             var projectileE = ecb.Instantiate(Key, template.Entity);
                             var projectileT = transform;
-                            projectileT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), r.NextFloat(-0.05f, 0.05f) - math.PIHALF),
-                                quaternion.LookRotationSafe(dir, transform.Up()));
-                            projectileT.Position = projectileT.Position + projectileT.Right() * Projectile_NearestRapid_CharacterOffset * projectileSize;
+                            projectileT.Position += r.NextFloat3Direction();
                             projectileT.Scale = projectileSize;
                             ecb.SetComponent(Key, projectileE, projectileT);
 
                             ecb.SetComponent(Key, projectileE, ProjectileLoopTrigger.Empty);
-                            //ecb.SetComponent(Key, projectileE, new ProjectileLoopTrigger(0, (byte)playerId.Index, (byte)ringIndex));
+                            
+                            ecb.SetComponent(Key, projectileE, new SeekerProjectileData()
+                            {
+                                CreateTime = Time,
+                                SeekerCount = requiredSeekerCount
+                            });
 
-                            ecb.SetComponent(Key, projectileE, new SurfaceMovement() { PerFrameVelocity = new float3(projectileSpeed, 0, 0) });
+                            ecb.SetComponent(Key, projectileE, new MovementSettings() { Speed = projectileSpeed });
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                             ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
+                            ecb.SetComponent(Key, projectileE, new OwnedProjectile(){ PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
 
                             if (ignoreNearbyBuffer.IsCreated)
                                 ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());
                         }
+                        
+                        // ... those seekers will register themselves to our 'owned projectiles' list in their own time before this method triggers again
+                        break;
+                    }
 
+                    case RingPrimaryEffect.Projectile_Band:
+                    {
+                        // Create the 'band' projectile for our desired tier
+
+                        break;
+                    }
+                    
+                    case RingPrimaryEffect.Projectile_Melee:
+                    { 
+                        // Does nothing, stat refresh generates these objects
+                        break;
+                    }
+                    
+                    case RingPrimaryEffect.Projectile_Returning:
+                    {
+                        // Does nothing, stat refresh generates these objects
+                        break;
+                    }
+                    
+                    case RingPrimaryEffect.Projectile_Mark:
+                    {
+                        // Scan for enemies within a (minRad, maxRad) band around the player
+                        
+                        // Create a projectile targeting each of those enemies
+                        break;
+                    }
+                    
+                    case RingPrimaryEffect.Projectile_Orbit:
+                    {
+                        // Does nothing, stat refresh generates these objects
                         break;
                     }
                 }

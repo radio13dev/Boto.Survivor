@@ -28,6 +28,8 @@ public struct NetworkIdMapping : IComponentData
     {
         get
         {
+            if (id.Value == 0) return Entity.Null;
+            
             int mappingArray = (int)(id.Value >> k_MappingOffset);
             if (mappingArray < m_Offset) return Entity.Null;
             if (mappingArray >= m_Offset + m_Mapping.Length) return Entity.Null;
