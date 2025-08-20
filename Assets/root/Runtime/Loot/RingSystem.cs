@@ -107,7 +107,8 @@ public partial struct RingSystem : ISystem
             float projectileSize = ring.Stats.PrimaryEffect.GetProjectileSize(compiledStats.ProjectileDuration);
 
             // Get gem mods
-            int mod_ProjectileCount = 0;
+            byte mod_ProjectileCount = 0;
+            byte mod_PierceCount = 0;
 
             var gemMin = ringIndex * Gem.k_GemsPerRing;
             var gemMax = (ringIndex + 1) * Gem.k_GemsPerRing;
@@ -117,6 +118,9 @@ public partial struct RingSystem : ISystem
                 {
                     case Gem.Type.Multishot:
                         mod_ProjectileCount++;
+                        break;
+                    case Gem.Type.Pierce:
+                        mod_PierceCount++;
                         break;
                 }
             }
@@ -186,7 +190,7 @@ public partial struct RingSystem : ISystem
                         var projectileCount = 1;
                         var loopCount = 1 + mod_ProjectileCount;
 
-                        var visitor = new EnemyColliderTree.NearestVisitor(){ DesiredHits = tier };
+                        var visitor = new EnemyColliderTree.NearestVisitorCount(){ DesiredHits = tier };
                         var distance = new EnemyColliderTree.DistanceProvider();
                         EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
 
@@ -221,7 +225,7 @@ public partial struct RingSystem : ISystem
                     case RingPrimaryEffect.Projectile_Seeker:
                     {
                         // Check if seekers (of our desired tier) are still active
-                        byte requiredSeekerCount = (byte)(mod_ProjectileCount + tier + 1);
+                        byte requiredSeekerCount = (byte)(mod_ProjectileCount + tier + 4);
                         
                         // If not, rebuild those seekers
                         var template = Projectiles[2];
@@ -269,6 +273,7 @@ public partial struct RingSystem : ISystem
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = Time + projectileDuration });
                             ecb.SetComponent(Key, projectileE, new Projectile() { Damage = projectileDamage });
                             ecb.SetComponent(Key, projectileE, new OwnedProjectile(){ PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
+                            ecb.SetComponent(Key, projectileE, new Pierce(){ Value = mod_PierceCount });
 
                             if (ignoreNearbyBuffer.IsCreated)
                                 ecb.SetBuffer<ProjectileIgnoreEntity>(Key, projectileE).AddRange(ignoreNearbyBuffer.AsArray().Reinterpret<ProjectileIgnoreEntity>());

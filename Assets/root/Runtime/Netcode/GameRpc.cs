@@ -25,6 +25,7 @@ public unsafe struct GameRpc : IComponentData
         PlayerSwapGemSlots = 0b0000_0010,
         PlayerSwapRingSlots = 0b0000_0011,
         PlayerPickupRing = 0b0000_0100,
+        PlayerDropRing = 0b0000_0101,
         
         // Admin Actions
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
@@ -93,7 +94,7 @@ public unsafe struct GameRpc : IComponentData
     }
 
     #region GemSlotting and RingSlotting
-    [FieldOffset(2)] public int InventoryIndex;
+    [FieldOffset(2)] public byte InventoryIndex;
     [FieldOffset(2)] public byte FromSlotIndex;
     [FieldOffset(3)] public byte ToSlotIndex;
     [FieldOffset(4)] public float3 InteractPosition;
@@ -120,6 +121,10 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerPickupRing(byte player, byte toSlotIndex, float3 interactPosition)
     {
         return new GameRpc() { Type = Code.PlayerPickupRing, PlayerId = player, FromSlotIndex = byte.MaxValue, ToSlotIndex = toSlotIndex, InteractPosition = interactPosition};
+    }
+    public static GameRpc PlayerDropRing(byte player, byte dropSlotIndex)
+    {
+        return new GameRpc() { Type = Code.PlayerDropRing, PlayerId = player, ToSlotIndex = dropSlotIndex};
     }
     #endregion
 
@@ -423,6 +428,34 @@ public partial struct GameRpcSystem : ISystem
                         state.EntityManager.DestroyEntity(bestE);
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                case GameRpc.Code.PlayerDropRing:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Ring>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var playerT = SystemAPI.GetComponent<LocalTransform>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
+
+                    if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= rings.Length)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to drop index {rpc.ToSlotIndex} but only has {rings.Length} slots.");
+                        continue;
+                    }
+                    
+                    var dropped = rings[rpc.ToSlotIndex];
+                    rings[rpc.ToSlotIndex] = default;
+                    if (dropped.Stats.IsValid)
+                    {
+                        var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().RingDropTemplate;
+                        var ringDropE = ecb.Instantiate(ringDropTemplate);
+                        ecb.SetComponent(ringDropE, dropped.Stats);
+                        ecb.SetComponent(ringDropE, playerT);
+                        SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    }
                     break;
                 }
                 

@@ -37,11 +37,15 @@ public partial struct CompiledStatsSystem : ISystem
     [BurstCompile]
     partial struct Job : IJobEntity
     {
-        public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings, in DynamicBuffer<EquippedGem> gems)
+        public void Execute(Entity entity, ref CompiledStats stats, EnabledRefRW<CompiledStatsDirty> statsDirty, in DynamicBuffer<Ring> rings, in DynamicBuffer<EquippedGem> gems, ref DynamicBuffer<OwnedProjectiles> ownedProjectiles)
         {
             stats = new();
             //for (int i = 0; i < rings.Length; i++)
             //    stats.Add(rings[i].Stats);
+            
+            // Destroy any owned projectiles that are no longer valid
+            
+            
             statsDirty.ValueRW = false;
             GameEvents.Trigger(GameEvents.Type.InventoryChanged, entity);
         }

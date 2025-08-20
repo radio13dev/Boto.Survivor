@@ -32,6 +32,9 @@ public struct OwnedProjectile : IComponentData, IEnableableComponent
     public ProjectileKey Key;
 }
 
+
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[UpdateBefore(typeof(RingSystem))]
 public partial struct OwnedProjectileSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)

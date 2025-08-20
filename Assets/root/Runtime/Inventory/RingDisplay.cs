@@ -97,6 +97,18 @@ public class RingDisplay : MonoBehaviour
                 SnapBackToOrigin();
             }
         }
+        else if (UIFocus.Focus && UIFocus.Focus.TryGetComponent<TrashCan>(out _))
+        {
+            // Trash this thing
+            if (this.Index >= 0)
+            {
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerDropRing((byte)Game.ClientGame.PlayerIndex, 
+                        (byte)this.Index
+                    ));
+                SnapBackToOrigin();
+            }
+        }
         else
         {
             // Snap back to origin

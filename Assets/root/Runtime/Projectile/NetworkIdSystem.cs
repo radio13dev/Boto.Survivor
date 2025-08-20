@@ -133,7 +133,7 @@ public partial struct NetworkIdSystem : ISystem
             int mappingArray = (int)(iterator >> NetworkIdMapping.k_MappingOffset);
             if (mappingArray >= mapping.m_Offset + mapping.m_Mapping.Length)
             {
-                mapping.m_Mapping.Add(new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.UninitializedMemory));
+                mapping.m_Mapping.Add(new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.ClearMemory));
             }
 
             mapping.m_Mapping.ElementAt(mappingArray)[mappingIndex] = entities[index];

@@ -19,6 +19,21 @@ namespace Collisions
         [BurstCompile]
         public struct NearestVisitor : IOctreeNearestVisitor<(Entity, NetworkId)>
         {
+            public bool Hit;
+            public AABB Nearest;
+            public (Entity, NetworkId) NearestObj;
+
+            public bool OnVist((Entity, NetworkId) obj, AABB bounds)
+            {
+                Nearest = bounds;
+                NearestObj = obj;
+                Hit = true;
+                return false; // End checks
+            }
+        }
+        [BurstCompile]
+        public struct NearestVisitorCount : IOctreeNearestVisitor<(Entity, NetworkId)>
+        {
             public int DesiredHits;
             public int Hits;
             public AABB Nearest;
@@ -37,6 +52,36 @@ namespace Collisions
                 Last = bounds;
                 LastObj = obj;
                 return Hits < DesiredHits; // End checks
+            }
+        }
+        [BurstCompile]
+        public struct NearestVisitorIgnore : IOctreeNearestVisitor<(Entity, NetworkId)>
+        {
+            public bool Hit;
+            public AABB Nearest;
+            public (Entity, NetworkId) NearestObj;
+            [ReadOnly] public DynamicBuffer<ProjectileIgnoreEntity> Ignore;
+
+            public NearestVisitorIgnore(in DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities)
+            {
+                Hit = default;
+                Nearest = default;
+                NearestObj = default;
+                Ignore = ignoredEntities;
+            }
+
+            public bool OnVist((Entity, NetworkId) obj, AABB bounds)
+            {
+                for (int i = 0; i < Ignore.Length; i++)
+                    if (Ignore[i].Value == obj.Item2)
+                    {
+                        return true;
+                    }
+                    
+                Nearest = bounds;
+                NearestObj = obj;
+                Hit = true;
+                return false; // End checks
             }
         }
 

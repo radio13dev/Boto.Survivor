@@ -1,4 +1,5 @@
-﻿using Collisions;
+﻿using BovineLabs.Saving;
+using Collisions;
 using NativeTrees;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[Save]
 public struct SeekerProjectileData : IComponentData
 {
     public double CreateTime;
@@ -23,10 +25,12 @@ public class SeekerProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new SeekerProjectileData());
             AddComponent(entity, new MovementSettings(){ Speed = 1 });
             AddComponent(entity, new OwnedProjectile());
+            AddComponent<Pierce>(entity);
         }
     }
 }
 
+[UpdateInGroup(typeof(ProjectileSystemGroup))]
 public partial struct SeekerProjectileSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -59,28 +63,24 @@ public partial struct SeekerProjectileSystem : ISystem
         [ReadOnly] public NetworkIdMapping NetworkIdMapping;
     
         public void Execute(ref SeekerProjectileData seeker, in OwnedProjectile owned, in MovementSettings speed, 
-            in LocalTransform transform, in DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities,
+            in LocalTransform transform, ref DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities,
             in Movement movement, ref Force force, ref RotationalInertia rotationalInertia)
         {
             var aliveTime = Time - seeker.CreateTime;
-            if (aliveTime > 2 && !TransformLookup.HasComponent(NetworkIdMapping[seeker.LockedTarget]))
+            if (aliveTime > 1)
             {
-                var visitor = new EnemyColliderTree.NearestVisitor();
+                var visitor = new EnemyColliderTree.NearestVisitorIgnore(ignoredEntities);
                 var distance = new EnemyColliderTree.DistanceProvider();
-                EnemyColliderTree.Nearest(transform.Position, 30, ref visitor, distance);
-                if (visitor.Hits > 0)
+                EnemyColliderTree.Nearest(transform.Position, 10, ref visitor, distance);
+                if (visitor.Hit)
                 {
-                    // Lock on to that target and fly towards them
-                    seeker.LockedTarget = visitor.NearestObj.Item2;
+                    // ... move towards that position smoothly
+                    var predictedPos = transform.Position;// + movement.Velocity*dt*10;
+                    force.Velocity += math.clamp(visitor.Nearest.Center - predictedPos, -3, 3)*dt*speed.Speed;
+                    return;
                 }
+                ignoredEntities.Clear();
             }
-            if (TransformLookup.TryGetComponent(NetworkIdMapping[seeker.LockedTarget], out var targetT))
-            {
-                // ... move towards that position smoothly
-                var predictedPos = transform.Position;// + movement.Velocity*dt*10;
-                force.Velocity += (targetT.Position - predictedPos)*dt*speed.Speed;
-            }
-            else
             {
                 // If we can't find an enemy to target, fallback to orbiting the player.
             
@@ -97,7 +97,7 @@ public partial struct SeekerProjectileSystem : ISystem
                 
                 // ... move towards that position smoothly
                 var predictedPos = transform.Position + movement.Velocity*dt*2;
-                force.Velocity += (zero - predictedPos)*dt*speed.Speed;
+                force.Velocity += math.clamp(zero - predictedPos, -3, 3)*dt*speed.Speed;
             }
         }
     }

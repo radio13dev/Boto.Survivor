@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BovineLabs.Saving;
 using Unity.Collections;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class SurvivorAuthoring : MonoBehaviour
 {
     public Health Health = new Health(100);
     public RingStats[] InitialRings = new RingStats[8];
+    public List<Gem> InitialGems = new();
 
     partial class Baker : Baker<SurvivorAuthoring>
     {
@@ -61,9 +63,8 @@ public class SurvivorAuthoring : MonoBehaviour
                 rings[i] = new Ring(){ Stats = authoring.InitialRings[i] };
             
             var inventoryGems = AddBuffer<InventoryGem>(entity);
-            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
-            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
-            inventoryGems.Add(new InventoryGem(new Gem(Gem.Type.Multishot, 1)));
+            foreach (var initGem in authoring.InitialGems)
+                inventoryGems.Add(new InventoryGem(initGem));
             
             // Loop triggers
             AddBuffer<ProjectileLoopTriggerQueue>(entity);

@@ -62,6 +62,17 @@ MonoBehaviour:
   - PrimaryEffect: 0
   - PrimaryEffect: 0
   - PrimaryEffect: 0
+  InitialGems:
+  - GemType: 3
+    Size: 0
+  - GemType: 3
+    Size: 0
+  - GemType: 3
+    Size: 0
+  - GemType: 3
+    Size: 0
+  - GemType: 3
+    Size: 0
 --- !u!114 &3243524279367401719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,6 +165,7 @@ MonoBehaviour:
     BounceThresholdMin: 100
     BounceResponse: 0.5
     BounceFriction: 0.5
+    DisableGrounding: 0
     AirDrag: 1
     AirDragLinear: 1
     Friction: 6
@@ -169,6 +181,7 @@ MonoBehaviour:
       z: 0
     ForceVelocityResistance: 0
     ForceShiftResistance: 0
+    LookInMoveDirection: 0
   HasSurfaceMovement: 0
 --- !u!114 &900170924473941128
 MonoBehaviour:

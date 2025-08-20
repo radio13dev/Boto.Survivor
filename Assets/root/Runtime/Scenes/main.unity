@@ -4851,6 +4851,8 @@ GameObject:
   - component: {fileID: 541658574}
   - component: {fileID: 541658573}
   - component: {fileID: 541658572}
+  - component: {fileID: 541658576}
+  - component: {fileID: 541658575}
   m_Layer: 5
   m_Name: Trash
   m_TagString: Untagged
@@ -4930,6 +4932,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::RingUI2Element
   rotateTarget: {fileID: 1023672163}
   snapRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
+--- !u!114 &541658575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541658570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97ba44a9131740b3ba44c131bf60215e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::TrashCan
+--- !u!114 &541658576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541658570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9318ac62599c4e81b5f56f9e7b064760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.GUI::Focusable
+  OnFocusStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFocusEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &555071188
 GameObject:
   m_ObjectHideFlags: 0

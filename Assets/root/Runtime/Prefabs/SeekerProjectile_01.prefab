@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -6949698779435470453}
   - component: {fileID: -6360861978305353800}
   - component: {fileID: -9192647812313897349}
+  - component: {fileID: -5738706082781734412}
   m_Layer: 0
   m_Name: SeekerProjectile_01
   m_TagString: Untagged
@@ -164,3 +165,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90949429c2e4d25b0e2dbf93203af24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::NetworkIdAuthoring
+--- !u!114 &-5738706082781734412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  Min:
+    x: -0.5
+    y: -0.5
+    z: -0.5
+  Max:
+    x: 0.5
+    y: 0.5
+    z: 0.5

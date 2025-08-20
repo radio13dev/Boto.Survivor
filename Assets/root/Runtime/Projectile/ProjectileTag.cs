@@ -15,6 +15,12 @@ public struct Projectile : IComponentData
 }
 
 [Save]
+public struct Pierce : IComponentData
+{
+    public byte Value;
+}
+
+[Save]
 public struct ProjectileHit : IComponentData, IEnableableComponent
 {
 }
