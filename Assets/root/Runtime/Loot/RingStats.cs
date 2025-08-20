@@ -46,7 +46,27 @@ public unsafe struct PrimaryEffectStack
 {
     public fixed byte Stacks[(int)RingPrimaryEffect.Length];
 
-    public PrimaryEffectStack(ref DynamicBuffer<Ring> rings, int ringIndex)
+    public PrimaryEffectStack(in DynamicBuffer<Ring> rings)
+    {
+        int depth;
+        int init;
+        const int mask = 1;
+        
+        for (int i = 0; i < rings.Length; i++)
+        {
+            depth = 0;
+            init = (int)rings[i].Stats.PrimaryEffect;
+            while (init != 0)
+            {
+                if ((init & mask) != 0)
+                    Stacks[depth]++;
+            
+                init >>= 1;
+                depth++;
+            }
+        }
+    }
+    public PrimaryEffectStack(in DynamicBuffer<Ring> rings, int ringIndex)
     {
         int main = (int)rings[ringIndex].Stats.PrimaryEffect;
         int comp;

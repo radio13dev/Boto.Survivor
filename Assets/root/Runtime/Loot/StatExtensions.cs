@@ -5,7 +5,7 @@ public static class StatExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
-    public static bool IsProjectile(this RingPrimaryEffect primaryEffect)
+    public static bool IsTimed(this RingPrimaryEffect primaryEffect)
     {
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) return true;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) return true;
@@ -15,14 +15,11 @@ public static class StatExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
-    public static bool IsTimed(this RingPrimaryEffect primaryEffect)
+    public static bool IsPersistent(this RingPrimaryEffect primaryEffect)
     {
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) return true;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) return true;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) return true;
         return false;
     }
-    
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
@@ -43,6 +40,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseSpeed = 10f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseSpeed = 20f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseSpeed = 30f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseSpeed = 30f;
         return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSpeed;
     }
     
@@ -65,6 +63,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseDamage = 10f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDamage = 10f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDamage = 10f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseDamage = 10f;
         return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseDamage;
     }
     

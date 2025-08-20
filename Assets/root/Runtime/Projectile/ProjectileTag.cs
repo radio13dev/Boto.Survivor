@@ -18,6 +18,8 @@ public struct Projectile : IComponentData
 public struct Pierce : IComponentData
 {
     public byte Value;
+    public static readonly Pierce Infinite = new Pierce(){ Value = byte.MaxValue };
+    public bool IsInfinite => Value == byte.MaxValue;
 }
 
 [Save]

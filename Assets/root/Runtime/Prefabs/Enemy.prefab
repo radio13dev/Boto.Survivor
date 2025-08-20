@@ -85,13 +85,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   Min:
-    x: -0.2
-    y: -0.2
-    z: -0.2
+    x: -1
+    y: -1
+    z: -1
   Max:
-    x: 0.2
-    y: 0.2
-    z: 0.2
+    x: 1
+    y: 1
+    z: 1
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +194,7 @@ MonoBehaviour:
     BounceThresholdMin: 100
     BounceResponse: 0.5
     BounceFriction: 0.5
+    DisableGrounding: 0
     AirDrag: 1
     AirDragLinear: 1
     Friction: 7
@@ -209,6 +210,7 @@ MonoBehaviour:
       z: 0
     ForceVelocityResistance: 0
     ForceShiftResistance: 0
+    LookInMoveDirection: 0
   HasSurfaceMovement: 0
 --- !u!114 &441538821448249754
 MonoBehaviour:

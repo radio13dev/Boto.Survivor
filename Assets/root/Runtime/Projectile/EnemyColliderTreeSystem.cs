@@ -165,6 +165,7 @@ namespace Collisions
 
         [BurstCompile]
         [WithNone(typeof(SurvivorTag))]
+        [WithNone(typeof(Projectile))]
         unsafe partial struct EnemyPushForceJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;

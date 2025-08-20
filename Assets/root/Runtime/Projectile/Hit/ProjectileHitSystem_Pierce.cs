@@ -26,7 +26,7 @@ public partial struct ProjectileHitSystem_Pierce : ISystem
         {
             if (pierce.Value > 0)
             {
-                pierce.Value--;
+                if (!pierce.IsInfinite) pierce.Value--;
                 ignore.AddRange(hits.AsNativeArray().Reinterpret<ProjectileIgnoreEntity>());
                 hitState.ValueRW = false;
             }

@@ -11,6 +11,7 @@ public partial struct ProjectileHitSystem_Push : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<NetworkIdMapping>();
+        state.Enabled = false; // Don't do knockback for now.
     }
 
     [BurstCompile]

@@ -8,32 +8,33 @@ using Unity.Transforms;
 using UnityEngine;
 
 [Save]
-public struct SeekerProjectileData : IComponentData
+public struct OrbitProjectileData : IComponentData
 {
-    public const int TemplateIndex = 2;
+    public const int TemplateIndex = SeekerProjectileData.TemplateIndex + 8;
 
     public double CreateTime;
     public byte SeekerCount;
     public NetworkId LockedTarget;
 }
 
-public class SeekerProjectileAuthoring : MonoBehaviour
+public class OrbitProjectileAuthoring : MonoBehaviour
 {
-    partial class Baker : Baker<SeekerProjectileAuthoring>
+    partial class Baker : Baker<OrbitProjectileAuthoring>
     {
-        public override void Bake(SeekerProjectileAuthoring authoring)
+        public override void Bake(OrbitProjectileAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new SeekerProjectileData());
-            AddComponent(entity, new MovementSettings(){ Speed = 1 });
+            AddComponent(entity, new OrbitProjectileData());
+            AddComponent(entity, new MovementSettings() { Speed = 1 });
             AddComponent(entity, new OwnedProjectile());
-            AddComponent<Pierce>(entity);
+            AddComponent<Pierce>(entity, Pierce.Infinite);
+            AddComponent<IgnoresTerrain>(entity);
         }
     }
 }
 
 [UpdateInGroup(typeof(ProjectileSystemGroup))]
-public partial struct SeekerProjectileSystem : ISystem
+public partial struct OrbitProjectileSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
@@ -53,7 +54,7 @@ public partial struct SeekerProjectileSystem : ISystem
             NetworkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
         }.Schedule();
     }
-    
+
     [WithPresent(typeof(OwnedProjectile))]
     partial struct Job : IJobEntity
     {
@@ -63,43 +64,33 @@ public partial struct SeekerProjectileSystem : ISystem
         [ReadOnly] public DynamicBuffer<PlayerControlledLink> Players;
         [ReadOnly] public NativeOctree<(Entity, NetworkId)> EnemyColliderTree;
         [ReadOnly] public NetworkIdMapping NetworkIdMapping;
-    
-        public void Execute(ref SeekerProjectileData seeker, in OwnedProjectile owned, in MovementSettings speed, 
+
+        public void Execute(ref OrbitProjectileData orbit, in OwnedProjectile owned, in MovementSettings speed,
             in LocalTransform transform, ref DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities,
-            in Movement movement, ref Force force)
+            in Movement movement, ref Force force, ref RotationalInertia rotationalInertia)
         {
-            var aliveTime = Time - seeker.CreateTime;
-            if (aliveTime > 1)
-            {
-                var visitor = new EnemyColliderTree.NearestVisitorIgnore(ignoredEntities);
-                var distance = new EnemyColliderTree.DistanceProvider();
-                EnemyColliderTree.Nearest(transform.Position, 10, ref visitor, distance);
-                if (visitor.Hit)
-                {
-                    // ... move towards that position smoothly
-                    var predictedPos = transform.Position;// + movement.Velocity*dt*10;
-                    force.Velocity += math.clamp(visitor.Nearest.Center - predictedPos, -3, 3)*dt*speed.Speed;
-                    return;
-                }
-                ignoredEntities.Clear();
-            }
-            {
-                // If we can't find an enemy to target, fallback to orbiting the player.
+            // We can hit enemies every frame, so go nuts!
+            ignoredEntities.Clear();
             
+            {
                 // Orbit player
                 if (owned.PlayerId < 0 || owned.PlayerId >= Players.Length) return;
                 var playerE = Players[owned.PlayerId].Value;
                 if (!TransformLookup.TryGetComponent(playerE, out var playerT)) return;
-                
+
                 // ... determine orbit pos based on index
-                var zero = playerT.Position;// + playerT.Up()*5;
-                var rot = quaternion.AxisAngle(playerT.Up(), math.PI2 * owned.Key.Index/seeker.SeekerCount);
-                zero += math.mul(rot, playerT.Forward()*2);
-                zero += playerT.Up()*5;
+                var zero = playerT.Position;
+                var fullRotTime = 360 / speed.Speed;
+                var rotOffset = math.PI2 * (float)((Time % fullRotTime) / fullRotTime);
+                var rot = quaternion.AxisAngle(playerT.Up(), rotOffset + math.PI2 * owned.Key.Index / orbit.SeekerCount);
                 
+                var perp = mathu.perpendicular(playerT.Up());
+                zero += math.mul(rot, perp * 5);
+                zero += playerT.Up() * 2;
+
                 // ... move towards that position smoothly
-                var predictedPos = transform.Position + movement.Velocity*dt*2;
-                force.Velocity += math.clamp(zero - predictedPos, -3, 3)*dt*speed.Speed;
+                var predictedPos = transform.Position + movement.Velocity * dt * 2;
+                force.Velocity += math.clamp(zero - predictedPos, -3, 3) * dt * speed.Speed;
             }
         }
     }

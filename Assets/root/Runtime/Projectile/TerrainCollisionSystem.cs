@@ -11,6 +11,7 @@ namespace Collisions
 {
 
     public struct TerrainTag : IComponentData{}
+    public struct IgnoresTerrain : IComponentData{}
 
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     [UpdateAfter(typeof(EnemyColliderTreeSystem))]
@@ -74,6 +75,7 @@ namespace Collisions
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
         [BurstCompile]
+        [WithNone(typeof(IgnoresTerrain))]
         unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
@@ -134,6 +136,7 @@ namespace Collisions
         
         [BurstCompile]
         [WithAll(typeof(Projectile))]
+        [WithNone(typeof(IgnoresTerrain))]
         unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;

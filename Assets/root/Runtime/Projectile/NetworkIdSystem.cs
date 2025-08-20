@@ -136,7 +136,7 @@ public partial struct NetworkIdSystem : ISystem
                 mapping.m_Mapping.Add(new UnsafeArray<Entity>(NetworkIdMapping.k_EntitiesPerArray, Allocator.Persistent, NativeArrayOptions.ClearMemory));
             }
 
-            mapping.m_Mapping.ElementAt(mappingArray)[mappingIndex] = entities[index];
+            mapping.m_Mapping.ElementAt(mappingArray - mapping.m_Offset)[mappingIndex] = entities[index];
 
             // Iterate
             iterator++;
