@@ -38,6 +38,16 @@ public class GameLaunch : MonoBehaviour, IDisposable
         return gameLaunch;
     }
     
+    [EditorButton]
+    public void ConnectToSelf()
+    {
+        if (Server)
+        {
+            var other = Create(m_GameFactory);
+            other.StartCoroutine(other.JoinLobby(Server.JoinCode));
+        }
+    }
+    
     public void Dispose()
     {
         Destroy(gameObject);
