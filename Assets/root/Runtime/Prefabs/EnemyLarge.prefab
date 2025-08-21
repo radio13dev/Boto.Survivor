@@ -141,9 +141,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
   Drops:
   - Type: 0
-    Chance: 5
-    MinCount: 1
-    MaxCount: 1
+    Chance: 100
+    MinCount: 4
+    MaxCount: 10
 --- !u!114 &-2345145132516463796
 MonoBehaviour:
   m_ObjectHideFlags: 0
