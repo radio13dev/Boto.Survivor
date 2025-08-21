@@ -23,6 +23,15 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
     /// Specifices which particular primary effects have been added/removed
     /// </summary>
     public RingPrimaryEffect DirtyFlags;
+
+    public void SetDirty(Ring ring)
+    {
+        DirtyFlags |= ring.Stats.PrimaryEffect;
+    }
+    public void SetDirty(RingStats ringStats)
+    {
+        DirtyFlags |= ringStats.PrimaryEffect;
+    }
 }
 
 [Serializable]

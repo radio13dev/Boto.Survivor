@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2420137112192564157}
   serializedVersion: 2
   m_LocalRotation: {x: -0.30825692, y: 0.463892, z: 0.6121858, w: -0.56125796}
-  m_LocalPosition: {x: 3.03, y: 0, z: 6.68}
+  m_LocalPosition: {x: 7.49, y: 0, z: 7.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -58,14 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &8284809072514810519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,7 +99,7 @@ Transform:
   m_GameObject: {fileID: 2759848014953052428}
   serializedVersion: 2
   m_LocalRotation: {x: -0.30825692, y: 0.463892, z: 0.6121858, w: -0.56125796}
-  m_LocalPosition: {x: 0.62, y: 0, z: -4.66}
+  m_LocalPosition: {x: 0.17, y: 0, z: -4.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -136,14 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &1276298809188393950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +170,7 @@ Transform:
   m_GameObject: {fileID: 2921937234528319090}
   serializedVersion: 2
   m_LocalRotation: {x: -0.30825692, y: 0.463892, z: 0.6121858, w: -0.56125796}
-  m_LocalPosition: {x: 10.67, y: 0, z: 8.95}
+  m_LocalPosition: {x: 11.82, y: 0, z: 9.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -214,14 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &5630726199602934777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,14 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &649956724868358487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,6 +444,7 @@ Transform:
   - {fileID: 2578241107480746986}
   - {fileID: 6941833817696038068}
   - {fileID: 3240163017850481163}
+  - {fileID: 6112999221420384959}
   - {fileID: 3937426639206795667}
   - {fileID: 4021941666555313434}
   m_Father: {fileID: 0}
@@ -558,14 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &4828662369062039131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +604,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!1 &7577784612415267302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6112999221420384959}
+  - component: {fileID: 5015534964092664573}
+  - component: {fileID: 866053113829869586}
+  - component: {fileID: 9036990177949243245}
+  m_Layer: 0
+  m_Name: Collider (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6112999221420384959
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577784612415267302}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.30825692, y: 0.463892, z: 0.6121858, w: -0.56125796}
+  m_LocalPosition: {x: 3.49, y: 0, z: 7.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7000380137355549543}
+  m_LocalEulerAnglesHint: {x: -12.824, y: -67.091, z: -86.448}
+--- !u!114 &5015534964092664573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577784612415267302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &866053113829869586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577784612415267302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  Radius: 2.15
+--- !u!114 &9036990177949243245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7577784612415267302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
 --- !u!1 &7595582325538619876
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +703,7 @@ Transform:
   m_GameObject: {fileID: 7595582325538619876}
   serializedVersion: 2
   m_LocalRotation: {x: -0.30825692, y: 0.463892, z: 0.6121858, w: -0.56125796}
-  m_LocalPosition: {x: -4.52, y: 0, z: 5.62}
+  m_LocalPosition: {x: -4.69, y: 0, z: 5.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -696,14 +733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.15
 --- !u!114 &9133540012090893478
 MonoBehaviour:
   m_ObjectHideFlags: 0

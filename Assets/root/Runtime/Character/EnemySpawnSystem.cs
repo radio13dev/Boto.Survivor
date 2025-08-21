@@ -48,10 +48,10 @@ public static class EnemySpawnerModeExtensions
         switch (mode)
         {
             case EnemySpawnerMode.Common:
-                return new SpawnRadius(9, 10);
+                return new SpawnRadius(29, 30);
             default:
-                Debug.LogError($"");
-                return new SpawnRadius(9, 10);
+                Debug.LogError($"No radius for {mode}");
+                return new SpawnRadius(29, 30);
         }
     }
     public static bool IsValidEnemy(this EnemySpawnerMode mode, int enemy)

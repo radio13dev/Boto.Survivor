@@ -38,7 +38,7 @@ public static class RingPrimaryEffectExtension
 {
     public static int GetMostSigBit(this RingPrimaryEffect eff)
     {
-        return sizeof(int)*8 - math.lzcnt((uint)eff);
+        return sizeof(int)*8 - math.lzcnt((uint)eff) - 1;
     }
 }
 
@@ -117,7 +117,7 @@ public struct RingStats : IComponentData
             case RingPrimaryEffect.Projectile_NearestRapid:
                 return "Rapid Ring";
             default:
-                return "???";
+                return PrimaryEffect.ToString();
         }
     }
 

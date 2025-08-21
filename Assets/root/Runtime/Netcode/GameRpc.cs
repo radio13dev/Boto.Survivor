@@ -258,6 +258,7 @@ public partial struct GameRpcSystem : ISystem
                     var playerE = playerQuery.GetSingletonEntity();
                     var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
                     var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
                     
                     if (rpc.InventoryIndex < 0 || rpc.InventoryIndex >= inventory.Length)
                     {
@@ -276,6 +277,10 @@ public partial struct GameRpcSystem : ISystem
                     equipped[rpc.ToSlotIndex] = new EquippedGem(inventory[rpc.InventoryIndex].Gem);
                     inventory.RemoveAtSwapBack(rpc.InventoryIndex);
                     
+                    var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                    dirty.SetDirty(rings[rpc.ToSlotIndex/Gem.k_GemsPerRing]);
+                    SystemAPI.SetComponent(playerE, dirty);
+                    
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     break;
                 }
@@ -287,6 +292,7 @@ public partial struct GameRpcSystem : ISystem
                     
                     var playerE = playerQuery.GetSingletonEntity();
                     var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
                     
                     if (rpc.FromSlotIndex < 0 || rpc.FromSlotIndex >= equipped.Length)
                     {
@@ -300,6 +306,10 @@ public partial struct GameRpcSystem : ISystem
                         var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
                         inventory.Add(new InventoryGem(equipped[rpc.FromSlotIndex].Gem));
                         equipped[rpc.FromSlotIndex] = default;
+                        
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(rings[rpc.FromSlotIndex/Gem.k_GemsPerRing]);
+                        SystemAPI.SetComponent(playerE, dirty);
                     }
                     else
                     {
@@ -310,6 +320,11 @@ public partial struct GameRpcSystem : ISystem
                         }
                     
                         (equipped[rpc.ToSlotIndex], equipped[rpc.FromSlotIndex]) = (equipped[rpc.FromSlotIndex], equipped[rpc.ToSlotIndex]);
+                        
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(rings[rpc.FromSlotIndex/Gem.k_GemsPerRing]);
+                        dirty.SetDirty(rings[rpc.ToSlotIndex/Gem.k_GemsPerRing]);
+                        SystemAPI.SetComponent(playerE, dirty);
                     }
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
@@ -332,6 +347,10 @@ public partial struct GameRpcSystem : ISystem
                     
                     if (rpc.ToSlotIndex == -1)
                     {
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(rings[rpc.FromSlotIndex]);
+                        SystemAPI.SetComponent(playerE, dirty);
+                        
                         // Drop this on the ground
                         rings[rpc.FromSlotIndex] = default;
                     }
@@ -345,6 +364,11 @@ public partial struct GameRpcSystem : ISystem
                     
                         (rings[rpc.ToSlotIndex], rings[rpc.FromSlotIndex]) = (rings[rpc.FromSlotIndex], rings[rpc.ToSlotIndex]);
                         
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(rings[rpc.ToSlotIndex]);
+                        dirty.SetDirty(rings[rpc.FromSlotIndex]);
+                        SystemAPI.SetComponent(playerE, dirty);
+                            
                         // Also swap the equipped gems
                         var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
                         for (int i = 0; i < Gem.k_GemsPerRing; i++)
@@ -360,7 +384,6 @@ public partial struct GameRpcSystem : ISystem
                         
                         Debug.Log($"Swapped slots {rpc.FromSlotIndex} and {rpc.ToSlotIndex}");
                     }
-                    
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     break;
                 }
@@ -402,6 +425,11 @@ public partial struct GameRpcSystem : ISystem
                     // Equip
                     (rings.ElementAt(rpc.ToSlotIndex).Stats, bestR) = (bestR, rings[rpc.ToSlotIndex].Stats);
                     Debug.Log($"Picked up ring into slot {rpc.ToSlotIndex}");
+                    
+                    var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                    dirty.SetDirty(rings[rpc.ToSlotIndex]);
+                    dirty.SetDirty(bestR);
+                    SystemAPI.SetComponent(playerE, dirty);
                     
                     // Drop the item
                     if (bestR.IsValid)
@@ -450,6 +478,10 @@ public partial struct GameRpcSystem : ISystem
                     rings[rpc.ToSlotIndex] = default;
                     if (dropped.Stats.IsValid)
                     {
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(dropped);
+                        SystemAPI.SetComponent(playerE, dirty);
+                        
                         var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().RingDropTemplate;
                         var ringDropE = ecb.Instantiate(ringDropTemplate);
                         ecb.SetComponent(ringDropE, dropped.Stats);

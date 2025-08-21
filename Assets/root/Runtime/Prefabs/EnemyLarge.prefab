@@ -84,14 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -2
-    y: -2
-    z: -2
-  Max:
-    x: 2
-    y: 2
-    z: 2
+  Radius: 2.05
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +187,7 @@ MonoBehaviour:
     BounceThresholdMin: 100
     BounceResponse: 0.5
     BounceFriction: 0.5
+    DisableGrounding: 0
     AirDrag: 1
     AirDragLinear: 1
     Friction: 8
@@ -209,6 +203,7 @@ MonoBehaviour:
       z: 0
     ForceVelocityResistance: 0
     ForceShiftResistance: 0
+    LookInMoveDirection: 0
   HasSurfaceMovement: 0
 --- !u!114 &1276742715247795018
 MonoBehaviour:
