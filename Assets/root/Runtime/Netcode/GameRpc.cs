@@ -92,6 +92,13 @@ public unsafe struct GameRpc : IComponentData
         var rpc = game.World.EntityManager.CreateEntity(new ComponentType(typeof(GameRpc)));
         game.World.EntityManager.SetComponentData(rpc, this);
     }
+    
+    #region PlayerJoin and PlayerLeave
+    public static GameRpc PlayerJoin(byte playerId, byte characterType)
+    {
+        return new GameRpc(){ Type = GameRpc.Code.PlayerJoin, PlayerId = playerId, SpawnType = characterType };
+    }
+    #endregion
 
     #region GemSlotting and RingSlotting
     [FieldOffset(2)] public byte InventoryIndex;
@@ -233,8 +240,8 @@ public partial struct GameRpcSystem : ISystem
                         }
                     }
 
-                    var resources = SystemAPI.GetSingleton<GameManager.Resources>();
-                    var newPlayer = ecb.Instantiate(resources.SurvivorTemplate);
+                    var resources = SystemAPI.GetSingletonBuffer<GameManager.Survivors>();
+                    var newPlayer = ecb.Instantiate(resources[rpc.SpawnType].Entity);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
                     ecb.SetComponent(newPlayer, LocalTransform.FromPosition(closest));
                     Debug.Log($"Player {playerId} created.");

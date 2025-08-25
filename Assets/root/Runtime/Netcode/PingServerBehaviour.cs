@@ -165,13 +165,13 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             while ((connection = Driver.Driver.Accept()) != default)
             {
                 // Find and use a new slot.
-                for (int i = 0; i < Connections.Length; i++)
+                for (byte i = 0; i < Connections.Length; i++)
                 {
                     if (Connections[i].Connection.IsCreated || Connections[i].Disabled) continue;
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
-                    SpecialActionQueue.Enqueue(new GameRpc() { Type = GameRpc.Code.PlayerJoin, PlayerId = (byte)i });
+                    SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                     break;
                 }
             }
@@ -427,11 +427,11 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     public void AddLocalPlayer()
     {
-        for (int i = 0; i < m_ServerConnections.Length; i++)
+        for (byte i = 0; i < m_ServerConnections.Length; i++)
         {
             if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
             {
-                m_SpecialActionQueue.Enqueue(new GameRpc() { Type = GameRpc.Code.PlayerJoin, PlayerId = (byte)i });
+                m_SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                 Game.PlayerIndex = i;
 
                 m_ServerConnections.ElementAt(i).Disabled = true;

@@ -7,6 +7,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Jobs;
+using math = Unity.Mathematics.math;
 using Object = UnityEngine.Object;
 
 public class GenericPrefabAuthoring : MonoBehaviour
@@ -158,6 +159,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
         // Initialize the job data
         var job = new ApplyLocalTransformToTransform()
         {
+            dt = 4.0f/60.0f,
             T = SystemAPI.GetSingleton<RenderSystemHalfTime>().Value,
             transforms = transforms,
             transformsLast = transformsLast
@@ -175,6 +177,7 @@ public partial struct GenericPrefabTrackSystem : ISystem
 [BurstCompile]
 public struct ApplyLocalTransformToTransform : IJobParallelForTransform
 {
+    [ReadOnly] public float dt;
     [ReadOnly] public float T;
     [ReadOnly] public NativeArray<LocalTransform> transforms;
     [ReadOnly] public NativeArray<LocalTransformLast> transformsLast;
@@ -182,8 +185,23 @@ public struct ApplyLocalTransformToTransform : IJobParallelForTransform
     [BurstCompile]
     public void Execute(int index, TransformAccess transform)
     {
-        transform.SetPositionAndRotation(math.lerp(transformsLast[index].Value.Position, transforms[index].Position, T),
-            math.slerp(transformsLast[index].Value.Rotation, transforms[index].Rotation, T));
+        // Lerp to new pos
+        var finalPos = math.lerp(transformsLast[index].Value.Position, transforms[index].Position, T);
+    
+        // The 'up' direction should adjust instantly, but the forward direction should be lerped over time.
+        var newRot = math.slerp(transformsLast[index].Value.Rotation, transforms[index].Rotation, T);
+        var newUp = math.mul(newRot, math.up()); // Use this for all calculations
+        
+        var oldForward = math.mul(transform.rotation, math.forward());
+        oldForward = math.cross(math.cross(newUp, oldForward), newUp); // Old forward to lerp from
+        
+        var newForward = math.mul(newRot, math.forward());
+        newForward = math.cross(math.cross(newUp, newForward), newUp); // New forward to lerp to
+        
+        var finalForward = math.lerp(oldForward, newForward, dt);
+        var finalRot = quaternion.LookRotationSafe(finalForward, newUp);
+        
+        transform.SetPositionAndRotation(finalPos, finalRot);
     }
 }
 

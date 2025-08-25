@@ -18,6 +18,7 @@ public static class StatExtensions
     public static bool IsPersistent(this RingPrimaryEffect primaryEffect)
     {
         if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) return true;
         return false;
     }
     

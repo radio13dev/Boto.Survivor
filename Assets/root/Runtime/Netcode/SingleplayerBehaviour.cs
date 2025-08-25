@@ -38,7 +38,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
         if (Game.PlayerIndex == -1)
         {
             Game.PlayerIndex = 0;
-            Game.RpcSendBuffer.Enqueue(new GameRpc(){ Type = GameRpc.Code.PlayerJoin, PlayerId = 0 });
+            Game.RpcSendBuffer.Enqueue(GameRpc.PlayerJoin(0, 0));
         }
     }
 

@@ -184,6 +184,9 @@ public partial struct CompiledStatsSystem : ISystem
                             Debug.LogWarning($"Unhandled persistent projectile: {effect}");
                             break;
                             
+                        case RingPrimaryEffect.Projectile_Seeker:
+                            break; // Persistent object generated elsewhere
+                            
                         case RingPrimaryEffect.Projectile_Orbit:
                         {
                             var template = Projectiles[OrbitProjectileData.TemplateIndex + (tier - 1)];

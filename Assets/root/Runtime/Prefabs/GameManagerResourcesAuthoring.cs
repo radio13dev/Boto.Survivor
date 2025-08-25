@@ -14,7 +14,6 @@ public struct GameManager : IComponentData
     [ChunkSerializable]
     public struct Resources : IComponentData
     {
-        public Entity SurvivorTemplate;
         public Entity GemDropTemplate;
         public Entity RingDropTemplate;
     }
@@ -83,12 +82,16 @@ public struct GameManager : IComponentData
     {
         public Entity Entity;
     }
+    
+    public struct Survivors : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
 
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
-    public GameObject SurvivorTemplate;
     public GemDropAuthoring GemDropTemplate;
     public RingDropAuthoring RingDropTemplate;
     
@@ -101,6 +104,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
     public SerializedDictionary<RingPrimaryEffect, InstancedResource> RingVisuals;
     public TerrainGroupAuthoring[] TerrainGroups;
+    public SurvivorAuthoring[] Survivors;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -110,7 +114,6 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             AddComponent(entity, new GameManager());
             AddComponent(entity, new GameManager.Resources()
             {
-                SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
                 GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace),
                 RingDropTemplate = GetEntity(authoring.RingDropTemplate, TransformUsageFlags.WorldSpace),
             });
@@ -220,6 +223,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.TerrainGroups.Length; i++)
                 {
                     buffer.Add(new GameManager.TerrainGroup(){ Entity = GetEntity(authoring.TerrainGroups[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Survivors?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Survivors>(entity);
+                for (int i = 0; i < authoring.Survivors.Length; i++)
+                {
+                    buffer.Add(new GameManager.Survivors(){ Entity = GetEntity(authoring.Survivors[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }
