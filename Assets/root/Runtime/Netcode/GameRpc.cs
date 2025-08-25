@@ -16,7 +16,7 @@ public unsafe struct GameRpc : IComponentData
     public enum Code
     {
         // Server Actions
-        PlayerJoin = 0b1000_0000, // Server actions (that players cannot call directly) are flagged with this bit
+        _ServerActionBit = 0b1000_0000,
         PlayerLeave = 0b1000_0001,
 
         // Runtime Actions
@@ -26,6 +26,8 @@ public unsafe struct GameRpc : IComponentData
         PlayerSwapRingSlots = 0b0000_0011,
         PlayerPickupRing = 0b0000_0100,
         PlayerDropRing = 0b0000_0101,
+        PlayerJoin = 0b0000_0110,
+
         
         // Admin Actions
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
@@ -39,7 +41,7 @@ public unsafe struct GameRpc : IComponentData
     [FieldOffset(0)] byte m_Type;
     [FieldOffset(1)] byte m_Player;
     [FieldOffset(0)] fixed byte m_Data[Length];
-    public bool IsValidClientRpc => (m_Type & (byte)Code.PlayerJoin) != 0;
+    public bool IsValidClientRpc => (m_Type & (byte)Code._ServerActionBit) != 0;
 
     public Code Type
     {
@@ -210,6 +212,13 @@ public partial struct GameRpcSystem : ISystem
                         continue;
                     }
                     
+                    var survivors = SystemAPI.GetSingletonBuffer<GameManager.Survivors>();
+                    if (rpc.SpawnType < 0 || rpc.SpawnType >= survivors.Length)
+                    {
+                        Debug.LogWarning($"{rpc.SpawnType} is not a valid character type, defaulting to 0.");
+                        rpc.SpawnType = 0;
+                    }
+                    
                     using var playerTransformsQ = state.EntityManager.CreateEntityQuery(typeof(SurvivorTag), typeof(LocalTransform));
                     using var playerTransforms = playerTransformsQ.ToComponentDataArray<LocalTransform>(Allocator.Temp);
                     float3 avgPos = new float3(1,0,0);
@@ -240,8 +249,7 @@ public partial struct GameRpcSystem : ISystem
                         }
                     }
 
-                    var resources = SystemAPI.GetSingletonBuffer<GameManager.Survivors>();
-                    var newPlayer = ecb.Instantiate(resources[rpc.SpawnType].Entity);
+                    var newPlayer = ecb.Instantiate(survivors[rpc.SpawnType].Entity);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
                     ecb.SetComponent(newPlayer, LocalTransform.FromPosition(closest));
                     Debug.Log($"Player {playerId} created.");

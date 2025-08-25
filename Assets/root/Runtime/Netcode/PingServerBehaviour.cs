@@ -156,7 +156,6 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     {
         public BiggerDriver Driver;
         public NativeArray<Client> Connections;
-        public NativeQueue<GameRpc>.ParallelWriter SpecialActionQueue;
 
         public void Execute()
         {
@@ -171,7 +170,6 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
-                    SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                     break;
                 }
             }
@@ -316,7 +314,6 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             {
                 Driver = m_ServerDriver,
                 Connections = m_ServerConnections,
-                SpecialActionQueue = m_SpecialActionQueue.AsParallelWriter()
             };
             var eventsJobs = new ConnectionsRelayEventsJobs
             {

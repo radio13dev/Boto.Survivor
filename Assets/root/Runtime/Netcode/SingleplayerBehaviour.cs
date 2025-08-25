@@ -33,13 +33,8 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
         
         // Complete
         m_InitComplete = true;
-
-        // Spawn the player
-        if (Game.PlayerIndex == -1)
-        {
-            Game.PlayerIndex = 0;
-            Game.RpcSendBuffer.Enqueue(GameRpc.PlayerJoin(0, 0));
-        }
+        
+        Game.PlayerIndex = 0;
     }
 
     private void OnDestroy()
