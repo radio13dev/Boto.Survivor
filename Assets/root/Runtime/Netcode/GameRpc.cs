@@ -41,7 +41,7 @@ public unsafe struct GameRpc : IComponentData
     [FieldOffset(0)] byte m_Type;
     [FieldOffset(1)] byte m_Player;
     [FieldOffset(0)] fixed byte m_Data[Length];
-    public bool IsValidClientRpc => (m_Type & (byte)Code._ServerActionBit) != 0;
+    public bool IsValidClientRpc => (m_Type & (byte)Code._ServerActionBit) == 0;
 
     public Code Type
     {

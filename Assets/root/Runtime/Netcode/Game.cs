@@ -60,7 +60,12 @@ public class Game : IDisposable
     public static Game ClientGame
     {
         get => s_ClientGame;
-        set { s_ClientGame = value; }
+        set
+        {
+            if (s_ClientGame == value) return;
+            s_ClientGame = value;
+            CameraTarget.MainTarget = null;
+        }
     }
 
     static Game s_ClientGame;

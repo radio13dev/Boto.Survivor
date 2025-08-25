@@ -213,7 +213,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                         case PingClientBehaviour.CODE_SendRpc:
                             var rpc = GameRpc.Read(ref reader);
                             if (!rpc.IsValidClientRpc)
-                                Debug.Log($"{connection} sent illegal RPC: {rpc}");
+                                Debug.Log($"{connection} sent illegal RPC: {rpc} ({rpc.Type}) ({(byte)rpc.Type})");
                             else if (rpc.PlayerId != i)
                                 Debug.Log($"{connection} sent RPC for different player: {rpc}");
                             else

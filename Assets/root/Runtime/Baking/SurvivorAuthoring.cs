@@ -21,6 +21,7 @@ public class SurvivorAuthoring : MonoBehaviour
     public Health Health = new Health(100);
     public RingStats[] InitialRings = new RingStats[8];
     public List<Gem> InitialGems = new();
+    public AbilityType AbilityType;
 
     partial class Baker : Baker<SurvivorAuthoring>
     {
@@ -47,7 +48,7 @@ public class SurvivorAuthoring : MonoBehaviour
             SetComponentEnabled<MovementInputLockout>(entity, false);
             AddComponent(entity, new ActiveLockout());
             SetComponentEnabled<ActiveLockout>(entity, false);
-            AddComponent(entity, new RollActive());
+            AddComponent(entity, new RollActive(){ AbilityType = authoring.AbilityType });
             SetComponentEnabled<RollActive>(entity, false);
             
             // Stats
