@@ -37,6 +37,7 @@ public partial struct SpriteUpdateSystem : ISystem
         }.ScheduleParallel();
     }
     
+    [WithNone(typeof(Hidden))]
     partial struct Job : IJobEntity
     {
         [ReadOnly] public double Time;

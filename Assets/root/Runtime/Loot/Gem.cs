@@ -158,6 +158,12 @@ public struct Gem : IEquatable<Gem>, IComparable<Gem>
         // Mark who's allowed to collect this
         ecb.SetComponent(entity, new Collectable() { PlayerId = playerId });
         //ecb.SetComponentEnabled<Collectable>(entity, true);
+        
+        // CLIENTSIDE ONLY
+        if (Game.ClientPlayerIndex.Data != -1 && Game.ClientPlayerIndex.Data != playerId)
+        {
+            ecb.AddComponent(entity, new Hidden());
+        }
     }
 }
 

@@ -69,9 +69,31 @@ public class Game : IDisposable
     }
 
     static Game s_ClientGame;
+    
+    public int PlayerIndex
+    {
+        get
+        {
+            return m_PlayerIndex;
+        }
+        set
+        {
+            m_PlayerIndex = value;
+            ClientPlayerIndex.Data = value;
+        }
+    }
+    public int m_PlayerIndex = -1;
+    
+    public static readonly SharedStatic<int> ClientPlayerIndex = SharedStatic<int>.GetOrCreate<int, k_ClientPlayerIndex>();
+    private class k_ClientPlayerIndex { }
+
+    [RuntimeInitializeOnLoadMethod]
+    private static void Initialize()
+    {
+        ClientPlayerIndex.Data = -1;
+    }
 
     public World World => m_World;
-    public int PlayerIndex = -1;
     public long Step => m_StepController.GetSingleton<StepController>().Step;
 
     private IStepProvider m_StepProvider;

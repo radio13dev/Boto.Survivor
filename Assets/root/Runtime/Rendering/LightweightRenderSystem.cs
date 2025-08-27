@@ -1,4 +1,5 @@
 using System;
+using BovineLabs.Saving;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -7,6 +8,11 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+
+public struct Hidden : IComponentData
+{
+    
+}
 
 public struct LocalTransformLast : IComponentData
 {
@@ -24,6 +30,7 @@ public partial struct LocalTransformLastSystem : ISystem
     }
 
     [BurstCompile]
+    [WithNone(typeof(Hidden))]
     partial struct UpdateLastTransform : IJobEntity
     {
         public void Execute(ref LocalTransformLast last, in LocalTransform current)
@@ -61,7 +68,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
     {
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<RenderSystemHalfTime>();
-        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().Build();
+        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().WithNone<Hidden>().Build();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
     }
 
