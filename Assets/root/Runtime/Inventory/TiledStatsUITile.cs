@@ -1,10 +1,18 @@
 ﻿using System.Collections.Generic;
+using BovineLabs.Saving;
 using TMPro;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
+[Save]
+public struct Wallet : IComponentData
+{
+    public ulong Value;
+}
 
 public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource
 {
@@ -20,6 +28,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public Image MaxedOutline;
 
     public Image[] Connections = new Image[4];
+    public Image[] Connecteds = new Image[4];
 
     public PooledParticle LevelUpParticle;
 
@@ -46,35 +55,44 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     {
         if (UIFocus.Focus == gameObject)
         {
-            var ui = GetComponentInParent<TiledStatsUI>();
-            if (ui)
-            {
-                ui.MoveTowards(Offset);
+            if (DescriptionUI.m_CustomZero == gameObject && !NotAvailableOverlay.gameObject.activeSelf)
+                DoLevelUp();
+            FocusParentToMe();
+        }
+    }
 
-                if (DescriptionUI.m_CustomZero != gameObject)
-                    DescriptionUI.m_CustomZero = gameObject;
-                else if (!NotAvailableOverlay.gameObject.activeSelf)
-                {
-                    // Level up!
-                    var old = Level;
-                    if (Keyboard.current.leftShiftKey.isPressed)
-                        Level = Level + 1;
-                    else
-                        Level = math.max(Level, math.min(5, Level + 1));
+    public void FocusParentToMe()
+    {
+        var ui = GetComponentInParent<TiledStatsUI>();
+        if (ui)
+        {
+            ui.MoveTowards(Offset);
+            DescriptionUI.m_CustomZero = gameObject;
+        }
+    }
 
-                    if (old != Level)
-                    {
-                        ui.m_unlocked[TileKey] = Level;
-                        ui.RebuildTiles();
-
-                        var particle = LevelUpParticle.GetFromPool();
-                        particle.transform.SetPositionAndRotation(transform.position, transform.rotation);
-                        particle.transform.localScale = Vector3.one * 100;
-                        
-                        UIFocus.Refresh();
-                    }
-                }
-            }
+    public void DoLevelUp()
+    {
+        var ui = GetComponentInParent<TiledStatsUI>();
+        if (ui)
+        {
+            if (Keyboard.current.shiftKey.isPressed)
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex, 
+                        (TiledStat)(this.TileKey.x + this.TileKey.y*TiledStats.TileCols),
+                        true
+                    ));
+            else if (Keyboard.current.ctrlKey.isPressed)
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                        (TiledStat)(this.TileKey.x + this.TileKey.y * TiledStats.TileCols),
+                        false
+                    ));
+            else
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                        (TiledStat)(this.TileKey.x + this.TileKey.y * TiledStats.TileCols)
+                    ));
         }
     }
 
@@ -92,13 +110,31 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         Image.sprite = icon;
     }
 
-    Vector2Int TileKey;
+    int2 TileKey;
     int Level;
 
-    public void RefreshState(Vector2Int tileKey, ref Dictionary<Vector2Int, int> mUnlocked)
+    static readonly int2[] directions = new int2[]
+        {
+            new int2(0,1),
+            new int2(1,0),
+            new int2(0,-1),
+            new int2(-1,0)
+        };
+
+    public void RefreshState(int2 tileKey, in TiledStatsTree stats)
     {
+        bool init = math.any(TileKey != tileKey);
         TileKey = tileKey;
-        Level = mUnlocked.GetValueOrDefault(tileKey);
+        
+        var oldLevel = Level;
+        Level = stats[TileKey];
+
+        if (Application.isPlaying && !init && oldLevel < Level && CoroutineHost.Instance)
+        {
+            var particle = LevelUpParticle.GetFromPool();
+            particle.transform.SetPositionAndRotation(transform.position, transform.rotation);
+            particle.transform.localScale = Vector3.one * 100;
+        }
 
         LevelText.text = $"{Level}/{5}";
 
@@ -106,54 +142,27 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         HasPointOutline.gameObject.SetActive(Level > 0 && Level < 5);
         NotEnoughMoneyOverlay.gameObject.SetActive(false);
 
-        bool locked = Level == 0;
-        if (!locked)
+        bool leveled = Level > 0;
+        bool locked = !leveled;
+        for (int i = 0; i < 4; i++)
         {
-            Connections[0].gameObject.SetActive(true);
-            Connections[1].gameObject.SetActive(true);
-            Connections[2].gameObject.SetActive(true);
-            Connections[3].gameObject.SetActive(true);
-        }
-        else
-        {
-            if (mUnlocked.ContainsKey(mathu.modabs(tileKey + Vector2Int.up, TiledStats.TileCount)))
+            bool dirLeveled = stats[tileKey + directions[i]] > 0;
+            if (dirLeveled && leveled)
             {
+                Connecteds[i].gameObject.SetActive(true);
+                Connections[i].gameObject.SetActive(false);
                 locked = false;
-                Connections[0].gameObject.SetActive(true);
+            }
+            else if (dirLeveled || leveled)
+            {
+                Connecteds[i].gameObject.SetActive(false);
+                Connections[i].gameObject.SetActive(true);
+                locked = false;
             }
             else
             {
-                Connections[0].gameObject.SetActive(false);
-            }
-
-            if (mUnlocked.ContainsKey(mathu.modabs(tileKey + Vector2Int.right, TiledStats.TileCount)))
-            {
-                locked = false;
-                Connections[1].gameObject.SetActive(true);
-            }
-            else
-            {
-                Connections[1].gameObject.SetActive(false);
-            }
-
-            if (mUnlocked.ContainsKey(mathu.modabs(tileKey + Vector2Int.down, TiledStats.TileCount)))
-            {
-                locked = false;
-                Connections[2].gameObject.SetActive(true);
-            }
-            else
-            {
-                Connections[2].gameObject.SetActive(false);
-            }
-
-            if (mUnlocked.ContainsKey(mathu.modabs(tileKey + Vector2Int.left, TiledStats.TileCount)))
-            {
-                locked = false;
-                Connections[3].gameObject.SetActive(true);
-            }
-            else
-            {
-                Connections[3].gameObject.SetActive(false);
+                Connecteds[i].gameObject.SetActive(false);
+                Connections[i].gameObject.SetActive(false);
             }
         }
 

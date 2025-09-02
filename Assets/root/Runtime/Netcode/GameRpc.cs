@@ -27,11 +27,13 @@ public unsafe struct GameRpc : IComponentData
         PlayerPickupRing = 0b0000_0100,
         PlayerDropRing = 0b0000_0101,
         PlayerJoin = 0b0000_0110,
+        PlayerLevelStat = 0b0000_0111,
 
         
         // Admin Actions
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
         AdminPlaceGem = 0b0100_0001,
+        AdminPlayerLevelStat = 0b0100_0010,
     }
 
     public const int Length = sizeof(long)*2;
@@ -134,6 +136,20 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerDropRing(byte player, byte dropSlotIndex)
     {
         return new GameRpc() { Type = Code.PlayerDropRing, PlayerId = player, ToSlotIndex = dropSlotIndex};
+    }
+    #endregion
+    
+    #region Stats and Leveling
+    public TiledStat AffectedStat => (TiledStat)m_AffectedStat;
+    [FieldOffset(2)] public byte m_AffectedStat;
+    [FieldOffset(3)] public bool ShouldLowerStat;
+    public static GameRpc PlayerLevelStat(byte player, TiledStat tiledStat)
+    {
+        return new GameRpc() { Type = Code.PlayerLevelStat, PlayerId = player, m_AffectedStat = (byte)tiledStat};
+    }
+    public static GameRpc AdminPlayerLevelStat(byte player, TiledStat tiledStat, bool shouldRaise)
+    {
+        return new GameRpc() { Type = Code.AdminPlayerLevelStat, PlayerId = player, m_AffectedStat = (byte)tiledStat, ShouldLowerStat = !shouldRaise};
     }
     #endregion
 
@@ -503,6 +519,49 @@ public partial struct GameRpcSystem : ISystem
                         ecb.SetComponent(ringDropE, playerT);
                         SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     }
+                    break;
+                }
+                case GameRpc.Code.PlayerLevelStat:
+                case GameRpc.Code.AdminPlayerLevelStat:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(TiledStatsTree), typeof(Wallet));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<TiledStatsTree>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var stats = playerQuery.GetSingleton<TiledStatsTree>();
+                    if (stats[rpc.AffectedStat] >= 5 && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but it was already max level.");
+                        continue;
+                    }
+                    if (!stats.CanLevelUp(rpc.AffectedStat) && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but it's locked.");
+                        continue;
+                    }
+                    
+                    var wallet = playerQuery.GetSingleton<Wallet>();
+                    
+                    var cost = stats.GetLevelUpCost(rpc.AffectedStat);
+                    if (cost > wallet.Value && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
+                    {
+                        Debug.LogWarning($"Player {playerId} didn't have enough money to level up {rpc.AffectedStat}: {wallet.Value}/{cost}.");
+                        continue;
+                    }
+                    
+                    wallet.Value = math.max(0, wallet.Value - cost);
+                    
+                    if (rpc.Type == GameRpc.Code.AdminPlayerLevelStat && rpc.ShouldLowerStat)
+                        stats[rpc.AffectedStat]--;
+                    else
+                        stats[rpc.AffectedStat]++;
+                    
+                    // Gotta make this changes INSTANTLY, ecb is too slow.
+                    SystemAPI.SetComponent(playerE, stats);
+                    SystemAPI.SetComponent(playerE, wallet);
+                    GameEvents.Trigger(GameEvents.Type.PlayerSkillsChanged, playerE);
+                    GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
                     break;
                 }
                 

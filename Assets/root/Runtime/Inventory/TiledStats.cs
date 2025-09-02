@@ -1,366 +1,205 @@
-﻿public static partial class TiledStats
+﻿using System.Collections.Generic;
+using BovineLabs.Saving;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+public enum TiledStat
 {
-    public static readonly TiledStatData[] StatData = new TiledStatData[36]
+    Stat_00,
+    Stat_01,
+    Stat_02,
+    Stat_03,
+    Stat_04,
+    Stat_05,
+    Stat_06,
+    Stat_07,
+    Stat_08,
+    Stat_09,
+    Stat_10,
+    Stat_11,
+    Stat_12,
+    Stat_13,
+    Stat_14,
+    Stat_15,
+    Stat_16,
+    Stat_17,
+    Stat_18,
+    Stat_19,
+    Stat_20,
+    Stat_21,
+    Stat_22,
+    Stat_23,
+    Stat_24,
+    Stat_25,
+    Stat_26,
+    Stat_27,
+    Stat_28,
+    Stat_29,
+    Stat_30,
+    Stat_31,
+    Stat_32,
+    Stat_33,
+    Stat_34,
+    Stat_35,
+}
+
+[Save]
+public unsafe struct TiledStatsTree : IComponentData
+{
+    public fixed int Levels[TiledStats.TileCols * TiledStats.TileRows];
+
+    public int this[int2 tileKey]
     {
-        new TiledStatData(
-            curve.exponential(0.10f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.30f),
-            curve.linear(-0.10f),
-            curve.zero,
-            new string[]{ "Heavy Blow" },
-            new string[]{ "Slower but stronger hits" },
-            new string[]{ "Damage:" },
-            new string[]{ "Attack Speed:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.2f),
-            curve.linear(-0.1f),
-            curve.zero,
-            new string[]{ "Quick Hands" },
-            new string[]{ "Faster weapon swings" },
-            new string[]{ "Attack Speed:" },
-            new string[]{ "Damage:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.1f),
-            curve.zero,
-            curve.zero,
-            new string[]{ "Bloodlust" },
-            new string[]{ "Kill feeds your fury" },
-            new string[]{ "Damage per Kill (5s):" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.linear(1),
-            curve.linear(-0.05f),
-            curve.zero,
-            new string[]{ "Iron Skin" },
-            new string[]{ "Fortify your body" },
-            new string[]{ "Max HP:" },
-            new string[]{ "Move Speed:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.linear(0.15f),
-            curve.zero, 
-            curve.zero,
-            new string[]{ "Swift Step" },
-            new string[]{ "Faster on your feet" },
-            new string[]{ "Move Speed:" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.20f),
-            curve.linear(-1),
-            curve.zero,
-            new string[]{ "Glass Cannon" },
-            new string[]{ "Pure offense" },
-            new string[]{ "Damage:" },
-            new string[]{ "Max HP:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.linear(-0.05f),
-            curve.zero, 
-            curve.zero,
-            new string[]{ "Guardian" },
-            new string[]{ "Endurance above all" },
-            new string[]{ "Shield Cooldown (100s default):" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.constant(0.05f),
-            curve.exponential(0.2f),
-            curve.zero,
-            new string[]{ "Lucky Strike" },
-            new string[]{ "Chance for stronger crits" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "Crit Damage:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.1f),
-            curve.zero,
-            curve.zero,
-            new string[]{ "Reckless Swing" },
-            new string[]{ "Attack with abandon" },
-            new string[]{ "Knockback:" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.1f),
-            curve.zero, 
-            curve.zero,
-            new string[]{ "Arcane Touch" },
-            new string[]{ "Channel raw energy" },
-            new string[]{ "Add Topological Damage:" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.10f),
-            curve.zero, 
-            curve.zero,
-            new string[]{ "Vital Spark" },
-            new string[]{ "Health fuels strength" },
-            new string[]{ "Damage per missing HP:" },
-            new string[]{ "" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.05f),
-            curve.linear(-0.05f),
-            curve.zero,
-            new string[]{ "Focused Mind" },
-            new string[]{ "Steady and precise" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "Attack Speed:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.05f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Frenzy" },
-            new string[]{ "Fighting builds momentum" },
-            new string[]{ "Attack Speed per Hit:" },
-            new string[]{ "Duration (Default 0.5s):" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-        new TiledStatData(
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
-            curve.zero,
-            new string[]{ "Sharp Edge" },
-            new string[]{ "Your strikes cut deeper" },
-            new string[]{ "Damage:" },
-            new string[]{ "Crit Chance:" },
-            new string[]{ "" }
-        ),
-    };
+        get
+        {
+            var modx = mathu.modabs(tileKey.x, TiledStats.TileCols);
+            var mody = mathu.modabs(tileKey.y, TiledStats.TileRows);
+            return Levels[modx + mody * TiledStats.TileCols];
+        }
+    }
+    public int this[TiledStat index]
+    {
+        get => this[(int)index];
+        set => this[(int)index] = value;
+    }
+    public int this[int index]
+    {
+        get
+        {
+            return Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))];
+        }
+        set
+        {
+            Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))] = value;
+        }
+    }
+
+    public static TiledStatsTree Default
+    {
+        get
+        {
+            var fake = new TiledStatsTree();
+            fake[0] = 1;
+            return fake;
+        }
+    }
+
+    public ulong GetLevelsSpent()
+    {
+        ulong levels = 0;
+        for (int i = 0; i < (TiledStats.TileCols * TiledStats.TileRows); i++)
+        {
+            if (Levels[i] > 0)
+            {
+                levels += (ulong)Levels[i];
+            }
+        }
+        return levels;
+    }
+
+    public ulong GetLevelUpCost(TiledStat stat)
+    {
+        return (10UL << (int)GetLevelsSpent());
+    }
+
+    public bool CanLevelUp(TiledStat stat)
+    {
+        var c = math.int2(((int)stat)%TiledStats.TileCols, ((int)stat)/TiledStats.TileCols);
+        return this[c+math.int2(1,0)] > 0 ||
+               this[c+math.int2(0,1)] > 0 ||
+               this[c+math.int2(-1,0)] > 0 ||
+               this[c+math.int2(0,-1)] > 0
+        ;
+    }
+
+    public bool HasCompletedColumn(int x)
+    {
+        for (int y = 0; y < TiledStats.TileRows; y++)
+        {
+            if (this[new int2(x, y)] <= 0)
+                return false;
+        }
+        return true;
+    }
+
+    public bool HasCompletedRow(int y)
+    {
+        for (int x = 0; x < TiledStats.TileCols; x++)
+        {
+            if (this[new int2(x, y)] <= 0)
+                return false;
+        }
+        return true;
+    }
+}
+
+public static partial class TiledStats
+{
+    public const int TileRows = 6;
+    public const int TileCols = 6;
+    public static readonly int2 TileCount = new int2(TileCols, TileRows);
+
+    public static TiledStat Get(int2 tileKey)
+    {
+        return (TiledStat)(tileKey.x + tileKey.y * TileCount.x);
+    }
+    
+    public static string GetTitle(this TiledStat stat)
+    {
+        return StatData[(int)stat].Localization_Title[0];
+    }
+    
+    public static string GetDescription(this TiledStat stat)
+    {
+        return string.Empty;
+    }
+    
+    
+    public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int specificLevel)
+    {
+        var statData = StatData[(int)stat];
+    
+        List<(string left, string oldVal, float change, string newVal)> ret = new();
+        
+        if (statData.EffectAValues != default)
+            ret.Add((statData.Localization_EffectA[0], default, default, statData.EffectAValues[specificLevel].ToMulString()));
+            
+        if (statData.EffectBValues != default)
+            ret.Add((statData.Localization_EffectB[0], default, default, statData.EffectBValues[specificLevel].ToMulString()));
+            
+        if (statData.EffectCValues != default)
+            ret.Add((statData.Localization_EffectC[0], default, default, statData.EffectCValues[specificLevel].ToMulString()));
+
+        return ret;
+    }
+    public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int oldLvl, int newLvl)
+    {
+        var statData = StatData[(int)stat];
+    
+        List<(string left, string oldVal, float change, string newVal)> ret = new();
+        
+        if (statData.EffectAValues != default)
+        {
+            var a = statData.EffectAValues[oldLvl];
+            var b = statData.EffectAValues[newLvl];
+            ret.Add((statData.Localization_EffectA[0], a.ToMulString(), b - a, b.ToMulString()));
+        }
+            
+        if (statData.EffectBValues != default)
+        {
+            var a = statData.EffectBValues[oldLvl];
+            var b = statData.EffectBValues[newLvl];
+            ret.Add((statData.Localization_EffectB[0], a.ToMulString(), b - a, b.ToMulString()));
+        }
+        
+        if (statData.EffectCValues != default)
+        {
+            var a = statData.EffectCValues[oldLvl];
+            var b = statData.EffectCValues[newLvl];
+            ret.Add((statData.Localization_EffectC[0], a.ToMulString(), b - a, b.ToMulString()));
+        }
+        return ret;
+    }
+
 }

@@ -3,166 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
-
-
-[Flags]
-public enum TiledStat
-{
-    Stat_00,
-    Stat_01,
-    Stat_02,
-    Stat_03,
-    Stat_04,
-    Stat_05,
-    Stat_06,
-    Stat_07,
-    Stat_08,
-    Stat_09,
-    Stat_10,
-    Stat_11,
-    Stat_12,
-    Stat_13,
-    Stat_14,
-    Stat_15,
-    Stat_16,
-    Stat_17,
-    Stat_18,
-    Stat_19,
-    Stat_20,
-    Stat_21,
-    Stat_22,
-    Stat_23,
-    Stat_24,
-    Stat_25,
-    Stat_26,
-    Stat_27,
-    Stat_28,
-    Stat_29,
-    Stat_30,
-    Stat_31,
-    Stat_32,
-    Stat_33,
-    Stat_34,
-    Stat_35,
-}
-
-public readonly struct TiledStatData
-{
-    public readonly curve EffectAValues;
-    public readonly curve EffectBValues;
-    public readonly curve EffectCValues;
-    
-    public readonly string[] Localization_Title;
-    public readonly string[] Localization_Description;
-    public readonly string[] Localization_EffectA;
-    public readonly string[] Localization_EffectB;
-    public readonly string[] Localization_EffectC;
-
-    public TiledStatData(curve effectA, curve effectB, curve effectC, string[] title, string[] description, string[] effectADesc, string[] effectBDesc, string[] effectCDesc)
-    {
-        EffectAValues = effectA;
-        EffectBValues = effectB;
-        EffectCValues = effectC;
-        Localization_Title = title;
-        Localization_Description = description;
-        Localization_EffectA = effectADesc;
-        Localization_EffectB = effectBDesc;
-        Localization_EffectC = effectCDesc;
-    }
-}
-
-public static partial class TiledStats
-{
-    public static readonly Vector2Int TileCount = new Vector2Int(6, 6);
-
-    public static TiledStat Get(Vector2Int tileKey)
-    {
-        return (TiledStat)(tileKey.x + tileKey.y * TileCount.x);
-    }
-    
-    public static string GetTitle(this TiledStat stat)
-    {
-        return StatData[(int)stat].Localization_Title[0];
-    }
-    
-    public static string GetDescription(this TiledStat stat)
-    {
-        return string.Empty;
-    }
-    
-    
-    public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int specificLevel)
-    {
-        var statData = StatData[(int)stat];
-    
-        List<(string left, string oldVal, float change, string newVal)> ret = new();
-        
-        if (statData.EffectAValues != default)
-            ret.Add((statData.Localization_EffectA[0], default, default, statData.EffectAValues[specificLevel].ToMulString()));
-            
-        if (statData.EffectBValues != default)
-            ret.Add((statData.Localization_EffectB[0], default, default, statData.EffectBValues[specificLevel].ToMulString()));
-            
-        if (statData.EffectCValues != default)
-            ret.Add((statData.Localization_EffectC[0], default, default, statData.EffectCValues[specificLevel].ToMulString()));
-
-        return ret;
-    }
-    public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int oldLvl, int newLvl)
-    {
-        var statData = StatData[(int)stat];
-    
-        List<(string left, string oldVal, float change, string newVal)> ret = new();
-        
-        if (statData.EffectAValues != default)
-        {
-            var a = statData.EffectAValues[oldLvl];
-            var b = statData.EffectAValues[newLvl];
-            ret.Add((statData.Localization_EffectA[0], a.ToMulString(), b - a, b.ToMulString()));
-        }
-            
-        if (statData.EffectBValues != default)
-        {
-            var a = statData.EffectBValues[oldLvl];
-            var b = statData.EffectBValues[newLvl];
-            ret.Add((statData.Localization_EffectB[0], a.ToMulString(), b - a, b.ToMulString()));
-        }
-        
-        if (statData.EffectCValues != default)
-        {
-            var a = statData.EffectCValues[oldLvl];
-            var b = statData.EffectCValues[newLvl];
-            ret.Add((statData.Localization_EffectC[0], a.ToMulString(), b - a, b.ToMulString()));
-        }
-        return ret;
-    }
-
-}
-
-[Serializable]
-public struct UpgradePath
-{
-    // 2 bits per level, max 32 levels
-    const ulong mask_0 = 0b0000_0011;
-
-    public ulong m_all;
-
-    public int Level => (sizeof(ulong) - math.lzcnt((ulong)m_all)) / 2;
-    
-    /// <summary>
-    /// Value will always be: 0, 1, 2, or 3.
-    /// </summary>
-    /// <param name="level"> Levels go from 0 to 31</param>
-    public byte this[int level]
-    {
-        get => (byte)((m_all & ((ulong)mask_0 << level)) >> level);
-        set => m_all = (byte)(m_all | (((ulong)value << level) & (mask_0 << level)));
-    }
-}
 
 public class TiledStatsUI : MonoBehaviour
 {
@@ -174,6 +19,10 @@ public class TiledStatsUI : MonoBehaviour
     public Sprite[] ColumnSprites;
     public Sprite[] ColumnSpritesOutlines;
     public Sprite[] Images;
+    
+    public RectTransform CompletedParent;
+    public GameObject[] CompleteRows;
+    public GameObject[] CompleteColumns;
     
     public Vector2 Offset;
     
@@ -190,10 +39,39 @@ public class TiledStatsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        DescriptionUI.m_CustomZero = Tiles[0].gameObject;
+        
+        HandUIController.Attach(this);
+
+        GameEvents.OnEvent += OnGameEvent;
+        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.PlayerSkillsChanged, CameraTarget.MainTarget.Entity);
+        else
+        {
+            RebuildTiles(TiledStatsTree.Default);
+        }
+       
+        // Focus the UI 
+        Tiles[0].FocusParentToMe();
     }
 
-    internal void RebuildTiles()
+    private void OnDisable()
+    {
+        HandUIController.Detach(this);
+
+        GameEvents.OnEvent -= OnGameEvent;
+    }
+    
+    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    {
+        if (eType != GameEvents.Type.PlayerSkillsChanged) return;
+        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
+        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var stats))
+        {
+            RebuildTiles(stats);
+        }
+    }
+
+    internal void RebuildTiles(TiledStatsTree stats)
     {
         int c = (TiledStats.TileCount.x + BorderCount.x*2)*(TiledStats.TileCount.y+BorderCount.y*2);
         for (int i = 0; i < Tiles.Count; i++)
@@ -221,19 +99,18 @@ public class TiledStatsUI : MonoBehaviour
             var tileArrayIndex = x + y * (TiledStats.TileCount.x + BorderCount.x*2);
             var tile = Tiles[tileArrayIndex];
             
-            var tileKey = new Vector2Int(x % TiledStats.TileCount.x, y % TiledStats.TileCount.y);
+            var tileKey = new int2(x % TiledStats.TileCount.x, y % TiledStats.TileCount.y);
             tile.SetImages(ColumnSprites[tileKey.x], ColumnSpritesOutlines[tileKey.x], Images[tileKey.x + tileKey.y*TiledStats.TileCount.x]);
             tile.Background.color = RowColors[tileKey.y];
             tile.gameObject.name = $"Tile: " + tile.Image.sprite.name;
             
-            tile.RefreshState(tileKey, ref m_unlocked);
+            tile.RefreshState(tileKey, in stats);
         }
+        for (int x = 0; x < CompleteColumns.Length; x++)
+            CompleteColumns[x].SetActive(stats.HasCompletedColumn(x%TiledStats.TileCols));
+        for (int y = 0; y < CompleteRows.Length; y++)
+            CompleteRows[y].SetActive(stats.HasCompletedRow(y%TiledStats.TileRows));
     }
-    
-    internal Dictionary<Vector2Int, int> m_unlocked = new()
-    {
-        { new Vector2Int(0,0), 1 },
-    };
     
     public float RotationPivot = 250;
     [EditorButton]
@@ -260,12 +137,26 @@ public class TiledStatsUI : MonoBehaviour
             //var forward = tile.transform.localPosition - new Vector3(0,0,RotationPivot);
             //tile.transform.localRotation = quaternion.LookRotationSafe(-forward, math.up());
         }
+        for (int x = 0; x < CompleteColumns.Length; x++)
+        {
+            CompleteColumns[x].transform.localPosition = new float3(
+                (mathu.modabs(Offset.x + x, TiledStats.TileCount.x + BorderCount.x*2) - (TiledStats.TileCount.x+BorderCount.x-1)/2.0f) * Spacing.x,
+                0,
+                0);
+        }
+        for (int y = 0; y < CompleteRows.Length; y++)
+        {
+            CompleteRows[y].transform.localPosition = new float3(
+                0,
+                (mathu.modabs(Offset.y + y, TiledStats.TileCount.y + BorderCount.y*2) - (TiledStats.TileCount.y+BorderCount.y-1)/2.0f) * Spacing.y,
+                0);
+        }
         m_Dirty = false;
     }
 
     private void OnValidate()
     {
-        RebuildTiles();
+        RebuildTiles(TiledStatsTree.Default);
         RefreshGrid();
     }
 
@@ -290,9 +181,10 @@ public class TiledStatsUI : MonoBehaviour
         m_Dirty = true;
     }
 
+    ExclusiveCoroutine co;
     public void MoveTowards(Vector2 offset)
     {
-        StartCoroutine(MoveTowardsCo(offset));
+        co.StartCoroutine(this, MoveTowardsCo(offset));
     }
     
     IEnumerator MoveTowardsCo(Vector2 offset)

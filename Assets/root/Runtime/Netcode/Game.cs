@@ -426,7 +426,9 @@ public static class GameEvents
         PlayerHealthChanged,
         InteractableStart,
         InteractableEnd,
-        VisualsUpdated
+        VisualsUpdated,
+        PlayerSkillsChanged,
+        WalletChanged
     }
 
     public static event Action<Type, Entity> OnEvent;
