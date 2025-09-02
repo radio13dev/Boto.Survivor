@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -14,12 +15,27 @@ public class Palette : MonoBehaviour
             _ => Color.white
         };
     }
+    
+    public static Color Money => new Color(0.2f, 0.8f, 0.2f);
 }
 
 public class DescriptionUI : MonoBehaviour
 {
-    public Transform Visual;
+    public interface ISource
+    {
+        void GetDescription(out string title, 
+            out string description, 
+            out List<(string left, string oldVal, float change, string newVal)> rows, 
+            out (string left, string right) bottomRow);
+    }
+
+    public TMP_Text Title;
     public TMP_Text Description;
+    public List<DescriptionUIRow> Rows;
+    public TMP_Text BottomRowLeft;
+    public TMP_Text BottomRowRight;
+    
+    public static GameObject m_CustomZero; 
 
     private void OnEnable()
     {
@@ -41,80 +57,106 @@ public class DescriptionUI : MonoBehaviour
             focus = UIFocus.Focus;
         
         if (!focus)
+            focus = m_CustomZero;
+        
+        if (!focus)
         {
-            Visual.gameObject.SetActive(false);
+            SetText("Info...", "Description...");
             return;
+        }
+        else if (!focus.TryGetComponent<ISource>(out var desc))
+        {
+            SetText($"{focus.gameObject.name}", $"A {focus} UI Element!");
         }
         else
         {
-            Visual.gameObject.SetActive(true);
+            SetText(desc);
         }
+    }
+
+    private void SetText(ISource component)
+    {
+        component.GetDescription(out string info, 
+            out string description, 
+            out List<(string left, string oldVal, float change, string newVal)> rows, 
+            out (string left, string right) bottomRow);
         
-        StringBuilder sb = new();
-        if (focus.TryGetComponent<GemDisplay>(out var gem))
+        SetText(info, description, rows, bottomRow);
+    }
+
+    private void SetText(
+        string title, 
+        string description, 
+        List<(string left, string oldVal, float change, string newVal)> rows = default, 
+        (string left, string right) bottomRow = default)
+    {
+        Title.text = title;
+        
+        if (!string.IsNullOrEmpty(description))
         {
-            if (gem.IsInSlot)
+            Description.text = description;
+            Description.gameObject.SetActive(true);
+        }
+        else
+            Description.gameObject.SetActive(false);
+        
+        if (rows?.Count > 0)
+        {
+            int i;
+            for (i = 0; i < rows.Count; i++)
             {
-                // Equipped
-                sb.AppendLine("(Equipped)".Color(Color.gray).Size(30));
-            }
-            else
-            {
-                // Inventory
-                sb.AppendLine("(Inventory)".Color(Color.gray).Size(30));
-            }
-            
-            if (gem.Gem.IsValid)
-            {
-                if (interact && interact != focus && interact.TryGetComponent<GemDisplay>(out var heldGem))
+                if (i >= Rows.Count)
+                    Rows.Add(Instantiate(Rows[0], Rows[0].transform.parent));
+                Rows[i].Left.text = rows[i].left;
+                if (string.IsNullOrEmpty(rows[i].oldVal) || rows[i].oldVal == rows[i].newVal)
                 {
-                    if (gem.Gem.ClientId != heldGem.Gem.ClientId)
+                    Rows[i].OldVal.gameObject.SetActive(false);
+                    Rows[i].NegativeChange.gameObject.SetActive(false);
+                    Rows[i].PositiveChange.gameObject.SetActive(false);
+                    Rows[i].NewVal.text = rows[i].newVal;
+                }
+                else
+                {
+                    Rows[i].OldVal.gameObject.SetActive(true);
+                    Rows[i].OldVal.text = rows[i].oldVal;
+                    Rows[i].NewVal.text = rows[i].newVal;
+                    if (rows[i].change >= 0)
                     {
-                        sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                        Rows[i].PositiveChange.gameObject.SetActive(true);
+                        Rows[i].NegativeChange.gameObject.SetActive(false);
+                        //Rows[i].PositiveChange.fillAmount = Mathf.Clamp01(rows[i].change / 10f);
                     }
-                    else if (focus == null)
+                    else if (rows[i].change < 0)
                     {
-                        sb.AppendLine("UNSOCKET".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                        Rows[i].PositiveChange.gameObject.SetActive(false);
+                        Rows[i].NegativeChange.gameObject.SetActive(true);
+                        //Rows[i].NegativeChange.fillAmount = Mathf.Clamp01(-rows[i].change / 10f);
                     }
                 }
                 
-                sb.AppendLine(gem.Gem.GetTitleString().Size(36));
-                sb.AppendLine($"Size: {gem.Gem.Size.Color(Palette.GemSize(gem.Gem.Size))}".Size(30));
+                Rows[i].gameObject.SetActive(true);
             }
-            else if (interact && interact.TryGetComponent<GemDisplay>(out var heldGem))
+            for (; i < Rows.Count; i++)
             {
-                sb.AppendLine("INSERT".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
-                sb.AppendLine(heldGem.Gem.GetTitleString().Size(36));
-                sb.AppendLine($"Size: {heldGem.Gem.Size.Color(Palette.GemSize(gem.Gem.Size))}".Size(30));
+                Rows[i].gameObject.SetActive(false);
             }
-            else
-            {
-                sb.AppendLine("Empty Slot".Color(new Color(0.2f,0.2f,0.2f)).Size(30));
-            }
-        }
-        else if (focus.TryGetComponent<RingDisplay>(out var ring))
-        {
-            // Inventory
-            if (ring.GetComponentInParent<RingUI>())
-                sb.AppendLine("(Rings)".Color(Color.gray).Size(30));
-            else
-                sb.AppendLine("(Pickup)".Color(Color.mediumPurple).Size(30));
             
-            if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
-            {
-                sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
-            }
-            if (ring.Ring.Stats.IsValid)
-            {
-                sb.AppendLine($"{ring.Ring.Stats.GetTitleString()}".Size(36));
-                sb.AppendLine($"{ring.Ring.Stats.GetDescriptionString()}".Size(30));
-            }
-            else
-            {
-                sb.AppendLine("Empty Slot".Color(new Color(0.2f,0.2f,0.2f)).Size(30));
-            }
+            Rows[0].transform.parent.gameObject.SetActive(true);
+        }
+        else
+        {
+            Rows[0].transform.parent.gameObject.SetActive(false);
         }
         
-        Description.text = sb.ToString();
+        if (bottomRow != default)
+        {
+            BottomRowLeft.text = bottomRow.left;
+            BottomRowRight.text = bottomRow.right;
+            BottomRowLeft.transform.parent.gameObject.SetActive(true);
+        }
+        else
+        {
+            BottomRowLeft.transform.parent.gameObject.SetActive(false);
+        }
     }
 }

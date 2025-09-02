@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: GemUIBackground2
-  m_Shader: {fileID: -6465566751694194690, guid: 63aefd184a5edd943b49dc0464023439, type: 3}
+  m_Shader: {fileID: 4800000, guid: 13c02b14c4d048fa9653293d54f6e0e1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,6 +25,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 5, y: 5}
@@ -54,8 +58,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 9aefb6037b97b014ca8817a03312e7ff, type: 3}
+        m_Scale: {x: 0, y: 0}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
         m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
@@ -108,6 +112,7 @@ Material:
     m_Ints: []
     m_Floats:
     - LIGHTMAP_SHADOW_MIXING: 0
+    - PixelSnap: 0
     - SHADOWS_SHADOWMASK: 0
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
@@ -130,6 +135,7 @@ Material:
     - _DstBlendAlpha: 0
     - _EdgePower: 0
     - _EdgeScale: 0
+    - _EnableExternalAlpha: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -166,13 +172,14 @@ Material:
     - _r2: 2
     m_Colors:
     - _BaseColor: {r: 0.60408956, g: 0.41438237, b: 0.9056604, a: 1}
-    - _Color: {r: 0.48627454, g: 0.30980393, b: 0.70980394, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HashA: {r: 1, g: 0.48839837, b: 0.2028302, a: 1}
     - _HashB: {r: 1, g: 0, b: 0.13477135, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _Scale: {r: 20, g: 20, b: 20, a: 0}
     - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

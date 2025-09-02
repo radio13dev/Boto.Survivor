@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class GemDisplay : MonoBehaviour, IFocusFilter
+public class GemDisplay : MonoBehaviour, IFocusFilter, DescriptionUI.ISource
 {
 	public MeshRenderer Renderer;
     public Gem Gem { get; private set; }
@@ -114,5 +116,54 @@ public class GemDisplay : MonoBehaviour, IFocusFilter
         if (go.TryGetComponent<RingDisplay>(out _)) return false;
         if (go.TryGetComponent<GemDisplay>(out var otherGem)) return otherGem.IsInSlot;
         return true;
+    }
+
+    public void GetDescription(out string title, out string description, out List<(string left, string oldVal, float change, string newVal)> rows, out (string left, string right) bottomRow)
+    {
+        if (IsInSlot)
+        {
+            // Equipped
+            title = "(Equipped)".Color(Color.gray).Size(30);
+        }
+        else
+        {
+            // Inventory
+            title = "(Inventory)".Color(Color.gray).Size(30);
+        }
+            
+        var interact = UIFocus.Interact;
+        var focus = gameObject;
+        StringBuilder sb = new();
+        if (Gem.IsValid)
+        {
+            if (interact && interact != focus && interact.TryGetComponent<GemDisplay>(out var heldGem))
+            {
+                if (Gem.ClientId != heldGem.Gem.ClientId)
+                {
+                    sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                }
+                else if (focus == null)
+                {
+                    sb.AppendLine("UNSOCKET".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+                }
+            }
+                
+            sb.AppendLine(Gem.GetTitleString().Size(36));
+            sb.AppendLine($"Size: {Gem.Size.Color(Palette.GemSize(Gem.Size))}".Size(30));
+        }
+        else if (interact && interact.TryGetComponent<GemDisplay>(out var heldGem))
+        {
+            sb.AppendLine("INSERT".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+            sb.AppendLine(heldGem.Gem.GetTitleString().Size(36));
+            sb.AppendLine($"Size: {heldGem.Gem.Size.Color(Palette.GemSize(Gem.Size))}".Size(30));
+        }
+        else
+        {
+            sb.AppendLine("Empty Slot".Color(new Color(0.2f,0.2f,0.2f)).Size(30));
+        }
+        description = sb.ToString();
+        
+        rows = default;
+        bottomRow = default;
     }
 }
