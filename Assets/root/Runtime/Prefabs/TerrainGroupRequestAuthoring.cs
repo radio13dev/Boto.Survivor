@@ -30,6 +30,7 @@ public struct TerrainGroupRequest : IComponentData
 [UpdateInGroup(typeof(WorldInitSystemGroup))]
 public partial struct TerrainGroupInitSystem : ISystem
 {
+    const int NonRandomGroupCount = 2;
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -54,7 +55,7 @@ public partial struct TerrainGroupInitSystem : ISystem
             var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
             
             var groupE = Entity.Null; //terrainSpawner.ValueRO.SpecificRequest;
-            if (terrainSpawner.ValueRO.Index == -1) groupE = options[r.NextInt(1, options.Length)].Entity;
+            if (terrainSpawner.ValueRO.Index == -1) groupE = options[r.NextInt(NonRandomGroupCount, options.Length)].Entity;
             else groupE = options[terrainSpawner.ValueRO.Index].Entity;
             
             var instGroup = state.EntityManager.Instantiate(groupE);

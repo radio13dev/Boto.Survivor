@@ -73,11 +73,6 @@ public abstract class EntityLinkMono : MonoBehaviour
     }
     
     public bool HasLink() => m_linkedEntity != Entity.Null;
-
-    private void OnDestroy()
-    {
-        Debug.Log($"Cleaned up.");
-    }
 }
 
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]

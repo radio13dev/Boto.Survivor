@@ -106,6 +106,9 @@ public partial struct EnemySpawnSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        return;
+        //if (!SystemAPI.IsComponentEnabled<EnemySpawningEnabled>(SystemAPI.GetSingletonEntity<EnemySpawningEnabled>())) return;
+        
         var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var sharedRandom = SystemAPI.GetSingleton<SharedRandom>();
         
