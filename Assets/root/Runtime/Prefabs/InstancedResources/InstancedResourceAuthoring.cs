@@ -32,7 +32,7 @@ public class InstancedResourceAuthoring : MonoBehaviour
         public override void Bake(InstancedResourceAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
-            AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.AssetIndex));
+            AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.GetAssetIndex()));
             AddComponent(entity, new LocalTransformLast());
             AddComponent<SpriteAnimFrame>(entity);
             

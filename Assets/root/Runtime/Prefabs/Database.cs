@@ -7,6 +7,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 #if UNITY_EDITOR
+using System.Threading;
 using UnityEditor;
 #endif
 
@@ -14,12 +15,101 @@ using UnityEditor;
 public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
 {
     public T Asset => _Asset as T;
+
+    public int GetAssetIndex()
+    {
+#if UNITY_EDITOR
+        if (!Asset)
+        {
+            return -1;
+        }
+
+        var database = GetCreateDatabase(out bool shouldSave);
+
+        var newIndex = database.IndexOf(Asset);
+        if (newIndex == -1)
+        {
+            newIndex = database.Add(Asset);
+            shouldSave = true;
+        }
+
+        if (shouldSave)
+        {
+            EditorUtility.SetDirty(database);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        return newIndex;
+#else
+        Debug.LogError($"This is an editor only method.");
+        return -1;
+#endif
+    }
+
+#if UNITY_EDITOR
+    static D _database;
+    static SemaphoreSlim _databaseCreateLock = new SemaphoreSlim(1,1);
+#endif
+
+    public D GetCreateDatabase(out bool created)
+    {
+#if UNITY_EDITOR
+        if (_database)
+        {
+            created = false;
+            return _database;
+        }
+
+        string assetPath = @$"Assets\root\Runtime\Prefabs\{typeof(D).Name}";
+        var databaseKey = typeof(D).Name + "Asset";
+        string[] result = AssetDatabase.FindAssets(databaseKey);
+        Object database = null;
+        if (result.Length > 1)
+            Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
+
+        if (result.Length == 0)
+        {
+            _databaseCreateLock.Wait();
+            // Double check it hasn't been created...
+            try
+            {
+                result = AssetDatabase.FindAssets(databaseKey);
+                if (result.Length == 0)
+                {
+                    Debug.Log("Create new Asset");
+                    database = ScriptableObject.CreateInstance(typeof(D));
+                    if (!Directory.Exists(assetPath))
+                        Directory.CreateDirectory(assetPath);
+                    AssetDatabase.CreateAsset(database, $@"{assetPath}\{databaseKey}.asset");
+                }
+                created = false;
+            }
+            finally
+            {
+                _databaseCreateLock.Release();
+            }
+            
+        }
+        else
+        {
+            string path = AssetDatabase.GUIDToAssetPath(result[0]);
+            database = AssetDatabase.LoadAssetAtPath(path, typeof(D));
+            Debug.Log($"Got asset file for {nameof(DatabaseRef)}<{typeof(T).Name},{typeof(D).Name}>: {path}");
+            created = false;
+        }
+
+        return database as D;
+#else
+        Debug.LogError($"This is an editor only method.");
+        return null;
+#endif
+    }
 }
 
 [Serializable]
 public class DatabaseRef
 {
-    [SerializeField] public int AssetIndex;
     [SerializeField] public Object _Asset;
 }
 
@@ -78,24 +168,17 @@ public class DatbaseRefDrawer : PropertyDrawer
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
         var assetProp = property.FindPropertyRelative("_Asset");
-        var indexProp = property.FindPropertyRelative("AssetIndex");
 
         var databaseRefType = property.boxedValue.GetType();
         var assetType = databaseRefType.GenericTypeArguments[0];
         var databaseType = databaseRefType.GenericTypeArguments[1];
-        
+
         string assetPath = @$"Assets\root\Runtime\Prefabs\{databaseType.Name}";
 
         var asset = assetProp.objectReferenceValue;
 
-        GUI.enabled = false;
-        Rect indexRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
-        EditorGUI.PropertyField(indexRect, indexProp, GUIContent.none, true);
-        GUI.enabled = true;
-
-    
         var adjusted = InlineScritableEditDrawer.ObjectField(asset, assetType, false);
-        
+
         if (typeof(ScriptableObject).IsAssignableFrom(assetType))
         {
             var spawnNewAsset = GUILayout.Button($"New {assetType.Name}...");
@@ -107,19 +190,19 @@ public class DatbaseRefDrawer : PropertyDrawer
                 {
                     assetKey = $"New{assetType.Name}_{attempt++}";
                 }
-    
+
                 Debug.Log("Create new Asset");
                 adjusted = ScriptableObject.CreateInstance(assetType);
                 if (!Directory.Exists(assetPath))
                     Directory.CreateDirectory(assetPath);
                 AssetDatabase.CreateAsset(adjusted, $@"{assetPath}\{assetKey}.asset");
-    
+
                 EditorUtility.SetDirty(adjusted);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
         }
-        
+
         bool changed = false;
         if (adjusted != asset)
         {
@@ -135,12 +218,8 @@ public class DatbaseRefDrawer : PropertyDrawer
             string[] result = AssetDatabase.FindAssets(databaseKey);
             Object database = null;
             if (result.Length > 1)
-            {
                 Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
-                EditorGUI.EndProperty();
-                return;
-            }
-            
+
             if (result.Length == 0)
             {
                 Debug.Log("Create new Asset");
@@ -169,12 +248,6 @@ public class DatbaseRefDrawer : PropertyDrawer
                 if (newIndex == -1)
                 {
                     newIndex = (int)addMethod.Invoke(database, new object[] { asset });
-                    shouldSave = true;
-                }
-
-                if (indexProp.intValue != newIndex)
-                {
-                    indexProp.intValue = newIndex;
                     shouldSave = true;
                 }
             }

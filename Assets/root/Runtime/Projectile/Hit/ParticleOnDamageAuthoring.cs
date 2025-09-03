@@ -18,7 +18,7 @@ public class ParticleOnDamageAuthoring : MonoBehaviour
         public override void Bake(ParticleOnDamageAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new ParticleOnDamage(){ ParticleIndex = authoring.Particle.AssetIndex });
+            AddComponent(entity, new ParticleOnDamage(){ ParticleIndex = authoring.Particle.GetAssetIndex() });
         }
     }
 }

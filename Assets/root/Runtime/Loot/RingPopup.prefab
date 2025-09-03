@@ -444,7 +444,7 @@ PrefabInstance:
     - target: {fileID: 1623674869171450883, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: -5693125950398070331, guid: fecf0a8a377437a47b2e0e57a06b4d3c, type: 3}
     - target: {fileID: 2925402598519780934, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -453,6 +453,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3343078749217753496, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ebe77c4f3d6513b4f96dc2e5df5c16d9, type: 2}
     - target: {fileID: 3976073547031006615, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -732,30 +736,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1539934782053531542, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2100762975955078002}
-    - targetCorrespondingSourceObject: {fileID: 3976073547031006615, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4028971894607522073}
   m_SourcePrefab: {fileID: 100100000, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
---- !u!1 &553281852986927314 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3976073547031006615, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
-  m_PrefabInstance: {fileID: 3494933201555088709}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4028971894607522073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 553281852986927314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  Particle:
-    AssetIndex: 18
-    _Asset: {fileID: 11400000, guid: 980dd70db0e6e8e4386babaf63ca0a6f, type: 2}
 --- !u!114 &1364106912378667042 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2480981161398281575, guid: 616fd8e91e39e7a47a64fc5b26295c2b, type: 3}
