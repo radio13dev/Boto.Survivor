@@ -27,6 +27,7 @@ public class CameraTarget : EntityLinkMono
             MainTarget = this;
             GameEvents.Trigger(GameEvents.Type.InventoryChanged, Entity);
             GameEvents.Trigger(GameEvents.Type.PlayerHealthChanged, Entity);
+            GameEvents.Trigger(GameEvents.Type.WalletChanged, Entity);
         }
     }
 }

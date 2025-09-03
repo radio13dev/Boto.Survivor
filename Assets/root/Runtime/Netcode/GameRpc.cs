@@ -560,7 +560,7 @@ public partial struct GameRpcSystem : ISystem
                     // Gotta make this changes INSTANTLY, ecb is too slow.
                     SystemAPI.SetComponent(playerE, stats);
                     SystemAPI.SetComponent(playerE, wallet);
-                    GameEvents.Trigger(GameEvents.Type.PlayerSkillsChanged, playerE);
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
                     break;
                 }

@@ -43,10 +43,10 @@ public class TiledStatsUI : MonoBehaviour
         HandUIController.Attach(this);
 
         GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.PlayerSkillsChanged, CameraTarget.MainTarget.Entity);
+        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity);
         else
         {
-            RebuildTiles(TiledStatsTree.Default);
+            RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats() { CompiledStatsTree = TiledStatsTree.Default });
         }
        
         // Focus the UI 
@@ -62,16 +62,16 @@ public class TiledStatsUI : MonoBehaviour
     
     private void OnGameEvent(GameEvents.Type eType, Entity entity)
     {
-        if (eType != GameEvents.Type.PlayerSkillsChanged) return;
+        if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;
-        if (GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var stats))
+        if (GameEvents.TryGetComponent2<Wallet>(entity, out var wallet) && GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var baseStats) && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats))
         {
-            RebuildTiles(stats);
+            RebuildTiles(wallet, baseStats, compiledStats);
         }
     }
 
-    internal void RebuildTiles(TiledStatsTree stats)
+    internal void RebuildTiles(in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats)
     {
         int c = (TiledStats.TileCount.x + BorderCount.x*2)*(TiledStats.TileCount.y+BorderCount.y*2);
         for (int i = 0; i < Tiles.Count; i++)
@@ -104,12 +104,12 @@ public class TiledStatsUI : MonoBehaviour
             tile.Background.color = RowColors[tileKey.y];
             tile.gameObject.name = $"Tile: " + tile.Image.sprite.name;
             
-            tile.RefreshState(tileKey, in stats);
+            tile.RefreshState(tileKey, in wallet, in baseStats, in compiledStats);
         }
         for (int x = 0; x < CompleteColumns.Length; x++)
-            CompleteColumns[x].SetActive(stats.HasCompletedColumn(x%TiledStats.TileCols));
+            CompleteColumns[x].SetActive(baseStats.HasCompletedColumn(x%TiledStats.TileCols));
         for (int y = 0; y < CompleteRows.Length; y++)
-            CompleteRows[y].SetActive(stats.HasCompletedRow(y%TiledStats.TileRows));
+            CompleteRows[y].SetActive(baseStats.HasCompletedRow(y%TiledStats.TileRows));
     }
     
     public float RotationPivot = 250;
@@ -156,7 +156,7 @@ public class TiledStatsUI : MonoBehaviour
 
     private void OnValidate()
     {
-        RebuildTiles(TiledStatsTree.Default);
+        RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats(){ CompiledStatsTree = TiledStatsTree.Default });
         RefreshGrid();
     }
 

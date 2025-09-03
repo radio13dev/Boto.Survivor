@@ -9,6 +9,8 @@ using UnityEngine;
 [Save]
 public struct CompiledStats : IComponentData
 {
+    public TiledStatsTree CompiledStatsTree;
+    
     public float ProjectileRate;
     public float ProjectileSpeed;
     public float ProjectileDuration;
@@ -120,6 +122,7 @@ public partial struct CompiledStatsSystem : ISystem
         
         public unsafe void Execute(Entity entity, in LocalTransform transform, in PlayerControlled playerId, 
             ref CompiledStats stats, ref CompiledStatsDirty dirtyData, EnabledRefRW<CompiledStatsDirty> dirtyState, 
+            in TiledStatsTree baseStats,
             in DynamicBuffer<Ring> rings, in DynamicBuffer<EquippedGem> gems, 
             ref DynamicBuffer<OwnedProjectiles> ownedProjectiles)
         {
@@ -127,6 +130,8 @@ public partial struct CompiledStatsSystem : ISystem
             
             // Compile stats
             stats = new();
+            
+            stats.CompiledStatsTree = baseStats;
             
             // Setup...
             var r = SharedRandom.Random;

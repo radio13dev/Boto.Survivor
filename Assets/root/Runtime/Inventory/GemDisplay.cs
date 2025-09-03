@@ -118,7 +118,9 @@ public class GemDisplay : MonoBehaviour, IFocusFilter, DescriptionUI.ISource
         return true;
     }
 
-    public void GetDescription(out string title, out string description, out List<(string left, string oldVal, float change, string newVal)> rows, out (string left, string right) bottomRow)
+    public void GetDescription(out string title, out string description, 
+        out List<(string left, string oldVal, float change, string newVal)> rows, 
+        out (string left, DescriptionUI.eBottomRowIcon icon, string right) bottomRow)
     {
         if (IsInSlot)
         {

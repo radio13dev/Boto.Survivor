@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.Entities;
 using UnityEngine;
 
 public class Palette : MonoBehaviour
@@ -17,6 +18,8 @@ public class Palette : MonoBehaviour
     }
     
     public static Color Money => new Color(0.2f, 0.8f, 0.2f);
+    public static Color MoneyChangePositive = new Color(0.2f, 0.8f, 0.2f);
+    public static Color MoneyChangeNegative = new Color32(0xff,0x72,0x77,0xff);
 }
 
 public class DescriptionUI : MonoBehaviour
@@ -26,13 +29,20 @@ public class DescriptionUI : MonoBehaviour
         void GetDescription(out string title, 
             out string description, 
             out List<(string left, string oldVal, float change, string newVal)> rows, 
-            out (string left, string right) bottomRow);
+            out (string left, eBottomRowIcon icon, string right) bottomRow);
+    }
+    
+    public enum eBottomRowIcon
+    {
+        None,
+        Gem
     }
 
     public TMP_Text Title;
     public TMP_Text Description;
     public List<DescriptionUIRow> Rows;
     public TMP_Text BottomRowLeft;
+    public GameObject[] BottomRowIcons;
     public TMP_Text BottomRowRight;
     
     public static GameObject m_CustomZero; 
@@ -79,7 +89,7 @@ public class DescriptionUI : MonoBehaviour
         component.GetDescription(out string info, 
             out string description, 
             out List<(string left, string oldVal, float change, string newVal)> rows, 
-            out (string left, string right) bottomRow);
+            out (string left, eBottomRowIcon icon, string right) bottomRow);
         
         SetText(info, description, rows, bottomRow);
     }
@@ -88,7 +98,7 @@ public class DescriptionUI : MonoBehaviour
         string title, 
         string description, 
         List<(string left, string oldVal, float change, string newVal)> rows = default, 
-        (string left, string right) bottomRow = default)
+        (string left, eBottomRowIcon icon, string right) bottomRow = default)
     {
         Title.text = title;
         
@@ -151,6 +161,13 @@ public class DescriptionUI : MonoBehaviour
         if (bottomRow != default)
         {
             BottomRowLeft.text = bottomRow.left;
+            for (int i = 0; i < BottomRowIcons.Length; i++)
+            {
+                if ((int)bottomRow.icon == i)
+                    BottomRowIcons[i].SetActive(true);
+                else
+                    BottomRowIcons[i].SetActive(false);
+            }
             BottomRowRight.text = bottomRow.right;
             BottomRowLeft.transform.parent.gameObject.SetActive(true);
         }

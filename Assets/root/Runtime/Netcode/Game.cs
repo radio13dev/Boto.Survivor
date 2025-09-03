@@ -427,7 +427,6 @@ public static class GameEvents
         InteractableStart,
         InteractableEnd,
         VisualsUpdated,
-        PlayerSkillsChanged,
         WalletChanged
     }
 

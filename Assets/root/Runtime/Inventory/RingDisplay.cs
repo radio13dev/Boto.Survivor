@@ -124,8 +124,9 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         transform.SetDisplacedLocalPosition(Vector3.zero);
     }
 
-    public void GetDescription(out string title, out string description, out List<(string left, string oldVal, float change, string newVal)> rows,
-        out (string left, string right) bottomRow)
+    public void GetDescription(out string title, out string description, 
+        out List<(string left, string oldVal, float change, string newVal)> rows,
+        out (string left, DescriptionUI.eBottomRowIcon icon, string right) bottomRow)
     {
         var interact = UIFocus.Interact;
         var focus = gameObject;

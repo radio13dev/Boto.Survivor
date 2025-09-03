@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -51,20 +52,22 @@ public unsafe struct TiledStatsTree : IComponentData
 
     public int this[int2 tileKey]
     {
+        [Pure]
         get
         {
-            var modx = mathu.modabs(tileKey.x, TiledStats.TileCols);
-            var mody = mathu.modabs(tileKey.y, TiledStats.TileRows);
-            return Levels[modx + mody * TiledStats.TileCols];
+            return this[GetStat(tileKey)];
         }
     }
+
     public int this[TiledStat index]
     {
+        [Pure]
         get => this[(int)index];
         set => this[(int)index] = value;
     }
     public int this[int index]
     {
+        [Pure]
         get
         {
             return Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))];
@@ -85,24 +88,39 @@ public unsafe struct TiledStatsTree : IComponentData
         }
     }
 
-    public ulong GetLevelsSpent()
+    [Pure]
+    private static TiledStat GetStat(int2 tileKey)
     {
-        ulong levels = 0;
+        var modx = mathu.modabs(tileKey.x, TiledStats.TileCols);
+        var mody = mathu.modabs(tileKey.y, TiledStats.TileRows);
+        return (TiledStat)(modx + mody * TiledStats.TileCols);
+    }
+
+    [Pure]
+    public long GetLevelsSpent()
+    {
+        long levels = 0;
         for (int i = 0; i < (TiledStats.TileCols * TiledStats.TileRows); i++)
         {
             if (Levels[i] > 0)
             {
-                levels += (ulong)Levels[i];
+                levels += (long)Levels[i];
             }
         }
         return levels;
     }
 
-    public ulong GetLevelUpCost(TiledStat stat)
+    [Pure]
+    public long GetLevelUpCost(int2 key) => GetLevelUpCost(GetStat(key));
+    [Pure]
+    public long GetLevelUpCost(TiledStat stat)
     {
-        return (10UL << (int)GetLevelsSpent());
+        return (10L << (int)GetLevelsSpent());
     }
 
+    [Pure]
+    public bool CanLevelUp(int2 key) => CanLevelUp(GetStat(key));
+    [Pure]
     public bool CanLevelUp(TiledStat stat)
     {
         var c = math.int2(((int)stat)%TiledStats.TileCols, ((int)stat)/TiledStats.TileCols);
@@ -113,6 +131,7 @@ public unsafe struct TiledStatsTree : IComponentData
         ;
     }
 
+    [Pure]
     public bool HasCompletedColumn(int x)
     {
         for (int y = 0; y < TiledStats.TileRows; y++)
@@ -123,6 +142,7 @@ public unsafe struct TiledStatsTree : IComponentData
         return true;
     }
 
+    [Pure]
     public bool HasCompletedRow(int y)
     {
         for (int x = 0; x < TiledStats.TileCols; x++)

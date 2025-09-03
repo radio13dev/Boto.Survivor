@@ -22,6 +22,8 @@ public class SurvivorAuthoring : MonoBehaviour
     public RingStats[] InitialRings = new RingStats[8];
     public List<Gem> InitialGems = new();
     public AbilityType AbilityType;
+    [Header("0 = None")]
+    public int UnlockAllSkills = 0;
 
     partial class Baker : Baker<SurvivorAuthoring>
     {
@@ -52,11 +54,12 @@ public class SurvivorAuthoring : MonoBehaviour
             SetComponentEnabled<RollActive>(entity, false);
             
             // Stats
-            AddComponent(entity, new Wallet(){ Value = 100000 });
+            AddComponent(entity, new Wallet(){ Value = 0 });
             var stats =  new TiledStatsTree();
-            for (int i = 0; i < TiledStats.TileCols*TiledStats.TileRows; i++)
-                stats[i] = 1;
             stats[0] = 1;
+            if (authoring.UnlockAllSkills > 0)
+                for (int i = 0; i < TiledStats.TileCols*TiledStats.TileRows; i++)
+                    stats[i] = authoring.UnlockAllSkills;
             AddComponent(entity, stats);
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());

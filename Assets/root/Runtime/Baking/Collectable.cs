@@ -132,12 +132,18 @@ public partial struct GemCollectableSystem : ISystem
             if (playerId < 0 || playerId >= links.Length) continue;
             
             var playerE = links[playerId].Value;
-            if (SystemAPI.HasBuffer<InventoryGem>(playerE))
+            if (SystemAPI.HasComponent<Wallet>(playerE))
             {
-                var inventoryRW = SystemAPI.GetBuffer<InventoryGem>(playerE);
-                inventoryRW.Add(new InventoryGem(drops[index].Gem));
-                GameEvents.Trigger(GameEvents.Type.InventoryChanged, playerE);
+                var walletRW = SystemAPI.GetComponentRW<Wallet>(playerE);
+                walletRW.ValueRW.Value++;
+                GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
             }
+            //if (SystemAPI.HasBuffer<InventoryGem>(playerE))
+            //{
+            //    var inventoryRW = SystemAPI.GetBuffer<InventoryGem>(playerE);
+            //    inventoryRW.Add(new InventoryGem(drops[index].Gem));
+            //    GameEvents.Trigger(GameEvents.Type.InventoryChanged, playerE);
+            //}
         }
         
         correctOrdering.Dispose();
