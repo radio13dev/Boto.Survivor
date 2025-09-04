@@ -1,9 +1,13 @@
 using System;
 using AYellowpaper.SerializedCollections;
+using Collisions;
+using NativeTrees;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
+using Unity.Transforms;
 using UnityEngine;
+using Collider = Collisions.Collider;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -63,6 +67,38 @@ public struct GameManager : IComponentData
         public Entity Entity;
     }
     
+    /// <summary>
+    /// The ULTIMATE generic entity list.
+    /// </summary>
+    public struct Prefabs : IBufferElementData
+    {
+        public Entity Entity;
+
+        public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
+        {
+            var circleE = ecb.Instantiate(prefabs[0].Entity);
+            var t = transform;
+            t.Scale = radius;
+            ecb.SetComponent(circleE, t);
+            ecb.SetComponent(circleE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(circleE, new DestroyAtTime(Time + delay));
+            return circleE;
+        }
+
+        public static Entity SpawnTorusBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, double Time, float delay)
+        {
+            var torusE = ecb.Instantiate(prefabs[1].Entity);
+            var t = transform;
+            t.Scale = radiusMax;
+            ecb.SetComponent(torusE, t);
+            ecb.SetComponent(torusE, new TorusMin(radiusMin/radiusMax));
+            ecb.SetComponent(torusE, Collider.Torus(radiusMin/radiusMax, 1));
+            ecb.SetComponent(torusE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
+            return torusE;
+        }
+    }
+    
     public struct Enemies : IBufferElementData
     {
         public Entity Entity;
@@ -105,6 +141,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public SerializedDictionary<RingPrimaryEffect, InstancedResource> RingVisuals;
     public TerrainGroupAuthoring[] TerrainGroups;
     public SurvivorAuthoring[] Survivors;
+    public GameObject[] Prefabs;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -170,6 +207,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Enemies.Length; i++)
                 {
                     buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace), Chance = authoring.Enemies[i].Chance });
+                }
+            }
+            
+            if (authoring.Prefabs?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Prefabs>(entity);
+                for (int i = 0; i < authoring.Prefabs.Length; i++)
+                {
+                    buffer.Add(new GameManager.Prefabs(){ Entity = GetEntity(authoring.Prefabs[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
             

@@ -1,5 +1,6 @@
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
+using Collisions;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -31,13 +32,34 @@ public class InstancedResourceAuthoring : MonoBehaviour
     {
         public override void Bake(InstancedResourceAuthoring authoring)
         {
+            DependsOn(authoring.Particle.Asset);
+            if (!authoring.Particle.Asset)
+            {
+                Debug.LogError($"Invalid asset on {authoring}: {authoring.Particle.Asset}");
+                return;
+            }
+        
             var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
             AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.GetAssetIndex()));
-            AddComponent(entity, new LocalTransformLast());
-            AddComponent<SpriteAnimFrame>(entity);
             
-            if (authoring.Particle.Asset && authoring.Particle.Asset.Animated)
+            if (authoring.Particle.Asset.UseLastTransform)
+            {
+                AddComponent(entity, new LocalTransformLast());
+            }
+            if (authoring.Particle.Asset.Animated)
+            {
+                AddComponent<SpriteAnimFrame>(entity);
                 AddComponent<SpriteAnimFrameTime>(entity);
+            }
+            if (authoring.Particle.Asset.HasLifespan)
+            {
+                AddComponent<SpawnTimeCreated>(entity);
+                AddComponent<DestroyAtTime>(entity);
+            }
+            if (authoring.Particle.Asset.IsTorus)
+            {
+                AddComponent<TorusMin>(entity);
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using BovineLabs.Saving;
+using Collisions;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -8,6 +9,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Collider = Collisions.Collider;
 
 public struct Hidden : IComponentData
 {
@@ -61,14 +63,13 @@ public partial class RenderSystemGroup : ComponentSystemGroup
 [UpdateInGroup(typeof(RenderSystemGroup))]
 public unsafe partial struct LightweightRenderSystem : ISystem
 {
-    EntityQuery m_Query;
+    bool m_Init;
     NativeArray<Matrix4x4> m_InstanceMats;
 
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GameManager.Resources>();
         state.RequireForUpdate<RenderSystemHalfTime>();
-        m_Query = SystemAPI.QueryBuilder().WithAll<LocalTransform, LocalTransformLast, InstancedResourceRequest, SpriteAnimFrame>().WithNone<Hidden>().Build();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
     }
 
@@ -82,32 +83,88 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         var halfTime = SystemAPI.GetSingleton<RenderSystemHalfTime>();
         var resources = SystemAPI.GetSingletonBuffer<GameManager.InstancedResources>();
         
-        for (int i = 0; i < resources.Length; i++)
+        if (!m_Init)
         {
-            if (!resources[i].Valid) continue;
-            
-            m_Query.SetSharedComponentFilter(new InstancedResourceRequest(i));
-            var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
-            if (transforms.Length == 0)
+            m_Init = true;
+            for (int resourceIt = 0; resourceIt < resources.Length; resourceIt++)
             {
-                transforms.Dispose();
-                continue;
+                var resource = resources.ElementAt(resourceIt);
+                if (!resource.Valid) continue;
+                
+                var resourceData = resource.Instance.Value;
+                var queryBuilder = new EntityQueryBuilder(Allocator.Persistent).WithAll<LocalTransform, InstancedResourceRequest>().WithNone<Hidden>();
+                
+                if (resourceData.UseLastTransform) queryBuilder = queryBuilder.WithAll<LocalTransformLast>();
+                if (resourceData.Animated) queryBuilder = queryBuilder.WithAll<SpriteAnimFrame>();
+                if (resourceData.HasLifespan) queryBuilder = queryBuilder.WithAll<SpawnTimeCreated, DestroyAtTime>();
+                if (resourceData.IsTorus) queryBuilder = queryBuilder.WithAll<TorusMin>();
+                
+                resourceData.Query = queryBuilder.Build(ref state);
             }
-            var transformsLast = m_Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
-            var spriteIndices = m_Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.Temp);
-            var spriteIndicesF = spriteIndices.Reinterpret<float>();
+        }
+
+        for (int resourceIt = 0; resourceIt < resources.Length; resourceIt++)
+        {
+            if (!resources[resourceIt].Valid) continue;
             
+            var resource = resources[resourceIt].Instance.Value;
+            resource.Query.SetSharedComponentFilter(new InstancedResourceRequest(resourceIt));
+            if (resource.Query.IsEmpty)
+                continue;
+            
+            NativeArray<LocalTransform> transforms = resource.Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
             int toRender = math.min(transforms.Length, m_InstanceMats.Length); 
-            AsyncRenderTransformGenerator asyncRenderTransformGenerator = new AsyncRenderTransformGenerator
-            {
-                transforms = transforms,
-                transformsLast = transformsLast,
-                matrices = m_InstanceMats,
-                t = halfTime.Value
-            };
-            asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
+
+            NativeArray<LocalTransformLast> transformsLast = default;
             
-            var resource = resources[i].Instance.Value;
+            if (resource.UseLastTransform)
+            {
+                transformsLast = resource.Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
+                AsyncRenderTransformGenerator asyncRenderTransformGenerator = new AsyncRenderTransformGenerator
+                {
+                    transforms = transforms,
+                    transformsLast = transformsLast,
+                    matrices = m_InstanceMats,
+                    t = halfTime.Value
+                };
+                asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
+            }
+            else
+            {
+                AsyncRenderTransformGeneratorLightweight asyncRenderTransformGenerator = new AsyncRenderTransformGeneratorLightweight
+                {
+                    transforms = transforms,
+                    matrices = m_InstanceMats,
+                };
+                asyncRenderTransformGenerator.ScheduleParallel(toRender, 64, default).Complete();
+            }
+            
+            NativeArray<SpriteAnimFrame> spriteIndices = default;
+            NativeArray<float> spriteIndicesf = default;
+            if (resource.Animated)
+            {
+                spriteIndices = resource.Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.TempJob);
+                spriteIndicesf = spriteIndices.Reinterpret<float>();
+            }
+            
+            NativeArray<float> lifespan = default;
+            if (resource.HasLifespan)
+            {
+                var destroyAtTime = resource.Query.ToComponentDataArray<DestroyAtTime>(Allocator.Temp).Reinterpret<double>();
+                var spawnAtTime = resource.Query.ToComponentDataArray<SpawnTimeCreated>(Allocator.Temp).Reinterpret<double>();
+                lifespan = new NativeArray<float>(destroyAtTime.Length, Allocator.Temp);
+                for (int lifeIt = 0; lifeIt < destroyAtTime.Length; lifeIt++)
+                    lifespan[lifeIt] = math.clamp((float)((SystemAPI.Time.ElapsedTime - spawnAtTime[lifeIt])/(destroyAtTime[lifeIt] - spawnAtTime[lifeIt])), 0, 1);
+                destroyAtTime.Dispose();
+                spawnAtTime.Dispose();
+            }
+            
+            NativeArray<float> torusRads = default;
+            if (resource.IsTorus)
+            {
+                torusRads = resource.Query.ToComponentDataArray<TorusMin>(Allocator.Temp).Reinterpret<float>();
+            }
+            
             var mesh = resource.Mesh;
             var renderParams = resource.RenderParams;
             
@@ -117,15 +174,26 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             
                 if (resource.Animated)
                 {
-                    renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new Span<float>(&((float*)spriteIndicesF.GetUnsafePtr())[j], count).ToArray());
+                    renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new Span<float>(&((float*)spriteIndices.GetUnsafePtr())[j], count).ToArray());
+                }
+                if (resource.HasLifespan)
+                {
+                    renderParams.matProps.SetFloatArray("lifespanBuffer", new Span<float>(&((float*)lifespan.GetUnsafePtr())[j], count).ToArray());
+                }
+                if (resource.IsTorus)
+                {
+                    renderParams.matProps.SetFloatArray("torusMinBuffer", new Span<float>(&((float*)torusRads.GetUnsafePtr())[j], count).ToArray());
                 }
                 
                 Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
             }
             
             transforms.Dispose();
-            transformsLast.Dispose();
-            spriteIndices.Dispose();
+            
+            if (transformsLast.IsCreated) transformsLast.Dispose();
+            if (spriteIndices.IsCreated) spriteIndices.Dispose();
+            if (lifespan.IsCreated) lifespan.Dispose();
+            if (torusRads.IsCreated) torusRads.Dispose();
         }
     }
 
@@ -142,11 +210,29 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         public void Execute(int index)
         {
             var oldTransform = transformsLast[index];
+            if (math.all(oldTransform.Value.Position == 0))
+            {
+                matrices[index] = transforms[index].ToMatrix();
+                return;
+            }
+            
             var newTransform = transforms[index];
             
             var p = math.lerp(oldTransform.Value.Position, newTransform.Position, t);
             var q = math.slerp(oldTransform.Value.Rotation, newTransform.Rotation, t);
-            matrices[index] = LocalTransform.FromPositionRotation(p, q).ToMatrix();
+            matrices[index] = LocalTransform.FromPositionRotationScale(p, q, newTransform.Scale).ToMatrix();
+        }
+    }
+    [BurstCompile]
+    partial struct AsyncRenderTransformGeneratorLightweight : IJobFor
+    {
+        [ReadOnly] public NativeArray<LocalTransform> transforms;
+        [WriteOnly] public NativeArray<Matrix4x4> matrices;
+
+        [BurstCompile]
+        public void Execute(int index)
+        {
+            matrices[index] = transforms[index].ToMatrix();
         }
     }
 }

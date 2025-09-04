@@ -109,7 +109,7 @@ public partial struct SpecificPrefabTrackSystem : ISystem
         m_AccessArray = new TransformAccessArray(proxyTransforms);
 
         // Initialize the job data
-        var job = new ApplyLocalTransformToTransform()
+        var job = new GenericPrefabTrackSystem.ApplyLocalTransformToTransform()
         {
             T = SystemAPI.GetSingleton<RenderSystemHalfTime>().Value,
             transforms = transforms,

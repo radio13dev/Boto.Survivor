@@ -167,36 +167,92 @@ public partial struct GenericPrefabTrackSystem : ISystem
         transforms.Dispose(state.Dependency);
         transformsLast.Dispose(state.Dependency);
     }
-}
-
-[BurstCompile]
-public struct ApplyLocalTransformToTransform : IJobParallelForTransform
-{
-    [ReadOnly] public float dt;
-    [ReadOnly] public float T;
-    [ReadOnly] public NativeArray<LocalTransform> transforms;
-    [ReadOnly] public NativeArray<LocalTransformLast> transformsLast;
 
     [BurstCompile]
-    public void Execute(int index, TransformAccess transform)
+    public struct ApplyLocalTransformToTransform : IJobParallelForTransform
     {
-        // Lerp to new pos
-        var finalPos = math.lerp(transformsLast[index].Value.Position, transforms[index].Position, T);
+        [ReadOnly] public float dt;
+        [ReadOnly] public float T;
+        [ReadOnly] public NativeArray<LocalTransform> transforms;
+        [ReadOnly] public NativeArray<LocalTransformLast> transformsLast;
+
+        [BurstCompile]
+        public void Execute(int index, TransformAccess transform)
+        {
+            // Lerp to new pos
+            var finalPos = math.lerp(transformsLast[index].Value.Position, transforms[index].Position, T);
     
-        // The 'up' direction should adjust instantly, but the forward direction should be lerped over time.
-        var newRot = math.slerp(transformsLast[index].Value.Rotation, transforms[index].Rotation, T);
-        var newUp = math.mul(newRot, math.up()); // Use this for all calculations
+            // The 'up' direction should adjust instantly, but the forward direction should be lerped over time.
+            var newRot = math.slerp(transformsLast[index].Value.Rotation, transforms[index].Rotation, T);
+            var newUp = math.mul(newRot, math.up()); // Use this for all calculations
         
-        var oldForward = math.mul(transform.rotation, math.forward());
-        oldForward = math.cross(math.cross(newUp, oldForward), newUp); // Old forward to lerp from
+            var oldForward = math.mul(transform.rotation, math.forward());
+            oldForward = math.cross(math.cross(newUp, oldForward), newUp); // Old forward to lerp from
         
-        var newForward = math.mul(newRot, math.forward());
-        newForward = math.cross(math.cross(newUp, newForward), newUp); // New forward to lerp to
+            var newForward = math.mul(newRot, math.forward());
+            newForward = math.cross(math.cross(newUp, newForward), newUp); // New forward to lerp to
         
-        var finalForward = math.lerp(oldForward, newForward, dt);
-        var finalRot = quaternion.LookRotationSafe(finalForward, newUp);
+            var finalForward = math.lerp(oldForward, newForward, dt);
+            var finalRot = quaternion.LookRotationSafe(finalForward, newUp);
         
-        transform.SetPositionAndRotation(finalPos, finalRot);
+            transform.SetPositionAndRotation(finalPos, finalRot);
+        }
+    }
+}
+
+[RequireMatchingQueriesForUpdate]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateInGroup(typeof(RenderSystemGroup))]
+public partial struct GenericPrefabTrackSystem_Light : ISystem
+{
+    EntityQuery m_query;
+    TransformAccessArray m_AccessArray;
+    
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<RenderSystemHalfTime>();
+        m_query = SystemAPI.QueryBuilder().WithAll<LocalTransform, GenericPrefabProxy, GenericPrefabRequest.DynamicTag>().WithNone<LocalTransformLast>().Build();
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        if (m_AccessArray.isCreated) m_AccessArray.Dispose();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var transforms = m_query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        var proxies = m_query.ToComponentDataArray<GenericPrefabProxy>(Allocator.TempJob);
+        var proxyTransforms = new Transform[proxies.Length];
+        for (int i = 0; i < proxies.Length; i++)
+            proxyTransforms[i] = proxies[i].Spawned.Value.transform;
+            
+        if (m_AccessArray.isCreated) m_AccessArray.Dispose();
+        m_AccessArray = new TransformAccessArray(proxyTransforms);
+
+        // Initialize the job data
+        var job = new ApplyLocalTransformToTransform()
+        {
+            transforms = transforms,
+        };
+
+        // Schedule a parallel-for-transform job.
+        // The method takes a TransformAccessArray which contains the Transforms that will be acted on in the job.
+        state.Dependency = job.ScheduleByRef(m_AccessArray, state.Dependency);
+        proxies.Dispose(state.Dependency);
+        transforms.Dispose(state.Dependency);
+    }
+
+    [BurstCompile]
+    public struct ApplyLocalTransformToTransform : IJobParallelForTransform
+    {
+        [ReadOnly] public NativeArray<LocalTransform> transforms;
+
+        [BurstCompile]
+        public void Execute(int index, TransformAccess transform)
+        {
+            transform.SetPositionAndRotation(transforms[index].Position, transforms[index].Rotation);
+        }
     }
 }
 
@@ -217,7 +273,13 @@ public partial class GenericPrefabCleanupSystem : SystemBase
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         foreach ((var proxy, var entity) in SystemAPI.Query<RefRO<GenericPrefabProxy>>().WithNone<GenericPrefabRequest>().WithEntityAccess())
         {
-            if (proxy.ValueRO.Spawned) Object.Destroy(proxy.ValueRO.Spawned.Value.gameObject);
+            if (proxy.ValueRO.Spawned)
+            {
+                if (proxy.ValueRO.Spawned.Value.TryGetComponent<DelayedCleanupEntityLinkMono>(out var cleanup))
+                    cleanup.StartDestroy();
+                else 
+                    Object.Destroy(proxy.ValueRO.Spawned.Value.gameObject);
+            }
             ecb.RemoveComponent<GenericPrefabProxy>(entity);
         }
 

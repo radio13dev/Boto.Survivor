@@ -48,6 +48,18 @@ Material:
         m_Texture: {fileID: 2800000, guid: e541d1337d51be743a6253cccad40d26, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _CirclableDecalExpand_e35b82eef027485ca3e904bde161e108_BaseMap_1460343442_Texture2D:
+        m_Texture: {fileID: 2800000, guid: e541d1337d51be743a6253cccad40d26, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CirclableDecalExpand_e35b82eef027485ca3e904bde161e108_NormalMap_3472276159_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LoopPattern:
+        m_Texture: {fileID: 2800000, guid: 47975c2f1e2122b4bbaf39065c2a3f99, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Normal_Map:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -71,8 +83,14 @@ Material:
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
     - _DrawOrder: 0
-    - _Fill: 0.3
-    - _Normal_Blend: 0.5
-    m_Colors: []
+    - _Fill: 0.97
+    - _Max: 0.94
+    - _Min: 0.57
+    - _Normal_Blend: 1
+    m_Colors:
+    - _ArrowColor: {r: 1, g: 0.6386786, b: 0.427451, a: 1}
+    - _PatternColorA: {r: 1, g: 0.6005108, b: 0.2688679, a: 1}
+    - _PatternColorB: {r: 1, g: 0.778063, b: 0.3443396, a: 1}
+    - _RingCol: {r: 0.8679245, g: 0.6541956, b: 0.3234247, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

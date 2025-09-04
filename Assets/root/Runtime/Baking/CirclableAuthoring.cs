@@ -81,7 +81,7 @@ public partial struct CirclableSystem : ISystem
                     var m = MovementLookup[Circlers[i]];
                     var toCenter = math.normalize(transform.Position - t.Position);
                     var moveDir = math.normalize(m.Velocity);
-                    var dot = math.abs(math.dot(toCenter, moveDir));
+                    var dot = math.dot(toCenter, moveDir);
                     if (dot < 0.5f)
                     {
                         c.Charge = math.min(c.MaxCharge, c.Charge + dt*(1-dot));

@@ -172,7 +172,7 @@ namespace Collisions
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
+                var adjustedAABB2D = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 {
                     var visitor = new CollisionVisitor(entity, force_ptr);
@@ -213,7 +213,7 @@ namespace Collisions
             public unsafe void Execute([EntityIndexInChunk] int Key, Entity projectileE, in LocalTransform transform, in Collider collider, 
                in DynamicBuffer<ProjectileIgnoreEntity> projectileIgnoreEntities, ref DynamicBuffer<ProjectileHitEntity> projectileHitEntities, EnabledRefRW<ProjectileHit> projectileHitState)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
+                var adjustedAABB2D = collider.Add(transform);
                 fixed (DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr = &projectileHitEntities)
                 {
                     var visitor = new CollisionVisitor(projectileE, projectileIgnoreEntities, projectileHit_ptr, projectileHitState);
@@ -268,7 +268,7 @@ namespace Collisions
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
+                var adjustedAABB2D = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 fixed (Health* health_ptr = &health)
                 {

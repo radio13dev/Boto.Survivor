@@ -95,7 +95,7 @@ public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Obj
         {
             string path = AssetDatabase.GUIDToAssetPath(result[0]);
             database = AssetDatabase.LoadAssetAtPath(path, typeof(D));
-            Debug.Log($"Got asset file for {nameof(DatabaseRef)}<{typeof(T).Name},{typeof(D).Name}>: {path}");
+            //Debug.Log($"Got asset file for {nameof(DatabaseRef)}<{typeof(T).Name},{typeof(D).Name}>: {path}");
             created = false;
         }
 

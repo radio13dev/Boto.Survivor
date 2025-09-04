@@ -18,7 +18,7 @@ public class CirclableVisual : EntityLinkMono
     {
         if (!HasLink()) return;
         if (!GameEvents.TryGetComponent2<Circlable>(Entity, out Circlable c)) return;
-        projector.material.SetFloat(Fill, math.lerp(0.3f, 1f, c.Charge/c.MaxCharge));
+        projector.material.SetFloat(Fill, c.Charge/c.MaxCharge);
     }
 
     private void OnDestroy()

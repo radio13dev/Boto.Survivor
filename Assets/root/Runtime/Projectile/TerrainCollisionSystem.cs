@@ -76,13 +76,13 @@ namespace Collisions
         /// </summary>
         [BurstCompile]
         [WithNone(typeof(IgnoresTerrain))]
-        unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
+        internal unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
             unsafe public void Execute(in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB = collider.Add(transform.Position);
+                var adjustedAABB = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 {
                     var visitor = new CollisionVisitor(force_ptr);
@@ -137,13 +137,13 @@ namespace Collisions
         [BurstCompile]
         [WithAll(typeof(Projectile))]
         [WithNone(typeof(IgnoresTerrain))]
-        unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
+        internal unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
         {
             [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
 
             unsafe public void Execute(in LocalTransform transform, in Collider collider, ref DestroyAtTime projectileLifespan)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
+                var adjustedAABB2D = collider.Add(transform);
                 fixed (DestroyAtTime* lifespan_ptr = &projectileLifespan)
                 {
                     var visitor = new CollisionVisitor(lifespan_ptr);

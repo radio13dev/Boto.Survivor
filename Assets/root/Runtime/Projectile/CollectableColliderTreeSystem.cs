@@ -75,7 +75,7 @@ namespace Collisions
             {
                 tree.Clear();
                 for (int i = 0; i < colliders.Length; i++)
-                    tree.Insert((entities[i], collectables[i]), colliders[i].Collider.Add(transforms[i].Position));
+                    tree.Insert((entities[i], collectables[i]), colliders[i].Collider.Add(transforms[i]));
             }
         }
 
@@ -92,7 +92,7 @@ namespace Collisions
 
             unsafe public void Execute([ChunkIndexInQuery] int Key, Entity survivorE, in PlayerControlled playerControlled, in LocalTransform transform, in Collider collider)
             {
-                var adjustedAABB = collider.Add(transform.Position);
+                var adjustedAABB = collider.Add(transform);
                 {
                     var visitor = new CollisionVisitor(Key, ref ecb, playerControlled);
                     tree.Range(adjustedAABB, ref visitor);

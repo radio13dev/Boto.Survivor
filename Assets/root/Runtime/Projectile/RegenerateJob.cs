@@ -16,7 +16,7 @@ namespace Collisions
         {
             tree.Clear();
             for (int i = 0; i < colliders.Length; i++)
-                tree.Insert(entities[i], colliders[i].Add(transforms[i].Position));
+                tree.Insert(entities[i], colliders[i].Add(transforms[i]));
         }
     }
     public partial struct RegenerateJob_NetworkId : IJob
@@ -31,7 +31,7 @@ namespace Collisions
         {
             tree.Clear();
             for (int i = 0; i < colliders.Length; i++)
-                tree.Insert((entities[i], networkIds[i]), colliders[i].Add(transforms[i].Position));
+                tree.Insert((entities[i], networkIds[i]), colliders[i].Add(transforms[i]));
         }
     }
 }
