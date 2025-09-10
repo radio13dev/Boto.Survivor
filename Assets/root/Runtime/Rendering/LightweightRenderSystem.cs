@@ -98,6 +98,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 if (resourceData.Animated) queryBuilder = queryBuilder.WithAll<SpriteAnimFrame>();
                 if (resourceData.HasLifespan) queryBuilder = queryBuilder.WithAll<SpawnTimeCreated, DestroyAtTime>();
                 if (resourceData.IsTorus) queryBuilder = queryBuilder.WithAll<TorusMin>();
+                if (resourceData.IsCone) queryBuilder = queryBuilder.WithAll<TorusCone>();
                 
                 resourceData.Query = queryBuilder.Build(ref state);
             }
@@ -165,6 +166,12 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 torusRads = resource.Query.ToComponentDataArray<TorusMin>(Allocator.Temp).Reinterpret<float>();
             }
             
+            NativeArray<float> torusAngles = default;
+            if (resource.IsCone)
+            {
+                torusAngles = resource.Query.ToComponentDataArray<TorusCone>(Allocator.Temp).Reinterpret<float>();
+            }
+            
             var mesh = resource.Mesh;
             var renderParams = resource.RenderParams;
             
@@ -184,6 +191,10 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 {
                     renderParams.matProps.SetFloatArray("torusMinBuffer", new Span<float>(&((float*)torusRads.GetUnsafePtr())[j], count).ToArray());
                 }
+                if (resource.IsCone)
+                {
+                    renderParams.matProps.SetFloatArray("torusAngleBuffer", new Span<float>(&((float*)torusAngles.GetUnsafePtr())[j], count).ToArray());
+                }
                 
                 Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
             }
@@ -194,6 +205,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             if (spriteIndices.IsCreated) spriteIndices.Dispose();
             if (lifespan.IsCreated) lifespan.Dispose();
             if (torusRads.IsCreated) torusRads.Dispose();
+            if (torusAngles.IsCreated) torusAngles.Dispose();
         }
     }
 

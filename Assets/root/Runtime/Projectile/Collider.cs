@@ -18,12 +18,23 @@ namespace Collisions
     /// <summary>
     /// Component only used for rendering
     /// </summary>
-    [Save]
     public struct TorusMin : IComponentData
     {
         public float Value;
 
         public TorusMin(float value)
+        {
+            Value = value;
+        }
+    }
+    /// <summary>
+    /// Component only used for rendering
+    /// </summary>
+    public struct TorusCone : IComponentData
+    {
+        public float Value;
+
+        public TorusCone(float value)
         {
             Value = value;
         }
@@ -186,7 +197,7 @@ namespace Collisions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Collider TorusCone(float radiusMin, float radiusMax, float coneAngle, float3 coneDir)
         {
-            return new Collider(new AABB(-radiusMax, radiusMax), ColliderType.Torus, radiusMax * radiusMax, radiusMin * radiusMin, coneAngle, coneDir);
+            return new Collider(new AABB(-radiusMax, radiusMax), ColliderType.TorusCone, radiusMax * radiusMax, radiusMin * radiusMin, coneAngle, coneDir);
         }
 
         public void DebugDraw(CommandBuilder draw, Color color)

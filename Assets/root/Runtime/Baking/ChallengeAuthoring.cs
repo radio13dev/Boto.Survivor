@@ -60,24 +60,17 @@ public partial struct ChallengeSystem : ISystem
             var old = challenge.timer;
             challenge.timer += dt;
             
-            //var range = new float2(old % 8, challenge.timer % 8);
-            //if (range.Contains(6))
-            //{
-            //    GameManager.Prefabs.SpawnCircleBlast(in Prefabs, ref ecb, transform, 5, Time, 2);
-            //}
-            //else if (range.Contains(6.5f))
-            //{
-            //    GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 5, 10, Time, 2);
-            //}
-            //else if (range.Contains(7f))
-            //{
-            //    GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 10, 20, Time, 2);
-            //}
-            
-            var range = new float2(old % 5, challenge.timer % 5);
+            var range = new float2(old % 10, challenge.timer % 10);
             if (range.Contains(1))
             {
-                GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 5, 10, Time, 4);
+                GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 0, 6, Time, 4);
+                GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 10, 15, Time, 4);
+                GameManager.Prefabs.SpawnTorusConeBlast(in Prefabs, ref ecb, transform, 6, 10, 0.3f, Time, 4);
+            }
+            else if (range.Contains(5.5f))
+            {
+                GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 6, 10, Time, 4);
+                GameManager.Prefabs.SpawnTorusBlast(in Prefabs, ref ecb, transform, 15, 20, Time, 4);
             }
         }
     }

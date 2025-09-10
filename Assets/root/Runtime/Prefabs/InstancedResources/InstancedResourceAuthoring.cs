@@ -60,6 +60,10 @@ public class InstancedResourceAuthoring : MonoBehaviour
             {
                 AddComponent<TorusMin>(entity);
             }
+            if (authoring.Particle.Asset.IsCone)
+            {
+                AddComponent<TorusCone>(entity);
+            }
         }
     }
 

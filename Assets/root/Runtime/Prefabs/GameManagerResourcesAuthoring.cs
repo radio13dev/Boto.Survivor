@@ -5,6 +5,7 @@ using NativeTrees;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using Collider = Collisions.Collider;
@@ -93,6 +94,20 @@ public struct GameManager : IComponentData
             ecb.SetComponent(torusE, t);
             ecb.SetComponent(torusE, new TorusMin(radiusMin/radiusMax));
             ecb.SetComponent(torusE, Collider.Torus(radiusMin/radiusMax, 1));
+            ecb.SetComponent(torusE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
+            return torusE;
+        }
+        
+        public static Entity SpawnTorusConeBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, float angle, double Time, float delay)
+        {
+            var torusE = ecb.Instantiate(prefabs[3].Entity);
+            var t = transform;
+            t.Scale = radiusMax;
+            ecb.SetComponent(torusE, t);
+            ecb.SetComponent(torusE, new TorusMin(radiusMin/radiusMax));
+            ecb.SetComponent(torusE, new TorusCone(angle));
+            ecb.SetComponent(torusE, Collider.TorusCone(radiusMin/radiusMax, 1, angle, math.right()));
             ecb.SetComponent(torusE, new SpawnTimeCreated(Time));
             ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
             return torusE;
