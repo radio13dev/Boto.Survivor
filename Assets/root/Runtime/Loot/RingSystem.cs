@@ -7,6 +7,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using AABB = NativeTrees.AABB;
+using Collider = Collisions.Collider;
+using Entity = Unity.Entities.Entity;
 using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
@@ -42,7 +44,7 @@ public partial struct RingSystem : ISystem
         public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public double Time;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
-        [ReadOnly] public NativeOctree<(Entity, NetworkId)> EnemyColliderTree;
+        [ReadOnly] public NativeOctree<(Entity e, NetworkId id, Collider c)> EnemyColliderTree;
         [ReadOnly] public Random SharedRandom;
         [ReadOnly] public NetworkIdMapping NetworkIdMapping;
         [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
@@ -72,7 +74,7 @@ public partial struct RingSystem : ISystem
 
             if (triggerQueue.Length > 0)
             {
-                NativeList<(Entity, NetworkId)> ignoreBuffer = new NativeList<(Entity, NetworkId)>(4, Allocator.Temp);
+                NativeList<(Entity e, NetworkId id, Collider c)> ignoreBuffer = new NativeList<(Entity e, NetworkId id, Collider c)>(4, Allocator.Temp);
                 DynamicBuffer<OwnedProjectiles> fakeIgnoredProjectiles = default;
                 for (int i = 0; i < triggerQueue.Length; i++)
                 {
@@ -93,7 +95,7 @@ public partial struct RingSystem : ISystem
         private unsafe void ActivateRing(int ringIndex, int Key, in PlayerControlled playerId, in LocalTransform transform, in Movement movement,
             in CompiledStats compiledStats, ref DynamicBuffer<Ring> rings, ref DynamicBuffer<EquippedGem> equippedGems,
             ref DynamicBuffer<OwnedProjectiles> ownedProjectiles,
-            in NativeList<(Entity, NetworkId)> ignoreNearbyBuffer)
+            in NativeList<(Entity e, NetworkId id, Collider c)> ignoreNearbyBuffer)
         {
             var r = SharedRandom;
             ref var ring = ref rings.ElementAt(ringIndex);
@@ -163,7 +165,6 @@ public partial struct RingSystem : ISystem
                         const float Projectile_NearestRapid_CharacterOffset = 1f;
 
                         var template = Projectiles[0];
-                        var projectileCount = 1;
                         var loopCount = 1 + projectileStats.ProjectileCount;
 
                         var visitor = new EnemyColliderTree.NearestVisitorCount(){ DesiredHits = tier };

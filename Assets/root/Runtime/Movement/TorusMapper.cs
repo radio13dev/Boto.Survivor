@@ -236,4 +236,13 @@ public static class TorusMapper
 
         return new float3(x, y, z);
     }
+
+    public static float3 ProjectOntoSurface(float3 worldPos, float3 dir)
+    {
+        SnapToSurface(worldPos, 0, out _, out var normal);
+        
+        // Project the 'dir' vector onto the plane defined by the normal
+        float3 projectedDir = dir - math.dot(dir, normal) * normal;
+        return projectedDir;
+    }
 }

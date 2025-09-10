@@ -58,7 +58,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &8284809072514810519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +137,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &1276298809188393950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +216,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &5630726199602934777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,7 +295,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &649956724868358487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,7 +362,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 13
     _Asset: {fileID: 11400000, guid: 7217b029dba501e4a9a442f8483b5704, type: 2}
 --- !u!114 &3159938514219718186
 MonoBehaviour:
@@ -390,7 +421,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 13
     _Asset: {fileID: 11400000, guid: 7217b029dba501e4a9a442f8483b5704, type: 2}
 --- !u!114 &2049568448227355016
 MonoBehaviour:
@@ -531,7 +561,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &4828662369062039131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -590,7 +628,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 13
     _Asset: {fileID: 11400000, guid: 7217b029dba501e4a9a442f8483b5704, type: 2}
 --- !u!114 &793883407312896502
 MonoBehaviour:
@@ -662,7 +699,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &9036990177949243245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,7 +778,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 2.15
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &9133540012090893478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -792,7 +845,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 13
     _Asset: {fileID: 11400000, guid: 7217b029dba501e4a9a442f8483b5704, type: 2}
 --- !u!114 &4357426861035381322
 MonoBehaviour:
@@ -852,7 +904,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 13
     _Asset: {fileID: 11400000, guid: 7217b029dba501e4a9a442f8483b5704, type: 2}
 --- !u!114 &4844640299925898724
 MonoBehaviour:

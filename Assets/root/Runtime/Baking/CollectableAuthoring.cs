@@ -1,13 +1,13 @@
+using Drawing;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using AABB = NativeTrees.AABB;
 using Collider = Collisions.Collider;
 
-public class CollectableAuthoring : MonoBehaviour
+public class CollectableAuthoring : MonoBehaviourGizmos
 {
-    public float3 CollectableMin = new float3(-0.5f,-0.5f,-0.5f);
-    public float3 CollectableMax = new float3(0.5f,0.5f,0.5f);
+    public float Radius = 1;
     
     partial class Baker : Baker<CollectableAuthoring>
     {
@@ -20,13 +20,16 @@ public class CollectableAuthoring : MonoBehaviour
             SetComponentEnabled<Collectable>(entity, false);
             AddComponent(entity, new Collected());
             SetComponentEnabled<Collected>(entity, false);
-            AddComponent(entity, new CollectCollider(){Collider = new Collider(new AABB(authoring.CollectableMin, authoring.CollectableMax))});
+            AddComponent(entity, new CollectCollider(){Collider = Collider.DefaultAABB(authoring.Radius)});
         }
     }
 
-    private void OnDrawGizmos()
+    public override void DrawGizmos()
     {
-        Gizmos.color = new Color(0.5f, 0f, 0.3f, 1f);
-        Gizmos.DrawWireCube(transform.position + (Vector3)(CollectableMin/2 + CollectableMax/2), (CollectableMax - CollectableMin));
+        using (Draw.WithLineWidth(2, false))
+        {
+            Draw.WireSphere(transform.position, Radius*math.SQRT2, new Color(0.5f, 0f, 0.3f, 1f));
+            Draw.WireSphere(transform.position, Radius, new Color(0.5f, 0f, 0.3f, 0.5f));
+        }
     }
 }

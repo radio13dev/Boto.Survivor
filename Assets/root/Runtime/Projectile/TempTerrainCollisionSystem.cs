@@ -15,7 +15,7 @@ namespace Collisions
     [UpdateAfter(typeof(EnemyColliderTreeSystem))]
     public partial struct TempTerrainCollisionSystem : ISystem
     {
-        NativeTrees.NativeOctree<Entity> m_Tree;
+        NativeTrees.NativeOctree<(Entity e, Collider c)> m_Tree;
         EntityQuery m_TreeQuery;
 
         public void OnCreate(ref SystemState state)
@@ -34,7 +34,7 @@ namespace Collisions
             var entities = m_TreeQuery.ToEntityArray(allocator: Allocator.TempJob);
             var colliders = m_TreeQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
             var transforms = m_TreeQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
-            state.Dependency = new RegenerateJob()
+            state.Dependency = new RegenerateJob_Collider()
             {
                 tree = m_Tree,
                 entities = entities,

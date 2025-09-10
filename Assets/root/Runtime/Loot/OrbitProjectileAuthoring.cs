@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Collider = Collisions.Collider;
 
 [Save]
 public struct OrbitProjectileData : IComponentData
@@ -62,7 +63,7 @@ public partial struct OrbitProjectileSystem : ISystem
         [ReadOnly] public double Time;
         [ReadOnly] public ComponentLookup<LocalTransform> TransformLookup;
         [ReadOnly] public DynamicBuffer<PlayerControlledLink> Players;
-        [ReadOnly] public NativeOctree<(Entity, NetworkId)> EnemyColliderTree;
+        [ReadOnly] public NativeOctree<(Entity e, NetworkId id, Collider c)> EnemyColliderTree;
         [ReadOnly] public NetworkIdMapping NetworkIdMapping;
 
         public void Execute(ref OrbitProjectileData orbit, in OwnedProjectile owned, in MovementSettings speed,

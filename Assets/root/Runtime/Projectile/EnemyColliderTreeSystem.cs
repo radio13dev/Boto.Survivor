@@ -17,13 +17,13 @@ namespace Collisions
     public static class EnemyColliderTree
     {
         [BurstCompile]
-        public struct NearestVisitor : IOctreeNearestVisitor<(Entity, NetworkId)>
+        public struct NearestVisitor : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
         {
             public bool Hit;
             public AABB Nearest;
-            public (Entity, NetworkId) NearestObj;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
 
-            public bool OnVist((Entity, NetworkId) obj, AABB bounds)
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
             {
                 Nearest = bounds;
                 NearestObj = obj;
@@ -32,16 +32,16 @@ namespace Collisions
             }
         }
         [BurstCompile]
-        public struct NearestVisitorCount : IOctreeNearestVisitor<(Entity, NetworkId)>
+        public struct NearestVisitorCount : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
         {
             public int DesiredHits;
             public int Hits;
             public AABB Nearest;
-            public (Entity, NetworkId) NearestObj;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
             public AABB Last;
-            public (Entity, NetworkId) LastObj;
+            public (Entity e, NetworkId id, Collider c) LastObj;
 
-            public bool OnVist((Entity, NetworkId) obj, AABB bounds)
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
             {
                 if (Hits == 0)
                 {
@@ -55,11 +55,11 @@ namespace Collisions
             }
         }
         [BurstCompile]
-        public struct NearestVisitorIgnore : IOctreeNearestVisitor<(Entity, NetworkId)>
+        public struct NearestVisitorIgnore : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
         {
             public bool Hit;
             public AABB Nearest;
-            public (Entity, NetworkId) NearestObj;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
             [ReadOnly] public DynamicBuffer<ProjectileIgnoreEntity> Ignore;
 
             public NearestVisitorIgnore(in DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities)
@@ -70,7 +70,7 @@ namespace Collisions
                 Ignore = ignoredEntities;
             }
 
-            public bool OnVist((Entity, NetworkId) obj, AABB bounds)
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
             {
                 for (int i = 0; i < Ignore.Length; i++)
                     if (Ignore[i].Value == obj.Item2)
@@ -86,9 +86,9 @@ namespace Collisions
         }
 
         [BurstCompile]
-        public struct DistanceProvider : IOctreeDistanceProvider<(Entity, NetworkId)>
+        public struct DistanceProvider : IOctreeDistanceProvider<(Entity e, NetworkId id, Collider c)>
         {
-            public float DistanceSquared(float3 point, (Entity, NetworkId) obj, AABB bounds)
+            public float DistanceSquared(float3 point, (Entity e, NetworkId id, Collider c) obj, AABB bounds)
             {
                 return math.distancesq(point, bounds.Center);
             }
@@ -99,7 +99,7 @@ namespace Collisions
     [BurstCompile]
     public unsafe partial struct EnemyColliderTreeSystem : ISystem
     {
-        public NativeOctree<(Entity, NetworkId)> Tree;
+        public NativeOctree<(Entity e, NetworkId id, Collider c)> Tree;
         public EntityQuery Query;
         
         public void OnCreate(ref SystemState state)
@@ -168,7 +168,7 @@ namespace Collisions
         [WithNone(typeof(Projectile))]
         unsafe partial struct EnemyPushForceJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, NetworkId id, Collider c)> tree;
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
             {
@@ -181,7 +181,7 @@ namespace Collisions
             }
 
 
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity, NetworkId)>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
                 Entity _source;
                 Force* _force;
@@ -192,10 +192,10 @@ namespace Collisions
                     _force = force;
                 }
 
-                public bool OnVisit((Entity, NetworkId) projectile, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, NetworkId id, Collider c) projectile, AABB objBounds, AABB queryRange)
                 {
-                    if (_source == projectile.Item1) return true;
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (_source == projectile.e) return true;
+                    if (!projectile.c.Contains(queryRange.Center)) return true;
                     
                     _force->Velocity += (queryRange.Center - objBounds.Center)/2;
                     return true;
@@ -208,7 +208,7 @@ namespace Collisions
         [WithDisabled(typeof(ProjectileHit))]
         unsafe partial struct ProjectileHitEnemyJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, NetworkId id, Collider c)> tree;
 
             public unsafe void Execute([EntityIndexInChunk] int Key, Entity projectileE, in LocalTransform transform, in Collider collider, 
                in DynamicBuffer<ProjectileIgnoreEntity> projectileIgnoreEntities, ref DynamicBuffer<ProjectileHitEntity> projectileHitEntities, EnabledRefRW<ProjectileHit> projectileHitState)
@@ -221,7 +221,7 @@ namespace Collisions
                 }
             }
 
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity, NetworkId)>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
                 Entity _projectileE;
                 DynamicBuffer<ProjectileIgnoreEntity> _projectileIgnore_ptr;
@@ -238,18 +238,18 @@ namespace Collisions
                     _projectileHitState = projectileHitState;
                 }
 
-                public bool OnVisit((Entity, NetworkId) enemyE, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, NetworkId id, Collider c) enemyE, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (!enemyE.c.Contains(queryRange.Center)) return true;
                     
                     for (int i = 0; i < _projectileIgnore_ptr.Length; i++)
                     {
-                        if (_projectileIgnore_ptr[i].Value == enemyE.Item2)
+                        if (_projectileIgnore_ptr[i].Value == enemyE.id)
                         {
                             return true; // Ignore this entity
                         }
                     }
-                    _projectileHit_ptr->Add(new ProjectileHitEntity(enemyE.Item2));
+                    _projectileHit_ptr->Add(new ProjectileHitEntity(enemyE.id));
                     _projectileHitState.ValueRW = true;
                     return true;
                 }
@@ -264,7 +264,7 @@ namespace Collisions
             public const float k_Knockback = 20;
         
             public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId)> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId, Collider)> tree;
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force force)
             {
@@ -278,7 +278,8 @@ namespace Collisions
             }
 
 
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity, NetworkId)>
+            [BurstCompile]
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
                 int _key;
                 Entity _source;
@@ -295,13 +296,13 @@ namespace Collisions
                     _ecb = ecb;
                 }
 
-                public bool OnVisit((Entity, NetworkId) enemy, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, NetworkId id, Collider c) enemy, AABB objBounds, AABB queryRange)
                 {
-                    if (_source == enemy.Item1) return true;
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (_source == enemy.e) return true;
+                    if (!enemy.c.Contains(queryRange.Center)) return true;
                     
                     // Flag enemy as destroyed
-                    _ecb.SetComponentEnabled<DestroyFlag>(_key, enemy.Item1, true);
+                    _ecb.SetComponentEnabled<DestroyFlag>(_key, enemy.e, true);
                     
                     // Do stuff to player
                     _health->Value--;

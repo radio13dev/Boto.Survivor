@@ -6,13 +6,16 @@ using UnityEngine;
 
 public class ChallengeShrineAuthoring : MonoBehaviour
 {
-    public ChallengeShrine Shrine;
+    public DatabaseRef<GameObject, GenericDatabase> ToSpawn = new();
     class Baker : Baker<ChallengeShrineAuthoring>
     {
         public override void Bake(ChallengeShrineAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, authoring.Shrine);
+            AddComponent(entity, new ChallengeShrine()
+            {
+                TerrainGroupToSpawn = authoring.ToSpawn.GetAssetIndex()
+            });
         }
     }
 }
@@ -36,7 +39,7 @@ public partial struct ChallengeShrineSystem : ISystem
                 SystemAPI.SetComponentEnabled<DestroyFlag>(e, true);
                 
                 // Spawn the challenge
-                var toSpawn = SystemAPI.GetSingletonBuffer<GameManager.TerrainGroup>()[shrine.ValueRO.TerrainGroupToSpawn];
+                var toSpawn = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>()[shrine.ValueRO.TerrainGroupToSpawn];
                 var spawned = TerrainGroupInitSystem.SpawnTerrainGroup(state.EntityManager, toSpawn.Entity, transform.ValueRO);
                 SystemAPI.SetComponent(spawned, new DestroyAtTime()
                 {

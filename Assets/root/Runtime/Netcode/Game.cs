@@ -445,7 +445,6 @@ public static class GameEvents
         if (m_Initialized)
         {
             throw new Exception($"{nameof(GameEvents)}.{nameof(Initialize)}() ran multiple times.");
-            return;
         }
 
         m_Initialized = true;

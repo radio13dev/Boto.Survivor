@@ -12,7 +12,7 @@ using UnityEditor;
 #endif
 
 [Serializable]
-public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
+public sealed class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Object
 {
     public T Asset => _Asset as T;
 
@@ -101,6 +101,7 @@ public class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where T : Obj
 
         return database as D;
 #else
+        created = false;
         Debug.LogError($"This is an editor only method.");
         return null;
 #endif

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -9,6 +10,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+[Save]
 [Serializable]
 [StructLayout(LayoutKind.Explicit, Size = 16, Pack = 2)]
 public unsafe struct GameRpc : IComponentData
@@ -325,13 +327,13 @@ public partial struct GameRpcSystem : ISystem
                     var equipped = SystemAPI.GetBuffer<EquippedGem>(playerE);
                     var rings = SystemAPI.GetBuffer<Ring>(playerE);
                     
-                    if (rpc.FromSlotIndex < 0 || rpc.FromSlotIndex >= equipped.Length)
+                    if (rpc.FromSlotIndex >= equipped.Length)
                     {
                         Debug.LogWarning($"Player {playerId} attempted to slot from index {rpc.FromSlotIndex} but only has {equipped.Length} slots.");
                         continue;
                     }
                     
-                    if (rpc.ToSlotIndex == -1)
+                    if (rpc.ToSlotIndex == byte.MaxValue)
                     {
                         // We're moving this item to the inventory.
                         var inventory = SystemAPI.GetBuffer<InventoryGem>(playerE);
@@ -344,7 +346,7 @@ public partial struct GameRpcSystem : ISystem
                     }
                     else
                     {
-                        if (rpc.ToSlotIndex < 0 || rpc.ToSlotIndex >= equipped.Length)
+                        if (rpc.ToSlotIndex >= equipped.Length)
                         {
                             Debug.LogWarning($"Player {playerId} attempted to slot into index {rpc.ToSlotIndex} but only has {equipped.Length} slots.");
                             continue;
@@ -370,13 +372,13 @@ public partial struct GameRpcSystem : ISystem
                     var playerE = playerQuery.GetSingletonEntity();
                     var rings = SystemAPI.GetBuffer<Ring>(playerE);
                     
-                    if (rpc.FromSlotIndex < 0 || rpc.FromSlotIndex >= rings.Length)
+                    if (rpc.FromSlotIndex >= rings.Length)
                     {
                         Debug.LogWarning($"Player {playerId} attempted to slot from index {rpc.FromSlotIndex} but only has {rings.Length} slots.");
                         continue;
                     }
                     
-                    if (rpc.ToSlotIndex == -1)
+                    if (rpc.ToSlotIndex == byte.MaxValue)
                     {
                         var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
                         dirty.SetDirty(rings[rpc.FromSlotIndex]);

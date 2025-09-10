@@ -1,10 +1,33 @@
 ﻿using BovineLabs.Saving;
+using Collisions;
 using Unity.Collections;
 using Unity.Entities;
 
 [Save]
 public struct DestroyFlag : IComponentData, IEnableableComponent
 {
+}
+
+[Save]
+public struct SpawnTimeCreated : IComponentData
+{
+    public double TimeCreated;
+
+    public SpawnTimeCreated(double time)
+    {
+        TimeCreated = time;
+    }
+}
+
+[Save]
+public struct DestroyAtTime : IComponentData
+{
+    public double DestroyTime;
+
+    public DestroyAtTime(double time)
+    {
+        DestroyTime = time;
+    }
 }
 
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup), OrderFirst = true)]
@@ -33,5 +56,25 @@ public partial struct DestroySystem : ISystem
         var linksToDestroy = m_DestroyLinkedQuery.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < linksToDestroy.Length; i++)
             state.EntityManager.DestroyEntity(SystemAPI.GetBuffer<LinkedEntityGroup>(linksToDestroy[i]).AsNativeArray().Reinterpret<Entity>());
+    }
+}
+
+[UpdateAfter(typeof(DestroySystem))]
+[UpdateInGroup(typeof(DestroySystemGroup), OrderLast = true)]
+[RequireMatchingQueriesForUpdate]
+public partial struct DestroyAtTimeCleanupSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        var currentTime = SystemAPI.Time.ElapsedTime;
+        foreach ((var projectile, var entity) in SystemAPI.Query<RefRO<DestroyAtTime>>().WithDisabled<DestroyFlag>().WithEntityAccess())
+        {
+            if (projectile.ValueRO.DestroyTime < currentTime)
+            {
+                state.EntityManager.SetComponentEnabled<DestroyFlag>(entity, true);
+                if (SystemAPI.HasComponent<EnableColliderOnDestroy>(entity))
+                    state.EntityManager.SetComponentEnabled<Collider>(entity, true);
+            }
+        }
     }
 }

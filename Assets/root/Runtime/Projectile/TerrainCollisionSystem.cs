@@ -18,7 +18,7 @@ namespace Collisions
     public partial struct TerrainCollisionSystem : ISystem
     {
         int m_LastEntityCount;
-        NativeTrees.NativeOctree<Entity> m_Tree;
+        NativeTrees.NativeOctree<(Entity e, Collider c)> m_Tree;
         EntityQuery m_TreeQuery;
 
         public void OnCreate(ref SystemState state)
@@ -41,7 +41,7 @@ namespace Collisions
                 var entities = m_TreeQuery.ToEntityArray(allocator: Allocator.TempJob);
                 var colliders = m_TreeQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
                 var transforms = m_TreeQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
-                state.Dependency = new RegenerateJob()
+                state.Dependency = new RegenerateJob_Collider()
                 {
                     tree = m_Tree,
                     entities = entities,
@@ -78,7 +78,7 @@ namespace Collisions
         [WithNone(typeof(IgnoresTerrain))]
         internal unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, Collider c)> tree;
 
             unsafe public void Execute(in LocalTransform transform, in Collider collider, ref Force force)
             {
@@ -91,7 +91,7 @@ namespace Collisions
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>
             {
                 Force* _force;
 
@@ -100,35 +100,61 @@ namespace Collisions
                     _force = force;
                 }
 
-                public bool OnVisit(Entity treeEntity, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, Collider c) terrain, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
-                    
-                    // TODO: Fix this now that it uses 3D AABB
-                    var delta = queryRange.Center - objBounds.Center;
-                    var halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
-                    var halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
+                    if (!terrain.c.Contains(queryRange.Center)) return true;
 
-                    float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
-                    float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
-                    float overlapZ = halfSizeA.z + halfSizeB.z - math.abs(delta.z);
+                    switch (terrain.c.Type)
+                    {
+                        case ColliderType.Sphere:
+                        {
+                            var d = math.distance(queryRange.Center, objBounds.Center);
+                            PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.Radius, d);
+                            break;
+                        }
+                        case ColliderType.Torus:
+                        {
+                            // Check if inside the torus hole
+                            var d = math.distance(queryRange.Center, objBounds.Center);
+                            if (d >= (terrain.c.TorusMin + terrain.c.Radius)/2) 
+                                PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.Radius, d); // Pushes towerds outer rad
+                            else
+                                PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.TorusMin, d); // Pushes towards inner rad
+                            break;
+                        }    
+                        default:
+                            // TODO: Fix this now that it uses 3D AABB
+                            var delta = queryRange.Center - objBounds.Center;
+                            var halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
+                            var halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
 
-                    if (overlapX < overlapY && overlapX < overlapZ)
-                    {
-                        float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
-                        _force->Shift += new float3(pushX, 0f, 0f);
-                    }
-                    else if (overlapY < overlapX && overlapY < overlapZ)
-                    {
-                        float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
-                        _force->Shift += new float3(0f, pushY, 0);
-                    }
-                    else
-                    {
-                        float pushZ = overlapZ * (delta.z < 0f ? -1f : 1f);
-                        _force->Shift += new float3(0f, 0f, pushZ);
+                            float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
+                            float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
+                            float overlapZ = halfSizeA.z + halfSizeB.z - math.abs(delta.z);
+
+                            if (overlapX < overlapY && overlapX < overlapZ)
+                            {
+                                float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
+                                _force->Shift += new float3(pushX, 0f, 0f);
+                            }
+                            else if (overlapY < overlapX && overlapY < overlapZ)
+                            {
+                                float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
+                                _force->Shift += new float3(0f, pushY, 0);
+                            }
+                            else
+                            {
+                                float pushZ = overlapZ * (delta.z < 0f ? -1f : 1f);
+                                _force->Shift += new float3(0f, 0f, pushZ);
+                            }
+                            break;
                     }
                     return true;
+                }
+
+                private void PushOutwards(ref Force* force, float3 worldPos, float3 dir, float sphereRad, float dist)
+                {
+                    force->Shift += TorusMapper.ProjectOntoSurface(worldPos, math.normalize(dir)*(sphereRad - dist));
                 }
             }
         }
@@ -139,7 +165,7 @@ namespace Collisions
         [WithNone(typeof(IgnoresTerrain))]
         internal unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, Collider c)> tree;
 
             unsafe public void Execute(in LocalTransform transform, in Collider collider, ref DestroyAtTime projectileLifespan)
             {
@@ -152,7 +178,7 @@ namespace Collisions
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>
             {
                 DestroyAtTime* _lifespanPtr;
 
@@ -161,9 +187,9 @@ namespace Collisions
                     _lifespanPtr = lifespanPtr;
                 }
 
-                public bool OnVisit(Entity treeEntity, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, Collider c) terrain, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (!terrain.c.Contains(queryRange.Center)) return true;
                     _lifespanPtr->DestroyTime = 0;
                     return false;
                 }

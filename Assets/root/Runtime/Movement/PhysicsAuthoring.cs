@@ -1,5 +1,6 @@
 ﻿using System;
 using BovineLabs.Saving;
+using Drawing;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -8,7 +9,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public class PhysicsAuthoring : MonoBehaviour
+public class PhysicsAuthoring : MonoBehaviourGizmos
 {
     public PhysicsResponse PhysicsResponse = PhysicsResponse.Default;
     public bool HasSurfaceMovement;
@@ -30,10 +31,12 @@ public class PhysicsAuthoring : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public override void DrawGizmos()
     {
-        Gizmos.color = new Color(0f, 1f, 0, 0.5f);
-        Gizmos.DrawWireSphere(transform.position, PhysicsResponse.Radius);
+        using (Draw.WithLineWidth(2, false))
+        {
+            Draw.WireSphere(transform.position, PhysicsResponse.Radius, new Color(1f, 0f, 1, 0.5f));
+        }
     }
 }
 

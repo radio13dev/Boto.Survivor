@@ -9,15 +9,17 @@ using UnityEngine;
 
 public class TerrainGroupRequestAuthoring : MonoBehaviour
 {
-    public TerrainGroupRequest Request = new TerrainGroupRequest(){ Index = -1 };
-    
+    public DatabaseRef<GameObject, GenericDatabase> Request = new();
 
     partial class Baker : Baker<TerrainGroupRequestAuthoring>
     {
         public override void Bake(TerrainGroupRequestAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
-            AddComponent(entity, authoring.Request);
+            AddComponent(entity, new TerrainGroupRequest()
+            {
+                Index = authoring.Request.GetAssetIndex()
+            });
         }
     }
 }
@@ -27,7 +29,6 @@ public class TerrainGroupRequestAuthoring : MonoBehaviour
 public struct TerrainGroupRequest : IComponentData
 {
     public int Index;
-    public bool FixedPosition;
 }
 
 [UpdateInGroup(typeof(WorldInitSystemGroup))]
@@ -38,7 +39,7 @@ public partial struct TerrainGroupInitSystem : ISystem
     {
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<SharedRandom>();
-        state.RequireForUpdate<GameManager.TerrainGroup>();
+        state.RequireForUpdate<GameManager.Prefabs>();
         state.RequireForUpdate<TerrainGroupRequest>();
     }
 
@@ -46,7 +47,7 @@ public partial struct TerrainGroupInitSystem : ISystem
     {
         var bounds = TorusMapper.MapBounds;
         var random = SystemAPI.GetSingleton<SharedRandom>();
-        var options = SystemAPI.GetSingletonBuffer<GameManager.TerrainGroup>(true);
+        var options = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>(true);
         var r = random.Random;
         foreach (var (terrainSpawner, e) in SystemAPI.Query<RefRO<TerrainGroupRequest>>().WithEntityAccess())
         {
@@ -56,12 +57,10 @@ public partial struct TerrainGroupInitSystem : ISystem
             // Position
             var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
             var pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
-            if (terrainSpawner.ValueRO.FixedPosition) pos = transform.Position;
-            TorusMapper.SnapToSurface(pos, 0, out _, out var normal);
+            TorusMapper.SnapToSurface(pos, 0, out pos, out var normal);
             
             // Rotation
             var randomRot = r.NextFloat3Direction();
-            if (terrainSpawner.ValueRO.FixedPosition) randomRot = transform.Forward();
             var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
             
             // What to spawn

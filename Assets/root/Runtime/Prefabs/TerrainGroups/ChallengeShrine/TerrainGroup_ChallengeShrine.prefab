@@ -58,7 +58,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Radius: 1.46
+  EnableColliderOnDestroy: 0
+  Radius: 2.01
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &4703886889758480428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,8 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286cbf486e9046a6ad11723b857dedd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ChallengeShrineAuthoring
-  Shrine:
-    TerrainGroupToSpawn: 2
+  ToSpawn:
+    _Asset: {fileID: 7009472383582892447, guid: e49b6fe2b60fa124592df14e6194e35b, type: 3}
 --- !u!114 &2015278451766593344
 MonoBehaviour:
   m_ObjectHideFlags: 0

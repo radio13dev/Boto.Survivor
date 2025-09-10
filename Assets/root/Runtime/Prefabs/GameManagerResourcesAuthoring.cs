@@ -76,7 +76,7 @@ public struct GameManager : IComponentData
 
         public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
         {
-            var circleE = ecb.Instantiate(prefabs[0].Entity);
+            var circleE = ecb.Instantiate(prefabs[1].Entity);
             var t = transform;
             t.Scale = radius;
             ecb.SetComponent(circleE, t);
@@ -87,7 +87,7 @@ public struct GameManager : IComponentData
 
         public static Entity SpawnTorusBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, double Time, float delay)
         {
-            var torusE = ecb.Instantiate(prefabs[1].Entity);
+            var torusE = ecb.Instantiate(prefabs[2].Entity);
             var t = transform;
             t.Scale = radiusMax;
             ecb.SetComponent(torusE, t);
@@ -114,17 +114,11 @@ public struct GameManager : IComponentData
         public int InstancedResourceIndex;
     }
     
-    public struct TerrainGroup : IBufferElementData
-    {
-        public Entity Entity;
-    }
-    
     public struct Survivors : IBufferElementData
     {
         public Entity Entity;
     }
 }
-
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
@@ -139,9 +133,8 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public EnemyCharacterAuthoring[] Enemies;
     public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
     public SerializedDictionary<RingPrimaryEffect, InstancedResource> RingVisuals;
-    public TerrainGroupAuthoring[] TerrainGroups;
     public SurvivorAuthoring[] Survivors;
-    public GameObject[] Prefabs;
+    public GenericDatabase Prefabs;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -260,15 +253,6 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                         }
                         buffer[kvp.Key.GetMostSigBit()] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
                     }
-                }
-            }
-            
-            if (authoring.TerrainGroups?.Length > 0)
-            {
-                var buffer = AddBuffer<GameManager.TerrainGroup>(entity);
-                for (int i = 0; i < authoring.TerrainGroups.Length; i++)
-                {
-                    buffer.Add(new GameManager.TerrainGroup(){ Entity = GetEntity(authoring.TerrainGroups[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
             
