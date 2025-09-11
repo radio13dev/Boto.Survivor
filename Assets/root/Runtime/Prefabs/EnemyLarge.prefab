@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 5878207292333736380}
   - component: {fileID: 638238371282637465}
   - component: {fileID: 1276742715247795018}
+  - component: {fileID: 484891261290821242}
   m_Layer: 0
   m_Name: EnemyLarge
   m_TagString: Untagged
@@ -222,3 +223,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
+--- !u!114 &484891261290821242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38a1b3a223845b89e2109be77b254ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GenericEnemyMovementTagAuthoring

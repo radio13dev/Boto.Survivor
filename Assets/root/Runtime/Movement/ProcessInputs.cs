@@ -44,6 +44,9 @@ public partial struct ProcessInputs : ISystem
         state.Dependency = new MovementInputJob()
         {
         }.ScheduleParallel(state.Dependency);
+        state.Dependency = new LockedMovementInputJob()
+        {
+        }.ScheduleParallel(state.Dependency);
         state.Dependency = new RollInputJob()
         {
         }.ScheduleParallel(state.Dependency);
@@ -63,6 +66,20 @@ public partial struct ProcessInputs : ISystem
             movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
             var vel = movement.LastDirection * movementSettings.Speed * math.clamp(math.length(input.Direction), 0, 1);
             movement.Velocity += vel;
+        }
+    }
+    [WithAll(typeof(MovementInputLockout))]
+    [WithAll(typeof(Simulate))]
+    partial struct LockedMovementInputJob : IJobEntity
+    {
+        public void Execute(in StepInput input, ref LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
+        {
+            // Rotate character to face input direction
+            var up = local.Up();
+            var inputForward = math.cross(up, math.cross(math.normalizesafe(input.Direction, local.Forward()), up));
+            local.Rotation = quaternion.LookRotation(inputForward, up);
+        
+            movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
         }
     }
 

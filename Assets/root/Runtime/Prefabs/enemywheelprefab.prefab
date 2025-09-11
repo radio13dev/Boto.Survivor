@@ -134,7 +134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       propertyPath: m_Name
-      value: enemywheel
+      value: enemywheelprefab
       objectReference: {fileID: 0}
     - target: {fileID: 1653317713245220617, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -234,6 +234,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3903790240772855067}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2937674862728593936}
   m_SourcePrefab: {fileID: 100100000, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
 --- !u!1 &1471640771636190874 stripped
 GameObject:
@@ -274,4 +277,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26f3c95494061e44cb825ad02d916c0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::MotionTreeTest
+  animator: {fileID: 6078579331817555960}
+--- !u!114 &2937674862728593936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1471640771636190874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd160db98b0bcee4ba3bc90365d41693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::WheelEnemyMotionTree
   animator: {fileID: 6078579331817555960}
