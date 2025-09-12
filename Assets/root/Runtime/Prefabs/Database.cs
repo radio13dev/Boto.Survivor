@@ -99,7 +99,8 @@ public sealed class DatabaseRef<T, D> : DatabaseRef where D : Database<T> where 
             created = false;
         }
 
-        return database as D;
+        _database = database as D;
+        return _database;
 #else
         created = false;
         Debug.LogError($"This is an editor only method.");

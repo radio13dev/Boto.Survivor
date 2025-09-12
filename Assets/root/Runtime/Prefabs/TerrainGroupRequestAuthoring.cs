@@ -34,7 +34,7 @@ public struct TerrainGroupRequest : IComponentData
 [UpdateInGroup(typeof(WorldInitSystemGroup))]
 public partial struct TerrainGroupInitSystem : ISystem
 {
-    const int NonRandomGroupCount = 3;
+    const int NonRandomGroupCount = 4;
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
@@ -53,20 +53,63 @@ public partial struct TerrainGroupInitSystem : ISystem
         {
             LocalTransform transform = SystemAPI.GetComponent<LocalTransform>(e);
             
-            // Setup map with initial terrain
-            // Position
-            var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
-            var pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
-            TorusMapper.SnapToSurface(pos, 0, out pos, out var normal);
-            
-            // Rotation
-            var randomRot = r.NextFloat3Direction();
-            var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
-            
             // What to spawn
             var groupE = Entity.Null; //terrainSpawner.ValueRO.SpecificRequest;
             if (terrainSpawner.ValueRO.Index == -1) groupE = options[r.NextInt(NonRandomGroupCount, options.Length)].Entity;
             else groupE = options[terrainSpawner.ValueRO.Index].Entity;
+            
+            // Setup map with initial terrain
+            // Position
+            float3 pos = default;
+            float3 normal = default;
+            if (SystemAPI.HasComponent<TerrainGroup>(groupE))
+            {
+                var exclusionRadius = SystemAPI.GetComponent<TerrainGroup>(groupE).ExclusionRadius;
+                
+                const int MAX_ATTEMPTS = 10;
+                bool success = false;
+                for (int attemptNum = 0; attemptNum < MAX_ATTEMPTS; attemptNum++)
+                {
+                    var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
+                    pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
+                    TorusMapper.SnapToSurface(pos, 0, out pos, out normal);
+                    
+                    bool hitOther = false;
+                    foreach (var other in SystemAPI.Query<RefRO<TerrainGroup>, RefRO<LocalTransform>>())
+                    {
+                        var d = math.distance(other.Item2.ValueRO.Position, pos);
+                        if (d < exclusionRadius + other.Item1.ValueRO.ExclusionRadius)
+                        {
+                            hitOther = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!hitOther)
+                    {
+                        success = true;
+                        break;
+                    }
+                }
+                
+                if (!success)
+                {
+                    Debug.Log($"Didn't spawn terrain, hit max attempts.");
+                    continue;
+                }
+                
+            }
+            else
+            {
+                var posToroidal = r.NextFloat2(bounds.Min, bounds.Max);
+                pos = TorusMapper.ToroidalToCartesian(posToroidal.x, posToroidal.y);
+                TorusMapper.SnapToSurface(pos, 0, out pos, out normal);
+            }
+            
+            
+            // Rotation
+            var randomRot = r.NextFloat3Direction();
+            var rotation = quaternion.LookRotationSafe(math.cross(math.cross(normal, randomRot), normal), normal);
             
             // Spawn parent
             LocalTransform parentT = LocalTransform.FromPositionRotation(pos, rotation);

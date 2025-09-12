@@ -74,7 +74,6 @@ namespace Collisions
         /// <summary>
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
-        [BurstCompile]
         [WithNone(typeof(IgnoresTerrain))]
         internal unsafe partial struct CharacterTerrainCollisionJob : IJobEntity
         {
@@ -90,7 +89,6 @@ namespace Collisions
                 }
             }
 
-            [BurstCompile]
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>
             {
                 Force* _force;
@@ -104,57 +102,9 @@ namespace Collisions
                 {
                     if (!terrain.c.Contains(queryRange.Center)) return true;
 
-                    switch (terrain.c.Type)
-                    {
-                        case ColliderType.Sphere:
-                        {
-                            var d = math.distance(queryRange.Center, objBounds.Center);
-                            PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.Radius, d);
-                            break;
-                        }
-                        case ColliderType.Torus:
-                        {
-                            // Check if inside the torus hole
-                            var d = math.distance(queryRange.Center, objBounds.Center);
-                            if (d >= (terrain.c.TorusMin + terrain.c.Radius)/2) 
-                                PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.Radius, d); // Pushes towerds outer rad
-                            else
-                                PushOutwards(ref _force, queryRange.Center, queryRange.Center - objBounds.Center, terrain.c.TorusMin, d); // Pushes towards inner rad
-                            break;
-                        }    
-                        default:
-                            // TODO: Fix this now that it uses 3D AABB
-                            var delta = queryRange.Center - objBounds.Center;
-                            var halfSizeA = (objBounds.max - objBounds.min) * 0.5f;
-                            var halfSizeB = (queryRange.max - queryRange.min) * 0.5f;
-
-                            float overlapX = halfSizeA.x + halfSizeB.x - math.abs(delta.x);
-                            float overlapY = halfSizeA.y + halfSizeB.y - math.abs(delta.y);
-                            float overlapZ = halfSizeA.z + halfSizeB.z - math.abs(delta.z);
-
-                            if (overlapX < overlapY && overlapX < overlapZ)
-                            {
-                                float pushX = overlapX * (delta.x < 0f ? -1f : 1f);
-                                _force->Shift += new float3(pushX, 0f, 0f);
-                            }
-                            else if (overlapY < overlapX && overlapY < overlapZ)
-                            {
-                                float pushY = overlapY * (delta.y < 0f ? -1f : 1f);
-                                _force->Shift += new float3(0f, pushY, 0);
-                            }
-                            else
-                            {
-                                float pushZ = overlapZ * (delta.z < 0f ? -1f : 1f);
-                                _force->Shift += new float3(0f, 0f, pushZ);
-                            }
-                            break;
-                    }
+                    var pointOnColliderSurface = terrain.c.GetPointOnSurface(queryRange.Center);
+                    _force->Shift += pointOnColliderSurface - queryRange.Center;
                     return true;
-                }
-
-                private void PushOutwards(ref Force* force, float3 worldPos, float3 dir, float sphereRad, float dist)
-                {
-                    force->Shift += TorusMapper.ProjectOntoSurface(worldPos, math.normalize(dir)*(sphereRad - dist));
                 }
             }
         }

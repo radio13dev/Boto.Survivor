@@ -11,6 +11,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Vella.UnityNativeHull;
 using AABB = NativeTrees.AABB;
 
 namespace Collisions
@@ -55,6 +56,7 @@ namespace Collisions
         Sphere,
         Torus,
         TorusCone,
+        MeshCollider,
     }
 
     public struct ColliderData : IBufferElementData
@@ -74,16 +76,24 @@ namespace Collisions
         [SerializeField] [FieldOffset(24)] public readonly ColliderType Type;
 
         [SerializeField] [FieldOffset(28)] public readonly float _A;
+        
         [SerializeField] [FieldOffset(32)] public readonly float _B;
         [SerializeField] [FieldOffset(36)] public readonly float _C;
         [SerializeField] [FieldOffset(40)] public readonly float _D;
+        
         [SerializeField] [FieldOffset(44)] public readonly float _E;
         [SerializeField] [FieldOffset(48)] public readonly float _F;
+        [SerializeField] [FieldOffset(52)] public readonly float _G;
+        [SerializeField] [FieldOffset(56)] public readonly float _H;
+        [SerializeField] [FieldOffset(60)] public readonly float _I;
 
         [FieldOffset(28)] public readonly float RadiusSqr;
         [FieldOffset(32)] public readonly float TorusMinSqr;
         [FieldOffset(36)] public readonly float ConeAngle;
         [FieldOffset(40)] public readonly float3 ConeDir;
+        
+        [FieldOffset(28)] public readonly int MeshPtr; // 28
+        [FieldOffset(32)] public readonly LocalTransform MeshTransform; //32,36,40 + 44 + 48,52,56,60
 
         [Pure] public float3 Center => AABB.Center;
         [Pure] public float Radius => AABB.Size.x / 2;
@@ -112,6 +122,8 @@ namespace Collisions
                 case ColliderType.TorusCone:
                     return new Collider(aabb, ColliderType.TorusCone, math.square(aabb.Size.x/2), TorusMinSqr * transform.Scale * transform.Scale, ConeAngle,
                         math.mul(transform.Rotation, ConeDir));
+                case ColliderType.MeshCollider:
+                    return new Collider(aabb, ColliderType.MeshCollider, MeshPtr, transform);   
                 default:
                     throw new NotImplementedException("Unimplemented collider type: " + Type);
             }
@@ -119,7 +131,7 @@ namespace Collisions
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        public bool Contains(float3 p)
+        public unsafe bool Contains(float3 p)
         {
             if (!AABB.Contains(p))
                 return false;
@@ -147,8 +159,41 @@ namespace Collisions
 
                     return false;
                 }
+                case ColliderType.MeshCollider:
+                {
+                    return HullCollision.Contains(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
+                }
                 default:
                     throw new NotImplementedException("Unimplemented collider type");
+            }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe float3 GetPointOnSurface(float3 p)
+        {
+            switch (Type)
+            {
+                default:
+                case ColliderType.Sphere:
+                {
+                    var d = math.distance(p, Center);
+                    return math.normalizesafe(p - Center)*(Radius - d);
+                }
+                case ColliderType.Torus:
+                {
+                    var d = math.distance(p, Center);
+                    if (d >= (TorusMin + Radius) / 2)
+                        return math.normalizesafe(p - Center)*(Radius - d);
+                    else
+                        return math.normalizesafe(p - Center)*(TorusMin - d);
+                }
+                case ColliderType.MeshCollider:
+                {
+                    var pClose = HullCollision.ClosestPoint(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
+                    pClose *= MeshTransform.Scale;
+                    pClose += MeshTransform.Position;
+                    return pClose;
+                }
             }
         }
 
@@ -175,6 +220,15 @@ namespace Collisions
             ConeAngle = coneAngle;
             ConeDir = coneDir;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        Collider(AABB aabb, ColliderType type, int meshPtr, LocalTransform meshTransform) : this()
+        {
+            AABB = aabb;
+            Type = type;
+            MeshPtr = meshPtr;
+            MeshTransform = meshTransform;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Collider DefaultAABB(float radius)
@@ -200,13 +254,18 @@ namespace Collisions
             return new Collider(new AABB(-radiusMax, radiusMax), ColliderType.TorusCone, radiusMax * radiusMax, radiusMin * radiusMin, coneAngle, coneDir);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Collider MeshCollider(DatabaseRef<Mesh, MeshDatabase> meshReference)
+        {
+            return new Collider(new AABB(-meshReference.Asset.bounds.extents*2, meshReference.Asset.bounds.extents*2), ColliderType.MeshCollider, meshReference.GetAssetIndex(), LocalTransform.Identity);
+        }
+
         public void DebugDraw(CommandBuilder draw, Color color)
         {
             using (draw.WithLineWidth(2, false))
                 switch (Type)
                 {
                     case ColliderType.AABB:
-                        draw.WireSphere(Center, Radius, color*new Color(0, 1f, 0.3f, 0.5f));
                         draw.WireBox(Center, new float3(Radius * 2), color*new Color(0, 1f, 0.3f, 0.5f));
                         break;
 
@@ -254,7 +313,10 @@ namespace Collisions
                             var outerPoint = (float3)Center + outerCircleCenter + math.mul(rot, new float3(outerCircleRadius, 0, 0));
                             draw.Line(innerPoint, outerPoint, color*new Color(0, 1f, 0.3f, 0.5f));
                         }
+                        break;
 
+                    case ColliderType.MeshCollider:
+                        draw.WireBox(Center, new float3(Radius * 2), color*new Color(0, 1f, 0.3f, 0.5f));
                         break;
                 }
         }

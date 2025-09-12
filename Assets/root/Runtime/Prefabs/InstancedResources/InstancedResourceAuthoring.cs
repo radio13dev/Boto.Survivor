@@ -2,6 +2,7 @@ using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Collisions;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -103,6 +104,46 @@ public class InstancedResourceAuthoring : MonoBehaviour
            
             //Leaves a small trail, object only visible in camera
             //Graphics.DrawMesh(mesh, matrix, material, gameObject.layer, camera);
+        }
+    }
+    
+    [EditorButton]
+    public void RegenerateColliders(float delta)
+    {
+        if (Particle.Asset && Particle.Asset.Mesh && Particle.Asset.Material)
+        {
+            // 'Imagine' the mesh at our position, create colliders on the xz-plane relative to that info
+            var c = gameObject.AddComponent<MeshCollider>();
+            try
+            {
+                var children = GetComponentsInChildren<Transform>();
+                foreach (var child in children)
+                    if (c.gameObject != child.gameObject)
+                        DestroyImmediate(child.gameObject);
+                    
+                c.convex = true;
+                c.sharedMesh = Particle.Asset.Mesh;
+                var bounds = c.bounds;
+                for (float x = bounds.min.x; x <= bounds.max.x; x += delta)
+                for (float z = bounds.min.z; z <= bounds.max.z; z += delta)
+                {
+                    var p = new Vector3(x,0,z);
+                    var pIn = c.ClosestPoint(p);
+                    if (pIn == p)
+                    {
+                        var childObj = new GameObject($"C:({x},{0},{z})");
+                        childObj.transform.SetParent(transform);
+                        childObj.transform.SetPositionAndRotation(p, Quaternion.identity);
+                        var childC = childObj.AddComponent<ColliderAuthoring>();
+                        childC.ColliderType = ColliderType.Sphere;
+                        childC.Radius = delta/childC.transform.lossyScale.x;
+                    }
+                }
+            }
+            finally
+            {
+                DestroyImmediate(c);
+            }
         }
     }
 #endif

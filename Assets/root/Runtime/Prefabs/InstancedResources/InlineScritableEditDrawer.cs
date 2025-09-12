@@ -77,7 +77,7 @@ public class InlineScritableEditDrawer : PropertyDrawer
     public static Object ObjectField(Object asset, Type assetType, bool b)
     {
         // Draw the object field.
-        Object newVal = EditorGUILayout.ObjectField(asset, typeof(ScriptableObject).IsAssignableFrom(assetType) ? assetType : typeof(Object), false);
+        Object newVal = EditorGUILayout.ObjectField(asset, typeof(ScriptableObject).IsAssignableFrom(assetType) ? assetType : typeof(MonoBehaviour).IsAssignableFrom(assetType) ? typeof(Object) : assetType, false);
         
         if (newVal && !assetType.IsAssignableFrom(newVal.GetType()))
         {

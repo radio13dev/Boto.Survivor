@@ -175,6 +175,13 @@ public static class TorusMapper
         newPos = circleCenter + normalIfClamped * (Thickness.Data + heightOffset);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float3 SnapToSurface(float3 worldSpace)
+    {
+        SnapToSurface(worldSpace, 0, out var pos, out _);
+        return pos;
+    }
+    
     //[BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SnapToSurface(float3 worldSpace, float heightOffset, out float3 newPos, out float3 normal)

@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Vella.UnityNativeHull;
 using AABB = NativeTrees.AABB;
 using Collider = Collisions.Collider;
 
@@ -23,6 +24,7 @@ public class ColliderAuthoring : MonoBehaviourGizmos
     public float TorusMin;
     public float ConeAngle;
     public float3 ConeDirection = math.forward();
+    public DatabaseRef<Mesh, MeshDatabase> Mesh = new();
 
     public Collider Collider
     {
@@ -42,6 +44,8 @@ public class ColliderAuthoring : MonoBehaviourGizmos
                 case ColliderType.TorusCone:
                     return Collisions.Collider.TorusCone(TorusMin, Radius, ConeAngle, ConeDirection);
                     break;
+                case ColliderType.MeshCollider:
+                    return Collisions.Collider.MeshCollider(Mesh);
                 default:
                     throw new NotImplementedException("Unknown collider type: " + ColliderType);
             }
@@ -62,9 +66,34 @@ public class ColliderAuthoring : MonoBehaviourGizmos
         }
     }
 
-    public override void DrawGizmos()
+    NativeHull m_EditorMesh;
+    private void OnDestroy()
+    {
+        if (m_EditorMesh.IsCreated) m_EditorMesh.Dispose();
+    }
+
+    public override unsafe void DrawGizmos()
     {
         var draw = Draw.editor;
-        Collider.Apply(LocalTransform.FromPositionRotationScale(transform.position, transform.rotation, transform.localScale.x)).DebugDraw(draw, Color.white);
+        var c = Collider.Apply(LocalTransform.FromPositionRotationScale(transform.position, transform.rotation, transform.lossyScale.x));
+        c.DebugDraw(draw, Color.white);
+        
+        if (ColliderType == ColliderType.MeshCollider)
+        {
+            // Draw lines from each corner of the AABB to the closest point on the mesh
+            if (!m_EditorMesh.IsCreated) m_EditorMesh = HullFactory.CreateFromMesh(Mesh.Asset);
+            
+            for (int x = -1; x <= 1; x++)
+            for (int y = -1; y <= 1; y++)
+            for (int z = -1; z <= 1; z++)
+            {
+                var p = c.Center + math.float3(c.Radius)*math.float3(x,y,z);
+                var pClose = HullCollision.ClosestPoint(new RigidTransform(transform.rotation, 0), m_EditorMesh, ((p-(float3)transform.position)/transform.lossyScale.x));
+                pClose *= transform.lossyScale.x;
+                pClose += (float3)transform.position;
+                draw.DashedLine(p, pClose, 2, 1);
+            }
+        }
+        
     }
 }

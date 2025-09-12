@@ -199,6 +199,17 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
             }
             
+            if (resource.ShowOnMap)
+            {
+                var mapRenderParams = resource.MapRenderParams;
+                for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
+                {
+                    int count = math.min(Profiling.k_MaxInstances, toRender - j);
+                
+                    Graphics.RenderMeshInstanced(mapRenderParams, mesh, 0, m_InstanceMats, count, j);
+                }
+            }
+            
             transforms.Dispose();
             
             if (transformsLast.IsCreated) transformsLast.Dispose();

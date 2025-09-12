@@ -12,7 +12,8 @@ public class InstancedResource : ScriptableObject
     public bool UseLastTransform;
     public bool IsTorus;
     public bool IsCone;
-    
+    public bool ShowOnMap;
+
     public bool Animated => AnimData.Frames > 0;
 
     internal RenderParams RenderParams
@@ -20,23 +21,45 @@ public class InstancedResource : ScriptableObject
         get
         {
             if (!m_Setup)
-            {
-                m_Setup = true;
-                m_RenderParams = new RenderParams(Material)
-                {
-                    matProps = new()
-                };
-                if (Animated) m_RenderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new float[Profiling.k_MaxInstances]);
-                if (HasLifespan) m_RenderParams.matProps.SetFloatArray("lifespanBuffer", new float[Profiling.k_MaxInstances]);
-                if (IsTorus) m_RenderParams.matProps.SetFloatArray("torusMinBuffer", new float[Profiling.k_MaxInstances]);
-                if (IsCone) m_RenderParams.matProps.SetFloatArray("torusAngleBuffer", new float[Profiling.k_MaxInstances]);
-            }
-            
+                Setup();
+
             return m_RenderParams;
+        }
+    }
+
+    private void Setup()
+    {
+        m_Setup = true;
+        m_RenderParams = new RenderParams(Material)
+        {
+            matProps = new()
+        };
+        if (Animated) m_RenderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new float[Profiling.k_MaxInstances]);
+        if (HasLifespan) m_RenderParams.matProps.SetFloatArray("lifespanBuffer", new float[Profiling.k_MaxInstances]);
+        if (IsTorus) m_RenderParams.matProps.SetFloatArray("torusMinBuffer", new float[Profiling.k_MaxInstances]);
+        if (IsCone) m_RenderParams.matProps.SetFloatArray("torusAngleBuffer", new float[Profiling.k_MaxInstances]);
+        
+        if (ShowOnMap)
+        {
+            // These render params should be on the 'Map' layer
+            m_MapRenderParams = new RenderParams(Material);
+            m_MapRenderParams.layer = LayerMask.NameToLayer("Map");
+            
+        }
+    }
+
+    internal RenderParams MapRenderParams
+    {
+        get
+        {
+            if (!m_Setup)
+                Setup();
+            return m_MapRenderParams;
         }
     }
 
     [NonSerialized] [HideInInspector] internal EntityQuery Query;
     [NonSerialized] bool m_Setup;
     [NonSerialized] RenderParams m_RenderParams;
+    [NonSerialized] RenderParams m_MapRenderParams;
 }
