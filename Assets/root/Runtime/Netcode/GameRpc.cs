@@ -15,7 +15,7 @@ using UnityEngine.Serialization;
 [StructLayout(LayoutKind.Explicit, Size = 16, Pack = 2)]
 public unsafe struct GameRpc : IComponentData
 {
-    public enum Code
+    public enum Code : byte
     {
         // Server Actions
         _ServerActionBit = 0b1000_0000,

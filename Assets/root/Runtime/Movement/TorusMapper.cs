@@ -245,4 +245,80 @@ public static class TorusMapper
         float3 projectedDir = dir - math.dot(dir, normal) * normal;
         return projectedDir;
     }
+
+    public static Mesh CreateRectangularMesh(float3 a, float3 b, float width, int segments)
+    {
+        // Iterate from a to b over 'segments' steps
+        // For each step, create two vertices offset by 'width' along the vector perpendicular to the normal and the 'direction' of the a-b line
+        var vertices = new Vector3[(segments + 1) * 3];
+        CreateRectangularMesh(a,b,width, ref vertices);
+        
+        var uvs = new Vector2[(segments + 1) * 3];
+        var indices = new int[segments * 12];
+        for (int i = 0; i < segments; i++)
+        {
+            float t0 = (float)i / segments;
+            uvs[i * 2] = new Vector2(t0, 0);
+            uvs[i * 2 + 1] = new Vector2(t0, 0.5f);
+            uvs[i * 2 + 2] = new Vector2(t0, 1);
+
+            if (i < segments - 1)
+            {
+                int baseIndex = i * 12;
+                int vertIndex = i * 3;
+                indices[baseIndex] = vertIndex;
+                indices[baseIndex + 1] = vertIndex + 1;
+                indices[baseIndex + 2] = vertIndex + 3;
+
+                indices[baseIndex + 3] = vertIndex + 1;
+                indices[baseIndex + 4] = vertIndex + 4;
+                indices[baseIndex + 5] = vertIndex + 3;
+                
+                indices[baseIndex + 6] = vertIndex + 1;
+                indices[baseIndex + 7] = vertIndex + 2;
+                indices[baseIndex + 8] = vertIndex + 4;
+                
+                indices[baseIndex + 9] = vertIndex + 2;
+                indices[baseIndex + 10] = vertIndex + 5;
+                indices[baseIndex + 11] = vertIndex + 4;
+            }
+        }
+        
+        // Create the mesh
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.triangles = indices;
+        mesh.RecalculateNormals();
+        return mesh;
+    }
+
+    public static void CreateRectangularMesh(float3 a, float3 b, float width, ref Vector3[] vertices)
+    {
+        SnapToSurface(a,0,out a, out _);
+        SnapToSurface(b,0,out b, out _);
+        
+        var aToroidal = CartesianToToroidal(a);
+        var bToroidal = CartesianToToroidal(b);
+        
+        // Iterate from a to b over 'segments' steps
+        // For each step, create a center vertex, and two shifted vertices offset by 'width'
+        // along the vector perpendicular to the normal and the 'direction' of the a-b line
+        var segments = vertices.Length / 3 - 1;
+        for (int i = 0; i < segments; i++)
+        {
+            float t0 = (float)i / segments;
+            var p0Toroidal = math.lerp(aToroidal, bToroidal, t0);
+            var p0 = ToroidalToCartesian(p0Toroidal);
+            
+            var dirToroidal =  math.normalize(bToroidal - p0Toroidal);
+            var dir = math.normalize(ToroidalToCartesian(p0Toroidal + dirToroidal*0.05f) - p0);
+            GetTorusInfo(p0, out _, out var normal, out _);
+            float3 perp = math.normalize(math.cross(normal, dir)) * (width * 0.5f);
+
+            vertices[i * 3] = p0 + perp;
+            vertices[i * 3 + 1] = p0;
+            vertices[i * 3 + 2] = p0 - perp;
+        }
+    }
 }

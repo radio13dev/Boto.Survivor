@@ -4,7 +4,16 @@ using UnityEngine;
 
 public struct WheelEnemyMovement : IComponentData
 {
-    public byte state;
+    public enum States : byte
+    {
+        Idle,
+        ChargeStart,
+        ChargeAimingComplete,
+        ChargeAttack,
+        ChargeEnd
+    }
+
+    public States state;
     public byte target;
     public float timer;
 }

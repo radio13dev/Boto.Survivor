@@ -89,7 +89,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
             switch (wheel.state)
             {
                 // Do generic movement until we're in range of someone
-                case 0:
+                case WheelEnemyMovement.States.Idle:
                 default:
                 {
                     float3 dir = float3.zero;
@@ -111,7 +111,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     if (bestDist < LOCK_ON_RANGE)
                     {
                         wheel.target = (byte)bestTarget;
-                        wheel.state = 1;
+                        wheel.state = WheelEnemyMovement.States.ChargeStart;
                         wheel.timer = 0;
                         movementLockout.ValueRW = true;
                     }
@@ -120,7 +120,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                 }
                 
                 // Once in range, start charge anim
-                case 1:
+                case WheelEnemyMovement.States.ChargeStart:
                 {
                     if (wheel.target >= Targets.Length)
                     {
@@ -132,31 +132,39 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     }
                 
                     // Maintain lock on target for most of this time
-                    if (wheel.timer <= 1.5f)
-                    {
-                        var dir = Targets[wheel.target].Position - localTransform.Position;
-                        input = new StepInput(){Direction = dir };
-                    }
+                    var dir = Targets[wheel.target].Position - localTransform.Position;
+                    input = new StepInput(){Direction = dir };
                 
                     // Idle in charge anim for time
-                    if ((wheel.timer += dt) >= 2)
+                    if ((wheel.timer += dt) >= 1.5f)
                     {
-                        wheel.state = 2;
+                        wheel.state = WheelEnemyMovement.States.ChargeAimingComplete;
+                        wheel.timer = 0;
+                    }
+                    break;
+                }
+                
+                // Idle for a short time after aiming
+                case WheelEnemyMovement.States.ChargeAimingComplete:
+                {
+                    if ((wheel.timer += dt) >= 0.5f)
+                    {
+                        wheel.state = WheelEnemyMovement.States.ChargeAttack;
                         wheel.timer = 0;
                     }
                     break;
                 }
                 
                 // Start charge attack anim
-                case 2:
+                case WheelEnemyMovement.States.ChargeAttack:
                 {
                     // Charge in our last input direction
-                    force.Velocity += input.Direction*dt*20;
+                    force.Velocity += math.normalizesafe(input.Direction)*dt*200;
                 
                     // Idle in charge attack anim
                     if ((wheel.timer += dt) >= 1)
                     {
-                        wheel.state = 3;
+                        wheel.state = WheelEnemyMovement.States.ChargeEnd;
                         wheel.timer = 0;
                     }
                     break;
@@ -164,13 +172,13 @@ public partial struct GenericEnemyMovementSystem : ISystem
             
             
                 // End charge attack anim
-                case 3:
+                case WheelEnemyMovement.States.ChargeEnd:
                 {
                     // Idle in charge attack anim end for time
-                    if ((wheel.timer += dt) >= 2)
+                    if ((wheel.timer += dt) >= 3)
                     {
                         // Reset
-                        wheel.state = 0;
+                        wheel.state = WheelEnemyMovement.States.Idle;
                         wheel.timer = 0;
                         movementLockout.ValueRW = false;
                     }
