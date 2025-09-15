@@ -12,7 +12,7 @@ public partial struct ColliderDebugger_RuntimeSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.Enabled = true;
+        state.Enabled = false;
     }
 
     public unsafe void OnUpdate(ref SystemState state)

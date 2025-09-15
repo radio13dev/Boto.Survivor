@@ -39,6 +39,17 @@ public class InstancedResourceAuthoring : MonoBehaviour
                 Debug.LogError($"Invalid asset on {authoring}: {authoring.Particle.Asset}");
                 return;
             }
+            
+            if (authoring.Particle.Asset.HasLifespan)
+            {
+                var component = GetComponent<HasLifespanAuthoring>();
+                DependsOn(component);
+                if (!component)
+                {
+                    Debug.LogError($"{authoring.gameObject} has a lifespan but is missing the {nameof(HasLifespanAuthoring)} component");
+                    return;
+                }
+            }
         
             var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
             AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.GetAssetIndex()));
@@ -51,11 +62,6 @@ public class InstancedResourceAuthoring : MonoBehaviour
             {
                 AddComponent<SpriteAnimFrame>(entity);
                 AddComponent<SpriteAnimFrameTime>(entity);
-            }
-            if (authoring.Particle.Asset.HasLifespan)
-            {
-                AddComponent<SpawnTimeCreated>(entity);
-                AddComponent<DestroyAtTime>(entity);
             }
             if (authoring.Particle.Asset.IsTorus)
             {

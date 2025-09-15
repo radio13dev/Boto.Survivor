@@ -8,9 +8,12 @@ public class GameInitialize : MonoBehaviour
     public static bool EnableInitGameLaunch = true;
     
     public static InputSystem_Actions Inputs;
+    
+    public GameDebug DebugAsset;
 
     private void Awake()
     {
+        if (DebugAsset) GameDebug.Initialize(DebugAsset);
         GameEvents.Initialize();
         
         Inputs = new InputSystem_Actions();

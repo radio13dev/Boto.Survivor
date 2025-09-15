@@ -14,7 +14,8 @@ public class WorldClickTool : MonoBehaviour
         PlaceEnemy,
         PlaceEnemyLarge,
         PlaceGem,
-        PlaceEnemyWheel
+        PlaceEnemyWheel,
+        PlaceEnemyTrap
     }
 
     private void Awake()
@@ -68,6 +69,9 @@ public class WorldClickTool : MonoBehaviour
                     break;
                 case ClickMode.PlaceEnemyWheel:
                     Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 2, default));
+                    break;
+                case ClickMode.PlaceEnemyTrap:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceEnemy((byte)Game.ClientGame.PlayerIndex, Visual.transform.position, 3, default));
                     break;
                 case ClickMode.PlaceGem:
                     Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceGem((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));

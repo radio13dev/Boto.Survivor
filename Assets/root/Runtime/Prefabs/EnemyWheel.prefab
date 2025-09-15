@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 1276742715247795018}
   - component: {fileID: 4699350325879992131}
   - component: {fileID: 3117608193158535689}
-  - component: {fileID: 4718972014693682596}
+  - component: {fileID: 8401230309168509605}
   m_Layer: 0
   m_Name: EnemyWheel
   m_TagString: Untagged
@@ -80,6 +80,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,7 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
     _Asset: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
---- !u!114 &4718972014693682596
+--- !u!114 &8401230309168509605
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

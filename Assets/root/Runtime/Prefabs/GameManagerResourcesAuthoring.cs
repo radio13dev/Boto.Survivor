@@ -112,6 +112,15 @@ public struct GameManager : IComponentData
             ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
             return torusE;
         }
+
+        public static void SpawnTrapProjectile(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in NetworkId parentNetworkId, in LocalTransform localTransform, in double Time)
+        {
+            var trapProjE = ecb.Instantiate(prefabs[4].Entity);
+            ecb.SetComponent(trapProjE, LocalTransform.FromPositionRotationScale(localTransform.Position, localTransform.Rotation, 0.01f));
+            ecb.SetComponent(trapProjE, new EnemyTrapProjectileAnimation(){ ParentId = parentNetworkId });
+            ecb.SetComponentEnabled<MovementDisabled>(trapProjE, true);
+            ecb.SetComponent(trapProjE, new DestroyAtTime(Time + 2));
+        }
     }
     
     public struct Enemies : IBufferElementData

@@ -1,33 +1,11 @@
 ﻿using BovineLabs.Saving;
-using Collisions;
 using Unity.Collections;
 using Unity.Entities;
+using Collider = Collisions.Collider;
 
 [Save]
 public struct DestroyFlag : IComponentData, IEnableableComponent
 {
-}
-
-[Save]
-public struct SpawnTimeCreated : IComponentData
-{
-    public double TimeCreated;
-
-    public SpawnTimeCreated(double time)
-    {
-        TimeCreated = time;
-    }
-}
-
-[Save]
-public struct DestroyAtTime : IComponentData
-{
-    public double DestroyTime;
-
-    public DestroyAtTime(double time)
-    {
-        DestroyTime = time;
-    }
 }
 
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup), OrderFirst = true)]

@@ -1,5 +1,6 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -38,6 +39,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
     {
         // TODO: Order this list.
         var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         
         var a = new GenericEnemyMovementJob()
         {
@@ -48,8 +50,16 @@ public partial struct GenericEnemyMovementSystem : ISystem
             dt = SystemAPI.Time.DeltaTime,
             Targets = targets,
         }.Schedule(a);
+        var c = new EnemyTrapMovementJob()
+        {
+            ecb = delayedEcb,
+            Time = SystemAPI.Time.ElapsedTime,
+            dt = SystemAPI.Time.DeltaTime,
+            Targets = targets,
+            Prefabs = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>(true)
+        }.Schedule(b);
         
-        state.Dependency = b;
+        state.Dependency = c;
         targets.Dispose(state.Dependency);
     }
     
@@ -76,6 +86,21 @@ public partial struct GenericEnemyMovementSystem : ISystem
         }
     }
     
+    public static void GetClosest(in NativeArray<LocalTransform> targets, in float3 p, out float bestDistSqr, out int bestTarget)
+    {
+        bestDistSqr = float.MaxValue;
+        bestTarget = -1;
+        for (int i = 0; i < targets.Length; i++)
+        {
+            var distSqr = math.distancesq(p, targets[i].Position);
+            if (distSqr < bestDistSqr)
+            {
+                bestTarget = i;
+                bestDistSqr = distSqr;
+            }
+        }
+    }
+    
     [BurstCompile]
     [WithPresent(typeof(MovementInputLockout))]
     partial struct WheelEnemyMovementJob : IJobEntity
@@ -92,28 +117,22 @@ public partial struct GenericEnemyMovementSystem : ISystem
                 case WheelEnemyMovement.States.Idle:
                 default:
                 {
-                    float3 dir = float3.zero;
-                    float bestDist = float.MaxValue;
-                    int bestTarget = -1;
-                    for (int i = 0; i < Targets.Length; i++)
+                    GetClosest(in Targets, in localTransform.Position, out float bestDistSqr, out int bestTarget);
+                    if (bestTarget == -1)
                     {
-                        var dif = math.abs(localTransform.Position - Targets[i].Position);
-                        var dist = dif.x + dif.y + dif.z;
-                        if (dist < bestDist)
-                        {
-                            bestTarget = i;
-                            bestDist = dist;
-                            dir = Targets[i].Position - localTransform.Position;
-                        }
+                        input = default;
                     }
-                    input = new StepInput(){Direction = dir };
-                    
-                    if (bestDist < LOCK_ON_RANGE)
+                    else
                     {
-                        wheel.target = (byte)bestTarget;
-                        wheel.state = WheelEnemyMovement.States.ChargeStart;
-                        wheel.timer = 0;
-                        movementLockout.ValueRW = true;
+                        input = new StepInput(){Direction = Targets[bestTarget].Position - localTransform.Position };
+                    
+                        if (bestDistSqr < LOCK_ON_RANGE)
+                        {
+                            wheel.target = (byte)bestTarget;
+                            wheel.state = WheelEnemyMovement.States.ChargeStart;
+                            wheel.timer = 0;
+                            movementLockout.ValueRW = true;
+                        }
                     }
                     
                     break;
@@ -184,6 +203,138 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     }
                     break;
                 }
+            }
+        }
+    }
+    
+    [BurstCompile]
+    [WithPresent(typeof(MovementInputLockout))]
+    partial struct EnemyTrapMovementJob : IJobEntity
+    {   
+        public const float LOCK_ON_RANGE = 20f;
+    
+        public EntityCommandBuffer ecb;
+        [ReadOnly] public double Time;
+        [ReadOnly] public float dt;
+        [ReadOnly] public NativeArray<LocalTransform> Targets;
+        [ReadOnly] public DynamicBuffer<GameManager.Prefabs> Prefabs;
+        
+        public void Execute(in NetworkId myNetworkId, in LocalTransform localTransform, in Movement movement, EnabledRefRW<MovementInputLockout> movementLockout, ref EnemyTrapMovement trap, ref StepInput input, ref Force force)
+        {
+            switch (trap.state)
+            {
+                // Do generic movement until we're in range of someone
+                case EnemyTrapMovement.States.Idle:
+                default:
+                {
+                    GetClosest(in Targets, in localTransform.Position, out float bestDistSqr, out int bestTarget);
+                    if (bestTarget == -1)
+                    {
+                        input = default;
+                    }
+                    else
+                    {
+                        input = new StepInput(){Direction = Targets[bestTarget].Position - localTransform.Position };
+                    
+                        if (bestDistSqr < LOCK_ON_RANGE)
+                        {
+                            trap.target = (byte)bestTarget;
+                            trap.state = EnemyTrapMovement.States.Charge;
+                            trap.timer = 0;
+                            movementLockout.ValueRW = true;
+                        }
+                    }
+                    
+                    break;
+                }
+                
+                // Once in range, start charge anim
+                case EnemyTrapMovement.States.Charge:
+                {
+                    if (trap.target >= Targets.Length)
+                    {
+                        // Reset
+                        trap.state = 0;
+                        trap.timer = 0;
+                        movementLockout.ValueRW = false;
+                        break;
+                    }
+                
+                    // Maintain lock on target for most of this time
+                    var dir = Targets[trap.target].Position - localTransform.Position;
+                    input = new StepInput(){Direction = dir };
+                
+                    // Idle in charge anim for time
+                    var range = math.float2(trap.timer, trap.timer += dt);
+                    if (range.Contains(GameDebug.A))
+                    {
+                        // Create projectile, lock its movement, its position will follow a custom anim curve
+                        GameManager.Prefabs.SpawnTrapProjectile(in Prefabs, ref ecb, in myNetworkId, in localTransform, in Time);
+                    }
+                    
+                    if (trap.timer >= GameDebug.D)
+                    {
+                        trap.state = 0;
+                        trap.timer = 0;
+                        movementLockout.ValueRW = false;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+public struct EnemyTrapProjectileAnimation : IComponentData
+{
+    public bool Released;
+    public NetworkId ParentId;
+}
+
+[RequireMatchingQueriesForUpdate]
+[UpdateInGroup(typeof(ProjectileSystemGroup))]
+public partial struct EnemyTrapProjectileSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<NetworkIdMapping>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        var mapping = SystemAPI.GetSingleton<NetworkIdMapping>();
+        foreach (var (transformRW, projectileRW, e) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<EnemyTrapProjectileAnimation>>().WithEntityAccess())
+        {
+            if (projectileRW.ValueRO.Released)
+            {
+                continue;
+            }
+        
+            var parentE = mapping[projectileRW.ValueRO.ParentId];
+            if (!SystemAPI.HasComponent<EnemyTrapMovement>(parentE))
+            {
+                SystemAPI.SetComponentEnabled<DestroyFlag>(e, true);
+                continue;
+            }
+            
+            var trap = SystemAPI.GetComponent<EnemyTrapMovement>(parentE);
+            if (trap.timer <= GameDebug.C)
+            {
+                var trapT = SystemAPI.GetComponent<LocalTransform>(parentE);
+                var t = math.clamp((trap.timer - GameDebug.A)/(GameDebug.B - GameDebug.A), 0, 1);
+                var p = trapT.TransformPoint(math.lerp(math.float3(0,0.5f,0), math.float3(0, 1.88f, -1.37f), t));
+                var r = trapT.Rotation;
+                var s = math.lerp(0, trapT.Scale, t);
+                transformRW.ValueRW = LocalTransform.FromPositionRotationScale(p, r, s); 
+            }
+            else
+            {
+                SystemAPI.SetComponent(e, new Force()
+                {
+                    Velocity = transformRW.ValueRO.TransformDirection(math.float3(0,2,20))
+                });
+                projectileRW.ValueRW.Released = true;
+                SystemAPI.SetComponentEnabled<MovementDisabled>(e, false);
             }
         }
     }

@@ -63,6 +63,12 @@ public struct SurfaceMovement : IComponentData
 }
 
 [Save]
+public struct MovementDisabled : IComponentData, IEnableableComponent
+{
+    
+}
+
+[Save]
 public struct Force : IComponentData
 {
     public float3 Velocity;
@@ -211,6 +217,7 @@ public partial struct TorusGravitySystem : ISystem
 
     [BurstCompile]
     [WithAll(typeof(SurfaceMovement))]
+    [WithNone(typeof(MovementDisabled))]
     partial struct SurfaceMovementJob : IJobEntity
     {
         public void Execute(in LocalTransform transform, ref Movement movement, in SurfaceMovement surfaceMovement)
@@ -224,6 +231,7 @@ public partial struct TorusGravitySystem : ISystem
     
     [BurstCompile]
     [WithPresent(typeof(Grounded))]
+    [WithNone(typeof(MovementDisabled))]
     partial struct RefJob : IJobEntity
     {
         [ReadOnly] public float dt;
@@ -239,6 +247,7 @@ public partial struct TorusGravitySystem : ISystem
     
     [BurstCompile]
     [WithPresent(typeof(Grounded))]
+    [WithNone(typeof(MovementDisabled))]
     partial struct TestJob : IJobEntity
     {
         [ReadOnly] public float dt;

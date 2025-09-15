@@ -34,7 +34,7 @@ public struct TerrainGroupRequest : IComponentData
 [UpdateInGroup(typeof(WorldInitSystemGroup))]
 public partial struct TerrainGroupInitSystem : ISystem
 {
-    const int NonRandomGroupCount = 4;
+    const int NonRandomGroupCount = 5;
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
