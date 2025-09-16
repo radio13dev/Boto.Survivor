@@ -105,7 +105,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
     [WithPresent(typeof(MovementInputLockout))]
     partial struct WheelEnemyMovementJob : IJobEntity
     {   
-        public const float LOCK_ON_RANGE = 20f;
+        public const float LOCK_ON_RANGE_SQR = 400f;
     
         [ReadOnly] public float dt;
         [ReadOnly] public NativeArray<LocalTransform> Targets;
@@ -126,7 +126,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     {
                         input = new StepInput(){Direction = Targets[bestTarget].Position - localTransform.Position };
                     
-                        if (bestDistSqr < LOCK_ON_RANGE)
+                        if (bestDistSqr < LOCK_ON_RANGE_SQR)
                         {
                             wheel.target = (byte)bestTarget;
                             wheel.state = WheelEnemyMovement.States.ChargeStart;
@@ -211,7 +211,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
     [WithPresent(typeof(MovementInputLockout))]
     partial struct EnemyTrapMovementJob : IJobEntity
     {   
-        public const float LOCK_ON_RANGE = 20f;
+        public const float LOCK_ON_RANGE_SQR = 400f;
     
         public EntityCommandBuffer ecb;
         [ReadOnly] public double Time;
@@ -236,7 +236,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     {
                         input = new StepInput(){Direction = Targets[bestTarget].Position - localTransform.Position };
                     
-                        if (bestDistSqr < LOCK_ON_RANGE)
+                        if (bestDistSqr < LOCK_ON_RANGE_SQR)
                         {
                             trap.target = (byte)bestTarget;
                             trap.state = EnemyTrapMovement.States.Charge;
@@ -266,13 +266,13 @@ public partial struct GenericEnemyMovementSystem : ISystem
                 
                     // Idle in charge anim for time
                     var range = math.float2(trap.timer, trap.timer += dt);
-                    if (range.Contains(GameDebug.A))
+                    if (range.Contains(1.15f))
                     {
                         // Create projectile, lock its movement, its position will follow a custom anim curve
                         GameManager.Prefabs.SpawnTrapProjectile(in Prefabs, ref ecb, in myNetworkId, in localTransform, in Time);
                     }
                     
-                    if (trap.timer >= GameDebug.D)
+                    if (trap.timer >= 3f)
                     {
                         trap.state = 0;
                         trap.timer = 0;
@@ -318,10 +318,10 @@ public partial struct EnemyTrapProjectileSystem : ISystem
             }
             
             var trap = SystemAPI.GetComponent<EnemyTrapMovement>(parentE);
-            if (trap.timer <= GameDebug.C)
+            if (trap.timer <= 1.5f)
             {
                 var trapT = SystemAPI.GetComponent<LocalTransform>(parentE);
-                var t = math.clamp((trap.timer - GameDebug.A)/(GameDebug.B - GameDebug.A), 0, 1);
+                var t = math.clamp((trap.timer - 1.15f)/(1.3f - 1.15f), 0, 1);
                 var p = trapT.TransformPoint(math.lerp(math.float3(0,0.5f,0), math.float3(0, 1.88f, -1.37f), t));
                 var r = trapT.Rotation;
                 var s = math.lerp(0, trapT.Scale, t);
@@ -331,8 +331,9 @@ public partial struct EnemyTrapProjectileSystem : ISystem
             {
                 SystemAPI.SetComponent(e, new Force()
                 {
-                    Velocity = transformRW.ValueRO.TransformDirection(math.float3(0,2,20))
+                    Velocity = transformRW.ValueRO.TransformDirection(math.float3(0,GameDebug.B,GameDebug.C))
                 });
+                SystemAPI.SetComponent(e, new RotationalInertia(transformRW.ValueRO.Right(), GameDebug.A));
                 projectileRW.ValueRW.Released = true;
                 SystemAPI.SetComponentEnabled<MovementDisabled>(e, false);
             }

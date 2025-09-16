@@ -84,25 +84,27 @@ namespace Collisions
                 var adjustedAABB = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 {
-                    var visitor = new CollisionVisitor(force_ptr);
+                    var visitor = new CollisionVisitor((transform, collider), force_ptr);
                     tree.Range(adjustedAABB, ref visitor);
                 }
             }
 
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>
             {
+                LazyCollider _collider;
                 Force* _force;
 
-                public CollisionVisitor(Force* force)
+                public CollisionVisitor(LazyCollider collider, Force* force)
                 {
+                    _collider = collider;
                     _force = force;
                 }
 
                 public bool OnVisit((Entity e, Collider c) terrain, AABB objBounds, AABB queryRange)
                 {
-                    if (!terrain.c.Contains(queryRange.Center)) return true;
+                    if (!terrain.c.Overlaps(_collider)) return true;
 
-                    var pointOnColliderSurface = terrain.c.GetPointOnSurface(queryRange.Center);
+                    var pointOnColliderSurface = terrain.c.GetPointOnSurface(_collider);
                     _force->Shift += pointOnColliderSurface - queryRange.Center;
                     return true;
                 }
@@ -139,7 +141,7 @@ namespace Collisions
 
                 public bool OnVisit((Entity e, Collider c) terrain, AABB objBounds, AABB queryRange)
                 {
-                    if (!terrain.c.Contains(queryRange.Center)) return true;
+                    //if (!terrain.c.Contains(queryRange.Center)) return true;
                     _lifespanPtr->DestroyTime = 0;
                     return false;
                 }

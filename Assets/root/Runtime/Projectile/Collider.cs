@@ -67,6 +67,47 @@ namespace Collisions
         public float TorusMin;
     }
 
+    public struct LazyCollider
+    {
+        public Collider Source;
+        public LocalTransform Transform;
+        
+        public Collider Adjusted
+        {
+            get
+            {
+                if (!_applied)
+                {
+                    _adjusted = Source.Apply(Transform);
+                    _applied = true;
+                }
+                return _adjusted;
+            }
+        }
+        Collider _adjusted;
+        bool _applied;
+
+        private LazyCollider(Collider source, LocalTransform transform)
+        {
+            Source = source;
+            Transform = transform;
+            
+            _adjusted = default;
+            _applied = false;
+        }
+
+        public static implicit operator LazyCollider((Collider, LocalTransform) source)
+        {
+            return new LazyCollider(source.Item1, source.Item2);
+        }
+        public static implicit operator LazyCollider((LocalTransform, Collider) source)
+        {
+            return new LazyCollider(source.Item2, source.Item1);
+        }
+        
+        public static implicit operator Collider(LazyCollider source) => source.Adjusted;
+    }
+
     [Save]
     [Serializable]
     [StructLayout(LayoutKind.Explicit, Size = 64, Pack = 32)]
@@ -94,6 +135,10 @@ namespace Collisions
         
         [FieldOffset(28)] public readonly int MeshPtr; // 28
         [FieldOffset(32)] public readonly LocalTransform MeshTransform; //32,36,40 + 44 + 48,52,56,60
+        
+        // Capsule
+        [FieldOffset(32)] public readonly float3 P1; //32,36,40
+        [FieldOffset(44)] public readonly float3 P2; //44,48,52
 
         [Pure] public float3 Center => AABB.Center;
         [Pure] public float Radius => AABB.Size.x / 2;
@@ -125,43 +170,160 @@ namespace Collisions
                 case ColliderType.MeshCollider:
                     return new Collider(aabb, ColliderType.MeshCollider, MeshPtr, transform);   
                 default:
-                    throw new NotImplementedException("Unimplemented collider type: " + Type);
+                    throw new NotImplementedException("Unimplemented collider type");
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        public unsafe bool Contains(float3 p)
+        public unsafe bool Overlaps(in Collider other)
         {
-            if (!AABB.Contains(p))
+            if (!AABB.Overlaps(other.AABB))
                 return false;
 
             switch (Type)
             {
                 case ColliderType.AABB:
-                    return true;
-                case ColliderType.Sphere:
-                    return math.distancesq(p, AABB.Center) <= RadiusSqr;
-                case ColliderType.Torus:
-                {
-                    var d = math.distancesq(p, AABB.Center);
-                    return d <= RadiusSqr && d >= TorusMinSqr;
-                }
-                case ColliderType.TorusCone:
-                {
-                    var d = math.distancesq(p, AABB.Center);
-                    if (d <= RadiusSqr && d >= TorusMinSqr)
+                    switch (other.Type)
                     {
-                        var dir = math.normalize(p - AABB.Center);
-                        var angle = math.acos(math.dot(dir, ConeDir));
-                        return angle <= ConeAngle;
+                        case ColliderType.AABB: // AABB + AABB
+                            return true;
+                        case ColliderType.Sphere:
+                            return math.distancesq(AABB.ClosestPoint(other.Center), other.Center) < other.RadiusSqr;
+                        case ColliderType.Torus: // AABB + Torus
+                        {
+                            var c = AABB.ClosestPoint(other.Center);
+                            var d = math.distancesq(c, other.Center);
+                            return d <= other.RadiusSqr && math.distance(c + AABB.Size*math.sign(Center-c), other.Center) >= other.TorusMinSqr;
+                        }
+                        case ColliderType.TorusCone: // AABB + TorusCone
+                        {
+                            var c = AABB.ClosestPoint(other.Center);
+                            var d = math.distancesq(c, other.Center);
+                            if (d <= other.RadiusSqr && math.distance(c + AABB.Size*math.sign(Center-c), other.Center) >= other.TorusMinSqr)
+                            {
+                                var dir = math.normalize(other.Center - AABB.Center);
+                                var angle = math.acos(math.dot(dir, ConeDir));
+                                return angle <= ConeAngle;
+                            }
+                            return false;
+                        }
+                        case ColliderType.MeshCollider: // AABB + MeshCollider
+                        {
+                            var p = Center + Radius*math.normalize(other.Center - Center);
+                            return HullCollision.Contains(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
+                        }
+                        default:
+                            throw new NotImplementedException("Unimplemented collider collision");
                     }
-
-                    return false;
-                }
+                case ColliderType.Sphere:
+                    switch (other.Type)
+                    {
+                        case ColliderType.AABB: // Sphere + AABB
+                            return other.Overlaps(this);
+                        case ColliderType.Sphere: // Sphere + Sphere
+                            return math.distancesq(Center, other.Center) < math.square(Radius + other.Radius);
+                        case ColliderType.Torus: // Sphere + Torus
+                        {
+                            var d = math.distancesq(Center, other.Center);
+                            return d <= math.square(Radius + other.Radius) && d >= math.square(other.TorusMin - Radius);
+                        }
+                        case ColliderType.TorusCone: // Sphere + TorusCone
+                        {
+                            var c = AABB.ClosestPoint(other.Center);
+                            var d = math.distancesq(c, other.Center);
+                            if (d <= other.RadiusSqr && math.distance(c + AABB.Size*math.sign(Center-c), other.Center) >= other.TorusMinSqr)
+                            {
+                                var dir = math.normalize(other.Center - AABB.Center);
+                                var angle = math.acos(math.dot(dir, ConeDir));
+                                return angle <= ConeAngle;
+                            }
+                            return false;
+                        }
+                        case ColliderType.MeshCollider: // Sphere + MeshCollider
+                        {
+                            var p = Center + Radius*math.normalize(other.Center - Center);
+                            return HullCollision.Contains(new RigidTransform(other.MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[other.MeshPtr], (p-other.MeshTransform.Position)/other.MeshTransform.Scale);
+                        }
+                        default:
+                            throw new NotImplementedException("Unimplemented collider collision");
+                    }
+                case ColliderType.Torus:
+                    switch (other.Type)
+                    {
+                        case ColliderType.AABB: // Torus + AABB
+                            return other.Overlaps(this);
+                        case ColliderType.Sphere: // Torus + Sphere
+                            return other.Overlaps(this);
+                        case ColliderType.Torus: // Torus + Torus
+                        {
+                            var d = math.distance(Center, other.Center);
+                            if ((d + Radius > other.TorusMin) && (d + TorusMin < other.Radius))
+                            {
+                                return true;
+                            }
+                            if ((d + other.Radius > TorusMin) && (d + other.TorusMin < Radius))
+                            {
+                                Debug.LogError("Fallback collision hit, you were wrong ben!");
+                                return true;
+                            }
+                            return false;
+                        }
+                        case ColliderType.TorusCone: // Torus + TorusCone
+                        {
+                            var d = math.distance(Center, other.Center);
+                            if (((d + Radius > other.TorusMin) && (d + TorusMin < other.Radius)) || (d + other.Radius > TorusMin) && (d + other.TorusMin < Radius))
+                            {
+                                var dir = math.normalize(other.Center - AABB.Center);
+                                var angle = math.acos(math.dot(dir, ConeDir));
+                                return angle <= ConeAngle;
+                            }
+                            return false;
+                        }
+                        case ColliderType.MeshCollider: // Torus + MeshCollider
+                        {
+                            var p = Center + Radius*math.normalize(other.Center - Center);
+                            return HullCollision.Contains(new RigidTransform(other.MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[other.MeshPtr], (p-other.MeshTransform.Position)/other.MeshTransform.Scale);
+                        }
+                        default:
+                            throw new NotImplementedException("Unimplemented collider collision");
+                    }
+                case ColliderType.TorusCone:
+                    switch (other.Type)
+                    {
+                        case ColliderType.AABB: // TorusCone + AABB
+                            return other.Overlaps(this);
+                        case ColliderType.Sphere: // TorusCone + Sphere
+                            return other.Overlaps(this);
+                        case ColliderType.Torus: // TorusCone + Torus
+                            return other.Overlaps(this);
+                        case ColliderType.TorusCone: // TorusCone + TorusCone
+                        {
+                            var d = math.distance(Center, other.Center);
+                            if (((d + Radius > other.TorusMin) && (d + TorusMin < other.Radius)) || (d + other.Radius > TorusMin) && (d + other.TorusMin < Radius))
+                            {
+                                var dir = math.normalize(other.Center - AABB.Center);
+                                var angle = math.acos(math.dot(dir, ConeDir));
+                                return angle <= ConeAngle || angle <= math.acos(math.dot(dir, other.ConeDir));
+                            }
+                            return false;
+                        }
+                        case ColliderType.MeshCollider: // TorusCone + MeshCollider
+                        {
+                            var p = Center + Radius*math.normalize(other.Center - Center);
+                            return HullCollision.Contains(new RigidTransform(other.MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[other.MeshPtr], (p-other.MeshTransform.Position)/other.MeshTransform.Scale);
+                        }
+                        default:
+                            throw new NotImplementedException("Unimplemented collider collision");
+                    }
                 case ColliderType.MeshCollider:
                 {
-                    return HullCollision.Contains(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
+                    switch (other.Type)
+                    {
+                        case ColliderType.MeshCollider:
+                            return false; // Can't overlap yet
+                    }
+                    return other.Overlaps(this);
                 }
                 default:
                     throw new NotImplementedException("Unimplemented collider type");
@@ -169,8 +331,9 @@ namespace Collisions
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe float3 GetPointOnSurface(float3 p)
+        public unsafe float3 GetPointOnSurface(Collider other)
         {
+            var p = other.Center;
             switch (Type)
             {
                 default:
@@ -189,9 +352,12 @@ namespace Collisions
                 }
                 case ColliderType.MeshCollider:
                 {
+                    var shift = other.Radius*math.normalize(Center - other.Center);
+                    p = other.Center + shift;
                     var pClose = HullCollision.ClosestPoint(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
                     pClose *= MeshTransform.Scale;
                     pClose += MeshTransform.Position;
+                    pClose -= shift;
                     return pClose;
                 }
             }

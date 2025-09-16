@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8164776769268316261}
   - component: {fileID: 2943698238182725417}
   - component: {fileID: 1276742715247795018}
-  - component: {fileID: 4641032342275044233}
   - component: {fileID: 1554981309899717944}
   - component: {fileID: 3613550172335762582}
+  - component: {fileID: 5906112472799775670}
   m_Layer: 0
   m_Name: Enemy_TorusBlast
   m_TagString: Untagged
@@ -99,19 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
---- !u!114 &4641032342275044233
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0c8d46ded68498cb13f22e61233a6a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemyTagAuthoring
-  type: 0
 --- !u!114 &1554981309899717944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,3 +123,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f034a3d97f5846cebdac947d212dcc0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::HasLifespanAuthoring
+--- !u!114 &5906112472799775670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
+  type: 1
+  Health:
+    Value: 0
+  Chance: 0

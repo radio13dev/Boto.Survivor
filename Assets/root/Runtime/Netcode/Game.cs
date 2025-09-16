@@ -70,6 +70,8 @@ public class Game : IDisposable
 
     static Game s_ClientGame;
     
+    public static LinkedList<Game> AllGames = new();
+    
     public int PlayerIndex
     {
         get
@@ -200,6 +202,8 @@ public class Game : IDisposable
         RpcSendBuffer = new NativeQueue<GameRpc>(Allocator.Persistent);
 
         m_StepController = m_World.EntityManager.CreateEntityQuery(new ComponentType(typeof(StepController)));
+        
+        AllGames.AddLast(this);
     }
 
     public void LoadScenes()
@@ -218,6 +222,7 @@ public class Game : IDisposable
         {
             //m_World.DestroyAllSystemsAndLogException(out _);
             m_World.Dispose();
+            AllGames.Remove(this);
         }
     }
 

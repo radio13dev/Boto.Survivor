@@ -257,6 +257,7 @@ public partial struct GenericPrefabTrackSystem_Light : ISystem
 }
 
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+[UpdateAfter(typeof(DestroySystemGroup))]
 public partial class GenericPrefabCleanupSystem : SystemBase
 {
     EntityQuery m_query;
@@ -275,6 +276,7 @@ public partial class GenericPrefabCleanupSystem : SystemBase
         {
             if (proxy.ValueRO.Spawned)
             {
+                Debug.Log($"Cleaning up {proxy.ValueRO.Spawned.Value}...");
                 if (proxy.ValueRO.Spawned.Value.TryGetComponent<DelayedCleanupEntityLinkMono>(out var cleanup))
                     cleanup.StartDestroy();
                 else 

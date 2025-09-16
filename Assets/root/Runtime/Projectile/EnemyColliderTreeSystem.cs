@@ -175,7 +175,7 @@ namespace Collisions
                 var adjustedAABB2D = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 {
-                    var visitor = new CollisionVisitor(entity, force_ptr);
+                    var visitor = new CollisionVisitor((collider, transform), entity, force_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
@@ -183,11 +183,15 @@ namespace Collisions
 
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
+                LazyCollider _collider;
+                
                 Entity _source;
                 Force* _force;
 
-                public CollisionVisitor(Entity source, Force* force)
+                public CollisionVisitor(LazyCollider collider, Entity source, Force* force)
                 {
+                    _collider = collider;
+                    
                     _source = source;
                     _force = force;
                 }
@@ -195,7 +199,7 @@ namespace Collisions
                 public bool OnVisit((Entity e, NetworkId id, Collider c) projectile, AABB objBounds, AABB queryRange)
                 {
                     if (_source == projectile.e) return true;
-                    if (!projectile.c.Contains(queryRange.Center)) return true;
+                    if (!projectile.c.Overlaps(_collider)) return true;
                     
                     _force->Velocity += (queryRange.Center - objBounds.Center)/2;
                     return true;
@@ -216,22 +220,26 @@ namespace Collisions
                 var adjustedAABB2D = collider.Add(transform);
                 fixed (DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr = &projectileHitEntities)
                 {
-                    var visitor = new CollisionVisitor(projectileE, projectileIgnoreEntities, projectileHit_ptr, projectileHitState);
+                    var visitor = new CollisionVisitor((collider, transform), projectileE, projectileIgnoreEntities, projectileHit_ptr, projectileHitState);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
 
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
+                LazyCollider _collider;
+                
                 Entity _projectileE;
                 DynamicBuffer<ProjectileIgnoreEntity> _projectileIgnore_ptr;
                 DynamicBuffer<ProjectileHitEntity>* _projectileHit_ptr;
                 EnabledRefRW<ProjectileHit> _projectileHitState;
 
-                public CollisionVisitor(Entity projectileE, 
+                public CollisionVisitor(LazyCollider collider, Entity projectileE, 
                     DynamicBuffer<ProjectileIgnoreEntity> projectileIgnore_ptr, DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr, 
                     EnabledRefRW<ProjectileHit> projectileHitState)
                 {
+                    _collider = collider;
+                    
                     _projectileE = projectileE;
                     _projectileIgnore_ptr = projectileIgnore_ptr;
                     _projectileHit_ptr = projectileHit_ptr;
@@ -240,7 +248,7 @@ namespace Collisions
 
                 public bool OnVisit((Entity e, NetworkId id, Collider c) enemyE, AABB objBounds, AABB queryRange)
                 {
-                    if (!enemyE.c.Contains(queryRange.Center)) return true;
+                    if (!enemyE.c.Overlaps(_collider)) return true;
                     
                     for (int i = 0; i < _projectileIgnore_ptr.Length; i++)
                     {
@@ -268,12 +276,12 @@ namespace Collisions
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform);
+                var adjustedAABB = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 fixed (Health* health_ptr = &health)
                 {
-                    var visitor = new CollisionVisitor(Key, entity, force_ptr, health_ptr, ref ecb);
-                    tree.Range(adjustedAABB2D, ref visitor);
+                    var visitor = new CollisionVisitor((collider, transform), Key, entity, force_ptr, health_ptr, ref ecb);
+                    tree.Range(adjustedAABB, ref visitor);
                 }
             }
 
@@ -281,14 +289,18 @@ namespace Collisions
             [BurstCompile]
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
+                LazyCollider _collider;
+                
                 int _key;
                 Entity _source;
                 Force* _force;
                 Health* _health;
                 EntityCommandBuffer.ParallelWriter _ecb;
 
-                public CollisionVisitor(int key, Entity source, Force* force, Health* health, ref EntityCommandBuffer.ParallelWriter ecb)
+                public CollisionVisitor(LazyCollider collider, int key, Entity source, Force* force, Health* health, ref EntityCommandBuffer.ParallelWriter ecb)
                 {
+                    _collider = collider;
+                    
                     _key = key;
                     _source = source;
                     _force = force;
@@ -299,7 +311,7 @@ namespace Collisions
                 public bool OnVisit((Entity e, NetworkId id, Collider c) enemy, AABB objBounds, AABB queryRange)
                 {
                     if (_source == enemy.e) return true;
-                    if (!enemy.c.Contains(queryRange.Center)) return true;
+                    if (!enemy.c.Overlaps(_collider)) return true;
                     
                     // Flag enemy as destroyed
                     _ecb.SetComponentEnabled<DestroyFlag>(_key, enemy.e, true);

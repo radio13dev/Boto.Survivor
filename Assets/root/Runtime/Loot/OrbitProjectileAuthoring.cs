@@ -87,7 +87,7 @@ public partial struct OrbitProjectileSystem : ISystem
                 
                 var perp = mathu.perpendicular(playerT.Up());
                 zero += math.mul(rot, perp * 5);
-                zero += playerT.Up() * 2;
+                zero += playerT.Up() * 1;
 
                 // ... move towards that position smoothly
                 var predictedPos = transform.Position + movement.Velocity * dt * 2;

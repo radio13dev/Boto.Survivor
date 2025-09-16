@@ -93,6 +93,12 @@ public struct RotationalInertia : IComponentData
         Normal = normal;
         Rate = rate;
     }
+    
+    public RotationalInertia(float3 normal, float rate)
+    {
+        Normal = normal;
+        Rate = rate;
+    }
 }
 
 [Save]
