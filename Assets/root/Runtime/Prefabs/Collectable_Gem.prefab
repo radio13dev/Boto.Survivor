@@ -63,14 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfe97125d9bd4a7cbebd73916dd7f7b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::CollectableAuthoring
-  CollectableMin:
-    x: -5
-    y: -5
-    z: -5
-  CollectableMax:
-    x: 5
-    y: 5
-    z: 5
+  Radius: 3.38
 --- !u!114 &3078662805218601296
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,7 +77,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 11
     _Asset: {fileID: 11400000, guid: 53b9839e62ca3424d940847c58e9419f, type: 2}
 --- !u!114 &5750577854139021121
 MonoBehaviour:
@@ -98,7 +90,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
   Radius: 0.29
+  ColliderType: 0
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &1249446285491673129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
   Particle:
-    AssetIndex: 6
     _Asset: {fileID: -8333230072600633316, guid: 3ed2cd97193b7f140a123b0b56bd640c, type: 3}
 --- !u!114 &-2254087907255268954
 MonoBehaviour:

@@ -331,9 +331,9 @@ public partial struct EnemyTrapProjectileSystem : ISystem
             {
                 SystemAPI.SetComponent(e, new Force()
                 {
-                    Velocity = transformRW.ValueRO.TransformDirection(math.float3(0,GameDebug.B,GameDebug.C))
+                    Velocity = transformRW.ValueRO.TransformDirection(math.float3(0,5,30))
                 });
-                SystemAPI.SetComponent(e, new RotationalInertia(transformRW.ValueRO.Right(), GameDebug.A));
+                SystemAPI.SetComponent(e, new RotationalInertia(transformRW.ValueRO.Right(), 30));
                 projectileRW.ValueRW.Released = true;
                 SystemAPI.SetComponentEnabled<MovementDisabled>(e, false);
             }

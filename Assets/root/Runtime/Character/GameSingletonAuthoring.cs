@@ -19,6 +19,7 @@ public struct StepController : IComponentData
 [Save]
 public struct SharedRandom : IComponentData
 {
+    public uint Seed;
     public Random Random;
 }
 

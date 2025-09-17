@@ -13,9 +13,6 @@ public class EnemyCharacterAuthoring : MonoBehaviour
     public Type type;
     public Health Health = new Health(10);
     
-    [Range(0,100)]
-    public int Chance;
-    
     partial class Baker : Baker<EnemyCharacterAuthoring>
     {
         public override void Bake(EnemyCharacterAuthoring authoring)
@@ -36,6 +33,8 @@ public class EnemyCharacterAuthoring : MonoBehaviour
                     // Basic character setup
                     AddComponent<CharacterTag>(entity);
                     AddComponent(entity, authoring.Health);
+                    AddComponent<SpawnAnimation>(entity);
+                    SetComponentEnabled<SpawnAnimation>(entity, false);
                     break;
 
                 case Type.Projectile:

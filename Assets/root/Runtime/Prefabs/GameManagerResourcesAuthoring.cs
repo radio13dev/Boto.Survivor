@@ -126,7 +126,6 @@ public struct GameManager : IComponentData
     public struct Enemies : IBufferElementData
     {
         public Entity Entity;
-        public int Chance;
     }
     
     public struct GemVisual : IBufferElementData
@@ -223,7 +222,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 var buffer = AddBuffer<GameManager.Enemies>(entity);
                 for (int i = 0; i < authoring.Enemies.Length; i++)
                 {
-                    buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace), Chance = authoring.Enemies[i].Chance });
+                    buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
             

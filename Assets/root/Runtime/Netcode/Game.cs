@@ -415,7 +415,8 @@ public class Game : IDisposable
 
     public void InitWorld()
     {
-        World.EntityManager.SetSingleton(new SharedRandom(){ Random = Unity.Mathematics.Random.CreateFromIndex((uint)(DateTime.UtcNow.Ticks % uint.MaxValue))});
+        var seed = (uint)(DateTime.UtcNow.Ticks % uint.MaxValue);
+        World.EntityManager.SetSingleton(new SharedRandom(){ Seed = seed, Random = Unity.Mathematics.Random.CreateFromIndex(seed)});
         var initSystemGroup = World.GetExistingSystemManaged<WorldInitSystemGroup>();
         initSystemGroup.Enabled = true;
         initSystemGroup.Update();

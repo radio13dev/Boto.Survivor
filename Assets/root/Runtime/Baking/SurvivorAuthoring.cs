@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BovineLabs.Saving;
+using Drawing;
 using Unity.Collections;
 using UnityEngine;
 using Unity.Entities;
@@ -16,7 +17,7 @@ public struct PlayerControlledSaveable : IComponentData
     public int Index;
 }
 
-public class SurvivorAuthoring : MonoBehaviour
+public class SurvivorAuthoring : MonoBehaviourGizmos
 {
     public Health Health = new Health(100);
     public RingStats[] InitialRings = new RingStats[8];
@@ -79,6 +80,15 @@ public class SurvivorAuthoring : MonoBehaviour
             // Loop triggers
             AddBuffer<ProjectileLoopTriggerQueue>(entity);
             AddBuffer<OwnedProjectiles>(entity);
+        }
+    }
+
+    public override void DrawGizmos()
+    {
+        using (Draw.WithLineWidth(2, false))
+        {
+            Draw.WireSphere(transform.position, SpawnRadius.DEFAULT_MIN_RAD, new Color(0.5f, 0f, 0.3f, 0.5f));
+            Draw.WireSphere(transform.position, SpawnRadius.DEFAULT_MAX_RAD, new Color(1, 1, 1, 0.5f));
         }
     }
 }

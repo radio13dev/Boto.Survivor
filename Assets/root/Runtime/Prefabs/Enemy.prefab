@@ -55,9 +55,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
+  type: 0
   Health:
     Value: 2
-  Chance: 100
 --- !u!114 &4710129199327565736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,6 +93,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8235055791634373634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +203,7 @@ MonoBehaviour:
     RotationalDrag: 1
     RotationalDragLinear: 1
     Radius: 0.75
-    LockToSurface: 1
+    LockToSurface: 0
     RotateWithSurface: 1
     IdlePivot:
       x: 0

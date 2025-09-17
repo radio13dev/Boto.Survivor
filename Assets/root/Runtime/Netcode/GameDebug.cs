@@ -10,6 +10,11 @@ public class GameDebug : ScriptableObject
     private class k_CollidersEnabled { }
     public static bool CollidersEnabled => s_CollidersEnabled.Data;
     
+    public bool _EnemySpawningEnabled;
+    public static readonly SharedStatic<bool> s_EnemySpawningEnabled = SharedStatic<bool>.GetOrCreate<bool, k_EnemySpawningEnabled>();
+    private class k_EnemySpawningEnabled { }
+    public static bool EnemySpawningEnabled => s_EnemySpawningEnabled.Data;
+    
     public float _A;
     public static readonly SharedStatic<float> s_A = SharedStatic<float>.GetOrCreate<float, k_A>();
     private class k_A { }
@@ -54,6 +59,7 @@ public class GameDebug : ScriptableObject
     public static void Initialize(GameDebug source)
     {
         s_CollidersEnabled.Data = source._CollidersEnabled;
+        s_EnemySpawningEnabled.Data = source._EnemySpawningEnabled;
     
         s_A.Data = source._A;
         s_B.Data = source._B;
@@ -67,6 +73,7 @@ public class GameDebug : ScriptableObject
         foreach (Game game in Game.AllGames)
         {
             game.World.Unmanaged.GetExistingSystemState<ColliderDebugger_RuntimeSystem>().Enabled = s_CollidersEnabled.Data;
+            game.World.Unmanaged.GetExistingSystemState<EnemySpawnSystem>().Enabled = s_EnemySpawningEnabled.Data;
         }
     }
 

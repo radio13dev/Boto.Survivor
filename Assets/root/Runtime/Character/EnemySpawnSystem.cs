@@ -10,7 +10,11 @@ using Random = Unity.Mathematics.Random;
 public enum EnemySpawnerMode
 {
     None,
-    Common,
+    Wave_01_Common,
+    Wave_02_4SecBurst,
+    Wave_03_Common,
+    Wave_04_Common,
+    Wave_05_Common,
 }
 
 public static class EnemySpawnerModeExtensions
@@ -21,7 +25,7 @@ public static class EnemySpawnerModeExtensions
         {
             case EnemySpawnerMode.None:
                 return Color.white*new Color(1,1,1,0.5f);
-            case EnemySpawnerMode.Common:
+            case EnemySpawnerMode.Wave_01_Common:
             default:
                 return Color.green;
         }
@@ -32,14 +36,18 @@ public static class EnemySpawnerModeExtensions
         {
             case EnemySpawnerMode.None:
                 return 0;
-            case EnemySpawnerMode.Common:
-                // Spawn chance scales with time, so that the longer the game runs, the more enemies spawn.
-                double enemiesPerSecond = (8*elapsed/1000);
-                enemiesPerSecond *= enemiesPerSecond;
-                enemiesPerSecond += 0.3d;
-                return (float)enemiesPerSecond;
+            case EnemySpawnerMode.Wave_01_Common:
+                return 1;
+            case EnemySpawnerMode.Wave_02_4SecBurst:
+                return 20;
+            case EnemySpawnerMode.Wave_03_Common:
+                return 2f;
+            case EnemySpawnerMode.Wave_04_Common:
+                return 3f;
+            case EnemySpawnerMode.Wave_05_Common:
+                return 4f;
             default:
-                Debug.LogError($"");
+                Debug.LogError($"No rate for {mode}");
                 return 0;
         }
     }
@@ -47,27 +55,49 @@ public static class EnemySpawnerModeExtensions
     {
         switch (mode)
         {
-            case EnemySpawnerMode.Common:
-                return new SpawnRadius(29, 30);
             default:
-                Debug.LogError($"No radius for {mode}");
-                return new SpawnRadius(29, 30);
+                return new SpawnRadius(SpawnRadius.DEFAULT_MIN_RAD, SpawnRadius.DEFAULT_MAX_RAD);
         }
     }
-    public static bool IsValidEnemy(this EnemySpawnerMode mode, int enemy)
+    public static int GetEnemyChance(this EnemySpawnerMode mode, int enemy)
     {
         switch (mode)
         {
-            case EnemySpawnerMode.Common:
-                return enemy == 0 || enemy == 1;
+            case EnemySpawnerMode.Wave_01_Common:
+            case EnemySpawnerMode.Wave_03_Common:
+            case EnemySpawnerMode.Wave_04_Common:
+            case EnemySpawnerMode.Wave_05_Common:
+                return enemy == 0 ? 100 : enemy == 1 ? 4 : 0;
+                
+            case EnemySpawnerMode.Wave_02_4SecBurst:
+                return enemy == 0 ? 100 : 0;
+                
             default:
-                return false;
+                return 0;
         }
+    }
+
+    public static EnemySpawnerMode GetWaveAtTime(double time, uint sharedRandomSeed)
+    {
+        if (time < 60)
+            return EnemySpawnerMode.Wave_01_Common;
+        if (time < 64)
+            return EnemySpawnerMode.Wave_02_4SecBurst;
+        if (time < 120)
+            return EnemySpawnerMode.Wave_03_Common;
+        if (time < 300)
+            return EnemySpawnerMode.Wave_04_Common;
+        if (time < 360)
+            return EnemySpawnerMode.Wave_05_Common;
+        return EnemySpawnerMode.None;
     }
 }
 
 public readonly struct SpawnRadius
 {
+    public const float DEFAULT_MIN_RAD = 1;
+    public const float DEFAULT_MAX_RAD = 10;
+
     public readonly float Min;
     public readonly float MinSqr;
     public readonly float Max;
@@ -103,7 +133,7 @@ public partial struct EnemySpawnSystem : ISystem
         m_PlayerTransformsQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, EnemySpawner>().Build();
         state.RequireForUpdate(m_PlayerTransformsQuery);
         
-        state.Enabled = false;
+        state.Enabled = GameDebug.EnemySpawningEnabled;
     }
 
     public void OnUpdate(ref SystemState state)
@@ -113,6 +143,7 @@ public partial struct EnemySpawnSystem : ISystem
         
         var time = SystemAPI.Time.ElapsedTime;
         var dt = SystemAPI.Time.DeltaTime;
+        
         var playerTransforms = m_PlayerTransformsQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         var playerSpawners = m_PlayerTransformsQuery.ToComponentDataArray<EnemySpawner>(Allocator.Temp);
         var enemies = SystemAPI.GetSingletonBuffer<GameManager.Enemies>(true);
@@ -121,6 +152,9 @@ public partial struct EnemySpawnSystem : ISystem
             // Detect the spawner mode required for each player and do different actions for each
             var random = sharedRandom.Random;
             EnemySpawnerMode mode = playerSpawners[i].Mode;
+            if (mode == EnemySpawnerMode.Wave_01_Common)
+                mode = EnemySpawnerModeExtensions.GetWaveAtTime(time, sharedRandom.Seed);
+            
             float enemiesPerSecond = mode.GetEnemiesPerSecond(time);
             if (random.NextFloat() > enemiesPerSecond*dt)
                 continue;
@@ -138,22 +172,68 @@ public partial struct EnemySpawnSystem : ISystem
                     break;
                 }
             if (failed) continue;
+            
+            rPos += GameDebug.B*zero.Up();
                 
             for (int j = 0; j < enemies.Length; j++)
             {
-                if (!mode.IsValidEnemy(j)) 
+                var chance = mode.GetEnemyChance(j);
+                if (chance <= 0) 
                     continue;
              
-                var enemy = enemies[j];   
-                if (enemy.Chance <= random.NextInt(100))
+                var enemy = enemies[j];
+                if (chance < 100 && chance <= random.NextInt(100))
                     continue;
                         
                 var enemyE = ecb.Instantiate(enemy.Entity);
-                ecb.SetComponent(enemyE, LocalTransform.FromPosition(rPos + random.NextFloat3(-0.5f, 0.5f)));
+                var t = LocalTransform.FromPosition(rPos + random.NextFloat3(-0.5f, 0.5f));
+                ecb.SetComponent(enemyE, t);
+                ecb.SetComponent(enemyE, new SpawnAnimation(t));
+                ecb.SetComponentEnabled<SpawnAnimation>(enemyE, true);
             }
         }
         
         playerTransforms.Dispose();
         
+    }
+}
+
+[Save]
+public struct SpawnAnimation : IComponentData, IEnableableComponent
+{
+    public static float ScaleTime => GameDebug.A;
+
+    public float t;
+    public float s;
+    
+    public SpawnAnimation(LocalTransform zeroT)
+    {
+        t = 0;
+        s = zeroT.Scale;
+    }
+}
+
+[RequireMatchingQueriesForUpdate]
+public partial struct SpawnAnimationSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        new Job()
+        {
+            dt = SystemAPI.Time.DeltaTime
+        }.Schedule();
+    }
+    
+    partial struct Job : IJobEntity
+    {
+        [ReadOnly] public float dt;
+    
+        public void Execute(ref LocalTransform transform, ref SpawnAnimation anim, EnabledRefRW<SpawnAnimation> animEnabled)
+        {
+            anim.t += dt;
+            var t = math.clamp(anim.t/SpawnAnimation.ScaleTime, 0, 1);
+            transform.Scale = anim.s * ease.elastic_out(t);
+            animEnabled.ValueRW = t < 1;
+        }
     }
 }

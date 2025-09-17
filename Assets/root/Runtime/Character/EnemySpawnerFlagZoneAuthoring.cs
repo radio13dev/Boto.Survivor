@@ -64,7 +64,7 @@ public partial struct EnemySpawnerFlagZoneSystem : ISystem
     
         public void Execute(in LocalTransform transform, ref EnemySpawner spawner)
         {
-            spawner.Mode = EnemySpawnerMode.Common;
+            spawner.Mode = EnemySpawnerMode.Wave_01_Common;
             
             bool wasInside = false;
             int insideI = -1;

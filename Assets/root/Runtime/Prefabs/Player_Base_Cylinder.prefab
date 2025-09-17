@@ -36,7 +36,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1567990844258516114}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6061478738849763825
@@ -100,6 +101,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &-2977659499843593134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,3 +190,85 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
+--- !u!1001 &3044067024659880229
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 240200278457971943}
+    m_Modifications:
+    - target: {fileID: 957610706970675159, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_Name
+      value: Camera Target Cylinder
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 957610706970675159, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5083690986653780577}
+  m_SourcePrefab: {fileID: 100100000, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+--- !u!4 &1567990844258516114 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4610610185730450871, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+  m_PrefabInstance: {fileID: 3044067024659880229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2843089721914826482 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 957610706970675159, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+  m_PrefabInstance: {fileID: 3044067024659880229}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5083690986653780577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843089721914826482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054d1f64ae2e41abba98a63f7f0e8e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Entities.Hybrid::Unity.Entities.Hybrid.Baking.BakingOnlyEntityAuthoring
