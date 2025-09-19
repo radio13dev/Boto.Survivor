@@ -56,17 +56,35 @@ public readonly struct TiledStatData
             Localization_EffectC = effectCDesc;
         }
     }
+    
+    public readonly struct Image
+    {
+        public readonly Sprite Shape;
+        public readonly Sprite ShapeOutline;
+        public readonly Color Color;
+        public readonly Sprite Icon;
+        
+        public Image(Sprite shape, Sprite shapeOutline, Color color, Sprite icon)
+        {
+            Shape = shape;
+            ShapeOutline = shapeOutline;
+            Color = color;
+            Icon = icon;
+        }
+    }
 
-    public readonly struct Full
+    public struct Full
     {
         public readonly TiledStatData Data;
         public readonly Localization Localization;
+        public Image Images;
 
         public Full(TiledStat stat, curve effectA, curve effectB, curve effectC, string[] title, string[] description, string[] effectADesc, string[] effectBDesc,
             string[] effectCDesc)
         {
             Data = new TiledStatData(effectA, effectB, effectC);
             Localization = new Localization(title, description, effectADesc, effectBDesc, effectCDesc);
+            Images = default;
         }
     }
 }
@@ -84,6 +102,16 @@ public static class TiledStatsFull
     public static void Dispose()
     {
         if (TiledStats.m_StatDataPtrWrite.IsCreated) TiledStats.m_StatDataPtrWrite.Dispose();
+    }
+
+    public static void SetImages(Sprite[] columnSprites, Sprite[] columnSpritesOutlines, Color[] rowColors, Sprite[] images)
+    {
+        for (int i = 0; i < StatDataFull.Length; i++)
+        {
+            var x = i%TiledStats.TileCount.x;
+            var y = i/TiledStats.TileCount.x;
+            StatDataFull[i].Images = new (columnSprites[x], columnSpritesOutlines[x], rowColors[y], images[i]);
+        }
     }
     
     public static readonly TiledStatData.Full[] StatDataFull = new TiledStatData.Full[TiledStats.TileRows * TiledStats.TileCols]

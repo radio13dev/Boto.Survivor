@@ -11,17 +11,19 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 60ed2d7aab43fa64aa16680d77f1f8b8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap:
-    RenderType: Opaque
+    RenderType: Transparent
   disabledShaderPasses:
   - MOTIONVECTORS
   - SHADOWCASTER
+  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -123,8 +125,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _EdgePower: 1
     - _EdgeScale: 1.5
     - _EnvironmentReflections: 1
@@ -148,16 +150,18 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _SrcBlendAlpha: 1
-    - _Surface: 0
+    - _Surface: 1
     - _Thickness: 52.6
     - _Tiling: 0.1
+    - _UiMaskIgnored: 1
+    - _UiSize: 0.15
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4
-    - _ZWrite: 1
+    - _ZWrite: 0
     - _ZWriteControl: 0
     - _r1: 1
     - _r2: 2
@@ -176,6 +180,7 @@ Material:
     - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecularColour: {r: 1, g: 1, b: 1, a: 1}
+    - _UiCenter: {r: 0.82, g: 0.5, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5629370939388152073

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BovineLabs.Saving;
 using TMPro;
 using Unity.Entities;
@@ -36,6 +37,12 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public Image[] Connecteds = new Image[4];
 
     public PooledParticle LevelUpParticle;
+    
+    public RingDisplay RingTemplate;
+    public RingDisplay m_SpawnedRing;
+    
+    public Transform RingContainer;
+    public Transform UiContainer;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -131,10 +138,11 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             new int2(-1,0)
         };
 
-    public void RefreshState(int2 tileKey, in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats)
+    public void RefreshState(int2 tileKey, in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in DynamicBuffer<Ring> rings)
     {
         bool init = math.any(TileKey != tileKey);
         TileKey = tileKey;
+        
         
         var oldLevel = Level;
         Level = baseStats[TileKey];
@@ -182,6 +190,22 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         }
 
         NotAvailableOverlay.gameObject.SetActive(locked);
+        
+        var ringIndex = TiledStats.Get(TileKey).GetRingIndex();
+        if (ringIndex >= 0)
+        {
+            if (!m_SpawnedRing) m_SpawnedRing = Instantiate(RingTemplate, RingContainer);
+            m_SpawnedRing.UpdateRing(ringIndex, rings.IsCreated ? rings[ringIndex] : default, ReadOnlySpan<EquippedGem>.Empty);
+        }
+        else if (m_SpawnedRing)
+        {
+            if (Application.isPlaying) Destroy(m_SpawnedRing.gameObject);
+            else DestroyImmediate(m_SpawnedRing.gameObject);
+            m_SpawnedRing = null;
+        }
+        
+        RingContainer.gameObject.SetActive(ringIndex >= 0);
+        UiContainer.gameObject.SetActive(ringIndex < 0);
         
         if (DescriptionUI.m_CustomZero == gameObject && (DescriptionUI.m_CustomZero == UIFocus.Focus || !UIFocus.Focus))
             UIFocus.Refresh();

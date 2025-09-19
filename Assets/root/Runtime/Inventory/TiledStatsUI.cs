@@ -11,6 +11,9 @@ using Random = UnityEngine.Random;
 
 public class TiledStatsUI : MonoBehaviour
 {
+    public Material[] UiMaskMaterials = Array.Empty<Material>();
+    public Transform TopTransform;
+
     public List<TiledStatsUITile> Tiles = new();
     public Vector2Int BorderCount = new Vector2Int(1,1);
     public Vector2 Spacing;
@@ -39,6 +42,7 @@ public class TiledStatsUI : MonoBehaviour
 
     private void OnEnable()
     {
+        TiledStatsFull.SetImages(ColumnSprites, ColumnSpritesOutlines, RowColors, Images);
         
         HandUIController.Attach(this);
 
@@ -46,7 +50,7 @@ public class TiledStatsUI : MonoBehaviour
         if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
         else
         {
-            RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats() { CompiledStatsTree = TiledStatsTree.Default });
+            RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats() { CompiledStatsTree = TiledStatsTree.Default }, default);
         }
        
         // Focus the UI 
@@ -66,13 +70,16 @@ public class TiledStatsUI : MonoBehaviour
         if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;
-        if (GameEvents.TryGetComponent2<Wallet>(entity, out var wallet) && GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var baseStats) && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats))
+        if (GameEvents.TryGetComponent2<Wallet>(entity, out var wallet) 
+            && GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var baseStats) 
+            && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats) 
+            && GameEvents.TryGetBuffer<Ring>(entity, out var rings))
         {
-            RebuildTiles(wallet, baseStats, compiledStats);
+            RebuildTiles(wallet, baseStats, compiledStats, rings);
         }
     }
 
-    internal void RebuildTiles(in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats)
+    internal void RebuildTiles(in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in DynamicBuffer<Ring> rings)
     {
         int c = (TiledStats.TileCount.x + BorderCount.x*2)*(TiledStats.TileCount.y+BorderCount.y*2);
         for (int i = 0; i < Tiles.Count; i++)
@@ -105,7 +112,7 @@ public class TiledStatsUI : MonoBehaviour
             tile.Background.color = RowColors[tileKey.y];
             tile.gameObject.name = $"Tile: " + tile.Image.sprite.name;
             
-            tile.RefreshState(tileKey, in wallet, in baseStats, in compiledStats);
+            tile.RefreshState(tileKey, in wallet, in baseStats, in compiledStats, in rings);
         }
         for (int x = 0; x < CompleteColumns.Length; x++)
             CompleteColumns[x].SetActive(baseStats.HasCompletedColumn(x%TiledStats.TileCols));
@@ -157,7 +164,7 @@ public class TiledStatsUI : MonoBehaviour
 
     private void OnValidate()
     {
-        RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats(){ CompiledStatsTree = TiledStatsTree.Default });
+        RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats(){ CompiledStatsTree = TiledStatsTree.Default }, default);
         RefreshGrid();
     }
 
@@ -172,6 +179,17 @@ public class TiledStatsUI : MonoBehaviour
             Offset = mathu.MoveTowards(Offset, math.round(Offset), Time.deltaTime*5);
             RefreshGrid();
         }
+        
+        UpdateMask();
+    }
+    
+    [EditorButton]
+    public void UpdateMask()
+    {
+        var center = CameraRegistry.UI.WorldToScreenPoint(transform.position);
+        var top = CameraRegistry.UI.WorldToScreenPoint(TopTransform.position);
+        Shader.SetGlobalVector("_UiCenter", center);
+        Shader.SetGlobalFloat("_UiSize", (top - center).y);
     }
 
     public Vector2 DragScale = new Vector2(1,1);

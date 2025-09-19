@@ -1,9 +1,38 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class CameraRegistry : MonoBehaviour
 {
-    public static Camera Main { get; private set; }
-    public static Camera UI { get; private set; }
+    public static Camera Main
+    {
+        get
+        {
+            if (m_Main) return m_Main;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) 
+                return Camera.main;
+#endif
+            return null;
+        }
+        private set => m_Main = value;
+    }
+    static Camera m_Main;
+
+    public static Camera UI
+    {
+        get
+        {
+            if (m_UI) return m_UI;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) 
+                return Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).FirstOrDefault(c => c != Camera.main);
+#endif
+            return null;
+        }
+        private set => m_UI = value;
+    }
+
+    static Camera m_UI;
     
     public bool IsMain;
     public bool IsUI;

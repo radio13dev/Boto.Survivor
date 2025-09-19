@@ -202,6 +202,17 @@ public static partial class TiledStats
         return string.Empty;
     }
     
+    public static int GetRingIndex(this TiledStat stat)
+    {
+        if (stat == TiledStat.Stat_00_SharpEdge) return 0;
+        if (stat == TiledStat.Stat_11) return 1;
+        if (stat == TiledStat.Stat_16_Intersect_Pierce) return 2;
+        if (stat == TiledStat.Stat_21) return 3;
+        if (stat == TiledStat.Stat_26) return 4;
+        if (stat == TiledStat.Stat_31) return 5;
+        return -1;
+    }
+    
     
     public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int specificLevel)
     {
