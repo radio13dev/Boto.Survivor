@@ -36,7 +36,7 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     [EditorButton]
     public void GotoClosed()
     {
-        foreach (var o in Object.FindObjectsByType(typeof(HandUIController.IStateChangeListener), FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var o in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             if (o is not HandUIController.IStateChangeListener change)
                 continue;
@@ -47,7 +47,7 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     [EditorButton]
     public void GotoInventory()
     {
-        foreach (var o in Object.FindObjectsByType(typeof(HandUIController.IStateChangeListener), FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        foreach (var o in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             if (o is not HandUIController.IStateChangeListener change)
                 continue;
