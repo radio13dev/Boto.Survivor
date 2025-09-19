@@ -43,7 +43,7 @@ public class TiledStatsUI : MonoBehaviour
         HandUIController.Attach(this);
 
         GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity);
+        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
         else
         {
             RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats() { CompiledStatsTree = TiledStatsTree.Default });
@@ -60,8 +60,9 @@ public class TiledStatsUI : MonoBehaviour
         GameEvents.OnEvent -= OnGameEvent;
     }
     
-    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    private void OnGameEvent(GameEvents.Data data)
     {
+        var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;

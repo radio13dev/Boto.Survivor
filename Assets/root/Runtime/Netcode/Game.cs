@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
@@ -86,7 +87,7 @@ public class Game : IDisposable
     }
     public int m_PlayerIndex = -1;
     
-    public static readonly SharedStatic<int> ClientPlayerIndex = SharedStatic<int>.GetOrCreate<int, k_ClientPlayerIndex>();
+    public static readonly SharedStatic<int> ClientPlayerIndex = SharedStatic<int>.GetOrCreate<k_ClientPlayerIndex>();
     private class k_ClientPlayerIndex { }
 
     [RuntimeInitializeOnLoadMethod]
@@ -433,12 +434,55 @@ public static class GameEvents
         InteractableStart,
         InteractableEnd,
         VisualsUpdated,
-        WalletChanged
+        WalletChanged,
+        EnemyHealthChanged
+    }
+    
+    
+    [StructLayout(LayoutKind.Explicit, Pack = 4)]
+    public readonly struct Data
+    {
+        [FieldOffset(0)] public readonly Type Type;
+        [FieldOffset(4)] public readonly Entity Entity;
+        [FieldOffset(12)] public readonly long _Data;
+        
+        [FieldOffset(12)] public readonly int Int0;
+        [FieldOffset(16)] public readonly int Int1;
+        
+        public static implicit operator Data((Type type, Entity entity) te) => new Data(te);
+        
+        public Data((Type type, Entity entity) te) : this(te.type, te.entity)
+        {
+        }
+        public Data(Type type, Entity entity) : this()
+        {
+            Type = type;
+            Entity = entity;
+        }
+        public Data(Type type, Entity entity, long data) : this()
+        {
+            Type = type;
+            Entity = entity;
+            _Data = data;
+        }
+        public Data(Type type, Entity entity, int int0) : this()
+        {
+            Type = type;
+            Entity = entity;
+            Int0 = int0;
+        }
+        public Data(Type type, Entity entity, int int0, int int1) : this()
+        {
+            Type = type;
+            Entity = entity;
+            Int0 = int0;
+            Int1 = int1;
+        }
     }
 
-    public static event Action<Type, Entity> OnEvent;
+    public static event Action<Data> OnEvent;
 
-    static readonly SharedStatic<NativeQueue<(Type, Entity)>> s_EventQueue = SharedStatic<NativeQueue<(Type, Entity)>>.GetOrCreate<NativeQueue<(Type, Entity)>, EventQueueKey>();
+    static readonly SharedStatic<NativeQueue<Data>> s_EventQueue = SharedStatic<NativeQueue<Data>>.GetOrCreate<EventQueueKey>();
 
     private class EventQueueKey
     {
@@ -454,7 +498,7 @@ public static class GameEvents
         }
 
         m_Initialized = true;
-        s_EventQueue.Data = new NativeQueue<(Type, Entity)>(Allocator.Persistent);
+        s_EventQueue.Data = new NativeQueue<Data>(Allocator.Persistent);
     }
 
     public static void Dispose()
@@ -467,13 +511,18 @@ public static class GameEvents
     {
         while (s_EventQueue.Data.TryDequeue(out var eType))
         {
-            OnEvent?.Invoke(eType.Item1, eType.Item2);
+            OnEvent?.Invoke(eType);
         }
     }
 
     public static void Trigger(Type eType, Entity entity)
     {
-        s_EventQueue.Data.Enqueue((eType, entity));
+        s_EventQueue.Data.Enqueue(new (eType, entity));
+    }
+
+    public static void Trigger(Type eType, Entity entity, int int0)
+    {
+        s_EventQueue.Data.Enqueue(new (eType, entity, int0));
     }
 
     public static bool TryGetSharedComponent<T>(Entity entity, out T o) where T : unmanaged, ISharedComponentData

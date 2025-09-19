@@ -1,4 +1,5 @@
-﻿using Unity.Burst;
+﻿using BovineLabs.Core.SingletonCollection;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
@@ -28,13 +29,15 @@ public partial struct ProjectileHitSystem_Damage : ISystem
         public ComponentLookup<Health> HealthLookup;
         [ReadOnly] public NetworkIdMapping networkIdMapping;
     
-        public void Execute(in DynamicBuffer<ProjectileHitEntity> hits)
+        public void Execute(in DynamicBuffer<ProjectileHitEntity> hits, in Projectile projectile)
         {
             for (int i = 0; i < hits.Length; i++)
             {
-                if (HealthLookup.TryGetRefRW(networkIdMapping[hits[i].Value], out var otherEntityF))
+                var e = networkIdMapping[hits[i].Value];
+                if (HealthLookup.TryGetRefRW(e, out var otherEntityF))
                 {
-                    otherEntityF.ValueRW.Value--;
+                    otherEntityF.ValueRW.Value -= projectile.Damage;
+                    GameEvents.Trigger(GameEvents.Type.EnemyHealthChanged, e, -projectile.Damage);
                 }
             }
         }

@@ -18,8 +18,9 @@ public class ShowInInteractRange : EntityLinkMono
         GameEvents.OnEvent -= OnGameEvent;
     }
 
-    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    private void OnGameEvent(GameEvents.Data data)
     {
+        var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.InteractableStart && eType != GameEvents.Type.InteractableEnd) return;
         if (entity != Entity) return;
         

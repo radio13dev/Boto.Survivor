@@ -11,13 +11,13 @@ public struct Ring : IBufferElementData
 {
     public const int k_RingCount = 8;
 
-    public double LastActivateTime;
+    public double NextActivateTime;
 
     public RingStats Stats;
 }
 
 [Flags]
-public enum RingPrimaryEffect
+public enum RingPrimaryEffect : byte
 {
     None = 0,
     

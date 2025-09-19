@@ -27,7 +27,7 @@ public class WalletDisplay : MonoBehaviour
         HandUIController.Attach(this);
 
         GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.WalletChanged, CameraTarget.MainTarget.Entity);
+        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.WalletChanged, CameraTarget.MainTarget.Entity));
         else SetValue(0);
     }
 
@@ -38,8 +38,9 @@ public class WalletDisplay : MonoBehaviour
         GameEvents.OnEvent -= OnGameEvent;
     }
     
-    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    private void OnGameEvent(GameEvents.Data data)
     {
+        var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.WalletChanged) return;
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;

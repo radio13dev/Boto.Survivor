@@ -115,7 +115,6 @@ namespace Collisions
 
                 public bool OnVisit((Entity, Collectable) treeEntity, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
                     if (treeEntity.Item2.PlayerId != _player.Index) return true;
 
                     _ecb.SetComponentEnabled<Collectable>(_key, treeEntity.Item1, true);

@@ -58,7 +58,7 @@ public struct TransitionPoint : IEquatable<TransitionPoint>
         return final;
     }
 
-    public IEnumerator Lerp(RectTransform from, float duration, bool editor)
+    public IEnumerator Lerp(RectTransform from, float duration)
     {
         TransitionPoint start = new();
         start.Save(from);
@@ -70,7 +70,7 @@ public struct TransitionPoint : IEquatable<TransitionPoint>
         while (t < duration && from)
         {
 #if UNITY_EDITOR
-            if (editor)
+            if (!Application.isPlaying)
                 t = (float)(EditorApplication.timeSinceStartup - t0);
             else
 #endif

@@ -14,6 +14,7 @@ public class GameInitialize : MonoBehaviour
     private void Awake()
     {
         if (DebugAsset) GameDebug.Initialize(DebugAsset);
+        TiledStatsFull.Setup();
         GameEvents.Initialize();
         
         Inputs = new InputSystem_Actions();
@@ -39,5 +40,6 @@ public class GameInitialize : MonoBehaviour
     {
         Inputs.Dispose();
         GameEvents.Dispose();
+        TiledStatsFull.Dispose();
     }
 }

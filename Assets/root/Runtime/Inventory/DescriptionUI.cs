@@ -20,6 +20,10 @@ public class Palette : MonoBehaviour
     public static Color Money => new Color(0.2f, 0.8f, 0.2f);
     public static Color MoneyChangePositive = new Color(0.2f, 0.8f, 0.2f);
     public static Color MoneyChangeNegative = new Color32(0xff,0x72,0x77,0xff);
+    
+    public static Color HealthChangeZero => new Color(0.7f, 0.7f, 0.7f);
+    public static Color HealthChangePositive = new Color(0.4f, 0.7f, 0.4f);
+    public static Color HealthChangeNegative = new Color(0.7f, 0.4f, 0.4f);
 }
 
 public class DescriptionUI : MonoBehaviour

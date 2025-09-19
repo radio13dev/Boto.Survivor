@@ -158,7 +158,9 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
 
         bool leveled = Level > 0;
-        bool locked = !leveled;
+        bool locked = !leveled && !baseStats.CanLevelUp(tileKey);
+        bool spentLevel = baseStats.GetLevelsSpent() > 0;
+        
         for (int i = 0; i < 4; i++)
         {
             bool dirLeveled = baseStats[tileKey + directions[i]] > 0;
@@ -166,13 +168,11 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             {
                 Connecteds[i].gameObject.SetActive(true);
                 Connections[i].gameObject.SetActive(false);
-                locked = false;
             }
             else if (dirLeveled || leveled)
             {
                 Connecteds[i].gameObject.SetActive(false);
                 Connections[i].gameObject.SetActive(true);
-                locked = false;
             }
             else
             {

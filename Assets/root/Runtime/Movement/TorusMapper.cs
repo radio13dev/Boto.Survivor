@@ -5,25 +5,25 @@ using UnityEngine;
 
 public static class TorusMapper
 {
-    public static readonly SharedStatic<float> RingRadius = SharedStatic<float>.GetOrCreate<float, RingRadiusKey>();
+    public static readonly SharedStatic<float> RingRadius = SharedStatic<float>.GetOrCreate<RingRadiusKey>();
 
     private class RingRadiusKey
     {
     }
 
-    public static readonly SharedStatic<float> Thickness = SharedStatic<float>.GetOrCreate<float, ThicknessKey>();
+    public static readonly SharedStatic<float> Thickness = SharedStatic<float>.GetOrCreate<ThicknessKey>();
 
     private class ThicknessKey
     {
     }
 
-    public static readonly SharedStatic<float> XRotScale = SharedStatic<float>.GetOrCreate<float, XRotScaleKey>();
+    public static readonly SharedStatic<float> XRotScale = SharedStatic<float>.GetOrCreate<XRotScaleKey>();
 
     private class XRotScaleKey
     {
     }
 
-    public static readonly SharedStatic<float> YRotScale = SharedStatic<float>.GetOrCreate<float, YRotScaleKey>();
+    public static readonly SharedStatic<float> YRotScale = SharedStatic<float>.GetOrCreate<YRotScaleKey>();
 
     private class YRotScaleKey
     {

@@ -563,6 +563,9 @@ public partial struct GameRpcSystem : ISystem
                     SystemAPI.SetComponent(playerE, stats);
                     SystemAPI.SetComponent(playerE, wallet);
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                    dirty.SetDirty();
+                    SystemAPI.SetComponent(playerE, dirty);
                     GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
                     break;
                 }
@@ -584,7 +587,7 @@ public partial struct GameRpcSystem : ISystem
                     if (enemySpawnOptions.HasFlag(GameRpc.EnemySpawnOptions.NoAi))
                         state.EntityManager.SetComponentData(enemy, new MovementSettings(){ Speed = 0 });
                     if (enemySpawnOptions.HasFlag(GameRpc.EnemySpawnOptions.InfiniteHealth))
-                        state.EntityManager.SetComponentData(enemy, new Health(){ Value = int.MaxValue });
+                        state.EntityManager.SetComponentData(enemy, new Health(int.MaxValue));
                     break;
                 }
                 

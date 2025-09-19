@@ -139,6 +139,7 @@ namespace Collisions
             enemyEntities.Dispose(state.Dependency);
             enemyColliders.Dispose(state.Dependency);
             enemyTransforms.Dispose(state.Dependency);
+            enemyNetworkIds.Dispose(state.Dependency);
 
             // Perform collisions
             var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);

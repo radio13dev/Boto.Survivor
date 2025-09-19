@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PhysicsSettings : MonoBehaviour
 {
-    public static readonly SharedStatic<float> s_GemJump = SharedStatic<float>.GetOrCreate<float, k_GemJump>();
+    public static readonly SharedStatic<float> s_GemJump = SharedStatic<float>.GetOrCreate<k_GemJump>();
     private class k_GemJump { }
-    public static readonly SharedStatic<float> s_GemSpin = SharedStatic<float>.GetOrCreate<float, k_GemSpin>();
+    public static readonly SharedStatic<float> s_GemSpin = SharedStatic<float>.GetOrCreate<k_GemSpin>();
     private class k_GemSpin { }
 
     [RuntimeInitializeOnLoadMethod]

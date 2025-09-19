@@ -1,15 +1,18 @@
 ﻿using System;
 using BovineLabs.Saving;
 using Unity.Entities;
+using UnityEngine.Serialization;
 
 [Serializable]
 [Save]
 public struct Health : IComponentData
 {
+    public int InitHealth;
     public int Value;
     
     public Health(int health)
     {
+        InitHealth = health;
         Value = health;
     }
 }

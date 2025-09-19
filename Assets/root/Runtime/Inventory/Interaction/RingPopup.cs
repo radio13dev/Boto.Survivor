@@ -19,8 +19,9 @@ public class RingPopup : EntityLinkMono
     {
         GameEvents.OnEvent -= OnGameEvent;
     }
-    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    private void OnGameEvent(GameEvents.Data data)
     {
+        var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.VisualsUpdated) return;
         if (entity != Entity) return;
         

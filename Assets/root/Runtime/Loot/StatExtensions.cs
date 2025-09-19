@@ -58,14 +58,14 @@ public static class StatExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
-    public static float GetProjectileDamage(this RingPrimaryEffect primaryEffect, float modifier)
+    public static int GetProjectileDamage(this RingPrimaryEffect primaryEffect, int modifier)
     {
-        float baseDamage = 1f;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseDamage = 10f;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDamage = 10f;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDamage = 10f;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseDamage = 10f;
-        return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseDamage;
+        int baseDamage = 100;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseDamage = 100;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDamage = 100;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDamage = 100;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseDamage = 100;
+        return baseDamage + modifier;
     }
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

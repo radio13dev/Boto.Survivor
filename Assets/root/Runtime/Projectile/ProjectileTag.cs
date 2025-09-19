@@ -11,7 +11,14 @@ using UnityEngine;
 [Save]
 public struct Projectile : IComponentData
 {
-    public float Damage;
+    public int Damage;
+    
+    public Projectile(int damage)
+    {
+        Damage = damage;
+    }
+
+    public const float PerFrameDamageMod = 1f/30f;
 }
 
 [Save]

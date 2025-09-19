@@ -29,7 +29,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         UIFocus.OnFocus += OnFocus;
         UIFocus.OnInteract += OnInteract;
         GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity);
+        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
     }
 
     private void OnDisable()
@@ -121,11 +121,12 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
                 break;
         }
 
-        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
     }
 
-    private void OnGameEvent(GameEvents.Type eType, Entity entity)
+    private void OnGameEvent(GameEvents.Data data)
     {
+        var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.InventoryChanged) return;
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;

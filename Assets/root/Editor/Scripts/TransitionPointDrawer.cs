@@ -38,7 +38,7 @@ public class TransitionPointDrawer : PropertyDrawer
         var transition = GUILayout.Button($"Transition");
         if (transition)
         {
-            EditorCoroutineUtility.StartCoroutine(curVal.Lerp(targetRect, HandUIController.k_AnimTransitionTime, true), this);
+            EditorCoroutineUtility.StartCoroutine(curVal.Lerp(targetRect, HandUIController.k_AnimTransitionTime), this);
         }
         GUI.enabled = wasEnabled;
 

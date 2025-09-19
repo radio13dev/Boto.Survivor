@@ -5,7 +5,7 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     public TransitionPoint InventoryT;
     public TransitionPoint ClosedT;
     ExclusiveCoroutine Co;
-    
+
     private void OnEnable()
     {
         HandUIController.Attach(this);
@@ -15,7 +15,7 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     {
         HandUIController.Detach(this);
     }
-    
+
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
         TransitionPoint target;
@@ -30,6 +30,28 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
                 break;
         }
 
-        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
+    }
+
+    [EditorButton]
+    public void GotoClosed()
+    {
+        foreach (var o in Object.FindObjectsByType(typeof(HandUIController.IStateChangeListener), FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (o is not HandUIController.IStateChangeListener change)
+                continue;
+            change.OnStateChanged(HandUIController.State.Inventory, HandUIController.State.Closed);
+        }
+    }
+
+    [EditorButton]
+    public void GotoInventory()
+    {
+        foreach (var o in Object.FindObjectsByType(typeof(HandUIController.IStateChangeListener), FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (o is not HandUIController.IStateChangeListener change)
+                continue;
+            change.OnStateChanged(HandUIController.State.Closed, HandUIController.State.Inventory);
+        }
     }
 }

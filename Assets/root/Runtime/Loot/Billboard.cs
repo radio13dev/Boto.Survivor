@@ -11,6 +11,6 @@ public class Billboard : MonoBehaviour
         //var cross = math.cross(math.cross(worldForward, camForward), worldForward);
         //transform.LookAt(CameraRegistry.Main.transform, cross);
         
-        transform.rotation = quaternion.LookRotationSafe(-CameraRegistry.Main.transform.forward, CameraRegistry.Main.transform.up);
+        transform.rotation = quaternion.LookRotationSafe(CameraRegistry.Main.transform.forward, CameraRegistry.Main.transform.up);
     }
 }

@@ -95,8 +95,8 @@ public static class EnemySpawnerModeExtensions
 
 public readonly struct SpawnRadius
 {
-    public const float DEFAULT_MIN_RAD = 1;
-    public const float DEFAULT_MAX_RAD = 10;
+    public const float DEFAULT_MIN_RAD = 35;
+    public const float DEFAULT_MAX_RAD = 40;
 
     public readonly float Min;
     public readonly float MinSqr;
@@ -172,8 +172,6 @@ public partial struct EnemySpawnSystem : ISystem
                     break;
                 }
             if (failed) continue;
-            
-            rPos += GameDebug.B*zero.Up();
                 
             for (int j = 0; j < enemies.Length; j++)
             {
@@ -201,7 +199,7 @@ public partial struct EnemySpawnSystem : ISystem
 [Save]
 public struct SpawnAnimation : IComponentData, IEnableableComponent
 {
-    public static float ScaleTime => GameDebug.A;
+    public static float ScaleTime => 1;
 
     public float t;
     public float s;

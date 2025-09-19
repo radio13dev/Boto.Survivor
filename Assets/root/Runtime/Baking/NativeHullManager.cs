@@ -11,7 +11,7 @@ public unsafe class NativeHullManager : MonoBehaviour
     public MeshDatabase Database;
     NativeArray<NativeHull> m_localHulls;
     
-    public static readonly SharedStatic<IntPtr> m_Hulls = SharedStatic<IntPtr>.GetOrCreate<IntPtr, m_HullsKey>();
+    public static readonly SharedStatic<IntPtr> m_Hulls = SharedStatic<IntPtr>.GetOrCreate<m_HullsKey>();
     class m_HullsKey{}
     
     [InitializeOnLoadMethod]

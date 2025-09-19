@@ -112,7 +112,6 @@ namespace Collisions
         }
         
         
-        [BurstCompile]
         [WithAll(typeof(Projectile))]
         [WithNone(typeof(IgnoresTerrain))]
         internal unsafe partial struct ProjectileTerrainCollisionJob : IJobEntity
@@ -124,24 +123,25 @@ namespace Collisions
                 var adjustedAABB2D = collider.Add(transform);
                 fixed (DestroyAtTime* lifespan_ptr = &projectileLifespan)
                 {
-                    var visitor = new CollisionVisitor(lifespan_ptr);
+                    var visitor = new CollisionVisitor((transform, collider), lifespan_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
 
-            [BurstCompile]
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>
             {
+                LazyCollider _collider;
                 DestroyAtTime* _lifespanPtr;
 
-                public CollisionVisitor(DestroyAtTime* lifespanPtr)
+                public CollisionVisitor(LazyCollider collider, DestroyAtTime* lifespanPtr)
                 {
+                    _collider = collider;
                     _lifespanPtr = lifespanPtr;
                 }
 
                 public bool OnVisit((Entity e, Collider c) terrain, AABB objBounds, AABB queryRange)
                 {
-                    //if (!terrain.c.Contains(queryRange.Center)) return true;
+                    if (!terrain.c.Overlaps(_collider)) return true;
                     _lifespanPtr->DestroyTime = 0;
                     return false;
                 }

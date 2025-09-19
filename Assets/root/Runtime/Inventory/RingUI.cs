@@ -30,6 +30,6 @@ public class RingUI : MonoBehaviour, HandUIController.IStateChangeListener
                 break;
         }
 
-        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime, false));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
     }
 }

@@ -59,14 +59,6 @@ namespace Collisions
         MeshCollider,
     }
 
-    public struct ColliderData : IBufferElementData
-    {
-        static SharedStatic<NativeArray<ColliderData>> s_Data;
-
-        public NativeTrees.AABB Value;
-        public float TorusMin;
-    }
-
     public struct LazyCollider
     {
         public Collider Source;
@@ -211,7 +203,7 @@ namespace Collisions
                         case ColliderType.MeshCollider: // AABB + MeshCollider
                         {
                             var p = Center + Radius*math.normalize(other.Center - Center);
-                            return HullCollision.Contains(new RigidTransform(MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[MeshPtr], (p-MeshTransform.Position)/MeshTransform.Scale);
+                            return HullCollision.Contains(new RigidTransform(other.MeshTransform.Rotation, 0), ((NativeHull*)NativeHullManager.m_Hulls.Data)[other.MeshPtr], (p-other.MeshTransform.Position)/other.MeshTransform.Scale);
                         }
                         default:
                             throw new NotImplementedException("Unimplemented collider collision");

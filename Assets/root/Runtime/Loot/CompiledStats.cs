@@ -3,6 +3,7 @@ using BovineLabs.Saving;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -10,12 +11,6 @@ using UnityEngine;
 public struct CompiledStats : IComponentData
 {
     public TiledStatsTree CompiledStatsTree;
-    
-    public float ProjectileRate;
-    public float ProjectileSpeed;
-    public float ProjectileDuration;
-    public float ProjectileSize;
-    public float ProjectileDamage;
 }
 
 [Save]
@@ -26,6 +21,10 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
     /// </summary>
     public RingPrimaryEffect DirtyFlags;
 
+    public void SetDirty()
+    {
+        DirtyFlags |= (RingPrimaryEffect)byte.MaxValue;
+    }
     public void SetDirty(Ring ring)
     {
         DirtyFlags |= ring.Stats.PrimaryEffect;
@@ -33,48 +32,6 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
     public void SetDirty(RingStats ringStats)
     {
         DirtyFlags |= ringStats.PrimaryEffect;
-    }
-}
-
-[Serializable]
-public readonly struct ProjectileStats
-{
-    public readonly float Speed;
-    public readonly float Duration;
-    public readonly float Damage;
-    public readonly float Size;
-    
-    public readonly byte ProjectileCount;
-    public readonly byte PierceCount;
-
-    public ProjectileStats(in DynamicBuffer<Ring> rings, in int ringIndex, in CompiledStats compiledStats, in DynamicBuffer<EquippedGem> equippedGems)
-    {            
-        var ring = rings[ringIndex];
-        
-        // Get shared stats
-        Speed = ring.Stats.PrimaryEffect.GetProjectileSpeed(compiledStats.ProjectileSpeed);
-        Duration = ring.Stats.PrimaryEffect.GetProjectileDuration(compiledStats.ProjectileDuration);
-        Damage = ring.Stats.PrimaryEffect.GetProjectileDamage(compiledStats.ProjectileDamage);
-        Size = ring.Stats.PrimaryEffect.GetProjectileSize(compiledStats.ProjectileSize);
-
-        // Get gem mods
-        ProjectileCount = 0;
-        PierceCount = 0;
-
-        var gemMin = ringIndex * Gem.k_GemsPerRing;
-        var gemMax = (ringIndex + 1) * Gem.k_GemsPerRing;
-        for (int gemIndex = gemMin; gemIndex < gemMax; gemIndex++)
-        {
-            switch (equippedGems[gemIndex].Gem.GemType)
-            {
-                case Gem.Type.Multishot:
-                    ProjectileCount++;
-                    break;
-                case Gem.Type.Pierce:
-                    PierceCount++;
-                    break;
-            }
-        }
     }
 }
 
@@ -160,7 +117,6 @@ public partial struct CompiledStatsSystem : ISystem
                 if (!ring.Stats.PrimaryEffect.IsPersistent()) continue;
                 
                 PrimaryEffectStack stack = new(in rings, ringIndex);
-                ProjectileStats projectileStats = new ProjectileStats(in rings, in ringIndex, in stats, in gems);
                 
                 // Fire projectiles
                 for (int effectIt = 0; effectIt < (int)RingPrimaryEffect.Length; effectIt++)
@@ -195,7 +151,7 @@ public partial struct CompiledStatsSystem : ISystem
                         case RingPrimaryEffect.Projectile_Orbit:
                         {
                             var template = Projectiles[OrbitProjectileData.TemplateIndex + (tier - 1)];
-                            byte spawnCount = (byte)(5 + projectileStats.ProjectileCount);
+                            byte spawnCount = (byte)(5 + stats.CompiledStatsTree.ExtraProjectiles);
                             for (byte projSpawnIt = 0; projSpawnIt < spawnCount; projSpawnIt++)
                             {
                                 Debug.Log($"Creating {effect} projectile...");
@@ -203,7 +159,7 @@ public partial struct CompiledStatsSystem : ISystem
                                 var projectileE = ecb.Instantiate(template.Entity);
                                 var projectileT = transform;
                                 projectileT.Position += r.NextFloat3Direction();
-                                projectileT.Scale = projectileStats.Size;
+                                projectileT.Scale = stats.CompiledStatsTree.Size;
                                 ecb.SetComponent(projectileE, projectileT);
 
                                 ecb.SetComponent(projectileE, ProjectileLoopTrigger.Empty);
@@ -214,9 +170,9 @@ public partial struct CompiledStatsSystem : ISystem
                                     SeekerCount = spawnCount
                                 });
 
-                                ecb.SetComponent(projectileE, new MovementSettings() { Speed = projectileStats.Speed });
+                                ecb.SetComponent(projectileE, new MovementSettings() { Speed = 30f*stats.CompiledStatsTree.ProjectileSpeed });
                                 ecb.SetComponent(projectileE, new DestroyAtTime() { DestroyTime = double.MaxValue });
-                                ecb.SetComponent(projectileE, new Projectile() { Damage = projectileStats.Damage });
+                                ecb.SetComponent(projectileE, new Projectile((int)math.ceil((float)stats.CompiledStatsTree.Damage*Projectile.PerFrameDamageMod)));
                                 ecb.SetComponent(projectileE, new OwnedProjectile(){ PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
                             }
                             break;

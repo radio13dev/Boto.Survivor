@@ -56,12 +56,7 @@ public class SurvivorAuthoring : MonoBehaviourGizmos
             
             // Stats
             AddComponent(entity, new Wallet(){ Value = 0 });
-            var stats =  new TiledStatsTree();
-            stats[0] = 1;
-            if (authoring.UnlockAllSkills > 0)
-                for (int i = 0; i < TiledStats.TileCols*TiledStats.TileRows; i++)
-                    stats[i] = authoring.UnlockAllSkills;
-            AddComponent(entity, stats);
+            AddComponent(entity, TiledStatsTree.Default);
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());
             
