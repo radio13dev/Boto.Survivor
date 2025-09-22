@@ -25,7 +25,7 @@ public class CameraRegistry : MonoBehaviour
             if (m_UI) return m_UI;
 #if UNITY_EDITOR
             if (!Application.isPlaying) 
-                return Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).FirstOrDefault(c => c != Camera.main);
+                return Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).FirstOrDefault(c => c.gameObject.name == "UI Camera");
 #endif
             return null;
         }

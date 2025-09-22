@@ -537,11 +537,6 @@ public partial struct GameRpcSystem : ISystem
                         Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but it was already max level.");
                         continue;
                     }
-                    if (!stats.CanLevelUp(rpc.AffectedStat) && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
-                    {
-                        Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but it's locked.");
-                        continue;
-                    }
                     
                     var wallet = playerQuery.GetSingleton<Wallet>();
                     

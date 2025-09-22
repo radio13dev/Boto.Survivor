@@ -11,6 +11,17 @@ using UnityEngine;
 public struct CompiledStats : IComponentData
 {
     public TiledStatsTree CompiledStatsTree;
+
+    public static CompiledStats Demo
+    {
+        get
+        {
+            return new CompiledStats()
+            {
+                CompiledStatsTree = TiledStatsTree.Demo
+            };
+        }
+    }
 }
 
 [Save]

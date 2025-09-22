@@ -2,21 +2,36 @@
 using System.Collections.Generic;
 using BovineLabs.Saving;
 using TMPro;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 [Save]
 public struct Wallet : IComponentData
 {
     public long Value;
+
+    public static Wallet Demo
+    {
+        get
+        {
+            return new Wallet()
+            {
+                Value = Random.Range(0, 100)
+            };
+        }
+    }
 }
 
 public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource
 {
+    public const int MaxLevel = 5;
+
     public Image[] BodyImages;
     public Image[] OutlineImages;
     public Image[] IconImages;
@@ -26,20 +41,27 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public Image Image;
     public TMP_Text LevelText;
 
-    public Image NotAvailableOverlay;
     public Image NotEnoughMoneyOverlay;
+    public Image HasEnoughMoneyOverlay;
 
+    public Image HasNoPointOutline;
     public Image HasPointOutline;
     public Image MaxedOutline;
     public Image ModifiedOutline;
+    public TMP_Text ModifiedText;
 
-    public Image[] Connections = new Image[4];
     public Image[] Connecteds = new Image[4];
+    public Image[] Connecteds_Ring = new Image[4];
 
     public PooledParticle LevelUpParticle;
     
     public RingDisplay RingTemplate;
     public RingDisplay m_SpawnedRing;
+    public Image Background_Ring;
+    public GameObject NotEnoughMoneyOverlay_Ring;
+    public GameObject HasEnoughMoneyOverlay_Ring;
+    public GameObject HasNoPointOutline_Ring;
+    public GameObject HasPointOutline_Ring;
     
     public Transform RingContainer;
     public Transform UiContainer;
@@ -67,7 +89,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     {
         if (UIFocus.Focus == gameObject)
         {
-            if (DescriptionUI.m_CustomZero == gameObject && !NotAvailableOverlay.gameObject.activeSelf)
+            if (DescriptionUI.m_CustomZero == gameObject)
                 DoLevelUp();
             FocusParentToMe();
         }
@@ -125,6 +147,12 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             img.sprite = icon;
     }
 
+    public void SetColor(Color rowColor)
+    {
+        Background.color = rowColor;
+        Background_Ring.color = rowColor;
+    }
+
     int2 TileKey;
     int Level;
     int CompiledLevel;
@@ -138,7 +166,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             new int2(-1,0)
         };
 
-    public void RefreshState(int2 tileKey, in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in DynamicBuffer<Ring> rings)
+    public void RefreshState(int2 tileKey, in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in NativeArray<Ring> rings)
     {
         bool init = math.any(TileKey != tileKey);
         TileKey = tileKey;
@@ -155,19 +183,22 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             particle.transform.localScale = Vector3.one * 100;
         }
 
-        LevelText.text = $"{CompiledLevel}/{5}";
+        LevelText.text = $"{CompiledLevel}/{MaxLevel}";
 
-        m_Cost = baseStats.GetLevelUpCost(TileKey);
+        m_Cost = 50; //baseStats.GetLevelUpCost(TileKey);
         var canAfford = m_Cost <= wallet.Value;
         
-        NotEnoughMoneyOverlay.gameObject.SetActive(baseStats.CanLevelUp(TileKey) && !canAfford);
-        MaxedOutline.gameObject.SetActive(Level >= 5);
-        HasPointOutline.gameObject.SetActive(Level > 0 && Level < 5);
+        NotEnoughMoneyOverlay.gameObject.SetActive(!canAfford);
+        HasEnoughMoneyOverlay.gameObject.SetActive(canAfford && Level < MaxLevel);
+        MaxedOutline.gameObject.SetActive(Level >= MaxLevel);
+        HasNoPointOutline.gameObject.SetActive(CompiledLevel == 0);
+        transform.localScale = Level > 0 ? Vector3.one : Vector3.one*0.6f;
+        HasPointOutline.gameObject.SetActive(Level > 0 && Level < MaxLevel);
         ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
+        ModifiedText.text = (CompiledLevel - Level).ToValueChangeString();
+        ModifiedText.color = CompiledLevel > Level ? Palette.MoneyChangePositive : Palette.MoneyChangeNegative;
 
         bool leveled = Level > 0;
-        bool locked = !leveled && !baseStats.CanLevelUp(tileKey);
-        bool spentLevel = baseStats.GetLevelsSpent() > 0;
         
         for (int i = 0; i < 4; i++)
         {
@@ -175,27 +206,27 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             if (dirLeveled && leveled)
             {
                 Connecteds[i].gameObject.SetActive(true);
-                Connections[i].gameObject.SetActive(false);
-            }
-            else if (dirLeveled || leveled)
-            {
-                Connecteds[i].gameObject.SetActive(false);
-                Connections[i].gameObject.SetActive(true);
+                Connecteds_Ring[i].gameObject.SetActive(true);
             }
             else
             {
                 Connecteds[i].gameObject.SetActive(false);
-                Connections[i].gameObject.SetActive(false);
+                Connecteds_Ring[i].gameObject.SetActive(false);
             }
         }
-
-        NotAvailableOverlay.gameObject.SetActive(locked);
+        
+        
         
         var ringIndex = TiledStats.Get(TileKey).GetRingIndex();
         if (ringIndex >= 0)
         {
             if (!m_SpawnedRing) m_SpawnedRing = Instantiate(RingTemplate, RingContainer);
             m_SpawnedRing.UpdateRing(ringIndex, rings.IsCreated ? rings[ringIndex] : default, ReadOnlySpan<EquippedGem>.Empty);
+        
+            NotEnoughMoneyOverlay_Ring.gameObject.SetActive(!canAfford);
+            HasEnoughMoneyOverlay_Ring.gameObject.SetActive(canAfford && Level == 0);
+            HasNoPointOutline_Ring.gameObject.SetActive(CompiledLevel == 0);
+            HasPointOutline_Ring.gameObject.SetActive(CompiledLevel > 0);
         }
         else if (m_SpawnedRing)
         {
@@ -234,15 +265,10 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         //else
             rows = stat.GetDescriptionRows(CompiledLevel, CompiledLevel + 1);
 
-        if (Level >= 5)
+        if (Level >= MaxLevel)
         {
             // Maxed out
             bottomRow = ($"Maxed!", DescriptionUI.eBottomRowIcon.None, "-");
-        }
-        else if (NotAvailableOverlay.gameObject.activeSelf)
-        {
-            // Not available
-            bottomRow = ($"Locked", DescriptionUI.eBottomRowIcon.None, "No adjacent unlock");
         }
         else
         {

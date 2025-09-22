@@ -1,5 +1,4 @@
 using System;
-using AYellowpaper.SerializedCollections;
 using Collisions;
 using NativeTrees;
 using Unity.Collections;
@@ -154,8 +153,8 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public TerrainAuthoring[] Terrains;
     public ProjectileAuthoring[] Projectiles;
     public EnemyCharacterAuthoring[] Enemies;
-    public SerializedDictionary<Gem.Type, InstancedResource> GemVisuals;
-    public SerializedDictionary<RingPrimaryEffect, InstancedResource> RingVisuals;
+    public GemVisuals GemVisuals;
+    public RingVisuals RingVisuals;
     public SurvivorAuthoring[] Survivors;
     public GenericDatabase Prefabs;
 
@@ -235,7 +234,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 }
             }
             
-            if (authoring.GemVisuals?.Count > 0)
+            if (authoring.GemVisuals && authoring.GemVisuals.Value?.Count > 0)
             {
                 if (!authoring.InstancedResourcesDatabase)
                 {
@@ -245,7 +244,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 {
                     var buffer = AddBuffer<GameManager.GemVisual>(entity);
                     buffer.Resize(Enum.GetValues(typeof(Gem.Type)).Length , NativeArrayOptions.ClearMemory);
-                    foreach (var kvp in authoring.GemVisuals)
+                    foreach (var kvp in authoring.GemVisuals.Value)
                     {
                         var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
                         if (index == -1)
@@ -257,7 +256,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 }
             }
             
-            if (authoring.RingVisuals?.Count > 0)
+            if (authoring.RingVisuals && authoring.RingVisuals.Value?.Count > 0)
             {
                 if (!authoring.InstancedResourcesDatabase)
                 {
@@ -267,7 +266,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 {
                     var buffer = AddBuffer<GameManager.RingVisual>(entity);
                     buffer.Resize(Enum.GetValues(typeof(RingPrimaryEffect)).Length , NativeArrayOptions.ClearMemory);
-                    foreach (var kvp in authoring.RingVisuals)
+                    foreach (var kvp in authoring.RingVisuals.Value)
                     {
                         var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
                         if (index == -1)

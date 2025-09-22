@@ -5,6 +5,7 @@ using BovineLabs.Saving;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum TiledStat
 {
@@ -120,21 +121,6 @@ public unsafe struct TiledStatsTree : IComponentData
     }
 
     [Pure]
-    public bool CanLevelUp(int2 key) => CanLevelUp(GetStat(key));
-    [Pure]
-    public bool CanLevelUp(TiledStat stat)
-    {
-        if (GetLevelsSpent() == 0) return true;
-        
-        var c = math.int2(((int)stat)%TiledStats.TileCols, ((int)stat)/TiledStats.TileCols);
-        return this[c+math.int2(1,0)] > 0 ||
-               this[c+math.int2(0,1)] > 0 ||
-               this[c+math.int2(-1,0)] > 0 ||
-               this[c+math.int2(0,-1)] > 0
-        ;
-    }
-
-    [Pure]
     public bool HasCompletedColumn(int x)
     {
         for (int y = 0; y < TiledStats.TileRows; y++)
@@ -177,6 +163,29 @@ public unsafe struct TiledStatsTree : IComponentData
     public byte PierceCount => (byte)GetData(TiledStat.Stat_16_Intersect_Pierce, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public float Cooldown => 1 + (byte)GetData(TiledStat.Stat_18_Frequency_ProjRate, out var lvl).EffectAValues.Evaluate(lvl);
+
+    public static TiledStatsTree Demo
+    {
+        get
+        {
+            TiledStatsTree demo = new TiledStatsTree();
+            
+            //for (int i = 0; i < TiledStats.TileCols * TiledStats.TileRows; i++)
+            //    demo[i] = math.clamp(Random.Range(0, 15) - 7, 0, 7);
+            
+            demo[TiledStat.Stat_06] = 1;
+            demo[TiledStat.Stat_07] = 2;
+            
+            demo[TiledStat.Stat_15_Scale_Scale]=3;
+            demo[TiledStat.Stat_16_Intersect_Pierce] = 1;
+            
+            demo[TiledStat.Stat_26] = 1;
+            demo[TiledStat.Stat_27]=2;
+            
+            demo[TiledStat.Stat_31] = 1;
+            return demo;
+        }
+    }
 }
 
 public static partial class TiledStats

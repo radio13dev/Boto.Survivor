@@ -154,6 +154,48 @@ public abstract class Database<T> : Database where T : Object
 
 public abstract class Database : ScriptableObject
 {
+#if UNITY_EDITOR
+    public static D GetMainDatabase<D>() where D : Database
+    {
+        var databaseKey = typeof(D).Name + "Asset";
+        string[] result = AssetDatabase.FindAssets(databaseKey);
+        Object database = null;
+        if (result.Length > 1)
+            Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
+
+        if (result.Length == 0)
+        {
+            Debug.Log($"No database found.");
+        }
+        else
+        {
+            string path = AssetDatabase.GUIDToAssetPath(result[0]);
+            database = AssetDatabase.LoadAssetAtPath(path, typeof(D));
+            Debug.Log("Found Asset File !!!");
+        }
+        return database as D;
+    }
+    
+    public static G GetGenericAsset<G>(string assetKey) where G : Object
+    {
+        string[] result = AssetDatabase.FindAssets(assetKey);
+        Object asset = null;
+        if (result.Length > 1)
+            Debug.LogError($"More than 1 Asset founded: {string.Join(", ", result.Select(r => AssetDatabase.GUIDToAssetPath(r)))}");
+
+        if (result.Length == 0)
+        {
+            Debug.Log($"No database found.");
+        }
+        else
+        {
+            string path = AssetDatabase.GUIDToAssetPath(result[0]);
+            asset = AssetDatabase.LoadAssetAtPath(path, typeof(G));
+            Debug.Log("Found Asset File !!!");
+        }
+        return asset as G;
+    }
+#endif
 }
 
 #if UNITY_EDITOR

@@ -7,30 +7,31 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Ring_Melee
-  m_Shader: {fileID: -6465566751694194690, guid: 60ed2d7aab43fa64aa16680d77f1f8b8, type: 3}
+  m_Name: Background 3
+  m_Shader: {fileID: -6465566751694194690, guid: 82117259ef41dc84488ed72dbcbe8c0c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   - SHADOWCASTER
-  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _BaseTex:
+        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
@@ -53,7 +54,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b2ee15c7744aecc49b7b13f788755b90, type: 3}
+        m_Texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
@@ -72,8 +73,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Pattern:
+        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _RampTexture:
-        m_Texture: {fileID: 2800000, guid: a1a4108227a8a8b4f9067f80f37c33ec, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -121,14 +126,15 @@ Material:
     - _CastShadows: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _ColorMask: 15
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
-    - _DstBlendAlpha: 10
-    - _EdgePower: 1
-    - _EdgeScale: 1.5
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _EdgePower: 0
+    - _EdgeScale: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -147,37 +153,47 @@ Material:
     - _RingRadiusSq: 6400
     - _SPECULAR: 0
     - _SampleGI: 0
-    - _Smoothness: 0.5
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Surface: 0
     - _Thickness: 52.6
     - _Tiling: 0.1
+    - _UIMaskSoftnessX: 1
+    - _UIMaskSoftnessY: 1
+    - _UiMaskIgnored: 1
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - _ZWriteControl: 0
     - _r1: 1
     - _r2: 2
     m_Colors:
-    - _A: {r: 1, g: 0.68315864, b: 0, a: 1}
-    - _B: {r: 1, g: 0.41822243, b: 0, a: 1}
-    - _BaseColor: {r: 0, g: 0, b: 0, a: 1}
-    - _C: {r: 0.8, g: 0.6711706, b: 0.46666667, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DiffuseColor: {r: 0.2588235, g: 1, b: 0.35708147, a: 1}
-    - _EdgeColor: {r: 1, g: 0.7923569, b: 0.2971698, a: 1}
+    - White: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.60408956, g: 0.41438237, b: 0.9056604, a: 1}
+    - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 0.81568635, g: 0.3803922, b: 0.39607847, a: 1}
+    - _DiffuseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HashA: {r: 1, g: 0.48839837, b: 0.2028302, a: 1}
     - _HashB: {r: 1, g: 0, b: 0.13477135, a: 1}
+    - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _Scale: {r: 20, g: 20, b: 20, a: 0}
     - _Scale2: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _SpecularColour: {r: 1, g: 1, b: 1, a: 1}
+    - _Tiling: {r: 80, g: 80, b: 0, a: 0}
+    - _TimeOffset: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5629370939388152073

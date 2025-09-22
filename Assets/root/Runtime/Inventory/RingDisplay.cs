@@ -37,11 +37,13 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         // Display ring
         if (ring.Stats.IsValid)
         {
-            if (m_CreatedMat) Destroy(m_CreatedMat);
+            if (m_CreatedMat) 
+                if (!Application.isPlaying) DestroyImmediate(m_CreatedMat); 
+                else Destroy(m_CreatedMat);
             RingRenderer.material = Ring.Stats.Material;
             RingFilter.sharedMesh = Ring.Stats.Mesh;
             m_CreatedMat = RingRenderer.material;
-            m_CreatedMat.SetInteger(UiMaskIgnored, 0); // We can do this in editor because all editor rings are invalid.
+            m_CreatedMat.SetInteger(UiMaskIgnored, 0);
         }
         else
         {

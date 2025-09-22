@@ -1,6 +1,7 @@
 ﻿using System;
 using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -9,28 +10,50 @@ using Random = Unity.Mathematics.Random;
 [Save]
 public struct Ring : IBufferElementData
 {
-    public const int k_RingCount = 8;
+    public const int k_RingCount = 6;
 
     public double NextActivateTime;
 
     public RingStats Stats;
+
+    public static NativeArray<Ring> DemoArray
+    {
+        get
+        {
+            Random r = Random.CreateFromIndex((uint)UnityEngine.Random.Range(1, 100));
+            var arr = new NativeArray<Ring>(k_RingCount, Allocator.Temp);
+            arr[2] = new Ring()
+            {
+                Stats = RingStats.Generate(ref r)
+            };
+            arr[4] = new Ring()
+            {
+                Stats = RingStats.Generate(ref r)
+            };
+            arr[5] = new Ring()
+            {
+                Stats = RingStats.Generate(ref r)
+            };
+            return arr;
+        }
+    }
 }
 
 [Flags]
 public enum RingPrimaryEffect : byte
 {
     None = 0,
-    
-    Projectile_Ring         = 1 << 0,
+
+    Projectile_Ring = 1 << 0,
     Projectile_NearestRapid = 1 << 1,
-    Projectile_Seeker       = 1 << 2,
-    Projectile_Band         = 1 << 3,
-    
-    Projectile_Melee        = 1 << 4,
-    Projectile_Returning    = 1 << 5,
-    Projectile_Mark         = 1 << 6,
-    Projectile_Orbit        = 1 << 7,
-    
+    Projectile_Seeker = 1 << 2,
+    Projectile_Band = 1 << 3,
+
+    Projectile_Melee = 1 << 4,
+    Projectile_Returning = 1 << 5,
+    Projectile_Mark = 1 << 6,
+    Projectile_Orbit = 1 << 7,
+
     Length = 8
 }
 
@@ -38,7 +61,7 @@ public static class RingPrimaryEffectExtension
 {
     public static int GetMostSigBit(this RingPrimaryEffect eff)
     {
-        return sizeof(int)*8 - math.lzcnt((uint)eff) - 1;
+        return sizeof(int) * 8 - math.lzcnt((uint)eff) - 1;
     }
 }
 
@@ -51,7 +74,7 @@ public unsafe struct PrimaryEffectStack
         int depth;
         int init;
         const int mask = 1;
-        
+
         for (int i = 0; i < rings.Length; i++)
         {
             depth = 0;
@@ -60,12 +83,13 @@ public unsafe struct PrimaryEffectStack
             {
                 if ((init & mask) != 0)
                     Stacks[depth]++;
-            
+
                 init >>= 1;
                 depth++;
             }
         }
     }
+
     public PrimaryEffectStack(in DynamicBuffer<Ring> rings, int ringIndex)
     {
         int main = (int)rings[ringIndex].Stats.PrimaryEffect;
@@ -73,7 +97,7 @@ public unsafe struct PrimaryEffectStack
         int depth;
         int init;
         const int mask = 1;
-        
+
         for (int i = 0; i <= ringIndex; i++)
         {
             comp = main;
@@ -83,7 +107,7 @@ public unsafe struct PrimaryEffectStack
             {
                 if ((comp & mask) != 0 && (init & mask) != 0)
                     Stacks[depth]++;
-            
+
                 comp >>= 1;
                 init >>= 1;
                 depth++;
@@ -109,7 +133,6 @@ public struct RingStats : IComponentData
 
     public string GetTitleString()
     {
-        
         switch (PrimaryEffect)
         {
             case RingPrimaryEffect.Projectile_Ring:
@@ -135,10 +158,21 @@ public struct RingStats : IComponentData
     }
 
     #region CLIENTSIDE
+
+#if UNITY_EDITOR
+    static RingVisuals RingVisualsDatabase_Editor => m_RingVisualsDatabase ? m_RingVisualsDatabase : m_RingVisualsDatabase = Database.GetGenericAsset<RingVisuals>("RingVisualsDatabase");
+    static RingVisuals m_RingVisualsDatabase;
+#endif
+
     public Material Material
     {
         get
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return RingVisualsDatabase_Editor.Value[PrimaryEffect].Material;
+#endif
+
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
             return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Material;
@@ -149,10 +183,16 @@ public struct RingStats : IComponentData
     {
         get
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return RingVisualsDatabase_Editor.Value[PrimaryEffect].Mesh;
+#endif
+
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
             return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Mesh;
         }
     }
+
     #endregion
 }

@@ -3,17 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class TiledStatsUI : MonoBehaviour
 {
-    public Material[] UiMaskMaterials = Array.Empty<Material>();
+    public Transform CenterTransform;
     public Transform TopTransform;
 
+    public TiledStatsUITile TileTemplate;
+    public Transform TilesContainer;
     public List<TiledStatsUITile> Tiles = new();
     public Vector2Int BorderCount = new Vector2Int(1,1);
     public Vector2 Spacing;
@@ -32,7 +36,7 @@ public class TiledStatsUI : MonoBehaviour
     [EditorButton]
     public void ForceRebuild()
     {
-        while (Tiles.Count > 1)
+        while (Tiles.Count > 0)
         {
             DestroyImmediate(Tiles[^1].gameObject);
             Tiles.RemoveAt(Tiles.Count-1);
@@ -75,11 +79,11 @@ public class TiledStatsUI : MonoBehaviour
             && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats) 
             && GameEvents.TryGetBuffer<Ring>(entity, out var rings))
         {
-            RebuildTiles(wallet, baseStats, compiledStats, rings);
+            RebuildTiles(wallet, baseStats, compiledStats, rings.AsNativeArray());
         }
     }
 
-    internal void RebuildTiles(in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in DynamicBuffer<Ring> rings)
+    internal void RebuildTiles(in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in NativeArray<Ring> rings)
     {
         int c = (TiledStats.TileCount.x + BorderCount.x*2)*(TiledStats.TileCount.y+BorderCount.y*2);
         for (int i = 0; i < Tiles.Count; i++)
@@ -92,7 +96,7 @@ public class TiledStatsUI : MonoBehaviour
         }
         while (Tiles.Count < c)
         {
-            var tile = Instantiate(Tiles[0], Tiles[0].transform.parent);
+            var tile = Instantiate(TileTemplate, TilesContainer);
             Tiles.Add(tile);
         }
         while (Tiles.Count > c)
@@ -109,7 +113,7 @@ public class TiledStatsUI : MonoBehaviour
             
             var tileKey = new int2(x % TiledStats.TileCount.x, y % TiledStats.TileCount.y);
             tile.SetImages(ColumnSprites[tileKey.x], ColumnSpritesOutlines[tileKey.x], Images[tileKey.x + tileKey.y*TiledStats.TileCount.x]);
-            tile.Background.color = RowColors[tileKey.y];
+            tile.SetColor(RowColors[tileKey.y]);
             tile.gameObject.name = $"Tile: " + tile.Image.sprite.name;
             
             tile.RefreshState(tileKey, in wallet, in baseStats, in compiledStats, in rings);
@@ -150,22 +154,23 @@ public class TiledStatsUI : MonoBehaviour
             CompleteColumns[x].transform.localPosition = new float3(
                 (mathu.modabs(Offset.x + x, TiledStats.TileCount.x + BorderCount.x*2) - (TiledStats.TileCount.x+BorderCount.x-1)/2.0f) * Spacing.x,
                 0,
-                0);
+                60);
         }
         for (int y = 0; y < CompleteRows.Length; y++)
         {
             CompleteRows[y].transform.localPosition = new float3(
                 0,
                 (mathu.modabs(Offset.y + y, TiledStats.TileCount.y + BorderCount.y*2) - (TiledStats.TileCount.y+BorderCount.y-1)/2.0f) * Spacing.y,
-                0);
+                60);
         }
         m_Dirty = false;
     }
 
     private void OnValidate()
     {
-        RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats(){ CompiledStatsTree = TiledStatsTree.Default }, default);
+        RebuildTiles(Wallet.Demo, TiledStatsTree.Demo, CompiledStats.Demo, Ring.DemoArray);
         RefreshGrid();
+        UpdateMask();
     }
 
     private void Update()
@@ -186,10 +191,10 @@ public class TiledStatsUI : MonoBehaviour
     [EditorButton]
     public void UpdateMask()
     {
-        var center = CameraRegistry.UI.WorldToScreenPoint(transform.position);
-        var top = CameraRegistry.UI.WorldToScreenPoint(TopTransform.position);
-        Shader.SetGlobalVector("_UiCenter", center);
-        Shader.SetGlobalFloat("_UiSize", (top - center).y);
+        var center = (float3)CameraRegistry.UI.WorldToScreenPoint(CenterTransform.position);
+        var top = (float3)CameraRegistry.UI.WorldToScreenPoint(TopTransform.position);
+        Shader.SetGlobalVector("_UiCenter", center.xyxx);
+        Shader.SetGlobalFloat("_UiSize", math.distance(top.xy,center.xy));
     }
 
     public Vector2 DragScale = new Vector2(1,1);
