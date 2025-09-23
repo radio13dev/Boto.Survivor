@@ -183,15 +183,15 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             particle.transform.localScale = Vector3.one * 100;
         }
 
-        LevelText.text = $"{CompiledLevel}/{MaxLevel}";
+        LevelText.text = $"{Level}/{MaxLevel}";
 
-        m_Cost = 50; //baseStats.GetLevelUpCost(TileKey);
+        m_Cost = baseStats.GetLevelUpCost(TileKey);
         var canAfford = m_Cost <= wallet.Value;
         
         NotEnoughMoneyOverlay.gameObject.SetActive(!canAfford);
         HasEnoughMoneyOverlay.gameObject.SetActive(canAfford && Level < MaxLevel);
         MaxedOutline.gameObject.SetActive(Level >= MaxLevel);
-        HasNoPointOutline.gameObject.SetActive(CompiledLevel == 0);
+        HasNoPointOutline.gameObject.SetActive(Level == 0 && CompiledLevel == 0);
         transform.localScale = Level > 0 ? Vector3.one : Vector3.one*0.6f;
         HasPointOutline.gameObject.SetActive(Level > 0 && Level < MaxLevel);
         ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);

@@ -170,19 +170,19 @@ public unsafe struct TiledStatsTree : IComponentData
         {
             TiledStatsTree demo = new TiledStatsTree();
             
-            //for (int i = 0; i < TiledStats.TileCols * TiledStats.TileRows; i++)
-            //    demo[i] = math.clamp(Random.Range(0, 15) - 7, 0, 7);
+            for (int i = 0; i < TiledStats.TileCols * TiledStats.TileRows; i++)
+                demo[i] = math.clamp(Random.Range(0, 50) - 42, 0, 7);
             
-            demo[TiledStat.Stat_06] = 1;
-            demo[TiledStat.Stat_07] = 2;
-            
-            demo[TiledStat.Stat_15_Scale_Scale]=3;
-            demo[TiledStat.Stat_16_Intersect_Pierce] = 1;
-            
-            demo[TiledStat.Stat_26] = 1;
-            demo[TiledStat.Stat_27]=2;
-            
-            demo[TiledStat.Stat_31] = 1;
+            //demo[TiledStat.Stat_06] = 1;
+            //demo[TiledStat.Stat_07] = 2;
+            //
+            //demo[TiledStat.Stat_15_Scale_Scale]=3;
+            //demo[TiledStat.Stat_16_Intersect_Pierce] = 1;
+            //
+            //demo[TiledStat.Stat_26] = 1;
+            //demo[TiledStat.Stat_27]=2;
+            //
+            //demo[TiledStat.Stat_31] = 1;
             return demo;
         }
     }
