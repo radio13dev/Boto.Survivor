@@ -31,6 +31,9 @@ public class ElementFocus : MonoBehaviour
             }
             
             scale = FocusedScale;
+            
+            if (UIFocus.Interact.TryGetComponent<IFocusScale>(out var scaler))
+                scale *= scaler.GetFocusScale();
         }
         else if (UIFocus.Focus)
         {
@@ -44,6 +47,9 @@ public class ElementFocus : MonoBehaviour
             }
             
             scale = Vector3.one;
+            
+            if (UIFocus.Focus.TryGetComponent<IFocusScale>(out var scaler))
+                scale *= scaler.GetFocusScale();
             
             if (!m_Active)
             {

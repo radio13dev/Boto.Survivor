@@ -179,7 +179,8 @@ public class TiledStatsUI : MonoBehaviour
 
     private void OnValidate()
     {
-        RebuildTiles(Wallet.Demo, TiledStatsTree.Demo, CompiledStats.Demo, Ring.DemoArray);
+        var demoStats = TiledStatsTree.Demo;
+        RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
         RefreshGrid();
         UpdateMask();
     }

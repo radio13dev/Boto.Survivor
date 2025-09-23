@@ -12,15 +12,12 @@ public struct CompiledStats : IComponentData
 {
     public TiledStatsTree CompiledStatsTree;
 
-    public static CompiledStats Demo
+    public static CompiledStats GetDemo(TiledStatsTree baseStats)
     {
-        get
+        return new CompiledStats()
         {
-            return new CompiledStats()
-            {
-                CompiledStatsTree = TiledStatsTree.Demo
-            };
-        }
+            CompiledStatsTree = baseStats + TiledStatsTree.Demo
+        };
     }
 }
 

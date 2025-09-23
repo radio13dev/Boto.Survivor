@@ -50,7 +50,7 @@ public enum TiledStat
 [Save]
 public unsafe struct TiledStatsTree : IComponentData
 {
-    public fixed int Levels[TiledStats.TileCols * TiledStats.TileRows];
+    [SerializeField] fixed int m_Levels[TiledStats.TileCols * TiledStats.TileRows];
 
     public int this[int2 tileKey]
     {
@@ -72,11 +72,11 @@ public unsafe struct TiledStatsTree : IComponentData
         [Pure]
         get
         {
-            return Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))];
+            return m_Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))];
         }
         set
         {
-            Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))] = value;
+            m_Levels[mathu.modabs(index, (TiledStats.TileCols * TiledStats.TileRows))] = value;
         }
     }
 
@@ -104,9 +104,9 @@ public unsafe struct TiledStatsTree : IComponentData
         long levels = 0;
         for (int i = 0; i < (TiledStats.TileCols * TiledStats.TileRows); i++)
         {
-            if (Levels[i] > 0)
+            if (m_Levels[i] > 0)
             {
-                levels += (long)Levels[i];
+                levels += (long)m_Levels[i];
             }
         }
         return levels;
@@ -185,6 +185,14 @@ public unsafe struct TiledStatsTree : IComponentData
             //demo[TiledStat.Stat_31] = 1;
             return demo;
         }
+    }
+    
+    public static TiledStatsTree operator +(TiledStatsTree left, TiledStatsTree right)
+    {
+        TiledStatsTree result = new TiledStatsTree();
+        for (int i = 0; i < TiledStats.TileCols * TiledStats.TileRows; i++)
+            result[i] = left[i] + right[i];
+        return result;
     }
 }
 

@@ -28,13 +28,15 @@ public struct Wallet : IComponentData
     }
 }
 
-public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource
+public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource, IFocusScale
 {
     public const int MaxLevel = 5;
 
     public Image[] BodyImages;
     public Image[] OutlineImages;
     public Image[] IconImages;
+    
+    public Image[] ToColor;
 
     public Image Background;
     public Image Border;
@@ -65,6 +67,9 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     
     public Transform RingContainer;
     public Transform UiContainer;
+    
+    public GameObject[] PipsMain_DisabledOverlays = Array.Empty<GameObject>();
+    public GameObject[] PipsExtra = Array.Empty<GameObject>();
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -149,6 +154,8 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public void SetColor(Color rowColor)
     {
+        foreach (var toColor in ToColor)
+            toColor.color = rowColor;
         Background.color = rowColor;
         Background_Ring.color = rowColor;
     }
@@ -192,17 +199,17 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         HasEnoughMoneyOverlay.gameObject.SetActive(canAfford && Level < MaxLevel);
         MaxedOutline.gameObject.SetActive(Level >= MaxLevel);
         HasNoPointOutline.gameObject.SetActive(Level == 0 && CompiledLevel == 0);
-        transform.localScale = Level > 0 ? Vector3.one : Vector3.one*0.6f;
+        transform.localScale = CompiledLevel > 0 ? Vector3.one : Vector3.one*0.6f;
         HasPointOutline.gameObject.SetActive(Level > 0 && Level < MaxLevel);
-        ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
-        ModifiedText.text = (CompiledLevel - Level).ToValueChangeString();
-        ModifiedText.color = CompiledLevel > Level ? Palette.MoneyChangePositive : Palette.MoneyChangeNegative;
+        //ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
+        //ModifiedText.text = (CompiledLevel - Level).ToValueChangeString();
+        //ModifiedText.color = CompiledLevel > Level ? Palette.MoneyChangePositive : Palette.MoneyChangeNegative;
 
-        bool leveled = Level > 0;
+        bool leveled = CompiledLevel > 0;
         
         for (int i = 0; i < 4; i++)
         {
-            bool dirLeveled = baseStats[tileKey + directions[i]] > 0;
+            bool dirLeveled = compiledStats.CompiledStatsTree[tileKey + directions[i]] > 0;
             if (dirLeveled && leveled)
             {
                 Connecteds[i].gameObject.SetActive(true);
@@ -224,7 +231,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             m_SpawnedRing.UpdateRing(ringIndex, rings.IsCreated ? rings[ringIndex] : default, ReadOnlySpan<EquippedGem>.Empty);
         
             NotEnoughMoneyOverlay_Ring.gameObject.SetActive(!canAfford);
-            HasEnoughMoneyOverlay_Ring.gameObject.SetActive(canAfford && Level == 0);
+            HasEnoughMoneyOverlay_Ring.gameObject.SetActive(canAfford && CompiledLevel == 0);
             HasNoPointOutline_Ring.gameObject.SetActive(CompiledLevel == 0);
             HasPointOutline_Ring.gameObject.SetActive(CompiledLevel > 0);
         }
@@ -234,6 +241,11 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             else DestroyImmediate(m_SpawnedRing.gameObject);
             m_SpawnedRing = null;
         }
+        
+        for (int i = 0; i < PipsMain_DisabledOverlays.Length; i++)
+            PipsMain_DisabledOverlays[i].SetActive(i >= Level);
+        for (int i = 0; i < PipsExtra.Length; i++)
+            PipsExtra[i].SetActive(i < (CompiledLevel - Level));
         
         RingContainer.gameObject.SetActive(ringIndex >= 0);
         UiContainer.gameObject.SetActive(ringIndex < 0);
@@ -245,6 +257,12 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public bool CheckFocusFilter(GameObject go)
     {
         return go == null;
+    }
+
+    public Vector3 GetFocusScale()
+    {
+        return RingContainer.gameObject.activeSelf ? (CompiledLevel > 0 ? Vector3.one * 1.4f : Vector3.one * 0.9f) 
+            : (CompiledLevel > 0 ? Vector3.one * 1.0f : Vector3.one * 0.9f);
     }
 
     public void GetDescription(out string title, out string description, out List<(string left, string oldVal, float change, string newVal)> rows,
