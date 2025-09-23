@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class WorldSpaceCanvasScaler : CanvasScaler
 {
     Canvas m_Canvas;
+    Canvas Canvas => m_Canvas ? m_Canvas : m_Canvas = GetComponent<Canvas>();
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -15,6 +16,12 @@ public class WorldSpaceCanvasScaler : CanvasScaler
 
     protected override void HandleWorldCanvas()
     {
+        if (!Application.isPlaying)
+        {
+            base.HandleWorldCanvas();
+            return;
+        }
+        
         switch (uiScaleMode)
         {
             case ScaleMode.ConstantPixelSize: HandleConstantPixelSize(); break;
@@ -30,7 +37,7 @@ public class WorldSpaceCanvasScaler : CanvasScaler
             // Multiple display support only when not the main display. For display 0 the reported
             // resolution is always the desktops resolution since its part of the display API,
             // so we use the standard none multiple display method. (case 741751)
-            int displayIndex = m_Canvas.targetDisplay;
+            int displayIndex = Canvas.targetDisplay;
             if (displayIndex > 0 && displayIndex < Display.displays.Length)
             {
                 Display disp = Display.displays[displayIndex];

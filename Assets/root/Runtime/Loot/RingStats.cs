@@ -171,6 +171,11 @@ public struct RingStats : IComponentData
 #if UNITY_EDITOR
             if (!Application.isPlaying)
                 return RingVisualsDatabase_Editor.Value[PrimaryEffect].Material;
+            if (Game.ClientGame?.World == null)
+            {
+                Debug.LogError($"ATTEMPTED MATERIAL FETCH WHILE WORLD NULL");
+                return RingVisualsDatabase_Editor.Value[PrimaryEffect].Material;
+            }
 #endif
 
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
@@ -186,6 +191,11 @@ public struct RingStats : IComponentData
 #if UNITY_EDITOR
             if (!Application.isPlaying)
                 return RingVisualsDatabase_Editor.Value[PrimaryEffect].Mesh;
+            if (Game.ClientGame?.World == null)
+            {
+                Debug.LogError($"ATTEMPTED MESH FETCH WHILE WORLD NULL");
+                return RingVisualsDatabase_Editor.Value[PrimaryEffect].Mesh;
+            }
 #endif
 
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);

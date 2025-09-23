@@ -16,7 +16,7 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
 
     public int Index { get; private set; }
     public Ring Ring { get; private set; }
-    EquippedGem[] m_Gems;
+    EquippedGem[] m_Gems = Array.Empty<EquippedGem>();
     public ReadOnlyCollection<EquippedGem> Gems => Array.AsReadOnly(m_Gems);
     Material m_CreatedMat;
 
@@ -43,11 +43,7 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
             RingRenderer.material = Ring.Stats.Material;
             RingFilter.sharedMesh = Ring.Stats.Mesh;
             m_CreatedMat = RingRenderer.material;
-            m_CreatedMat.SetInteger(UiMaskIgnored, 0);
-        }
-        else
-        {
-            NoRingDisplay.sharedMaterial.SetInteger(UiMaskIgnored, 0);
+            m_CreatedMat.SetFloat(UiMaskIgnored, 0);
         }
     }
 

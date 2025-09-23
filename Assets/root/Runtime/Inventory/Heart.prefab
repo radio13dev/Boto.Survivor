@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::Heart
   Renderer: {fileID: 5290414306435252823}
   ValueMats:
-  - {fileID: 2100000, guid: 4c0e391f5dc2bcd4ea4efd2e9c36d96c, type: 2}
+  - {fileID: 2100000, guid: c6eb00a98597a1b45b278bd20bb4d186, type: 2}
   - {fileID: 2100000, guid: 66d773b0a762e4f42a1fb32e973d13ac, type: 2}
   InvincibleMat: {fileID: 0}
   IncreaseParticle: {fileID: -8333230072600633316, guid: 782135dc9bc5ca84da4efab8b66202bc, type: 3}
@@ -144,6 +144,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7320326294124322911
 GameObject:
