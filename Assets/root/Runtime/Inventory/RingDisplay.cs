@@ -13,6 +13,7 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
     public MeshRenderer HasRingDisplay;
     public MeshRenderer RingRenderer;
     public MeshFilter RingFilter;
+    public bool ShouldMask;
 
     public int Index { get; private set; }
     public Ring Ring { get; private set; }
@@ -42,8 +43,11 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
                 else Destroy(m_CreatedMat);
             RingRenderer.material = Ring.Stats.Material;
             RingFilter.sharedMesh = Ring.Stats.Mesh;
-            m_CreatedMat = RingRenderer.material;
-            m_CreatedMat.SetFloat(UiMaskIgnored, 0);
+            if (ShouldMask && Application.isPlaying)
+            {
+                m_CreatedMat = RingRenderer.material;
+                m_CreatedMat.SetFloat(UiMaskIgnored, 0);
+            }
         }
     }
 

@@ -58,7 +58,7 @@ public struct TransitionPoint : IEquatable<TransitionPoint>
         return final;
     }
 
-    public IEnumerator Lerp(RectTransform from, float duration)
+    public IEnumerator Lerp(RectTransform from, float duration, ease.Mode easeMode = ease.Mode.elastic_out)
     {
         TransitionPoint start = new();
         start.Save(from);
@@ -80,7 +80,7 @@ public struct TransitionPoint : IEquatable<TransitionPoint>
 
             // Smooth the progress so it eases in and out
             float progress = t / duration;
-            progress = CoroutineHost.Methods.EaseCubic(progress);
+            progress = easeMode.Evaluate(progress);// CoroutineHost.Methods.EaseCubic(progress);
 
             var part = TransitionPoint.Lerp(start, this, progress);
             part.Apply(from);

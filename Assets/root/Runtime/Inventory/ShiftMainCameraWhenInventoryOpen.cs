@@ -3,14 +3,9 @@ using UnityEngine;
 
 public class ShiftMainCameraWhenInventoryOpen : MonoBehaviour, HandUIController.IStateChangeListener
 {
+    public Vector3 DefaultOffset;
     public Vector3 InventoryOffset;
-    Vector3 m_defaultOffset;
     ExclusiveCoroutine m_Co;
-
-    private void Awake()
-    {
-        m_defaultOffset = transform.localPosition;
-    }
 
     private void OnEnable()
     {
@@ -28,11 +23,11 @@ public class ShiftMainCameraWhenInventoryOpen : MonoBehaviour, HandUIController.
         {
             case HandUIController.State.Inventory:
                 // Transition to 'inventory' offset
-                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, m_defaultOffset + InventoryOffset, 0.2f, true, true));
+                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, DefaultOffset + InventoryOffset, 0.2f, true, true));
                 break;
             default:
                 // Transition to 'default' offset
-                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, m_defaultOffset, 0.2f, true, true));
+                m_Co.StartCoroutine(this, CoroutineHost.Methods.Lerp(transform, DefaultOffset, 0.2f, true, true));
                 break;
         }
         
