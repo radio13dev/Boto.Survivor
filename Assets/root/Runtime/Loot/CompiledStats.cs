@@ -97,7 +97,11 @@ public partial struct CompiledStatsSystem : ISystem
             stats = new();
             
             stats.CompiledStatsTree = baseStats;
-            
+            for (int i = 0; i < rings.Length; i++)
+                for (int j = 0; j < RingStats.k_MaxStats; j++)
+                    if (rings[i].Stats.GetStatBoost(j, out var stat, out var boost))
+                        stats.CompiledStatsTree[stat] += boost;
+                    
             // Setup...
             var r = SharedRandom.Random;
             

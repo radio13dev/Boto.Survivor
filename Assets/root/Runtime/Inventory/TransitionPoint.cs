@@ -58,7 +58,7 @@ public struct TransitionPoint : IEquatable<TransitionPoint>
         return final;
     }
 
-    public IEnumerator Lerp(RectTransform from, float duration, ease.Mode easeMode = ease.Mode.elastic_out)
+    public IEnumerator Lerp(RectTransform from, float duration, ease.Mode easeMode = ease.Mode.elastic_inout2)
     {
         TransitionPoint start = new();
         start.Save(from);

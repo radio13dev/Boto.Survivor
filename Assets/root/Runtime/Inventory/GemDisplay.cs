@@ -118,19 +118,19 @@ public class GemDisplay : MonoBehaviour, IFocusFilter, DescriptionUI.ISource
         return true;
     }
 
-    public void GetDescription(out string title, out string description, 
-        out List<(string left, string oldVal, float change, string newVal)> rows, 
-        out (string left, DescriptionUI.eBottomRowIcon icon, string right) bottomRow)
+    public DescriptionUI.Data GetDescription()
     {
+        var data = new DescriptionUI.Data();
+    
         if (IsInSlot)
         {
             // Equipped
-            title = "(Equipped)".Color(Color.gray).Size(30);
+            data.Title = "(Equipped)".Color(Color.gray).Size(30);
         }
         else
         {
             // Inventory
-            title = "(Inventory)".Color(Color.gray).Size(30);
+            data.Title = "(Inventory)".Color(Color.gray).Size(30);
         }
             
         var interact = UIFocus.Interact;
@@ -163,9 +163,8 @@ public class GemDisplay : MonoBehaviour, IFocusFilter, DescriptionUI.ISource
         {
             sb.AppendLine("Empty Slot".Color(new Color(0.2f,0.2f,0.2f)).Size(30));
         }
-        description = sb.ToString();
+        data.Description = sb.ToString();
         
-        rows = default;
-        bottomRow = default;
+        return data;
     }
 }

@@ -32,15 +32,14 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 {
     public const int MaxLevel = 5;
 
+    public StatIcon StatIcon;
+
     public Image[] BodyImages;
     public Image[] OutlineImages;
     public Image[] IconImages;
     
     public Image[] ToColor;
 
-    public Image Background;
-    public Image Border;
-    public Image Image;
     public TMP_Text LevelText;
 
     public Image NotEnoughMoneyOverlay;
@@ -59,7 +58,6 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     
     public RingDisplay RingTemplate;
     public RingDisplay m_SpawnedRing;
-    public Image Background_Ring;
     public GameObject NotEnoughMoneyOverlay_Ring;
     public GameObject HasEnoughMoneyOverlay_Ring;
     public GameObject HasNoPointOutline_Ring;
@@ -73,6 +71,9 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        //var ui = GetComponentInParent<TiledStatsUI>();
+        //if (ui)
+        //    ui.StartDrag(this);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -80,19 +81,20 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         // Send drag movement to parent ui
         //var ui = GetComponentInParent<TiledStatsUI>();
         //if (ui)
-        //{
         //    ui.ApplyDragDelta(eventData.delta);
-        //}
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        //var ui = GetComponentInParent<TiledStatsUI>();
+        //if (ui)
+        //    ui.EndDrag(this);
     }
 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (UIFocus.Focus == gameObject)
+        if (UIFocus.Focus == gameObject)// && !eventData.dragging)
         {
             if (DescriptionUI.m_CustomZero == gameObject)
                 DoLevelUp();
@@ -144,6 +146,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public void SetImages(Sprite body, Sprite bodyOutline, Sprite icon)
     {
+        StatIcon.SetImages(body, bodyOutline, icon);
         foreach (var img in BodyImages)
             img.sprite = body;
         foreach (var img in OutlineImages)
@@ -154,10 +157,9 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public void SetColor(Color rowColor)
     {
+        StatIcon.SetColor(rowColor);
         foreach (var toColor in ToColor)
             toColor.color = rowColor;
-        Background.color = rowColor;
-        Background_Ring.color = rowColor;
     }
 
     int2 TileKey;
@@ -199,7 +201,6 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         HasEnoughMoneyOverlay.gameObject.SetActive(canAfford && Level < MaxLevel);
         MaxedOutline.gameObject.SetActive(Level >= MaxLevel);
         HasNoPointOutline.gameObject.SetActive(Level == 0 && CompiledLevel == 0);
-        transform.localScale = CompiledLevel > 0 ? Vector3.one : Vector3.one*0.6f;
         HasPointOutline.gameObject.SetActive(Level > 0 && Level < MaxLevel);
         //ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
         //ModifiedText.text = (CompiledLevel - Level).ToValueChangeString();
@@ -247,6 +248,8 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         for (int i = 0; i < PipsExtra.Length; i++)
             PipsExtra[i].SetActive(i < (CompiledLevel - Level));
         
+        UiContainer.localScale = CompiledLevel > 0 ? Vector3.one : Vector3.one*0.6f;
+        RingContainer.localScale = CompiledLevel > 0 ? Vector3.one*1.4f : Vector3.one*0.8f;
         RingContainer.gameObject.SetActive(ringIndex >= 0);
         UiContainer.gameObject.SetActive(ringIndex < 0);
         
@@ -265,36 +268,42 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             : (CompiledLevel > 0 ? Vector3.one * 1.0f : Vector3.one * 0.9f);
     }
 
-    public void GetDescription(out string title, out string description, out List<(string left, string oldVal, float change, string newVal)> rows,
-        out (string left, DescriptionUI.eBottomRowIcon icon, string right) bottomRow)
-    {
-        if (DescriptionUI.m_CustomZero != gameObject)
-        {
-            DescriptionUI.m_CustomZero.GetComponent<TiledStatsUITile>().GetDescription(out title, out description, out rows, out bottomRow);
-            return;
-        }
-
+    public DescriptionUI.Data GetDescription()
+    {  
         var stat = TiledStats.Get(TileKey);
-        title = stat.GetTitle();
-        description = stat.GetDescription();
+        
+        if (stat.GetRingIndex() >= 0 && CompiledLevel > 0)
+            return m_SpawnedRing.GetDescription();
+        
+        var data = new DescriptionUI.Data();
+
+        data.Title = stat.GetTitle();
+        data.Description = stat.GetDescription();
 
         //if (Level == 0 || Level >= 5)
         //    rows = stat.GetDescriptionRows(math.max(CompiledLevel, 1));
         //else
-            rows = stat.GetDescriptionRows(CompiledLevel, CompiledLevel + 1);
+            data.Rows = stat.GetDescriptionRows(CompiledLevel, CompiledLevel + 1);
 
         if (Level >= MaxLevel)
         {
             // Maxed out
-            bottomRow = ($"Maxed!", DescriptionUI.eBottomRowIcon.None, "-");
+            data.BottomLeft = $"Maxed!";
+            data.BottomVariant = DescriptionUI.eBottomRowVariant.BuyInvalid;
+            data.BottomRight = string.Empty;
         }
         else
         {
             // Cost
             GameEvents.TryGetComponent2<Wallet>(CameraTarget.MainTarget.Entity, out var wallet);
             bool canAfford = m_Cost <= wallet.Value;
-            bottomRow = ($"Cost", DescriptionUI.eBottomRowIcon.Gem, 
-                $"{m_Cost.ToGemString()}{(canAfford ? "" : "  (Not enough)")}".Color(canAfford ? Palette.Money : Palette.MoneyChangeNegative));
+            
+            data.BottomLeft = $"Cost";
+            data.BottomVariant = canAfford ? DescriptionUI.eBottomRowVariant.BuyValid : DescriptionUI.eBottomRowVariant.BuyInvalid;
+            data.BottomRight = $"{m_Cost.ToGemString()}{(canAfford ? "" : "  (Not enough)")}".Color(canAfford ? Color.white : Palette.MoneyChangeNegative);
         }
+        
+        data.ButtonPress = DoLevelUp;
+        return data;
     }
 }

@@ -11,7 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class TiledStatsUI : MonoBehaviour
+public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
 {
     public Transform CenterTransform;
     public Transform TopTransform;
@@ -62,6 +62,8 @@ public class TiledStatsUI : MonoBehaviour
 
         // Focus the UI 
         Tiles[0].FocusParentToMe();
+        
+        UIFocus.OnFocus += OnFocus;
     }
 
     private void OnDisable()
@@ -69,6 +71,32 @@ public class TiledStatsUI : MonoBehaviour
         HandUIController.Detach(this);
 
         GameEvents.OnEvent -= OnGameEvent;
+        
+        UIFocus.OnFocus -= OnFocus;
+    }
+
+    ExclusiveCoroutine m_focusRedirectCo;
+    private void OnFocus()
+    {
+        if (!UIFocus.Focus && HandUIController.GetState() == HandUIController.State.Inventory)
+        {
+            var focusedIndex = (BackendShift-FocusedPosition);
+            var tileIndex = (mathu.modabs((int)math.round(focusedIndex.x), TiledStats.TileCount.x + BorderCount.x * 2)) +
+                            (mathu.modabs((int)math.round(focusedIndex.y), TiledStats.TileCount.y + BorderCount.y * 2)) * (TiledStats.TileCount.x + BorderCount.x * 2);
+            UIFocus.StartFocus(Tiles[tileIndex].GetComponent<Focusable>());
+        }
+        //m_focusRedirectCo.StartCoroutine(this, _AttemptReFocus());
+    }
+    IEnumerator _AttemptReFocus()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (!UIFocus.Focus && HandUIController.GetState() == HandUIController.State.Inventory)
+        {
+            var focusedIndex = (BackendShift-FocusedPosition);
+            var tileIndex = (mathu.modabs((int)math.round(focusedIndex.x), TiledStats.TileCount.x + BorderCount.x * 2)) +
+                            (mathu.modabs((int)math.round(focusedIndex.y), TiledStats.TileCount.y + BorderCount.y * 2)) * (TiledStats.TileCount.x + BorderCount.x * 2);
+            UIFocus.StartFocus(Tiles[tileIndex].GetComponent<Focusable>());
+        }
     }
 
     private void OnGameEvent(GameEvents.Data data)
@@ -120,7 +148,7 @@ public class TiledStatsUI : MonoBehaviour
             var tileKey = new int2(x % TiledStats.TileCount.x, y % TiledStats.TileCount.y);
             tile.SetImages(ColumnSprites[tileKey.x], ColumnSpritesOutlines[tileKey.x], Images[tileKey.x + tileKey.y * TiledStats.TileCount.x]);
             tile.SetColor(RowColors[tileKey.y]);
-            tile.gameObject.name = $"Tile: " + tile.Image.sprite.name;
+            tile.gameObject.name = $"Tile: " + tile.StatIcon.Icon.sprite.name;
 
             tile.RefreshState(tileKey, in wallet, in baseStats, in compiledStats, in rings);
         }
@@ -193,7 +221,7 @@ public class TiledStatsUI : MonoBehaviour
         }
         else
         {
-            if ((FocusedPosition.x % 1 != 0 || FocusedPosition.y % 1 != 0))
+            if (!m_Dragging && (FocusedPosition.x % 1 != 0 || FocusedPosition.y % 1 != 0))
             {
                 FocusedPosition = mathu.MoveTowards(FocusedPosition, math.round(FocusedPosition), Time.deltaTime * 5);
                 RefreshGrid();
@@ -217,11 +245,20 @@ public class TiledStatsUI : MonoBehaviour
 
     public Vector2 DragScale = new Vector2(1, 1);
     internal bool m_Dirty;
+    internal bool m_Dragging;
 
+    public void StartDrag(TiledStatsUITile dragging)
+    {
+        m_Dragging = true;
+    }
     public void ApplyDragDelta(Vector2 eventDataDelta)
     {
         FocusedPosition += eventDataDelta * DragScale;
         m_Dirty = true;
+    }
+    public void EndDrag(TiledStatsUITile dragging)
+    {
+        m_Dragging = false;
     }
 
     ExclusiveCoroutine co;
@@ -248,5 +285,10 @@ public class TiledStatsUI : MonoBehaviour
             m_Dirty = true;
             yield return null;
         }
+    }
+
+    public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
+    {
+        if (newState == HandUIController.State.Inventory) OnFocus();
     }
 }

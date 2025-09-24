@@ -118,11 +118,30 @@ public unsafe struct PrimaryEffectStack
 
 [Save]
 [Serializable]
-public struct RingStats : IComponentData
+public unsafe struct RingStats : IComponentData
 {
+    public const int k_MaxStats = 3;
+
     // Primary effect
     public bool IsValid => PrimaryEffect != RingPrimaryEffect.None;
     public RingPrimaryEffect PrimaryEffect;
+    
+    [SerializeField] public fixed byte BoostedStats[k_MaxStats];
+    [SerializeField] public fixed byte BoostedStatsBoosts[k_MaxStats];
+    
+    public bool GetStatBoost(int index, out TiledStat stat, out byte boost)
+    {
+        if (index < 0 || index >= k_MaxStats)
+        {
+            stat = default;
+            boost = 0;
+            return false;
+        }
+        
+        stat = (TiledStat)BoostedStats[index];
+        boost = BoostedStatsBoosts[index];
+        return true;
+    }
 
     public static RingStats Generate(ref Random random)
     {

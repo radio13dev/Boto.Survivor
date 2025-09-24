@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using AYellowpaper.SerializedCollections;
 using TMPro;
 using Unity.Entities;
 using UnityEngine;
@@ -30,24 +33,62 @@ public class DescriptionUI : MonoBehaviour
 {
     public interface ISource
     {
-        void GetDescription(out string title, 
-            out string description, 
-            out List<(string left, string oldVal, float change, string newVal)> rows, 
-            out (string left, eBottomRowIcon icon, string right) bottomRow);
+        Data GetDescription();
     }
     
-    public enum eBottomRowIcon
+    public enum eBottomRowVariant
     {
         None,
-        Gem
+        BuyInvalid,
+        BuyValid,
+        SwapRing,
+    }
+
+    public struct Data
+    {
+        public string Title;
+        public string Description;
+        public List<Row> Rows;
+        
+        public string BottomLeft;
+        public string BottomRight;
+        public eBottomRowVariant BottomVariant;
+        
+        public Action ButtonPress;
+        
+        public struct Row
+        {
+            public string Left;
+            public string OldVal;
+            public float Change;
+            public string NewVal;
+
+            public Row(string left, string oldVal, float change, string newVal)
+            {
+                Left = left;
+                OldVal = oldVal;
+                Change = change;
+                NewVal = newVal;
+            }
+        }
+
+        public static Data Demo(string title, string description)
+        {
+            return new Data()
+            {
+                Title = title,
+                Description = description
+            };
+        }
     }
 
     public TMP_Text Title;
     public TMP_Text Description;
     public List<DescriptionUIRow> Rows;
     public TMP_Text BottomRowLeft;
-    public GameObject[] BottomRowIcons;
     public TMP_Text BottomRowRight;
+    
+    public SerializedDictionary<eBottomRowVariant, GameObject[]> BottomRowVariants = new();
     
     public static GameObject m_CustomZero; 
 
@@ -75,12 +116,12 @@ public class DescriptionUI : MonoBehaviour
         
         if (!focus)
         {
-            SetText("Info...", "Description...");
+            SetText(Data.Demo("Info...", "Description..."));
             return;
         }
         else if (!focus.TryGetComponent<ISource>(out var desc))
         {
-            SetText($"{focus.gameObject.name}", $"A {focus} UI Element!");
+            SetText(Data.Demo($"{focus.gameObject.name}", $"A {focus} UI Element!"));
         }
         else
         {
@@ -90,57 +131,58 @@ public class DescriptionUI : MonoBehaviour
 
     private void SetText(ISource component)
     {
-        component.GetDescription(out string info, 
-            out string description, 
-            out List<(string left, string oldVal, float change, string newVal)> rows, 
-            out (string left, eBottomRowIcon icon, string right) bottomRow);
+        var data = component.GetDescription();
         
-        SetText(info, description, rows, bottomRow);
+        SetText(data);
+    }
+    
+    Action m_ButtonPress;
+    public void ButtonPress()
+    {
+        m_ButtonPress?.Invoke();
     }
 
-    private void SetText(
-        string title, 
-        string description, 
-        List<(string left, string oldVal, float change, string newVal)> rows = default, 
-        (string left, eBottomRowIcon icon, string right) bottomRow = default)
+    private void SetText(Data data)
     {
-        Title.text = title;
+        m_ButtonPress = data.ButtonPress;
         
-        if (!string.IsNullOrEmpty(description))
+        Title.text = data.Title;
+        
+        if (!string.IsNullOrEmpty(data.Description))
         {
-            Description.text = description;
+            Description.text = data.Description;
             Description.gameObject.SetActive(true);
         }
         else
             Description.gameObject.SetActive(false);
         
-        if (rows?.Count > 0)
+        if (data.Rows?.Count > 0)
         {
             int i;
-            for (i = 0; i < rows.Count; i++)
+            for (i = 0; i < data.Rows.Count; i++)
             {
                 if (i >= Rows.Count)
                     Rows.Add(Instantiate(Rows[0], Rows[0].transform.parent));
-                Rows[i].Left.text = rows[i].left;
-                if (string.IsNullOrEmpty(rows[i].oldVal) || rows[i].oldVal == rows[i].newVal)
+                Rows[i].Left.text = data.Rows[i].Left;
+                if (string.IsNullOrEmpty(data.Rows[i].OldVal) || data.Rows[i].OldVal == data.Rows[i].NewVal)
                 {
                     Rows[i].OldVal.gameObject.SetActive(false);
                     Rows[i].NegativeChange.gameObject.SetActive(false);
                     Rows[i].PositiveChange.gameObject.SetActive(false);
-                    Rows[i].NewVal.text = rows[i].newVal;
+                    Rows[i].NewVal.text = data.Rows[i].NewVal;
                 }
                 else
                 {
                     Rows[i].OldVal.gameObject.SetActive(true);
-                    Rows[i].OldVal.text = rows[i].oldVal;
-                    Rows[i].NewVal.text = rows[i].newVal;
-                    if (rows[i].change >= 0)
+                    Rows[i].OldVal.text = data.Rows[i].OldVal;
+                    Rows[i].NewVal.text = data.Rows[i].NewVal;
+                    if (data.Rows[i].Change >= 0)
                     {
                         Rows[i].PositiveChange.gameObject.SetActive(true);
                         Rows[i].NegativeChange.gameObject.SetActive(false);
                         //Rows[i].PositiveChange.fillAmount = Mathf.Clamp01(rows[i].change / 10f);
                     }
-                    else if (rows[i].change < 0)
+                    else if (data.Rows[i].Change < 0)
                     {
                         Rows[i].PositiveChange.gameObject.SetActive(false);
                         Rows[i].NegativeChange.gameObject.SetActive(true);
@@ -162,17 +204,18 @@ public class DescriptionUI : MonoBehaviour
             Rows[0].transform.parent.gameObject.SetActive(false);
         }
         
-        if (bottomRow != default)
+        if (data.BottomLeft != default)
         {
-            BottomRowLeft.text = bottomRow.left;
-            for (int i = 0; i < BottomRowIcons.Length; i++)
-            {
-                if ((int)bottomRow.icon == i)
-                    BottomRowIcons[i].SetActive(true);
-                else
-                    BottomRowIcons[i].SetActive(false);
-            }
-            BottomRowRight.text = bottomRow.right;
+            BottomRowLeft.text = data.BottomLeft;
+            BottomRowRight.text = data.BottomRight;
+            BottomRowRight.gameObject.SetActive(!string.IsNullOrEmpty(data.BottomRight));
+            
+            foreach (var v in BottomRowVariants)
+            foreach (var o in v.Value)
+                o.SetActive(false);
+            foreach (var o in BottomRowVariants[data.BottomVariant])
+                o.SetActive(true);
+                
             BottomRowLeft.transform.parent.gameObject.SetActive(true);
         }
         else

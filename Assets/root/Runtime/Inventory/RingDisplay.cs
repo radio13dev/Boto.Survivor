@@ -136,19 +136,19 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         transform.SetDisplacedLocalPosition(Vector3.zero);
     }
 
-    public void GetDescription(out string title, out string description, 
-        out List<(string left, string oldVal, float change, string newVal)> rows,
-        out (string left, DescriptionUI.eBottomRowIcon icon, string right) bottomRow)
+    public DescriptionUI.Data GetDescription()
     {
+        DescriptionUI.Data data = new();
+    
         var interact = UIFocus.Interact;
         var focus = gameObject;
         StringBuilder sb = new();
 
         // Inventory
         if (GetComponentInParent<RingUI>())
-            title = "(Rings)".Color(Color.gray).Size(30);
+            data.Title = "(Rings)".Color(Color.gray).Size(30);
         else
-            title = "(Pickup)".Color(Color.mediumPurple).Size(30);
+            data.Title = "(Pickup)".Color(Color.mediumPurple).Size(30);
 
         if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
         {
@@ -165,9 +165,31 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
             sb.AppendLine("Empty Slot".Color(new Color(0.2f, 0.2f, 0.2f)).Size(30));
         }
 
-        description = sb.ToString();
+        data.Description = sb.ToString();
+        
+        data.BottomVariant = DescriptionUI.eBottomRowVariant.SwapRing;
+        data.BottomLeft = "Swap Ring";
+        
+        data.ButtonPress = ChoiceUIGrab;
+        
+        return data;
+    }
 
-        rows = default;
-        bottomRow = default;
+    private void ChoiceUIGrab()
+    {
+        ChoiceUI.Instance.Grab(this);
+    }
+
+    public void CopyTransform(RingDisplay other)
+    {
+        var myGrabPivot = transform.GetChild(0);
+        var otherGrabPivot = other.transform.GetChild(0);
+        
+        transform.position = otherGrabPivot.position;
+        transform.SetDisplacedLocalPosition(Vector3.zero);
+        
+        var myRotatePivot = myGrabPivot.GetChild(0);
+        var otherRotatePivot = otherGrabPivot.GetChild(0);
+        myRotatePivot.rotation = otherRotatePivot.rotation;
     }
 }

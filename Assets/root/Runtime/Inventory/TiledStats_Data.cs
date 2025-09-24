@@ -91,6 +91,8 @@ public readonly struct TiledStatData
 
 public static class TiledStatsFull
 {
+    public static TiledStatData.Full GetFull(this TiledStat stat) => TiledStatsFull.StatDataFull[(int)stat];
+    
     public static void Setup()
     {
         TiledStats.m_StatDataPtrWrite = new NativeArray<TiledStatData>(TiledStats.TileRows * TiledStats.TileCols, Allocator.Persistent);
@@ -117,14 +119,14 @@ public static class TiledStatsFull
     public static readonly TiledStatData.Full[] StatDataFull = new TiledStatData.Full[TiledStats.TileRows * TiledStats.TileCols]
     {
         new(
-            TiledStat.Stat_00_SharpEdge,
-            curve.exponential(50),
-            curve.exponential(0.05f),
+            TiledStat.Stat_00_Ring0,
             curve.zero,
-            new string[] { "Sharp Edge" },
-            new string[] { "Your strikes cut deeper" },
-            new string[] { "Damage:" },
-            new string[] { "Crit Chance:" },
+            curve.zero,
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" }
         ),
         new(
@@ -238,13 +240,13 @@ public static class TiledStatsFull
             new string[] { "" }
         ),
         new(
-            TiledStat.Stat_11,
-            curve.exponential(0.10f),
+            TiledStat.Stat_11_Ring1,
             curve.zero,
             curve.zero,
-            new string[] { "Vital Spark" },
-            new string[] { "Health fuels strength" },
-            new string[] { "Damage per missing HP:" },
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" },
             new string[] { "" }
         ),
@@ -293,13 +295,13 @@ public static class TiledStatsFull
             new string[] { "" }
         ),
         new(
-            TiledStat.Stat_16_Intersect_Pierce,
-            curve.linear(1),
+            TiledStat.Stat_16_Ring2,
             curve.zero,
             curve.zero,
-            new string[] { "Intersect" },
-            new string[] { "Chances pierce count for projectiles" },
-            new string[] { "Pierce:" },
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" },
             new string[] { "" }
         ),
@@ -348,14 +350,14 @@ public static class TiledStatsFull
             new string[] { "" }
         ),
         new(
-            TiledStat.Stat_21,
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
+            TiledStat.Stat_21_Ring3,
             curve.zero,
-            new string[] { "Sharp Edge" },
-            new string[] { "Your strikes cut deeper" },
-            new string[] { "Damage:" },
-            new string[] { "Crit Chance:" },
+            curve.zero,
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" }
         ),
         new(
@@ -403,14 +405,14 @@ public static class TiledStatsFull
             new string[] { "" }
         ),
         new(
-            TiledStat.Stat_26,
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
+            TiledStat.Stat_26_Ring4,
             curve.zero,
-            new string[] { "Sharp Edge" },
-            new string[] { "Your strikes cut deeper" },
-            new string[] { "Damage:" },
-            new string[] { "Crit Chance:" },
+            curve.zero,
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" }
         ),
         new(
@@ -458,14 +460,14 @@ public static class TiledStatsFull
             new string[] { "" }
         ),
         new(
-            TiledStat.Stat_31,
-            curve.exponential(0.15f),
-            curve.exponential(0.05f),
+            TiledStat.Stat_31_Ring5,
             curve.zero,
-            new string[] { "Sharp Edge" },
-            new string[] { "Your strikes cut deeper" },
-            new string[] { "Damage:" },
-            new string[] { "Crit Chance:" },
+            curve.zero,
+            curve.zero,
+            new string[] { "Ring Slot" },
+            new string[] { "" },
+            new string[] { "" },
+            new string[] { "" },
             new string[] { "" }
         ),
         new(

@@ -50,11 +50,13 @@ public class WorldSpaceCanvasScaler : MonoBehaviour
 
         float scaleFactor = 0;
         scaleFactor = Mathf.Min(screenSize.x / 1920, screenSize.y / 1080);
-
-
-        transform.localScale = scaleFactor * Vector3.one;
-        var rect = (RectTransform)transform;
-        rect.sizeDelta = screenSize / scaleFactor;
-        rect.position = new Vector3(739, 739 * screenSize.y / screenSize.x, 0);
+        
+        if (float.IsFinite(scaleFactor) && scaleFactor != 0 && float.IsFinite(screenSize.x) && float.IsFinite(screenSize.y) && screenSize.x != 0 && screenSize.y != 0)
+        {
+            var rect = (RectTransform)transform;
+            rect.localScale = scaleFactor * Vector3.one;
+            rect.sizeDelta = screenSize / scaleFactor;
+            rect.position = new Vector3(739, 739 * screenSize.y / screenSize.x, 0);
+        }
     }
 }

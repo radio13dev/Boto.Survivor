@@ -7,9 +7,9 @@ using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public enum TiledStat
+public enum TiledStat : byte
 {
-    Stat_00_SharpEdge,
+    Stat_00_Ring0,
     Stat_01,
     Stat_02,
     Stat_03,
@@ -20,27 +20,27 @@ public enum TiledStat
     Stat_08,
     Stat_09,
     Stat_10,
-    Stat_11,
+    Stat_11_Ring1,
     Stat_12,
     Stat_13,
     Stat_14_Homotopy_ProjCount,
     Stat_15_Scale_Scale,
-    Stat_16_Intersect_Pierce,
+    Stat_16_Ring2,
     Stat_17_Velocity_ProjSpeed,
     Stat_18_Frequency_ProjRate,
     Stat_19,
     Stat_20,
-    Stat_21,
+    Stat_21_Ring3,
     Stat_22,
     Stat_23,
     Stat_24,
     Stat_25,
-    Stat_26,
+    Stat_26_Ring4,
     Stat_27,
     Stat_28,
     Stat_29,
     Stat_30,
-    Stat_31,
+    Stat_31_Ring5,
     Stat_32,
     Stat_33,
     Stat_34,
@@ -152,7 +152,7 @@ public unsafe struct TiledStatsTree : IComponentData
     }
     
     [Pure]
-    public int Damage => 100 + (int)GetData(TiledStat.Stat_00_SharpEdge, out var lvl).EffectAValues.Evaluate(lvl);
+    public int Damage => 100 + (int)GetData(TiledStat.Stat_00_Ring0, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public float ProjectileSpeed => 1 + GetData(TiledStat.Stat_17_Velocity_ProjSpeed, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
@@ -160,7 +160,7 @@ public unsafe struct TiledStatsTree : IComponentData
     [Pure]
     public float Size => 1 + GetData(TiledStat.Stat_15_Scale_Scale, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
-    public byte PierceCount => (byte)GetData(TiledStat.Stat_16_Intersect_Pierce, out var lvl).EffectAValues.Evaluate(lvl);
+    public byte PierceCount => (byte)GetData(TiledStat.Stat_16_Ring2, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public float Cooldown => 1 + (byte)GetData(TiledStat.Stat_18_Frequency_ProjRate, out var lvl).EffectAValues.Evaluate(lvl);
 
@@ -208,6 +208,7 @@ public static partial class TiledStats
     }
     
     public static TiledStatData Get(this TiledStat stat) => StatData[(int)stat];
+
     
     public static string GetTitle(this TiledStat stat)
     {
@@ -221,12 +222,12 @@ public static partial class TiledStats
     
     public static int GetRingIndex(this TiledStat stat)
     {
-        if (stat == TiledStat.Stat_00_SharpEdge) return 0;
-        if (stat == TiledStat.Stat_11) return 1;
-        if (stat == TiledStat.Stat_16_Intersect_Pierce) return 2;
-        if (stat == TiledStat.Stat_21) return 3;
-        if (stat == TiledStat.Stat_26) return 4;
-        if (stat == TiledStat.Stat_31) return 5;
+        if (stat == TiledStat.Stat_00_Ring0) return 0;
+        if (stat == TiledStat.Stat_11_Ring1) return 1;
+        if (stat == TiledStat.Stat_16_Ring2) return 2;
+        if (stat == TiledStat.Stat_21_Ring3) return 3;
+        if (stat == TiledStat.Stat_26_Ring4) return 4;
+        if (stat == TiledStat.Stat_31_Ring5) return 5;
         return -1;
     }
     
@@ -248,31 +249,31 @@ public static partial class TiledStats
 
         return ret;
     }
-    public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int oldLvl, int newLvl)
+    public static List<DescriptionUI.Data.Row> GetDescriptionRows(this TiledStat stat, int oldLvl, int newLvl)
     {
         var statData = TiledStatsFull.StatDataFull[(int)stat];
     
-        List<(string left, string oldVal, float change, string newVal)> ret = new();
+        var ret = new List<DescriptionUI.Data.Row>();
         
         if (statData.Data.EffectAValues != default)
         {
             var a = statData.Data.EffectAValues[oldLvl];
             var b = statData.Data.EffectAValues[newLvl];
-            ret.Add((statData.Localization.Localization_EffectA[0], a.ToMulString(), b - a, b.ToMulString()));
+            ret.Add(new (statData.Localization.Localization_EffectA[0], a.ToMulString(), b - a, b.ToMulString()));
         }
             
         if (statData.Data.EffectBValues != default)
         {
             var a = statData.Data.EffectBValues[oldLvl];
             var b = statData.Data.EffectBValues[newLvl];
-            ret.Add((statData.Localization.Localization_EffectB[0], a.ToMulString(), b - a, b.ToMulString()));
+            ret.Add(new (statData.Localization.Localization_EffectB[0], a.ToMulString(), b - a, b.ToMulString()));
         }
         
         if (statData.Data.EffectCValues != default)
         {
             var a = statData.Data.EffectCValues[oldLvl];
             var b = statData.Data.EffectCValues[newLvl];
-            ret.Add((statData.Localization.Localization_EffectC[0], a.ToMulString(), b - a, b.ToMulString()));
+            ret.Add(new (statData.Localization.Localization_EffectC[0], a.ToMulString(), b - a, b.ToMulString()));
         }
         return ret;
     }
