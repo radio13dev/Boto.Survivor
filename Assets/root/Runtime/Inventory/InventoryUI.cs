@@ -137,7 +137,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
             {
                 // Get the 'subset' of gems that this ring uses
                 var equippedGemsForRing = equippedGems.AsNativeArray().AsReadOnlySpan().Slice(i * Gem.k_GemsPerRing, Gem.k_GemsPerRing);
-                RingDisplays[i].UpdateRing(i, rings[i], equippedGemsForRing);
+                RingDisplays[i].UpdateRing(i, rings[i], equippedGemsForRing, false);
                 RingDisplays[i].SnapBackToOrigin();
 
                 // Update the focus display if this ring is focused

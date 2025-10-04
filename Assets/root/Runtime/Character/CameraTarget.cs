@@ -22,6 +22,11 @@ public class CameraTarget : EntityLinkMono
 
     private void Start()
     {
+        if (Game == null)
+        {
+            Debug.LogError("No Game found for CameraTarget");
+            return;
+        }
         if (PlayerIndex == Game.PlayerIndex)
         {
             MainTarget = this;

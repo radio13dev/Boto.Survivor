@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -73,6 +74,18 @@ public abstract class EntityLinkMono : MonoBehaviour
     }
     
     public bool HasLink() => m_linkedEntity != Entity.Null;
+
+#if UNITY_EDITOR
+    public virtual IEnumerator Start()
+    {
+        yield return null;
+        if (Game == null)
+        {
+            enabled = false;
+            throw new Exception($"Game is null on {this} {gameObject.name}.");
+        }
+    }
+#endif
 }
 
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
@@ -91,7 +104,7 @@ public partial class GenericPrefabSpawnSystem : SystemBase
     protected override void OnUpdate()
     {
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        foreach ((var request, var transform, var entity) in SystemAPI.Query<RefRO<GenericPrefabRequest>, RefRO<LocalToWorld>>().WithNone<GenericPrefabProxy>().WithEntityAccess())
+        foreach ((var request, var transform, var entity) in SystemAPI.Query<RefRO<GenericPrefabRequest>, RefRO<LocalToWorld>>().WithNone<GenericPrefabProxy, Hidden>().WithEntityAccess())
         {
             GameObject spawned = null;
             if (request.ValueRO.ToSpawn)

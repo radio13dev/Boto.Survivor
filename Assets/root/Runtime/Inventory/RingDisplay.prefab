@@ -99,7 +99,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &786371570582866889
 Transform:
   m_ObjectHideFlags: 0
@@ -189,7 +189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7976986371563903172
 Transform:
   m_ObjectHideFlags: 0
@@ -212,7 +212,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3976073547031006615}
-  m_Mesh: {fileID: 4300000, guid: c7eb48bfe5900a54cb0505279c12fc61, type: 2}
+  m_Mesh: {fileID: -5693125950398070331, guid: fecf0a8a377437a47b2e0e57a06b4d3c, type: 3}
 --- !u!23 &3343078749217753496
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -238,7 +238,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 094109aab1c3feb4294b86c3b3c3d75d, type: 2}
+  - {fileID: 2100000, guid: 033d30ae129a8194c8969db675eb87a5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -274,7 +274,6 @@ GameObject:
   - component: {fileID: 5408487111386441482}
   - component: {fileID: 2480981161398281575}
   - component: {fileID: 8431576489743613060}
-  - component: {fileID: 5193884078063478175}
   - component: {fileID: 8677135832262857953}
   m_Layer: 5
   m_Name: RingDisplay
@@ -329,6 +328,7 @@ MonoBehaviour:
   HasRingDisplay: {fileID: 3343078749217753496}
   RingRenderer: {fileID: 3343078749217753496}
   RingFilter: {fileID: 1623674869171450883}
+  ShouldMask: 0
 --- !u!114 &8431576489743613060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,27 +347,8 @@ MonoBehaviour:
   OnFocusEnd:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5193884078063478175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8218265837086282912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4e67bbcd030414469bb3ef3e0960a04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.GUI::DraggableElement
-  OnBeforeDraggingStartEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDraggingStartEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDraggingEndEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  UnfocusDelay: 0
+  DisablePointerEvents: 1
 --- !u!135 &8677135832262857953
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -436,6 +417,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.GUI::GenericPhysics
   Displacement: {x: 0, y: 0, z: 0}
   Velocity: {x: 0, y: 0, z: 0}
-  DisplacementDamping: 20
-  VelocityDamping: 20
+  DisplacementDamping: 10
+  VelocityDamping: 10
   AddDraggableDisplacement: 1

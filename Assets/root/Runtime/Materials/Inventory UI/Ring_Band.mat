@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ring_Band
-  m_Shader: {fileID: -6465566751694194690, guid: 60ed2d7aab43fa64aa16680d77f1f8b8, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 3ee139aec18aa4c4fb6a41b9d27c76f9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -133,6 +133,8 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Gradient_Scale: 1
+    - _Gradient_Speed: 0.5
     - _Height: 1
     - _Index: 14
     - _LIGHTMAP_SHADOW_MIXING: 0
@@ -154,7 +156,9 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 1
     - _Thickness: 52.6
+    - _Tier: 3.12
     - _Tiling: 0.1
+    - _UiMaskIgnored: 1
     - _Width: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1

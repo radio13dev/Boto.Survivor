@@ -14,7 +14,7 @@ public class WorldSpaceCanvasScaler : MonoBehaviour
 
     private void OnValidate()
     {
-        Setup();
+        //Setup();
     }
 
     private void OnEnable()

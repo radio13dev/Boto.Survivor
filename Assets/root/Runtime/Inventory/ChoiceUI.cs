@@ -1,66 +1,70 @@
 using System;
+using JetBrains.Annotations;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ChoiceUI : MonoBehaviour
 {
     public static ChoiceUI Instance;
 
+    public GameObject Container;
     public RingDisplay RingDisplay;
-    public TMP_Text Title;
-    public TMP_Text Description;
-    public ChoiceUIRow[] Rows;
+    public DescriptionUI DescriptionUI;
+    
+    public static bool IsActive => Instance && Instance.Container.activeInHierarchy;
+    public static Ring ActiveRing { get; private set; }
+    public static int ActiveRingIndex { get; private set; } = -1;
+    public static float3 PickupPosition { get; private set; }
+    public static Action<int> OnActiveRingChange;
+
+    CompiledStats m_BaseStats;
 
     private void Awake()
     {
         Instance = this;
         Close();
     }
-
-    CompiledStats m_BaseStats;
-    public void Setup(CompiledStats stats, Ring ring)
+    
+    public void Setup(RingDisplay grabbed)
     {
-        RingDisplay.UpdateRing(-1, ring);
-        var desc = RingDisplay.GetDescription();
-        Title.text = desc.Title;
-        Description.text = desc.Description;
+        GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats);
+        Setup(stats, grabbed.Ring, grabbed.Index);
+        RingDisplay.CopyTransform(grabbed);
+    }
+    
+    public void Setup(CompiledStats stats, Ring ring, int ringIndex) => _Setup(stats, ring, ringIndex, default);
+    public void Setup(CompiledStats stats, Ring ring, float3 pickupPosition) => _Setup(stats, ring, -1, pickupPosition);
+    private void _Setup(CompiledStats stats, Ring ring, int ringIndex, float3 pickupPosition)
+    {
+        ActiveRing = ring;
+        ActiveRingIndex = ringIndex;
+        PickupPosition = pickupPosition;
+        OnActiveRingChange?.Invoke(ActiveRingIndex);
         
-        for (int i = 0; i < Rows.Length; i++)
-        {
-            if (ring.Stats.GetStatBoost(i, out var stat, out var boost) && boost > 0)
-            {
-                Rows[i].gameObject.SetActive(true);
-                Rows[i].Setup(stat, stats.CompiledStatsTree[stat] - boost, boost);
-            }
-            else
-            {
-                Rows[i].gameObject.SetActive(false);
-            }
-        }
+        RingDisplay.UpdateRing(ringIndex, ring, false);
+        
+        var desc = RingDisplay.GetDescription();
+        desc.BottomLeft = string.Empty;
+        for (int i = 0; i < desc.TiledStatsData?.Length; i++)
+            desc.TiledStatsData[i].RingDisplayParent = null;
+            
+        DescriptionUI.SetText(desc);
+        
+        Container.SetActive(true);
     }
 
     private void OnDisable()
     {
-        if (m_GrabbedDisplay)
-        {
-            m_GrabbedDisplay.gameObject.SetActive(true);
-            m_GrabbedDisplay = null;
-        }
-    }
-    
-    RingDisplay m_GrabbedDisplay;
-    public void Grab(RingDisplay grabbed)
-    {
-        if (m_GrabbedDisplay) m_GrabbedDisplay.gameObject.SetActive(true);
-        m_GrabbedDisplay = grabbed;
-        m_GrabbedDisplay.gameObject.SetActive(false);
-        GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats);
-        Setup(stats, grabbed.Ring);
-        RingDisplay.CopyTransform(grabbed);
+        Close();
     }
 
-    private void Close()
+    public void Close()
     {
-        throw new NotImplementedException();
+        ActiveRingIndex = -1;
+        OnActiveRingChange?.Invoke(ActiveRingIndex);
+        
+        Container.SetActive(false);
     }
 }

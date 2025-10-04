@@ -54,6 +54,17 @@ public class DescriptionUI : MonoBehaviour
         public string BottomRight;
         public eBottomRowVariant BottomVariant;
         
+        public TiledStatData[] TiledStatsData;
+        
+        public struct TiledStatData
+        {
+            public TiledStat Stat;
+            public int Low;
+            public int Boost;
+            public RingDisplay RingDisplayParent;
+            public bool IsValid => Boost != 0;
+        }
+        
         public Action ButtonPress;
         
         public struct Row
@@ -89,6 +100,8 @@ public class DescriptionUI : MonoBehaviour
     public TMP_Text BottomRowRight;
     
     public SerializedDictionary<eBottomRowVariant, GameObject[]> BottomRowVariants = new();
+    
+    public ChoiceUIRow[] ChoiceUIElements = Array.Empty<ChoiceUIRow>();
     
     public static GameObject m_CustomZero; 
 
@@ -129,7 +142,7 @@ public class DescriptionUI : MonoBehaviour
         }
     }
 
-    private void SetText(ISource component)
+    public void SetText(ISource component)
     {
         var data = component.GetDescription();
         
@@ -142,7 +155,7 @@ public class DescriptionUI : MonoBehaviour
         m_ButtonPress?.Invoke();
     }
 
-    private void SetText(Data data)
+    public void SetText(Data data)
     {
         m_ButtonPress = data.ButtonPress;
         
@@ -204,7 +217,7 @@ public class DescriptionUI : MonoBehaviour
             Rows[0].transform.parent.gameObject.SetActive(false);
         }
         
-        if (data.BottomLeft != default)
+        if (!string.IsNullOrEmpty(data.BottomLeft))
         {
             BottomRowLeft.text = data.BottomLeft;
             BottomRowRight.text = data.BottomRight;
@@ -221,6 +234,17 @@ public class DescriptionUI : MonoBehaviour
         else
         {
             BottomRowLeft.transform.parent.gameObject.SetActive(false);
+        }
+        
+        for (int i = 0; i < ChoiceUIElements.Length; i++)
+        {
+            if (i < data.TiledStatsData?.Length && data.TiledStatsData[i].IsValid)
+            {
+                ChoiceUIElements[i].gameObject.SetActive(true);
+                ChoiceUIElements[i].Setup(data.TiledStatsData[i].Stat, data.TiledStatsData[i].Low, data.TiledStatsData[i].Boost, data.TiledStatsData[i].RingDisplayParent);
+            }
+            else
+                ChoiceUIElements[i].gameObject.SetActive(false);
         }
     }
 }

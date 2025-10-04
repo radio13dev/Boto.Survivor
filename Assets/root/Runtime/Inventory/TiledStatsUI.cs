@@ -13,6 +13,8 @@ using Random = UnityEngine.Random;
 
 public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
 {
+    private static readonly int UiCenter = Shader.PropertyToID("_UiCenter");
+    private static readonly int UiSize = Shader.PropertyToID("_UiSize");
     public Transform CenterTransform;
     public Transform TopTransform;
 
@@ -31,9 +33,9 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
     public GameObject[] CompleteRows;
     public GameObject[] CompleteColumns;
 
-    public Vector2 FocusedPosition = new Vector2(4,4);
+    public Vector2 FocusedPosition = new Vector2(4, 4);
     public Vector2 VisualShift = new Vector2(0.5f, 0.5f);
-    public Vector2 BackendShift = new Vector2(4,4);
+    public Vector2 BackendShift = new Vector2(4, 4);
 
     [EditorButton]
     public void ForceRebuild()
@@ -54,7 +56,7 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         HandUIController.Attach(this);
 
         GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(new(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
+        if (CameraTarget.MainTarget) RebuildTilesFull();
         else
         {
             RebuildTiles(new(), TiledStatsTree.Default, new CompiledStats() { CompiledStatsTree = TiledStatsTree.Default }, default);
@@ -62,8 +64,10 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
 
         // Focus the UI 
         Tiles[0].FocusParentToMe();
-        
+
         UIFocus.OnFocus += OnFocus;
+
+        ChoiceUI.OnActiveRingChange += OnActiveRingChange;
     }
 
     private void OnDisable()
@@ -71,32 +75,43 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         HandUIController.Detach(this);
 
         GameEvents.OnEvent -= OnGameEvent;
-        
+
         UIFocus.OnFocus -= OnFocus;
+
+        ChoiceUI.OnActiveRingChange -= OnActiveRingChange;
     }
 
     ExclusiveCoroutine m_focusRedirectCo;
+
     private void OnFocus()
     {
         if (!UIFocus.Focus && HandUIController.GetState() == HandUIController.State.Inventory)
         {
-            var focusedIndex = (BackendShift-FocusedPosition);
+            var focusedIndex = (BackendShift - FocusedPosition);
             var tileIndex = (mathu.modabs((int)math.round(focusedIndex.x), TiledStats.TileCount.x + BorderCount.x * 2)) +
                             (mathu.modabs((int)math.round(focusedIndex.y), TiledStats.TileCount.y + BorderCount.y * 2)) * (TiledStats.TileCount.x + BorderCount.x * 2);
             UIFocus.StartFocus(Tiles[tileIndex].GetComponent<Focusable>());
         }
         //m_focusRedirectCo.StartCoroutine(this, _AttemptReFocus());
+        RebuildHighlights();
     }
+
     IEnumerator _AttemptReFocus()
     {
         yield return new WaitForSeconds(0.5f);
         if (!UIFocus.Focus && HandUIController.GetState() == HandUIController.State.Inventory)
         {
-            var focusedIndex = (BackendShift-FocusedPosition);
+            var focusedIndex = (BackendShift - FocusedPosition);
             var tileIndex = (mathu.modabs((int)math.round(focusedIndex.x), TiledStats.TileCount.x + BorderCount.x * 2)) +
                             (mathu.modabs((int)math.round(focusedIndex.y), TiledStats.TileCount.y + BorderCount.y * 2)) * (TiledStats.TileCount.x + BorderCount.x * 2);
             UIFocus.StartFocus(Tiles[tileIndex].GetComponent<Focusable>());
         }
+    }
+
+    private void RebuildTilesFull()
+    {
+        if (CameraTarget.MainTarget)
+            OnGameEvent(new(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
     }
 
     private void OnGameEvent(GameEvents.Data data)
@@ -138,6 +153,7 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
             DestroyImmediate(Tiles[^1].gameObject);
             Tiles.RemoveAt(Tiles.Count - 1);
         }
+        
 
         for (int x = 0; x < TiledStats.TileCount.x + BorderCount.x * 2; x++)
         for (int y = 0; y < TiledStats.TileCount.y + BorderCount.y * 2; y++)
@@ -157,6 +173,31 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
             CompleteColumns[x].SetActive(baseStats.HasCompletedColumn(x % TiledStats.TileCols));
         for (int y = 0; y < CompleteRows.Length; y++)
             CompleteRows[y].SetActive(baseStats.HasCompletedRow(y % TiledStats.TileRows));
+            
+        RebuildHighlights();
+    }
+    
+    public void RebuildHighlights()
+    {
+        Ring? highlightedRing = null;
+        TiledStat? highlightedStat = null;
+        
+        if (ChoiceUI.IsActive)
+            highlightedRing = ChoiceUI.ActiveRing;
+        else if (UIFocus.Focus && UIFocus.Focus.TryGetComponent<TiledStatsUITile>(out var focusedTile))
+            if (focusedTile.IsRing)
+                highlightedRing = focusedTile.Ring;
+            else
+                highlightedStat = focusedTile.Stat;
+        
+        foreach (var tile in Tiles)
+        {
+            tile.NothingHighlighted();
+            if (highlightedRing.HasValue || ChoiceUI.IsActive)
+                tile.RingHighlighted(ChoiceUI.IsActive, highlightedRing.Value);
+            else if (highlightedStat.HasValue)
+                tile.StatHighlighted(false, highlightedStat.Value);
+        }
     }
 
     public float RotationPivot = 250;
@@ -181,9 +222,10 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
             tile.transform.localPosition = tilePos;
             tile.transform.localRotation = quaternion.identity;
             tile.SetOffset(tilePos2D);
-            tile.GetComponent<Focusable>().enabled = math.lengthsq(tilePos) < math.lengthsq(Spacing) * 6;
-            //var forward = tile.transform.localPosition - new Vector3(0,0,RotationPivot);
-            //tile.transform.localRotation = quaternion.LookRotationSafe(-forward, math.up());
+            
+            var focusEnabled = math.lengthsq(tilePos) < math.lengthsq(Spacing) * 6;
+            tile.GetComponent<Focusable>().enabled = focusEnabled;
+            tile.GetComponent<FocusableRequest>().enabled = focusEnabled;
         }
 
         for (int x = 0; x < CompleteColumns.Length; x++)
@@ -205,12 +247,20 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         m_Dirty = false;
     }
 
+    private void OnActiveRingChange(int ringIndex)
+    {
+        RebuildTilesFull();
+    }
+
     private void OnValidate()
     {
-        var demoStats = TiledStatsTree.Demo;
-        RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
-        RefreshGrid();
-        UpdateMask();
+        CoroutineHost.FixOnValidateError(this, () =>
+        {
+            var demoStats = TiledStatsTree.Demo;
+            RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
+            RefreshGrid();
+            UpdateMask();
+        });
     }
 
     private void Update()
@@ -238,8 +288,8 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         {
             var center = (float3)CameraRegistry.UI.WorldToScreenPoint(CenterTransform.position);
             var top = (float3)CameraRegistry.UI.WorldToScreenPoint(TopTransform.position);
-            Shader.SetGlobalVector("_UiCenter", center.xyxx);
-            Shader.SetGlobalFloat("_UiSize", math.distance(top.xy, center.xy));
+            Shader.SetGlobalVector(UiCenter, center.xyxx);
+            Shader.SetGlobalFloat(UiSize, math.distance(top.xy, center.xy));
         }
     }
 
@@ -251,11 +301,13 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
     {
         m_Dragging = true;
     }
+
     public void ApplyDragDelta(Vector2 eventDataDelta)
     {
         FocusedPosition += eventDataDelta * DragScale;
         m_Dirty = true;
     }
+
     public void EndDrag(TiledStatsUITile dragging)
     {
         m_Dragging = false;

@@ -85,7 +85,11 @@ public unsafe struct TiledStatsTree : IComponentData
         get
         {
             var fake = new TiledStatsTree();
-            fake[0] = 1;
+            fake[TiledStat.Stat_00_Ring0] = 1;
+            fake[TiledStat.Stat_01] = 2;
+            fake[TiledStat.Stat_07] = 1;
+            fake[TiledStat.Stat_11_Ring1] = 1;
+            fake[TiledStat.Stat_21_Ring3] = 1;
             return fake;
         }
     }
@@ -212,12 +216,12 @@ public static partial class TiledStats
     
     public static string GetTitle(this TiledStat stat)
     {
-        return TiledStatsFull.StatDataFull[(int)stat].Localization.Localization_Title[0];
+        return "(Stat)".Color(Color.gray).Size(30);
     }
     
     public static string GetDescription(this TiledStat stat)
     {
-        return string.Empty;
+        return stat.GetFull().Localization.Localization_Title[0].Size(36);
     }
     
     public static int GetRingIndex(this TiledStat stat)

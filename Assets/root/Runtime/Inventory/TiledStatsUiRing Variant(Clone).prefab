@@ -87,6 +87,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   UnfocusDelay: 0
+  DisablePointerEvents: 0
 --- !u!114 &6885411185039530706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,8 +349,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.GUI::GenericPhysics
   Displacement: {x: 0, y: 0, z: 0}
   Velocity: {x: 0, y: 0, z: 0}
-  DisplacementDamping: 20
-  VelocityDamping: 20
+  DisplacementDamping: 10
+  VelocityDamping: 10
   AddDraggableDisplacement: 1
 --- !u!1 &8607864713294278026
 GameObject:

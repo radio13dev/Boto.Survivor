@@ -135,6 +135,10 @@ public struct GameManager : IComponentData
     {
         public int InstancedResourceIndex;
     }
+    public struct RingDropTemplate : IBufferElementData
+    {
+        public Entity Entity;
+    }
     
     public struct Survivors : IBufferElementData
     {
@@ -145,7 +149,6 @@ public struct GameManager : IComponentData
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
     public GemDropAuthoring GemDropTemplate;
-    public RingDropAuthoring RingDropTemplate;
     
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
@@ -155,6 +158,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public EnemyCharacterAuthoring[] Enemies;
     public GemVisuals GemVisuals;
     public RingVisuals RingVisuals;
+    public RingDropAuthoring[] RingDropTemplates;
     public SurvivorAuthoring[] Survivors;
     public GenericDatabase Prefabs;
 
@@ -167,7 +171,6 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             AddComponent(entity, new GameManager.Resources()
             {
                 GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace),
-                RingDropTemplate = GetEntity(authoring.RingDropTemplate, TransformUsageFlags.WorldSpace),
             });
             
             if (authoring.SpecificPrefabDatabase)
@@ -275,6 +278,15 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                         }
                         buffer[kvp.Key.GetMostSigBit()] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
                     }
+                }
+            }
+            
+            if (authoring.RingDropTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.RingDropTemplate>(entity);
+                foreach (var ringDropTemplate in authoring.RingDropTemplates)
+                {
+                    buffer.Add(new GameManager.RingDropTemplate(){ Entity = GetEntity(ringDropTemplate.gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
             

@@ -15,7 +15,8 @@ public class WorldClickTool : MonoBehaviour
         PlaceEnemyLarge,
         PlaceGem,
         PlaceEnemyWheel,
-        PlaceEnemyTrap
+        PlaceEnemyTrap,
+        PlaceRing
     }
 
     private void Awake()
@@ -40,7 +41,7 @@ public class WorldClickTool : MonoBehaviour
     {
         if (!Active) return;
 
-        if (GameInitialize.Inputs.UI.RightClick.WasPressedThisFrame())
+        if (GameInput.Inputs.UI.RightClick.WasPressedThisFrame())
         {
             if (TryGetComponent<Toggle>(out var toggle))
                 toggle.isOn = false;
@@ -55,7 +56,7 @@ public class WorldClickTool : MonoBehaviour
         Visual.transform.SetPositionAndRotation(TorusCollider.LastRaycast.pointerCurrentRaycast.worldPosition,
             Quaternion.LookRotation(Camera.main.transform.up, TorusCollider.LastRaycast.pointerCurrentRaycast.worldNormal));
 
-        if (GameInitialize.Inputs.UI.Click.WasPressedThisFrame())
+        if (GameInput.Inputs.UI.Click.WasPressedThisFrame())
             switch (Mode)
             {
                 case ClickMode.PlaceDummy:
@@ -75,6 +76,9 @@ public class WorldClickTool : MonoBehaviour
                     break;
                 case ClickMode.PlaceGem:
                     Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceGem((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));
+                    break;
+                case ClickMode.PlaceRing:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceRing((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));
                     break;
             }
     }

@@ -218,6 +218,8 @@ public class Game : IDisposable
 
     public void Dispose()
     {
+        if (ClientGame == this)
+            ClientGame = null;
         RpcSendBuffer.Dispose();
         if (m_World.IsCreated)
         {

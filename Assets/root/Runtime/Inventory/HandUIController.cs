@@ -112,10 +112,10 @@ public class HandUIController : MonoBehaviour
 
     private void Update()
     {
-        if (GameInitialize.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
+        if (GameInput.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
             if (m_StateCore == State.Inventory) SetState(State.Closed);
             else SetState(State.Inventory);
-        if (GameInitialize.Inputs.UI.MapShortcut.WasPressedThisFrame())
+        if (GameInput.Inputs.UI.MapShortcut.WasPressedThisFrame())
             if (m_StateCore == State.Map) SetState(State.Closed);
             else SetState(State.Map);
     }

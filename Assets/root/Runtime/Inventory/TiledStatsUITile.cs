@@ -30,7 +30,12 @@ public struct Wallet : IComponentData
 
 public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource, IFocusScale
 {
+
     public const int MaxLevel = 5;
+    
+    public bool IsRing => TiledStats.Get(TileKey).GetRingIndex() >= 0;
+    public TiledStat Stat => TiledStats.Get(TileKey);
+    public Ring Ring { get; private set; }
 
     public StatIcon StatIcon;
 
@@ -66,8 +71,116 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public Transform RingContainer;
     public Transform UiContainer;
     
+    public GameObject[] PipsMain = Array.Empty<GameObject>();
     public GameObject[] PipsMain_DisabledOverlays = Array.Empty<GameObject>();
     public GameObject[] PipsExtra = Array.Empty<GameObject>();
+    
+    public GameObject Highlight;
+    public GameObject HighlightFade;
+    public GameObject Highlight_Ring;
+    public GameObject HighlightFade_Ring;
+    public CanvasGroup HighlightFadeCanvasGroup;
+    
+    public void NothingHighlighted()
+    {
+        HighlightFadeCanvasGroup.alpha = 1;
+        Highlight.SetActive(false);
+        HighlightFade.SetActive(false);
+        Highlight_Ring.SetActive(false);
+        HighlightFade_Ring.SetActive(false);
+        UiContainer.localScale = Vector3.one;
+        for (int i = 0; i < PipsMain.Length; i++)
+            PipsMain[i].transform.localScale = Vector3.one;
+        for (int i = 0; i < PipsExtra.Length; i++)
+            PipsExtra[i].transform.localScale = Vector3.one;
+    }
+    public void RingHighlighted(bool fadeIrrelevent, Ring ring)
+    {
+        if (this.IsRing)
+        {
+            if (fadeIrrelevent)
+                Highlight_Ring.SetActive(true);
+        }
+        else
+        {
+            if (ring.Stats.DoesBoostStat(this.Stat, out int boost))
+            {
+                if (fadeIrrelevent)
+                {
+                    Highlight.SetActive(true);
+                    for (int i = 0; i < PipsMain.Length; i++)
+                        PipsMain[i].transform.localScale = Vector3.one*0.5f;
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                        if (i >= CompiledLevel-Level - boost)
+                            PipsExtra[i].transform.localScale = Vector3.one*1f;
+                        else if (fadeIrrelevent)
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                        if (i >= CompiledLevel-Level - boost)
+                            PipsExtra[i].transform.localScale = Vector3.one*1f;
+                        else
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+            }
+            else
+            {
+                if (fadeIrrelevent)
+                {
+                    HighlightFadeCanvasGroup.alpha = 0.2f;
+                    HighlightFade.SetActive(true);
+                    for (int i = 0; i < PipsMain.Length; i++)
+                        PipsMain[i].transform.localScale = Vector3.one*0.5f;
+                    for (int i = 0; i < PipsExtra.Length; i++)
+                        PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                }
+                else
+                {
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+            }
+        }
+    }
+    public void StatHighlighted(bool fadeIrrelevent, TiledStat stat)
+    {
+        if (this.IsRing)
+        {
+            if (this.Ring.Stats.DoesBoostStat(stat, out int boost))
+                Highlight_Ring.SetActive(true);
+            else
+            {
+                if (fadeIrrelevent)
+                {
+                    HighlightFade_Ring.SetActive(true);
+                    HighlightFadeCanvasGroup.alpha = 0.2f;
+                    //RingContainer.localScale = Vector3.one * 0.5f;
+                }
+            }
+        }
+        else
+        {
+            if (stat == this.Stat)
+            {
+                Highlight.SetActive(true);
+            }
+            else
+            {
+                for (int i = 0; i < CompiledLevel-Level; i++)
+                {
+                    PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                }
+            }
+        }
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -94,7 +207,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (UIFocus.Focus == gameObject)// && !eventData.dragging)
+        //if (UIFocus.Focus == gameObject)// && !eventData.dragging)
         {
             if (DescriptionUI.m_CustomZero == gameObject)
                 DoLevelUp();
@@ -109,6 +222,8 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         {
             ui.MoveTowards(Offset);
             DescriptionUI.m_CustomZero = gameObject;
+            UIFocus.StartFocus(this.GetComponent<Focusable>());
+            ui.RebuildHighlights();
         }
     }
 
@@ -180,7 +295,6 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         bool init = math.any(TileKey != tileKey);
         TileKey = tileKey;
         
-        
         var oldLevel = Level;
         Level = baseStats[TileKey];
         CompiledLevel = compiledStats.CompiledStatsTree[TileKey];
@@ -229,18 +343,22 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         if (ringIndex >= 0)
         {
             if (!m_SpawnedRing) m_SpawnedRing = Instantiate(RingTemplate, RingContainer);
-            m_SpawnedRing.UpdateRing(ringIndex, rings.IsCreated ? rings[ringIndex] : default, ReadOnlySpan<EquippedGem>.Empty);
+            Ring = rings.IsCreated ? rings[ringIndex] : default;
+            var ring = ringIndex != ChoiceUI.ActiveRingIndex ? Ring : default;
+            m_SpawnedRing.UpdateRing(ringIndex, ring, ReadOnlySpan<EquippedGem>.Empty, false);
         
             NotEnoughMoneyOverlay_Ring.gameObject.SetActive(!canAfford);
             HasEnoughMoneyOverlay_Ring.gameObject.SetActive(canAfford && CompiledLevel == 0);
             HasNoPointOutline_Ring.gameObject.SetActive(CompiledLevel == 0);
             HasPointOutline_Ring.gameObject.SetActive(CompiledLevel > 0);
         }
-        else if (m_SpawnedRing)
-        {
-            if (Application.isPlaying) Destroy(m_SpawnedRing.gameObject);
-            else DestroyImmediate(m_SpawnedRing.gameObject);
-            m_SpawnedRing = null;
+        else {
+            if (m_SpawnedRing)
+            {
+                if (Application.isPlaying) Destroy(m_SpawnedRing.gameObject);
+                else DestroyImmediate(m_SpawnedRing.gameObject);
+                m_SpawnedRing = null;
+            }
         }
         
         for (int i = 0; i < PipsMain_DisabledOverlays.Length; i++)
@@ -272,18 +390,25 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     {  
         var stat = TiledStats.Get(TileKey);
         
-        if (stat.GetRingIndex() >= 0 && CompiledLevel > 0)
-            return m_SpawnedRing.GetDescription();
-        
         var data = new DescriptionUI.Data();
-
-        data.Title = stat.GetTitle();
-        data.Description = stat.GetDescription();
-
-        //if (Level == 0 || Level >= 5)
-        //    rows = stat.GetDescriptionRows(math.max(CompiledLevel, 1));
-        //else
+        
+        if (stat.GetRingIndex() >= 0)
+        {
+            if (CompiledLevel > 0)
+                return m_SpawnedRing.GetDescription();
+                
+            data = m_SpawnedRing.GetDescription();
+        }
+        else
+        {
+            data.Title = stat.GetTitle();
+            data.Description = stat.GetDescription();
+            
+            //if (Level == 0 || Level >= 5)
+            //    rows = stat.GetDescriptionRows(math.max(CompiledLevel, 1));
+            //else
             data.Rows = stat.GetDescriptionRows(CompiledLevel, CompiledLevel + 1);
+        }
 
         if (Level >= MaxLevel)
         {
@@ -295,7 +420,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         else
         {
             // Cost
-            GameEvents.TryGetComponent2<Wallet>(CameraTarget.MainTarget.Entity, out var wallet);
+            GameEvents.TryGetComponent2<Wallet>(CameraTarget.MainTarget ? CameraTarget.MainTarget.Entity : default, out var wallet);
             bool canAfford = m_Cost <= wallet.Value;
             
             data.BottomLeft = $"Cost";

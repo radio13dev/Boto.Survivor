@@ -11,6 +11,7 @@ public class RingDropAuthoring : MonoBehaviour
             AddComponent<Interactable>(entity);
             AddComponent<RingStats>(entity);
             AddSharedComponent<LootKey>(entity, new LootKey());
+            AddComponent<Collectable>(entity);
         }
     }
 }

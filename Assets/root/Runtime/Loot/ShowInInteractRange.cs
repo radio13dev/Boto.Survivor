@@ -1,5 +1,3 @@
-using Unity.Entities;
-using UnityEngine;
 using UnityEngine.Events;
 
 public class ShowInInteractRange : EntityLinkMono

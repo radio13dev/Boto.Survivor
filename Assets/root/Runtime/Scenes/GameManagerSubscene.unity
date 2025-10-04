@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::GameManagerResourcesAuthoring
   GemDropTemplate: {fileID: 6121660106472816910, guid: 95bdde110b0b5c649a3e3671ad905766, type: 3}
-  RingDropTemplate: {fileID: 4660096552810017651, guid: 97935f69511d31f4aab76f74f510d516, type: 3}
   SpecificPrefabDatabase: {fileID: 11400000, guid: 2236ec58b14307e4f89f34b18668931c, type: 2}
   InstancedResourcesDatabase: {fileID: 11400000, guid: d1bd9a978272a2e438fdeec8ba9fee6c, type: 2}
   ParticleDatabase: {fileID: 11400000, guid: 3710ef55dc7ecff40a4ace5e7b7d076b, type: 2}
@@ -174,6 +173,11 @@ MonoBehaviour:
   - {fileID: 3557533656269071170, guid: cc18c792911ad0443ab7a0df3792e388, type: 3}
   GemVisuals: {fileID: 11400000, guid: 8f093ee8204abd540b1622b8ac4113ef, type: 2}
   RingVisuals: {fileID: 11400000, guid: f6c385cdaa0d5b141b7da22677acccfd, type: 2}
+  RingDropTemplates:
+  - {fileID: 6890974473594127639, guid: ac7dfc928bd35c849864b5618d809cf0, type: 3}
+  - {fileID: 9118208287573198904, guid: b646da38288849e41b2ea9b2ee0ef3b2, type: 3}
+  - {fileID: 9118208287573198904, guid: 5b347b4f59d2696498c478d4a3a84e3f, type: 3}
+  - {fileID: 9118208287573198904, guid: fc2940369467fbb47b42c40bdfeaedad, type: 3}
   Survivors:
   - {fileID: 6061478738849763825, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
   - {fileID: 7418438034480435078, guid: 5317c47d98dbbfb4bb8cf0f3223ad41e, type: 3}

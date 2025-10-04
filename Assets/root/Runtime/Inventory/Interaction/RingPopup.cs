@@ -35,6 +35,6 @@ public class RingPopup : EntityLinkMono
         if (!Game.World.EntityManager.HasComponent<RingStats>(Entity)) return;
         
         var ringStats = Game.World.EntityManager.GetComponentData<RingStats>(Entity);
-        RingDisplay.UpdateRing(-1, new Ring(){ Stats = ringStats });
+        RingDisplay.UpdateRing(-1, new Ring(){ Stats = ringStats }, true);
     }
 }

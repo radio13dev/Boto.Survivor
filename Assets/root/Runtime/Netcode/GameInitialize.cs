@@ -6,9 +6,7 @@ public class GameInitialize : MonoBehaviour
 {
     public static bool EnableMainContentLoad = true;
     public static bool EnableInitGameLaunch = true;
-    
-    public static InputSystem_Actions Inputs;
-    
+
     public GameDebug DebugAsset;
 
     private void Awake()
@@ -16,15 +14,14 @@ public class GameInitialize : MonoBehaviour
         if (DebugAsset) GameDebug.Initialize(DebugAsset);
         TiledStatsFull.Setup();
         GameEvents.Initialize();
-        
-        Inputs = new InputSystem_Actions();
-        Inputs.Player.Enable();
-        Inputs.UI.Enable();
-        
+
+        GameInput.Init();
+
         if (EnableMainContentLoad && !SceneManager.GetSceneByName("main").isLoaded)
         {
             SceneManager.LoadSceneAsync("main", LoadSceneMode.Additive);
         }
+
         if (EnableInitGameLaunch && !GameLaunch.Main)
         {
             GameLaunch.Create(new GameFactory("main"));
@@ -38,8 +35,15 @@ public class GameInitialize : MonoBehaviour
 
     private void OnDestroy()
     {
-        Inputs.Dispose();
+        GameInput.Dispose();
         GameEvents.Dispose();
         TiledStatsFull.Dispose();
+    }
+
+    [EditorButton]
+    public void CycleInputMode()
+    {
+        var arr = ((GameInput.Mode[])Enum.GetValues(typeof(GameInput.Mode)));
+        GameInput.SetInputMode(arr[(Array.IndexOf(arr, GameInput.CurrentMode)+1)%arr.Length]);
     }
 }

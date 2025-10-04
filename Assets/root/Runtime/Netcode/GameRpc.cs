@@ -36,6 +36,7 @@ public unsafe struct GameRpc : IComponentData
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
         AdminPlaceGem = 0b0100_0001,
         AdminPlayerLevelStat = 0b0100_0010,
+        AdminPlaceRing = 0b0100_0011,
     }
 
     public const int Length = sizeof(long)*2;
@@ -177,6 +178,10 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc AdminPlaceGem(byte player, Vector3 placePosition)
     {
         return new GameRpc() { Type = Code.AdminPlaceGem, PlayerId = player, PlacePosition = placePosition };
+    }
+    public static GameRpc AdminPlaceRing(byte player, Vector3 placePosition)
+    {
+        return new GameRpc() { Type = Code.AdminPlaceRing, PlayerId = player, PlacePosition = placePosition };
     }
     #endregion
 }
@@ -595,6 +600,17 @@ public partial struct GameRpcSystem : ISystem
                     var gem = Gem.Generate(ref r);
                     Debug.Log($"Generated: {gem.GemType} gem");
                     Gem.SetupEntity(gemE, 0, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
+                    break;
+                }
+                case GameRpc.Code.AdminPlaceRing:
+                {
+                    var ringTemplates = SystemAPI.GetSingletonBuffer<GameManager.RingDropTemplate>(true);
+                    
+                    var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                    var ring = RingStats.Generate(ref r);
+                    var ringE = ecb.Instantiate(ringTemplates[ring.Tier].Entity);
+                    Debug.Log($"Generated: {ring} ring");
+                    Ring.SetupEntity(ringE, 0, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default, ring);
                     break;
                 }
             }

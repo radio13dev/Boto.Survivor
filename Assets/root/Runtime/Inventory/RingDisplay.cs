@@ -8,7 +8,8 @@ using UnityEngine.EventSystems;
 public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
 {
     private static readonly int UiMaskIgnored = Shader.PropertyToID("_UiMaskIgnored");
-    
+    private static readonly int Tier = Shader.PropertyToID("_Tier");
+
     public MeshRenderer NoRingDisplay;
     public MeshRenderer HasRingDisplay;
     public MeshRenderer RingRenderer;
@@ -17,17 +18,19 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
 
     public int Index { get; private set; }
     public Ring Ring { get; private set; }
+    public bool IsPickup { get; private set; }
     EquippedGem[] m_Gems = Array.Empty<EquippedGem>();
     public ReadOnlyCollection<EquippedGem> Gems => Array.AsReadOnly(m_Gems);
     Material m_CreatedMat;
 
     private void Awake()
     {
-        UpdateRing(-1, default, ReadOnlySpan<EquippedGem>.Empty);
+        UpdateRing(-1, default, ReadOnlySpan<EquippedGem>.Empty, true);
     }
 
-    public void UpdateRing(int index, Ring ring, ReadOnlySpan<EquippedGem> equippedGemsForRing)
+    public void UpdateRing(int index, Ring ring, ReadOnlySpan<EquippedGem> equippedGemsForRing, bool isPickup)
     {
+        IsPickup = isPickup;
         Index = index;
         Ring = ring;
         m_Gems = equippedGemsForRing.ToArray();
@@ -43,16 +46,19 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
                 else Destroy(m_CreatedMat);
             RingRenderer.material = Ring.Stats.Material;
             RingFilter.sharedMesh = Ring.Stats.Mesh;
-            if (ShouldMask && Application.isPlaying)
+            if (Application.isPlaying)
             {
                 m_CreatedMat = RingRenderer.material;
-                m_CreatedMat.SetFloat(UiMaskIgnored, 0);
+                m_CreatedMat.SetFloat(Tier, ring.Stats.Tier);
+                if (ShouldMask)
+                    m_CreatedMat.SetFloat(UiMaskIgnored, 0);
             }
         }
     }
 
-    public void UpdateRing(int index, Ring ring)
+    public void UpdateRing(int index, Ring ring, bool isPickup)
     {
+        IsPickup = isPickup;
         Index = index;
         Ring = ring;
         m_Gems = Array.Empty<EquippedGem>();
@@ -63,8 +69,18 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         // Display ring
         if (ring.Stats.IsValid)
         {
+            if (m_CreatedMat) 
+                if (!Application.isPlaying) DestroyImmediate(m_CreatedMat); 
+                else Destroy(m_CreatedMat);
             RingRenderer.material = Ring.Stats.Material;
-            RingFilter.mesh = Ring.Stats.Mesh;
+            RingFilter.sharedMesh = Ring.Stats.Mesh;
+            if (Application.isPlaying)
+            {
+                m_CreatedMat = RingRenderer.material;
+                m_CreatedMat.SetFloat(Tier, ring.Stats.Tier);
+                if (ShouldMask)
+                    m_CreatedMat.SetFloat(UiMaskIgnored, 0);
+            }
         }
     }
 
@@ -145,12 +161,12 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         StringBuilder sb = new();
 
         // Inventory
-        if (GetComponentInParent<RingUI>())
-            data.Title = "(Rings)".Color(Color.gray).Size(30);
+        if (!IsPickup)
+            data.Title = "(Equipped)".Color(Color.gray).Size(30);
         else
             data.Title = "(Pickup)".Color(Color.mediumPurple).Size(30);
 
-        if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
+        if (ChoiceUI.IsActive || (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing)))
         {
             sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
         }
@@ -170,6 +186,23 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         data.BottomVariant = DescriptionUI.eBottomRowVariant.SwapRing;
         data.BottomLeft = "Swap Ring";
         
+        // Hate this
+        GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget ? CameraTarget.MainTarget.Entity : default, out var stats);
+        data.TiledStatsData = new DescriptionUI.Data.TiledStatData[RingStats.k_MaxStats];
+        for (int i = 0; i < RingStats.k_MaxStats; i++)
+        {
+            if (Ring.Stats.GetStatBoost(i, out var stat, out var boost))
+            {
+                data.TiledStatsData[i] = new DescriptionUI.Data.TiledStatData()
+                {
+                    Stat = stat,
+                    Low = stats.CompiledStatsTree[stat] - boost,
+                    Boost = boost,
+                    RingDisplayParent = this
+                };
+            }
+        }
+        
         data.ButtonPress = ChoiceUIGrab;
         
         return data;
@@ -177,7 +210,38 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
 
     private void ChoiceUIGrab()
     {
-        ChoiceUI.Instance.Grab(this);
+        if (ChoiceUI.ActiveRingIndex == Index)
+        {
+            this.CopyTransform(ChoiceUI.Instance.RingDisplay);
+            ChoiceUI.Instance.Close();
+        }
+        else if (!ChoiceUI.IsActive)
+            ChoiceUI.Instance.Setup(this);
+        else
+        {
+            if (ChoiceUI.ActiveRingIndex >= 0)
+            {
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerSwapRingSlots((byte)Game.ClientGame.PlayerIndex,
+                        (byte)this.Index,
+                        (byte)ChoiceUI.ActiveRingIndex
+                    ));
+                this.CopyTransform(ChoiceUI.Instance.RingDisplay);
+            }
+            else
+            {
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerPickupRing((byte)Game.ClientGame.PlayerIndex,
+                        (byte)this.Index,
+                        ChoiceUI.PickupPosition
+                    ));
+                this.CopyTransform(ChoiceUI.Instance.RingDisplay);
+            }
+            ChoiceUI.Instance.Close();
+        }
+        
+        UIFocus.Refresh();
+        if (GetComponentInParent<TiledStatsUI>() is {} ui) ui.RebuildHighlights();
     }
 
     public void CopyTransform(RingDisplay other)

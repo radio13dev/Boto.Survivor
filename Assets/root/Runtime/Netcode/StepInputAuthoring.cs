@@ -68,7 +68,7 @@ public struct StepInput : IComponentData
     {
         if (!camera) return;
 
-        var player = GameInitialize.Inputs.Player;
+        var player = GameInput.Inputs.Player;
         var dir = player.Move.ReadValue<Vector2>();
         Direction += (float3)camera.transform.right*dir.x + (float3)camera.transform.up*dir.y;
         
