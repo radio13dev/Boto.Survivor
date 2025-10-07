@@ -171,6 +171,11 @@ public unsafe struct RingStats : IComponentData
         }
     }
 
+    public int GetSellPrice()
+    {
+        return ((int)Tier*20);
+    }
+
     public bool GetStatBoost(int index, out TiledStat stat, out byte boost)
     {
         if (index < 0 || index >= k_MaxStats || BoostedStatsBoosts[index] == 0)

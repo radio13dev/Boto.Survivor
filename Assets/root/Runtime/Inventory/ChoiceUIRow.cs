@@ -41,24 +41,37 @@ public class ChoiceUIRow : MonoBehaviour, DescriptionUI.ISource
         return data;
     }
     
-    FocusableRequest m_Focusable;
+    Focusable m_Focusable;
     public void OnFocusRequestStart()
     {
         OnFocusRequestEnd();
         var tiles = Object.FindAnyObjectByType<TiledStatsUI>().Tiles;
+        
+        Focusable bestTile = null;
+        float bestScore = float.MaxValue;
         for (int i = 0; i < tiles.Count; i++)
         {
             if (tiles[i].Stat != this.m_Stat) continue;
-            if (!tiles[i].TryGetComponent<FocusableRequest>(out var focusable)) continue;
+            if (!tiles[i].TryGetComponent<Focusable>(out var focusable)) continue;
             if (!focusable.enabled) continue;
-            m_Focusable = focusable;
-            UIFocusRequest.StartFocus(m_Focusable);
+            var tileScore = tiles[i].transform.localPosition.sqrMagnitude;
+            if (tileScore <= bestScore)
+            {
+                bestScore = tileScore;
+                bestTile = focusable;   
+            }
+        }
+        
+        if (bestTile)
+        {
+            m_Focusable = bestTile;
+            ElementFocus.SetForcedFocus(m_Focusable);
         }
     }
     public void OnFocusRequestEnd()
     {
         if (m_Focusable)
-            UIFocusRequest.EndFocus(m_Focusable);
+            ElementFocus.EndForcedFocus(m_Focusable);
         m_Focusable = null;
     }
 }

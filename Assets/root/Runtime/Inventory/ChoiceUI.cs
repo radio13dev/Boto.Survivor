@@ -49,6 +49,8 @@ public class ChoiceUI : MonoBehaviour
         desc.BottomLeft = string.Empty;
         for (int i = 0; i < desc.TiledStatsData?.Length; i++)
             desc.TiledStatsData[i].RingDisplayParent = null;
+        desc.ButtonText = "Sell";
+        desc.ButtonPress = RingDisplay.SellPress;
             
         DescriptionUI.SetText(desc);
         
@@ -66,5 +68,11 @@ public class ChoiceUI : MonoBehaviour
         OnActiveRingChange?.Invoke(ActiveRingIndex);
         
         Container.SetActive(false);
+    }
+    
+    public void SetRingFocus(bool v)
+    {
+        if (v) ElementFocus.SetForcedFocus(RingDisplay.GetComponent<Focusable>());
+        else ElementFocus.EndForcedFocus(RingDisplay.GetComponent<Focusable>());
     }
 }

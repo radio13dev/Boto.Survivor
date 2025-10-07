@@ -223,9 +223,9 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
             tile.transform.localRotation = quaternion.identity;
             tile.SetOffset(tilePos2D);
             
-            var focusEnabled = math.lengthsq(tilePos) < math.lengthsq(Spacing) * 6;
-            tile.GetComponent<Focusable>().enabled = focusEnabled;
-            tile.GetComponent<FocusableRequest>().enabled = focusEnabled;
+            //var focusEnabled = math.lengthsq(tilePos) < math.lengthsq(Spacing) * 6;
+            //tile.GetComponent<Focusable>().enabled = focusEnabled;
+            //tile.GetComponent<FocusableRequest>().enabled = focusEnabled;
         }
 
         for (int x = 0; x < CompleteColumns.Length; x++)

@@ -9,6 +9,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = Unity.Mathematics.Random;
 
 [Save]
 [Serializable]
@@ -30,6 +31,7 @@ public unsafe struct GameRpc : IComponentData
         PlayerDropRing = 0b0000_0101,
         PlayerJoin = 0b0000_0110,
         PlayerLevelStat = 0b0000_0111,
+        PlayerSellRing = 0b0000_1000,
 
         
         // Admin Actions
@@ -135,6 +137,14 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerPickupRing(byte player, byte toSlotIndex, float3 interactPosition)
     {
         return new GameRpc() { Type = Code.PlayerPickupRing, PlayerId = player, FromSlotIndex = byte.MaxValue, ToSlotIndex = toSlotIndex, InteractPosition = interactPosition};
+    }
+    public static GameRpc PlayerSellRing(byte player, float3 interactPosition)
+    {
+        return new GameRpc() { Type = Code.PlayerSellRing, PlayerId = player, FromSlotIndex = byte.MaxValue, InteractPosition = interactPosition};
+    }
+    public static GameRpc PlayerSellRing(byte player, byte fromSlotIndex)
+    {
+        return new GameRpc() { Type = Code.PlayerSellRing, PlayerId = player, FromSlotIndex = fromSlotIndex};
     }
     public static GameRpc PlayerDropRing(byte player, byte dropSlotIndex)
     {
@@ -447,6 +457,9 @@ public partial struct GameRpcSystem : ISystem
                     Entity bestE = default;
                     foreach (var (interactableT, interactableRing, interactableE) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<RingStats>>().WithAll<Interactable>().WithEntityAccess())
                     {
+                        if (SystemAPI.HasComponent<Collectable>(interactableE) && SystemAPI.GetComponent<Collectable>(interactableE).PlayerId != playerId)
+                            continue;
+                            
                         var d = math.distancesq(interactableT.ValueRO.Position, playerT.Position);
                         if (d < bestD)
                         {
@@ -472,13 +485,12 @@ public partial struct GameRpcSystem : ISystem
                     // Drop the item
                     if (bestR.IsValid)
                     {
-                        var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().RingDropTemplate;
-                        var ringDropE = ecb.Instantiate(ringDropTemplate);
-                        ecb.SetComponent(ringDropE, bestR);
-                        ecb.SetComponent(ringDropE, playerT);
-                        //ecb.SetSharedComponent(ringDropE, 
-                        //    new InstancedResourceRequest(
-                        //        SystemAPI.GetSingletonBuffer<GameManager.RingVisual>(true)[(int)bestR.PrimaryEffect].InstancedResourceIndex));
+                        var ringTemplates = SystemAPI.GetSingletonBuffer<GameManager.RingDropTemplate>(true);
+                        var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                        var ringE = ecb.Instantiate(ringTemplates[bestR.Tier].Entity);
+                        Debug.Log($"Generated: {bestR} ring");
+                        Ring.SetupEntity(ringE, playerId, ref r, ref ecb, playerT, default, bestR);
+                        
                     }
                     
                     
@@ -494,6 +506,84 @@ public partial struct GameRpcSystem : ISystem
                         state.EntityManager.DestroyEntity(bestE);
                     
                     SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                    break;
+                }
+                case GameRpc.Code.PlayerSellRing:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Ring>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var playerT = SystemAPI.GetComponent<LocalTransform>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
+                    
+                    int earned = 0;
+                    
+                    if (rpc.FromSlotIndex >= Ring.k_RingCount)
+                    {
+                        // Sell grounded pickup (if we are the owner)
+                        // Find the nearest interactable to our interact location
+                        float bestD = float.MaxValue;
+                        RingStats bestR = default;
+                        Entity bestE = default;
+                        foreach (var (interactableT, interactableRing, interactableE) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<RingStats>>().WithAll<Interactable>().WithEntityAccess())
+                        {
+                            if (SystemAPI.HasComponent<Collectable>(interactableE) && SystemAPI.GetComponent<Collectable>(interactableE).PlayerId != playerId)
+                                continue;
+                            
+                            var d = math.distancesq(interactableT.ValueRO.Position, playerT.Position);
+                            if (d < bestD)
+                            {
+                                bestD = d;
+                                bestR = interactableRing.ValueRO;
+                                bestE = interactableE;
+                            }
+                        }
+                        
+                        if (bestE == Entity.Null)
+                        {
+                            Debug.LogWarning($"Player {playerId} couldn't find the ring they were looking for at {playerT.Position}.");
+                            continue;
+                        }
+                        
+                        earned +=  bestR.GetSellPrice();
+                        
+                        var key = state.EntityManager.GetSharedComponent<LootKey>(bestE);
+                        if (key.Value != 0)
+                        {
+                            Debug.Log($"Destroying shared loot key {key.Value}");
+                            var destroyQuery = state.EntityManager.CreateEntityQuery(typeof(Interactable), typeof(LootKey));
+                            destroyQuery.SetSharedComponentFilter(key);
+                            state.EntityManager.DestroyEntity(destroyQuery);
+                        }
+                        else
+                            state.EntityManager.DestroyEntity(bestE);
+                    }
+                    else
+                    {
+                        var ring = rings[rpc.FromSlotIndex];
+                        if (!ring.Stats.IsValid)
+                        {
+                            Debug.LogWarning($"Player {playerId} attempted to sell empty ring slot {rpc.FromSlotIndex}.");
+                            continue;
+                        }
+                        
+                        var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                        dirty.SetDirty(rings[rpc.ToSlotIndex]);
+                        dirty.SetDirty(ring);
+                        SystemAPI.SetComponent(playerE, dirty);
+                        SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                        
+                        earned += ring.Stats.GetSellPrice();
+                        rings[rpc.FromSlotIndex] = default;
+                    }
+                    
+                    var gemTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate;
+                    var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                    for (int i = 0; i < earned; i++)
+                        CreateGem(ref ecb, playerId, gemTemplate, ref r, playerT.Position + r.NextFloat3Direction()*r.NextFloat()*4);
+                    
                     break;
                 }
                 case GameRpc.Code.PlayerDropRing:
@@ -519,12 +609,13 @@ public partial struct GameRpcSystem : ISystem
                         var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
                         dirty.SetDirty(dropped);
                         SystemAPI.SetComponent(playerE, dirty);
-                        
-                        var ringDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().RingDropTemplate;
-                        var ringDropE = ecb.Instantiate(ringDropTemplate);
-                        ecb.SetComponent(ringDropE, dropped.Stats);
-                        ecb.SetComponent(ringDropE, playerT);
                         SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
+                        
+                        var ringTemplates = SystemAPI.GetSingletonBuffer<GameManager.RingDropTemplate>(true);
+                        var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                        var ringE = ecb.Instantiate(ringTemplates[dropped.Stats.Tier].Entity);
+                        Debug.Log($"Generated: {dropped.Stats} ring");
+                        Ring.SetupEntity(ringE, playerId, ref r, ref ecb, playerT, default, dropped.Stats);
                     }
                     break;
                 }
@@ -594,12 +685,8 @@ public partial struct GameRpcSystem : ISystem
                 case GameRpc.Code.AdminPlaceGem:
                 {
                     var gemTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate;
-                    var gemE = ecb.Instantiate(gemTemplate);
-                    
                     var r = SystemAPI.GetSingleton<SharedRandom>().Random;
-                    var gem = Gem.Generate(ref r);
-                    Debug.Log($"Generated: {gem.GemType} gem");
-                    Gem.SetupEntity(gemE, 0, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
+                    CreateGem(ref ecb, playerId, gemTemplate, ref r, rpc.PlacePosition);
                     break;
                 }
                 case GameRpc.Code.AdminPlaceRing:
@@ -610,7 +697,7 @@ public partial struct GameRpcSystem : ISystem
                     var ring = RingStats.Generate(ref r);
                     var ringE = ecb.Instantiate(ringTemplates[ring.Tier].Entity);
                     Debug.Log($"Generated: {ring} ring");
-                    Ring.SetupEntity(ringE, 0, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default, ring);
+                    Ring.SetupEntity(ringE, playerId, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default, ring);
                     break;
                 }
             }
@@ -618,5 +705,13 @@ public partial struct GameRpcSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+
+    private void CreateGem(ref EntityCommandBuffer ecb, byte playerId, Entity gemTemplate, ref Random random, float3 placePosition)
+    {
+        var gemE = ecb.Instantiate(gemTemplate);
+        var gem = Gem.Generate(ref random);
+        Debug.Log($"Generated: {gem.GemType} gem");
+        Gem.SetupEntity(gemE, playerId, ref random, ref ecb, LocalTransform.FromPosition(placePosition), default,  gem, SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true));
     }
 }

@@ -56,6 +56,9 @@ public class DescriptionUI : MonoBehaviour
         
         public TiledStatData[] TiledStatsData;
         
+        public string CostFieldText;
+        public string ButtonText;
+        
         public struct TiledStatData
         {
             public TiledStat Stat;
@@ -98,6 +101,9 @@ public class DescriptionUI : MonoBehaviour
     public List<DescriptionUIRow> Rows;
     public TMP_Text BottomRowLeft;
     public TMP_Text BottomRowRight;
+    
+    public TMP_Text CostFieldText;
+    public TMP_Text ButtonText;
     
     public SerializedDictionary<eBottomRowVariant, GameObject[]> BottomRowVariants = new();
     
@@ -217,7 +223,7 @@ public class DescriptionUI : MonoBehaviour
             Rows[0].transform.parent.gameObject.SetActive(false);
         }
         
-        if (!string.IsNullOrEmpty(data.BottomLeft))
+        if (false && !string.IsNullOrEmpty(data.BottomLeft))
         {
             BottomRowLeft.text = data.BottomLeft;
             BottomRowRight.text = data.BottomRight;
@@ -245,6 +251,26 @@ public class DescriptionUI : MonoBehaviour
             }
             else
                 ChoiceUIElements[i].gameObject.SetActive(false);
+        }
+        
+        if (!string.IsNullOrEmpty(data.CostFieldText))
+        {
+            CostFieldText.text = data.CostFieldText;
+            CostFieldText.transform.parent.gameObject.SetActive(true);
+        }
+        else
+        {
+            CostFieldText.transform.parent.gameObject.SetActive(false);
+        }
+        
+        if (!string.IsNullOrEmpty(data.ButtonText))
+        {
+            ButtonText.text = data.ButtonText;
+            ButtonText.transform.parent.gameObject.SetActive(true);
+        }
+        else
+        {
+            ButtonText.transform.parent.gameObject.SetActive(false);
         }
     }
 }

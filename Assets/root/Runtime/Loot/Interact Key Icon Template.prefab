@@ -140,8 +140,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3717661783584829238}
   - component: {fileID: 279434145273240277}
-  - component: {fileID: 7671844313069185126}
   - component: {fileID: 8834540991257988568}
+  - component: {fileID: 7576257305550067862}
   m_Layer: 5
   m_Name: Interact Key Icon Template
   m_TagString: Untagged
@@ -192,26 +192,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 79.07
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7671844313069185126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3726911333789694391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9318ac62599c4e81b5f56f9e7b064760, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.GUI::Focusable
-  OnFocusStart:
-    m_PersistentCalls:
-      m_Calls: []
-  OnFocusEnd:
-    m_PersistentCalls:
-      m_Calls: []
-  UnfocusDelay: 0
-  DisablePointerEvents: 0
 --- !u!114 &8834540991257988568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,6 +208,25 @@ MonoBehaviour:
   Icon: {fileID: 2393070896815682331}
   Text: {fileID: 7698451970302432159}
   DisabledColorMul: {r: 0.25, g: 0.25, b: 0.25, a: 1}
+--- !u!114 &7576257305550067862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3726911333789694391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfd5d12f52ce469285c67b97acb70c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.GUI::FocusableRequest
+  OnFocusStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFocusEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  UnfocusDelay: 0.1
 --- !u!1 &8285112136648654358
 GameObject:
   m_ObjectHideFlags: 0

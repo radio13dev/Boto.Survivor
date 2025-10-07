@@ -382,12 +382,12 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public Vector3 GetFocusScale()
     {
-        return RingContainer.gameObject.activeSelf ? (CompiledLevel > 0 ? Vector3.one * 1.4f : Vector3.one * 0.9f) 
-            : (CompiledLevel > 0 ? Vector3.one * 1.0f : Vector3.one * 0.9f);
+        return RingContainer.gameObject.activeSelf ? (CompiledLevel > 0 ? Vector3.one * 1.4f : Vector3.one * 1.2f) 
+            : (CompiledLevel > 0 ? Vector3.one * 1.2f : Vector3.one * 1.2f);
     }
 
     public DescriptionUI.Data GetDescription()
-    {  
+    {
         var stat = TiledStats.Get(TileKey);
         
         var data = new DescriptionUI.Data();

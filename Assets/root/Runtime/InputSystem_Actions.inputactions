@@ -587,6 +587,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "AdminShortcut",
+                    "type": "Button",
+                    "id": "74a63ba1-382a-4840-be4e-45989663d8df",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -983,6 +992,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "MapShortcut",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0fa2f09-826b-4b09-a957-18a1848e70e1",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "AdminShortcut",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

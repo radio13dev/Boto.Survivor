@@ -168,13 +168,18 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
 
         if (ChoiceUI.IsActive || (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing)))
         {
-            sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+            //sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+            data.ButtonText = "Swap";
         }
+        else if (Ring.Stats.IsValid)
+            data.ButtonText = "Move";
 
         if (Ring.Stats.IsValid)
         {
             sb.AppendLine($"{Ring.Stats.GetTitleString()}".Size(36));
             sb.AppendLine($"{Ring.Stats.GetDescriptionString()}".Size(30));
+            
+            data.CostFieldText = Ring.Stats.GetSellPrice().ToString();
         }
         else
         {
@@ -242,6 +247,40 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         
         UIFocus.Refresh();
         if (GetComponentInParent<TiledStatsUI>() is {} ui) ui.RebuildHighlights();
+    }
+
+    public void SellPress()
+    {
+        if (IsPickup)
+        {
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.PlayerSellRing((byte)Game.ClientGame.PlayerIndex,
+                    ChoiceUI.PickupPosition
+                ));
+        }
+        else
+        {
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.PlayerSellRing((byte)Game.ClientGame.PlayerIndex,
+                    (byte)this.Index
+                ));
+        }
+            
+        if (ChoiceUI.ActiveRingIndex == Index)
+            ChoiceUI.Instance.Close();
+    }
+    
+    public void DropPress()
+    {
+        if (!IsPickup)
+        {
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.PlayerDropRing((byte)Game.ClientGame.PlayerIndex,
+                    (byte)this.Index
+                ));
+        }
+        if (ChoiceUI.ActiveRingIndex == Index)
+            ChoiceUI.Instance.Close();
     }
 
     public void CopyTransform(RingDisplay other)

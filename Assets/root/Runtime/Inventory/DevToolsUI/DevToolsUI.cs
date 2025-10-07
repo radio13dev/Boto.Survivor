@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class DevToolsUI : MonoBehaviour, HandUIController.IStateChangeListener
@@ -7,8 +8,10 @@ public class DevToolsUI : MonoBehaviour, HandUIController.IStateChangeListener
     public TransitionPoint InventoryT;
     ExclusiveCoroutine Co;
 
-    private void Awake()
+    private IEnumerator Start()
     {
+        yield return new WaitUntil(() => GameInput.Inputs?.UI.AdminShortcut != null);
+        GameInput.Inputs.UI.AdminShortcut.performed += o => { gameObject.SetActive(!gameObject.activeSelf); };
         gameObject.SetActive(false); // Disable on launch
     }
 
