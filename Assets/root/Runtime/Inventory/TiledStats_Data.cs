@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
 using UnityEditor;
@@ -8,6 +10,7 @@ using UnityEngine;
 
 public static partial class TiledStats
 {
+    [Pure]
     public static NativeArray<TiledStatData>.ReadOnly StatData => m_StatDataPtr.Data;
     public static NativeArray<TiledStatData> m_StatDataPtrWrite;
 
@@ -208,12 +211,12 @@ public static class TiledStatsFull
             new(
                 TiledStat.Stat_07_Chain,
                 curve.linear(0, 0.01f),
-                curve.linear(0f, 0.1f),
+                curve.zero,
                 curve.zero,
                 new string[] { "Chain" },
                 new string[] { "Chance to chain damage to other enemies" },
                 new string[] { "Chain Chance:" },
-                new string[] { "Chain Damage:" },
+                new string[] { "" },
                 new string[] { "" }
             ),
             new(

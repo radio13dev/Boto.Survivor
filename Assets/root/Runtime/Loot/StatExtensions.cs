@@ -15,6 +15,14 @@ public static class StatExtensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [Pure]
+    public static bool IsDoT(this RingPrimaryEffect primaryEffect)
+    {
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) return true;
+        return false;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [Pure]
     public static bool IsPersistent(this RingPrimaryEffect primaryEffect)
     {
         if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) return true;

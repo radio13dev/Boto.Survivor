@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 [Save]
 public struct CompiledStats : IComponentData
@@ -18,6 +19,66 @@ public struct CompiledStats : IComponentData
         {
             CompiledStatsTree = baseStats + TiledStatsTree.Demo
         };
+    }
+
+    public (int damageWithMods, int baseDamage, Crit crit, Chain chain, Cut cut, Degenerate degenerate, Subdivide subdivide, Decimate decimate, 
+        Dissolve dissolve, Poke poke) RollDamage(ref Random random)
+    {
+        int baseDamage = CompiledStatsTree.Damage;
+        int damageWithMods = baseDamage;
+
+        Crit crit;
+        {
+            var chance_crit = CompiledStatsTree.EvaluateA(TiledStat.Stat_01_CritChance)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            crit = new Crit((byte)((int)math.floor(chance_crit) + (math.frac(chance_crit) > random.NextFloat() ? 1 : 0)));
+        }
+
+        Chain chain;
+        {
+            var chance_chain = CompiledStatsTree.EvaluateA(TiledStat.Stat_07_Chain)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            chain = new Chain((byte)((int)math.floor(chance_chain) + (math.frac(chance_chain) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Cut cut;
+        {
+            var chance_cut = CompiledStatsTree.EvaluateA(TiledStat.Stat_08_Cut)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            cut = new Cut((byte)((int)math.floor(chance_cut) + (math.frac(chance_cut) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Degenerate degenerate;
+        {
+            var chance_degenerate = CompiledStatsTree.EvaluateA(TiledStat.Stat_09_Degenerate)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            degenerate = new Degenerate((byte)((int)math.floor(chance_degenerate) + (math.frac(chance_degenerate) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Subdivide subdivide;
+        {
+            var chance_subdivide = CompiledStatsTree.EvaluateA(TiledStat.Stat_10_Subdivide)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            subdivide = new Subdivide((byte)((int)math.floor(chance_subdivide) + (math.frac(chance_subdivide) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Decimate decimate;
+        {
+            var chance_decimate = CompiledStatsTree.EvaluateA(TiledStat.Stat_12_Decimate)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            decimate = new Decimate((byte)((int)math.floor(chance_decimate) + (math.frac(chance_decimate) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Dissolve dissolve;
+        {
+            var chance_dissolve = CompiledStatsTree.EvaluateA(TiledStat.Stat_13_Dissolve)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            dissolve = new Dissolve((byte)((int)math.floor(chance_dissolve) + (math.frac(chance_dissolve) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        Poke poke;
+        {
+            var chance_poke = CompiledStatsTree.EvaluateA(TiledStat.Stat_14_Poke)*(1+CompiledStatsTree.EvaluateA(TiledStat.Stat_27_Probability));
+            poke = new Poke((byte)((int)math.floor(chance_poke) + (math.frac(chance_poke) > random.NextFloat() ? 1 : 0)));
+        }
+        
+        if (poke) damageWithMods += poke.Value*(int)CompiledStatsTree.EvaluateB(TiledStat.Stat_14_Poke);
+        if (crit) damageWithMods *= 2 << crit.Value;
+        
+        return (damageWithMods, baseDamage, crit, chain, cut, degenerate, subdivide, decimate, dissolve, poke);
     }
 }
 
@@ -174,18 +235,14 @@ public partial struct CompiledStatsSystem : ISystem
                                 projectileT.Scale = stats.CompiledStatsTree.Size;
                                 ecb.SetComponent(projectileE, projectileT);
 
-                                ecb.SetComponent(projectileE, ProjectileLoopTrigger.Empty);
-                            
                                 ecb.SetComponent(projectileE, new OrbitProjectileData()
                                 {
                                     CreateTime = Time,
                                     SeekerCount = spawnCount
                                 });
 
-                                ecb.SetComponent(projectileE, new MovementSettings() { Speed = 30f*stats.CompiledStatsTree.ProjectileSpeed });
-                                ecb.SetComponent(projectileE, new DestroyAtTime() { DestroyTime = double.MaxValue });
-                                ecb.SetComponent(projectileE, new Projectile((int)math.ceil((float)stats.CompiledStatsTree.Damage*Projectile.PerFrameDamageMod)));
-                                ecb.SetComponent(projectileE, new OwnedProjectile(){ PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
+                                Projectile.Setup(ref ecb, ref r, in projectileE, in stats, in playerId, in effect, in tier, (byte)projSpawnIt, double.MaxValue);
+                                Projectile.SetSpeed(ref ecb, in projectileE, in stats, 30);
                             }
                             break;
                         }

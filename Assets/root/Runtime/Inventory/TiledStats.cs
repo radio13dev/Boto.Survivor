@@ -154,13 +154,27 @@ public unsafe struct TiledStatsTree : IComponentData
         lvl = this[stat];
         return stat.Get();
     }
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float EvaluateA(TiledStat stat)
+    {
+        var lvl = this[stat];
+        return stat.Get().EffectAValues.Evaluate(lvl);
+    }
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float EvaluateB(TiledStat stat)
+    {
+        var lvl = this[stat];
+        return stat.Get().EffectBValues.Evaluate(lvl);
+    }
     
     [Pure]
-    public int Damage => 100 + (int)GetData(TiledStat.Stat_00_Ring0, out var lvl).EffectAValues.Evaluate(lvl);
+    public int Damage => 100 + (int)GetData(TiledStat.Stat_23_Sharpness, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public float ProjectileSpeed => 1 + GetData(TiledStat.Stat_03_Momentum, out var lvl2).EffectAValues.Evaluate(lvl2);
     [Pure]
-    public int ExtraProjectiles => (int)GetData(TiledStat.Stat_04_ProjectileCount, out var lvl).EffectAValues.Evaluate(lvl);
+    public byte ExtraProjectiles => (byte)GetData(TiledStat.Stat_04_ProjectileCount, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public float Size => 1 + GetData(TiledStat.Stat_05_ProjectileSize, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
@@ -211,6 +225,8 @@ public static partial class TiledStats
         return (TiledStat)(tileKey.x + tileKey.y * TileCount.x);
     }
     
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TiledStatData Get(this TiledStat stat) => StatData[(int)stat];
 
     
