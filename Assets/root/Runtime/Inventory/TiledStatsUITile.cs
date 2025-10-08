@@ -416,6 +416,10 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             data.BottomLeft = $"Maxed!";
             data.BottomVariant = DescriptionUI.eBottomRowVariant.BuyInvalid;
             data.BottomRight = string.Empty;
+            
+            data.ButtonText = $"MAXED";
+            data.ButtonDisabled = true;
+            data.CostFieldText = "-";
         }
         else
         {
@@ -426,6 +430,10 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
             data.BottomLeft = $"Cost";
             data.BottomVariant = canAfford ? DescriptionUI.eBottomRowVariant.BuyValid : DescriptionUI.eBottomRowVariant.BuyInvalid;
             data.BottomRight = $"{m_Cost.ToGemString()}{(canAfford ? "" : "  (Not enough)")}".Color(canAfford ? Color.white : Palette.MoneyChangeNegative);
+            
+            data.ButtonText = $"Upgrade";
+            data.ButtonDisabled = !canAfford;
+            data.CostFieldText = $"{m_Cost.ToGemString()}{(canAfford ? "" : "")}".Color(canAfford ? Color.white : Palette.MoneyChangeNegative);
         }
         
         data.ButtonPress = DoLevelUp;

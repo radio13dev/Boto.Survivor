@@ -127,6 +127,17 @@ public class HandUIController : MonoBehaviour
             current = m_StateSources.Last.Value.GetUIState();
         return current;
     }
+    
+    public void m_SetState(State state)
+    {
+        SetState(state);
+    }
+    
+    public void m_ToggleInventory()
+    {
+        if (GetState() == State.Inventory) SetState(State.Closed);
+        else SetState(State.Inventory);
+    }
 }
 
 public static class SelectableExtensions

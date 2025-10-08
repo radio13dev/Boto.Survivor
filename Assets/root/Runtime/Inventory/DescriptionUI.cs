@@ -58,6 +58,7 @@ public class DescriptionUI : MonoBehaviour
         
         public string CostFieldText;
         public string ButtonText;
+        public bool ButtonDisabled;
         
         public struct TiledStatData
         {
@@ -104,6 +105,7 @@ public class DescriptionUI : MonoBehaviour
     
     public TMP_Text CostFieldText;
     public TMP_Text ButtonText;
+    public GameObject ButtonDisabledOverlay;
     
     public SerializedDictionary<eBottomRowVariant, GameObject[]> BottomRowVariants = new();
     
@@ -163,7 +165,7 @@ public class DescriptionUI : MonoBehaviour
 
     public void SetText(Data data)
     {
-        m_ButtonPress = data.ButtonPress;
+        m_ButtonPress = data.ButtonDisabled ? null : data.ButtonPress;
         
         Title.text = data.Title;
         
@@ -267,6 +269,7 @@ public class DescriptionUI : MonoBehaviour
         {
             ButtonText.text = data.ButtonText;
             ButtonText.transform.parent.gameObject.SetActive(true);
+            ButtonDisabledOverlay.gameObject.SetActive(data.ButtonDisabled);
         }
         else
         {

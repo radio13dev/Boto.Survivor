@@ -15,7 +15,8 @@ public class InteractableContextUI : MonoBehaviour, IPointerClickHandler, HandUI
 
     private void Update()
     {
-        if (GameInput.Inputs.UI.Submit.WasReleasedThisFrame())
+        if (GameInput.Inputs.UI.Drop.WasPressedThisFrame() || 
+            (HandUIController.GetState() == HandUIController.State.Closed && GameInput.Inputs.UI.Submit.WasPressedThisFrame()))
         {
             Interact();
         }

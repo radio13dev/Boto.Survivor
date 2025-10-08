@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class ChoiceUI : MonoBehaviour
+public class ChoiceUI : MonoBehaviour, HandUIController.IStateChangeListener
 {
     public static ChoiceUI Instance;
 
@@ -26,12 +26,39 @@ public class ChoiceUI : MonoBehaviour
         Instance = this;
         Close();
     }
+
+    private void OnEnable()
+    {
+        HandUIController.Attach(this);
+    }
+
+    private void OnDisable()
+    {
+        Close();
+        HandUIController.Detach(this);
+    }
+
+    public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
+    {
+        if (newState == HandUIController.State.Closed)
+        {
+            Close();
+        }
+    }
     
     public void Setup(RingDisplay grabbed)
     {
         GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats);
         Setup(stats, grabbed.Ring, grabbed.Index);
         RingDisplay.CopyTransform(grabbed);
+    }
+
+    public void Close()
+    {
+        ActiveRingIndex = -1;
+        OnActiveRingChange?.Invoke(ActiveRingIndex);
+        
+        Container.SetActive(false);
     }
     
     public void Setup(CompiledStats stats, Ring ring, int ringIndex) => _Setup(stats, ring, ringIndex, default);
@@ -41,9 +68,11 @@ public class ChoiceUI : MonoBehaviour
         ActiveRing = ring;
         ActiveRingIndex = ringIndex;
         PickupPosition = pickupPosition;
-        OnActiveRingChange?.Invoke(ActiveRingIndex);
         
         RingDisplay.UpdateRing(ringIndex, ring, false);
+        
+        Container.SetActive(true);
+        OnActiveRingChange?.Invoke(ActiveRingIndex);
         
         var desc = RingDisplay.GetDescription();
         desc.BottomLeft = string.Empty;
@@ -54,20 +83,6 @@ public class ChoiceUI : MonoBehaviour
             
         DescriptionUI.SetText(desc);
         
-        Container.SetActive(true);
-    }
-
-    private void OnDisable()
-    {
-        Close();
-    }
-
-    public void Close()
-    {
-        ActiveRingIndex = -1;
-        OnActiveRingChange?.Invoke(ActiveRingIndex);
-        
-        Container.SetActive(false);
     }
     
     public void SetRingFocus(bool v)

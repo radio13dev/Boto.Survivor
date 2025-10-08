@@ -10,41 +10,41 @@ using Random = UnityEngine.Random;
 public enum TiledStat : byte
 {
     Stat_00_Ring0,
-    Stat_01,
-    Stat_02,
-    Stat_03,
-    Stat_04,
-    Stat_05,
-    Stat_06,
-    Stat_07,
-    Stat_08,
-    Stat_09,
-    Stat_10,
+    Stat_01_CritChance,
+    Stat_02_Rate,
+    Stat_03_Momentum,
+    Stat_04_ProjectileCount,
+    Stat_05_ProjectileSize,
+    Stat_06_Pierce,
+    Stat_07_Chain,
+    Stat_08_Cut,
+    Stat_09_Degenerate,
+    Stat_10_Subdivide,
     Stat_11_Ring1,
-    Stat_12,
-    Stat_13,
-    Stat_14_Homotopy_ProjCount,
+    Stat_12_Decimate,
+    Stat_13_Dissolve,
+    Stat_14_Poke,
     Stat_15_Scale_Scale,
     Stat_16_Ring2,
-    Stat_17_Velocity_ProjSpeed,
-    Stat_18_Frequency_ProjRate,
-    Stat_19,
-    Stat_20,
+    Stat_17_Reflect,
+    Stat_18_Overshield,
+    Stat_19_Immunity,
+    Stat_20_RateOnDestroy,
     Stat_21_Ring3,
-    Stat_22,
-    Stat_23,
-    Stat_24,
-    Stat_25,
+    Stat_22_DmgOnDestroy,
+    Stat_23_Sharpness,
+    Stat_24_Speed,
+    Stat_25_SpeedOnDestroy,
     Stat_26_Ring4,
-    Stat_27,
-    Stat_28,
-    Stat_29,
-    Stat_30,
+    Stat_27_Probability,
+    Stat_28_Finding,
+    Stat_29_Economical,
+    Stat_30_Quality,
     Stat_31_Ring5,
-    Stat_32,
-    Stat_33,
-    Stat_34,
-    Stat_35,
+    Stat_32_AbilityCooldown,
+    Stat_33_AbilityCooldownOnDestroy,
+    Stat_34_RateOnAbility,
+    Stat_35_DamageOnAbility,
 }
 
 [Save]
@@ -86,8 +86,8 @@ public unsafe struct TiledStatsTree : IComponentData
         {
             var fake = new TiledStatsTree();
             fake[TiledStat.Stat_00_Ring0] = 1;
-            fake[TiledStat.Stat_01] = 2;
-            fake[TiledStat.Stat_07] = 1;
+            fake[TiledStat.Stat_01_CritChance] = 2;
+            fake[TiledStat.Stat_07_Chain] = 1;
             fake[TiledStat.Stat_11_Ring1] = 1;
             fake[TiledStat.Stat_21_Ring3] = 1;
             return fake;
@@ -158,15 +158,15 @@ public unsafe struct TiledStatsTree : IComponentData
     [Pure]
     public int Damage => 100 + (int)GetData(TiledStat.Stat_00_Ring0, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
-    public float ProjectileSpeed => 1 + GetData(TiledStat.Stat_17_Velocity_ProjSpeed, out var lvl).EffectAValues.Evaluate(lvl);
+    public float ProjectileSpeed => 1 + GetData(TiledStat.Stat_03_Momentum, out var lvl2).EffectAValues.Evaluate(lvl2);
     [Pure]
-    public int ExtraProjectiles => (int)GetData(TiledStat.Stat_14_Homotopy_ProjCount, out var lvl).EffectAValues.Evaluate(lvl);
+    public int ExtraProjectiles => (int)GetData(TiledStat.Stat_04_ProjectileCount, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
-    public float Size => 1 + GetData(TiledStat.Stat_15_Scale_Scale, out var lvl).EffectAValues.Evaluate(lvl);
+    public float Size => 1 + GetData(TiledStat.Stat_05_ProjectileSize, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
     public byte PierceCount => (byte)GetData(TiledStat.Stat_16_Ring2, out var lvl).EffectAValues.Evaluate(lvl);
     [Pure]
-    public float Cooldown => 1 + (byte)GetData(TiledStat.Stat_18_Frequency_ProjRate, out var lvl).EffectAValues.Evaluate(lvl);
+    public float Cooldown => 1 + (byte)GetData(TiledStat.Stat_02_Rate, out var lvl).EffectAValues.Evaluate(lvl);
 
     public static TiledStatsTree Demo
     {

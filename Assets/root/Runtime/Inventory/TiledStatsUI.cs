@@ -263,8 +263,24 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         });
     }
 
+    public float delDist = 0.3f;
     private void Update()
     {
+        float dist = math.distance(FocusedPosition, math.round(FocusedPosition));
+        if (HandUIController.GetState() == HandUIController.State.Inventory)
+        {
+            var dir = GameInput.Inputs.UI.Navigate.ReadValue<Vector2>();
+            if (dist < delDist && dir.magnitude > 0.5f)
+            {
+                // Get the current focused tile and select the one in the direction of input
+                var focusedIndex = (BackendShift - FocusedPosition) + (Vector2)math.round(dir);
+                var tileIndex = (mathu.modabs((int)math.round(focusedIndex.x), TiledStats.TileCount.x + BorderCount.x * 2)) +
+                                (mathu.modabs((int)math.round(focusedIndex.y), TiledStats.TileCount.y + BorderCount.y * 2)) * (TiledStats.TileCount.x + BorderCount.x * 2);
+                    
+                Tiles[tileIndex].FocusParentToMe();
+            }
+        }
+        
         if (m_Dirty)
         {
             RefreshGrid();

@@ -166,9 +166,14 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         else
             data.Title = "(Pickup)".Color(Color.mediumPurple).Size(30);
 
-        if (ChoiceUI.IsActive || (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing)))
+        if (ChoiceUI.IsActive)
         {
-            //sb.AppendLine("SWAP".Size(36).Color(new Color(0.9960785f, 0.4313726f, 0.3254902f)));
+            if (Ring.Stats.IsValid) data.ButtonText = "Swap";
+            else data.ButtonText = "Equip";
+        }
+        if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
+        {
+            // Dragging NO LONGER SUPPORTED
             data.ButtonText = "Swap";
         }
         else if (Ring.Stats.IsValid)

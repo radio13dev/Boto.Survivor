@@ -242,10 +242,11 @@ public partial struct RingSystem : ISystem
                                 CreateTime = Time,
                                 SeekerCount = requiredSeekerCount
                             });
+                            
+                            Projectile.Setup(in Key, ref ecb, in projectileE, in compiledStats, ref r);
 
                             ecb.SetComponent(Key, projectileE, new MovementSettings() { Speed = compiledStats.CompiledStatsTree.ProjectileSpeed*30f });
                             ecb.SetComponent(Key, projectileE, new DestroyAtTime() { DestroyTime = double.MaxValue });
-                            ecb.SetComponent(Key, projectileE, new Projectile(compiledStats.CompiledStatsTree.Damage));
                             ecb.SetComponent(Key, projectileE, new OwnedProjectile(){ PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
                             ecb.SetComponent(Key, projectileE, new Pierce(){ Value = compiledStats.CompiledStatsTree.PierceCount });
 
