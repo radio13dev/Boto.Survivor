@@ -24,12 +24,15 @@ public partial struct ProjectileHitSystem_Chain : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var prefabs = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>(true);
         state.Dependency = new Job()
         {
             ecb = delayedEcb,
+            Time = SystemAPI.Time.ElapsedTime,
             SharedRandom = SystemAPI.GetSingleton<SharedRandom>(),
             networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>(),
-            ChainEntity = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>()[GameManager.Prefabs.PlayerProjectile_Chain].Entity,
+            ChainEntity = prefabs[GameManager.Prefabs.PlayerProjectile_Chain].Entity,
+            ChainVisualEntity = prefabs[GameManager.Prefabs.PlayerProjectile_ChainVisual].Entity,
             EnemyColliderTree = state.WorldUnmanaged.GetUnsafeSystemRef<EnemyColliderTreeSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<EnemyColliderTreeSystem>()).Tree,
         }.Schedule(state.Dependency);
     }
@@ -38,9 +41,11 @@ public partial struct ProjectileHitSystem_Chain : ISystem
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer ecb;
+        [ReadOnly] public double Time;
         [ReadOnly] public SharedRandom SharedRandom;
         [ReadOnly] public NetworkIdMapping networkIdMapping;
         [ReadOnly] public Entity ChainEntity;
+        [ReadOnly] public Entity ChainVisualEntity;
         [ReadOnly] public NativeOctree<(Entity e, NetworkId id, Collider c)> EnemyColliderTree;
     
         public void Execute(in DynamicBuffer<ProjectileHitEntity> hits, in LocalTransform t, in Projectile projectile, in Chain chain)
@@ -62,7 +67,7 @@ public partial struct ProjectileHitSystem_Chain : ISystem
                 var chainFromE = networkIdMapping[hits[i].Value];
                 if (chainFromE != Entity.Null)
                 {
-                    Chain.Setup(ref ecb, ChainEntity, chainDamage, t, visitor);
+                    Chain.Setup(ref ecb, Time, projectile.IsDoT ? 0.05d : 1d, ChainEntity, ChainVisualEntity, chainDamage, t, visitor);
                 }
             }
         }

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2943698238182725417}
   - component: {fileID: 1276742715247795018}
   - component: {fileID: 9138912128672578320}
-  - component: {fileID: 4008878249238711825}
   m_Layer: 0
   m_Name: Player_ChainProjectile
   m_TagString: Untagged
@@ -71,17 +70,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b4fb56b2bb345a6970d83638ced7168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ProjectileChainAuthoring
---- !u!114 &4008878249238711825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  Particle:
-    _Asset: {fileID: 11400000, guid: 6c39da2de4994604e9ca90af88c5271b, type: 2}

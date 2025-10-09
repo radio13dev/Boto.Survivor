@@ -32,6 +32,8 @@ public struct GameManager : IComponentData
         public UnityObjectRef<InstancedResource> Instance;
         public SpriteAnimData AnimData;
         public bool Valid;
+        public const int ChainVisualIndex = 45;
+        public const int ChainEffectIndex = 46;
 
         public void Validate()
         {
@@ -81,6 +83,7 @@ public struct GameManager : IComponentData
         public const int TrapProjectile = 4;
         public const int TerrainGroup_ChallengeWall = 5;
         public const int PlayerProjectile_Chain = 6;
+        public const int PlayerProjectile_ChainVisual = 7;
 
         public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
         {

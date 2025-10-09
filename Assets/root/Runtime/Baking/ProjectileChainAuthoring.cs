@@ -7,7 +7,7 @@ public class ProjectileChainAuthoring : MonoBehaviour
     {
         public override void Bake(ProjectileChainAuthoring authoring)
         {
-            var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
+            var entity = GetEntity(authoring, TransformUsageFlags.None);
             AddComponent(entity, new Projectile());
             AddComponent(entity, new ProjectileHit());
             AddBuffer<ProjectileHitEntity>(entity);

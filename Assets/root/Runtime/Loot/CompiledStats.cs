@@ -3,6 +3,7 @@ using BovineLabs.Saving;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
@@ -143,8 +144,6 @@ public partial struct CompiledStatsSystem : ISystem
         [ReadOnly] public SharedRandom SharedRandom;
         [ReadOnly] public DynamicBuffer<GameManager.Projectiles> Projectiles;
         [ReadOnly] public NetworkIdMapping NetworkIdMapping;
-
-
         
         public unsafe void Execute(Entity entity, in LocalTransform transform, in PlayerControlled playerId, 
             ref CompiledStats stats, ref CompiledStatsDirty dirtyData, EnabledRefRW<CompiledStatsDirty> dirtyState, 
@@ -256,6 +255,115 @@ public partial struct CompiledStatsSystem : ISystem
             
             // Notify
             GameEvents.Trigger(GameEvents.Type.InventoryChanged, entity);
+        }
+    }
+}
+
+[RequireMatchingQueriesForUpdate]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[UpdateBefore(typeof(ProjectileSystemGroup))]
+[BurstCompile]
+public partial struct PersistentProjectileProcToggleSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<SharedRandom>();
+        state.RequireForUpdate<StepController>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        if (SystemAPI.GetSingleton<StepController>().Step % 300 != 0) return;
+        var a = new Job()
+        {
+            SharedRandom = SystemAPI.GetSingleton<SharedRandom>(),
+            Players = SystemAPI.GetSingletonBuffer<PlayerControlledLink>(true),
+            CompiledStatsLookup = SystemAPI.GetComponentLookup<CompiledStats>(true)
+        };
+        var b = new Job2()
+        {
+            SharedRandom = SystemAPI.GetSingleton<SharedRandom>(),
+            Players = SystemAPI.GetSingletonBuffer<PlayerControlledLink>(true),
+            CompiledStatsLookup = SystemAPI.GetComponentLookup<CompiledStats>(true)
+        };
+        
+        var aJ = a.Schedule(state.Dependency);
+        var aB = b.Schedule(state.Dependency);
+        state.Dependency = JobHandle.CombineDependencies(aJ, aB);
+    }
+    
+    [WithAny(typeof(OrbitProjectileData))]
+    [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+    partial struct Job : IJobEntity
+    {
+        [ReadOnly] public SharedRandom SharedRandom;
+        [ReadOnly] public DynamicBuffer<PlayerControlledLink> Players;
+        [ReadOnly] public ComponentLookup<CompiledStats> CompiledStatsLookup;
+    
+        public void Execute(
+            in OwnedProjectile owned,
+            
+            ref Projectile projectile,
+            
+            ref Crit crit,
+            ref Chain chain,
+            ref Cut cut,
+            ref Degenerate degenerate,
+            ref Subdivide subdivide,
+            ref Decimate decimate,
+            ref Dissolve dissolve,
+            
+            EnabledRefRW<Crit> critState,
+            EnabledRefRW<Chain> chainState,
+            EnabledRefRW<Cut> cutState,
+            EnabledRefRW<Degenerate> degenerateState,
+            EnabledRefRW<Subdivide> subdivideState,
+            EnabledRefRW<Decimate> decimateState,
+            EnabledRefRW<Dissolve> dissolveState
+            )
+        {
+            if (owned.PlayerId < 0 || owned.PlayerId >= Players.Length) return;
+            var playerE = Players[owned.PlayerId].Value;
+            if (!CompiledStatsLookup.TryGetComponent(playerE, out var compiledStats)) return;
+            
+            var random = SharedRandom.Get(owned.PlayerId*7 + (int)owned.Key.PrimaryEffect*17 + owned.Key.Index);
+            (projectile.Damage, _, crit, chain, cut, degenerate, subdivide, decimate, dissolve, _) = compiledStats.RollDamage(ref random);
+            
+            critState.ValueRW = crit;
+            chainState.ValueRW = chain;
+            cutState.ValueRW = cut;
+            degenerateState.ValueRW = degenerate;
+            subdivideState.ValueRW = subdivide;
+            decimateState.ValueRW = decimate;
+            dissolveState.ValueRW = dissolve;
+            //pokeState.ValueRW = poke;
+        }
+    }
+    
+    [WithAny(typeof(OrbitProjectileData))]
+    [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+    partial struct Job2 : IJobEntity
+    {
+        [ReadOnly] public SharedRandom SharedRandom;
+        [ReadOnly] public DynamicBuffer<PlayerControlledLink> Players;
+        [ReadOnly] public ComponentLookup<CompiledStats> CompiledStatsLookup;
+    
+        public void Execute(
+            in OwnedProjectile owned,
+            
+            ref Poke poke,
+            
+            EnabledRefRW<Poke> pokeState
+            )
+        {
+            if (owned.PlayerId < 0 || owned.PlayerId >= Players.Length) return;
+            var playerE = Players[owned.PlayerId].Value;
+            if (!CompiledStatsLookup.TryGetComponent(playerE, out var compiledStats)) return;
+            
+            var random = SharedRandom.Get(owned.PlayerId*7 + (int)owned.Key.PrimaryEffect*17 + owned.Key.Index);
+            (_, _, _, _, _, _, _, _, _, poke) = compiledStats.RollDamage(ref random);
+            
+            pokeState.ValueRW = poke;
         }
     }
 }

@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59930f09355d47679d886e789fe5a04f, type: 3}
   m_Name: TEMP_ChainVisual
   m_EditorClassIdentifier: Boto.Survivor::InstancedResource
-  Material: {fileID: 2100000, guid: afaa9a7d16fef924eaf9cd7a00e720d5, type: 2}
-  Mesh: {fileID: -7196802604745430461, guid: ce55fd6a875a1d44ebe8ffabc5d5b93c, type: 3}
+  Material: {fileID: 2100000, guid: 74ae23075e7e1c74483f376a92bccae7, type: 2}
+  Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   AnimData:
     Frames: 0
     TimeBetweenFrames: 0
-  HasLifespan: 0
+  HasLifespan: 1
   UseLastTransform: 0
   IsTorus: 0
   IsCone: 0
   ShowOnMap: 0
+  IsStretch: 1

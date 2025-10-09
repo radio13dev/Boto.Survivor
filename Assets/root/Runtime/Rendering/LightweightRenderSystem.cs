@@ -68,7 +68,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<GameManager.Resources>();
+        state.RequireForUpdate<GameManager.InstancedResources>();
         state.RequireForUpdate<RenderSystemHalfTime>();
         m_InstanceMats = new NativeArray<Matrix4x4>(Profiling.k_MaxRender, Allocator.Persistent);
     }
@@ -221,7 +221,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
     }
 
     [BurstCompile]
-    partial struct AsyncRenderTransformGenerator : IJobFor
+    public partial struct AsyncRenderTransformGenerator : IJobFor
     {
         [ReadOnly] public float t;
         [ReadOnly] public NativeArray<LocalTransformLast> transformsLast;
@@ -247,7 +247,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         }
     }
     [BurstCompile]
-    partial struct AsyncRenderTransformGeneratorLightweight : IJobFor
+    public partial struct AsyncRenderTransformGeneratorLightweight : IJobFor
     {
         [ReadOnly] public NativeArray<LocalTransform> transforms;
         [WriteOnly] public NativeArray<Matrix4x4> matrices;

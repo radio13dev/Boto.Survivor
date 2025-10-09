@@ -13,6 +13,8 @@ public class InstancedResource : ScriptableObject
     public bool IsTorus;
     public bool IsCone;
     public bool ShowOnMap;
+    
+    public bool IsStretch;
 
     public bool Animated => AnimData.Frames > 0;
 
@@ -38,6 +40,7 @@ public class InstancedResource : ScriptableObject
         if (HasLifespan) m_RenderParams.matProps.SetFloatArray("lifespanBuffer", new float[Profiling.k_MaxInstances]);
         if (IsTorus) m_RenderParams.matProps.SetFloatArray("torusMinBuffer", new float[Profiling.k_MaxInstances]);
         if (IsCone) m_RenderParams.matProps.SetFloatArray("torusAngleBuffer", new float[Profiling.k_MaxInstances]);
+        if (IsStretch) m_RenderParams.matProps.SetVectorArray("stretchBuffer", new Vector4[Profiling.k_MaxInstances]);
         
         if (ShowOnMap)
         {

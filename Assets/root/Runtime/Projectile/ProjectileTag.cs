@@ -149,6 +149,11 @@ public struct Chain : IComponentData, IEnableableComponent
     public byte Value;
     public static implicit operator bool(Chain v) => v.Value > 0;
     
+    // Presentation only.
+    public struct Visual : IComponentData
+    {
+        public float4 Target;
+    }
         
     [BurstCompile]
     public struct NearestVisitorArray : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
@@ -209,7 +214,7 @@ public struct Chain : IComponentData, IEnableableComponent
         }
     }
 
-    public static void Setup(ref EntityCommandBuffer ecb, in Entity chainEntity, in int chainDamage, in LocalTransform chainFromT, in NearestVisitorArray chainResults)
+    public static void Setup(ref EntityCommandBuffer ecb, in double Time, in double Life, in Entity chainEntity, in Entity chainVisualEntity, in int chainDamage, in LocalTransform chainFromT, in NearestVisitorArray chainResults)
     {
         var len = chainResults.Hits;
         for (int i = 0; i < len; i++)
@@ -217,8 +222,17 @@ public struct Chain : IComponentData, IEnableableComponent
             var chainE = ecb.Instantiate(chainEntity);
             
             ecb.SetComponent(chainE, new Projectile(chainDamage, false));
-            ecb.SetComponent(chainE, chainFromT);
             ecb.SetBuffer<ProjectileHitEntity>(chainE).Add(new ProjectileHitEntity(chainResults[i].id));
+            
+            if (chainVisualEntity != Entity.Null)
+            {
+                // The renderer will handle stretching between the two entities
+                var chainVisualE = ecb.Instantiate(chainVisualEntity);
+                ecb.SetComponent(chainVisualE, chainFromT);
+                ecb.SetComponent(chainVisualE, new Chain.Visual() { Target = chainResults[i].c.Center.xyzz });
+                ecb.SetComponent(chainVisualE, new SpawnTimeCreated(Time));
+                ecb.SetComponent(chainVisualE, new DestroyAtTime(Time + Life));
+            }
         }
     }
 }

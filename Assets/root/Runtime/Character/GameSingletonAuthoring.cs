@@ -21,6 +21,14 @@ public struct SharedRandom : IComponentData
 {
     public uint Seed;
     public Random Random;
+
+    public Random Get(int offset)
+    {
+        unchecked
+        {
+            return Random.CreateFromIndex((uint)(Random.state + offset));
+        }
+    }
 }
 
 [Save]
