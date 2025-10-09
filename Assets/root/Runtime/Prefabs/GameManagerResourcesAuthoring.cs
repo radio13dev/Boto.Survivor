@@ -73,10 +73,18 @@ public struct GameManager : IComponentData
     public struct Prefabs : IBufferElementData
     {
         public Entity Entity;
+        
+        public const int TerrainGroup_Challenge = 0;
+        public const int CircleBlast = 1;
+        public const int TorusBlast = 2;
+        public const int TorusConeBlast = 3;
+        public const int TrapProjectile = 4;
+        public const int TerrainGroup_ChallengeWall = 5;
+        public const int PlayerProjectile_Chain = 6;
 
         public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
         {
-            var circleE = ecb.Instantiate(prefabs[1].Entity);
+            var circleE = ecb.Instantiate(prefabs[CircleBlast].Entity);
             var t = transform;
             t.Scale = radius;
             ecb.SetComponent(circleE, t);
@@ -87,7 +95,7 @@ public struct GameManager : IComponentData
 
         public static Entity SpawnTorusBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, double Time, float delay)
         {
-            var torusE = ecb.Instantiate(prefabs[2].Entity);
+            var torusE = ecb.Instantiate(prefabs[TorusBlast].Entity);
             var t = transform;
             t.Scale = radiusMax;
             ecb.SetComponent(torusE, t);
@@ -100,7 +108,7 @@ public struct GameManager : IComponentData
         
         public static Entity SpawnTorusConeBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, float angle, double Time, float delay)
         {
-            var torusE = ecb.Instantiate(prefabs[3].Entity);
+            var torusE = ecb.Instantiate(prefabs[TorusConeBlast].Entity);
             var t = transform;
             t.Scale = radiusMax;
             ecb.SetComponent(torusE, t);
@@ -114,7 +122,7 @@ public struct GameManager : IComponentData
 
         public static void SpawnTrapProjectile(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in NetworkId parentNetworkId, in LocalTransform localTransform, in double Time)
         {
-            var trapProjE = ecb.Instantiate(prefabs[4].Entity);
+            var trapProjE = ecb.Instantiate(prefabs[TrapProjectile].Entity);
             ecb.SetComponent(trapProjE, LocalTransform.FromPositionRotationScale(localTransform.Position, localTransform.Rotation, 0.01f));
             ecb.SetComponent(trapProjE, new EnemyTrapProjectileAnimation(){ ParentId = parentNetworkId });
             ecb.SetComponentEnabled<MovementDisabled>(trapProjE, true);

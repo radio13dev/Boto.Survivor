@@ -21,6 +21,15 @@ public class ProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new DestroyAtTime());
             
             AddComponent<SurvivorProjectileTag>(entity);
+            
+            AddComponent<Crit>(entity);
+            AddComponent<Chain>(entity);
+            AddComponent<Cut>(entity);
+            AddComponent<Degenerate>(entity);
+            AddComponent<Subdivide>(entity);
+            AddComponent<Decimate>(entity);
+            AddComponent<Dissolve>(entity);
+            AddComponent<Poke>(entity);
         }
     }       
 }

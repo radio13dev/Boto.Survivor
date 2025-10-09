@@ -210,7 +210,7 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_07_Chain,
-                curve.linear(0, 0.01f),
+                curve.linear(0f, 0.01f),
                 curve.zero,
                 curve.zero,
                 new string[] { "Chain" },

@@ -86,10 +86,6 @@ public unsafe struct TiledStatsTree : IComponentData
         {
             var fake = new TiledStatsTree();
             fake[TiledStat.Stat_00_Ring0] = 1;
-            fake[TiledStat.Stat_01_CritChance] = 2;
-            fake[TiledStat.Stat_07_Chain] = 1;
-            fake[TiledStat.Stat_11_Ring1] = 1;
-            fake[TiledStat.Stat_21_Ring3] = 1;
             return fake;
         }
     }

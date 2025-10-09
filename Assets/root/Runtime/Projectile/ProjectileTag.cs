@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using BovineLabs.Saving;
 using Collisions;
+using NativeTrees;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using AABB = NativeTrees.AABB;
 using Collider = Collisions.Collider;
 using Random = Unity.Mathematics.Random;
 
@@ -19,7 +22,7 @@ public struct Projectile : IComponentData
 
     public Projectile(int damage, bool isDoT)
     {
-        Damage = (int)math.ceil(damage*Projectile.PerFrameDamageMod);
+        Damage = isDoT ? (int)math.ceil(damage * Projectile.PerFrameDamageMod) : damage;
         IsDoT = isDoT;
     }
 
@@ -54,7 +57,7 @@ public struct Projectile : IComponentData
         ecb.SetComponent(projectileE, new DestroyAtTime() { DestroyTime = destroyTime });
         ecb.SetComponent(projectileE, new OwnedProjectile() { PlayerId = playerId.Index, Key = new ProjectileKey(effect, tier, projSpawnIt) });
     }
-    
+
     public static void Setup(in int Key, ref EntityCommandBuffer.ParallelWriter ecb, ref Random random, in Entity projectileE,
         in CompiledStats compiledStats,
         in PlayerControlled playerId, in RingPrimaryEffect effect, in byte tier, in byte projSpawnIt, in double destroyTime)
@@ -88,6 +91,7 @@ public struct Projectile : IComponentData
     {
         ecb.SetComponent(projectileE, new MovementSettings() { Speed = compiledStats.CompiledStatsTree.ProjectileSpeed * baseSpeed });
     }
+
     public static void SetSpeed(in int Key, ref EntityCommandBuffer.ParallelWriter ecb, in Entity projectileE, in CompiledStats compiledStats, float baseSpeed)
     {
         ecb.SetComponent(Key, projectileE, new MovementSettings() { Speed = compiledStats.CompiledStatsTree.ProjectileSpeed * baseSpeed });
@@ -119,16 +123,178 @@ public struct Pierce : IComponentData
     public bool IsInfinite => Value == byte.MaxValue;
 }
 
-// @formatter:off
-[Save] public struct Crit : IComponentData, IEnableableComponent {          public Crit(byte value) { Value = value; }          public byte Value; public static implicit operator bool(Crit v)       => v.Value > 0; }
-[Save] public struct Chain : IComponentData, IEnableableComponent {         public Chain(byte value) { Value = value; }         public byte Value; public static implicit operator bool(Chain v)      => v.Value > 0;  }
-[Save] public struct Cut : IComponentData, IEnableableComponent {           public Cut(byte value) { Value = value; }           public byte Value; public static implicit operator bool(Cut v)        => v.Value > 0;  }
-[Save] public struct Degenerate : IComponentData, IEnableableComponent {    public Degenerate(byte value) { Value = value; }    public byte Value; public static implicit operator bool(Degenerate v) => v.Value > 0;  }
-[Save] public struct Subdivide : IComponentData, IEnableableComponent {     public Subdivide(byte value) { Value = value; }     public byte Value; public static implicit operator bool(Subdivide v)  => v.Value > 0;  }
-[Save] public struct Decimate : IComponentData, IEnableableComponent {      public Decimate(byte value) { Value = value; }      public byte Value; public static implicit operator bool(Decimate v)   => v.Value > 0;  }
-[Save] public struct Dissolve : IComponentData, IEnableableComponent {      public Dissolve(byte value) { Value = value; }      public byte Value; public static implicit operator bool(Dissolve v)   => v.Value > 0;  }
-[Save] public struct Poke : IComponentData, IEnableableComponent {          public Poke(byte value) { Value = value; }          public byte Value; public static implicit operator bool(Poke v)       => v.Value > 0;  }
-// @formatter:on
+
+[Save]
+public struct Crit : IComponentData, IEnableableComponent
+{
+    public Crit(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Crit v) => v.Value > 0;
+}
+
+[Save]
+public struct Chain : IComponentData, IEnableableComponent
+{
+    public const int k_MaxChainDistance = 10;
+
+    public Chain(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Chain v) => v.Value > 0;
+    
+        
+    [BurstCompile]
+    public struct NearestVisitorArray : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
+    {
+        public const byte k_Length = 6;
+    
+        public (Entity e, NetworkId id, Collider c) A;
+        public (Entity e, NetworkId id, Collider c) B;
+        public (Entity e, NetworkId id, Collider c) C;
+        public (Entity e, NetworkId id, Collider c) D;
+        public (Entity e, NetworkId id, Collider c) E;
+        public (Entity e, NetworkId id, Collider c) F;
+        
+        // Indexer for easier access
+        public (Entity e, NetworkId id, Collider c) this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return A;
+                    case 1: return B;
+                    case 2: return C;
+                    case 3: return D;
+                    case 4: return E;
+                    case 5: return F;
+                    default: throw new IndexOutOfRangeException();
+                }
+            }
+        }
+
+        public int Hits
+        {
+            get
+            {
+                if (A.e == Entity.Null) return 0;
+                if (B.e == Entity.Null) return 1;
+                if (C.e == Entity.Null) return 2;
+                if (D.e == Entity.Null) return 3;
+                if (E.e == Entity.Null) return 4;
+                if (F.e == Entity.Null) return 5;
+                return 6;
+            }
+        }
+        
+
+        public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
+        {
+            var h = Hits;
+            if (h == 0) A = obj;
+            else if (h == 1) B = obj;
+            else if (h == 2) C = obj;
+            else if (h == 3) D = obj;
+            else if (h == 4) E = obj;
+            else if (h == 5) F = obj;
+            
+            return h < k_Length-1;
+        }
+    }
+
+    public static void Setup(ref EntityCommandBuffer ecb, in Entity chainEntity, in int chainDamage, in LocalTransform chainFromT, in NearestVisitorArray chainResults)
+    {
+        var len = chainResults.Hits;
+        for (int i = 0; i < len; i++)
+        {
+            var chainE = ecb.Instantiate(chainEntity);
+            
+            ecb.SetComponent(chainE, new Projectile(chainDamage, false));
+            ecb.SetComponent(chainE, chainFromT);
+            ecb.SetBuffer<ProjectileHitEntity>(chainE).Add(new ProjectileHitEntity(chainResults[i].id));
+        }
+    }
+}
+
+[Save]
+public struct Cut : IComponentData, IEnableableComponent
+{
+    public Cut(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Cut v) => v.Value > 0;
+}
+
+[Save]
+public struct Degenerate : IComponentData, IEnableableComponent
+{
+    public Degenerate(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Degenerate v) => v.Value > 0;
+}
+
+[Save]
+public struct Subdivide : IComponentData, IEnableableComponent
+{
+    public Subdivide(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Subdivide v) => v.Value > 0;
+}
+
+[Save]
+public struct Decimate : IComponentData, IEnableableComponent
+{
+    public Decimate(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Decimate v) => v.Value > 0;
+}
+
+[Save]
+public struct Dissolve : IComponentData, IEnableableComponent
+{
+    public Dissolve(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Dissolve v) => v.Value > 0;
+}
+
+[Save]
+public struct Poke : IComponentData, IEnableableComponent
+{
+    public Poke(byte value)
+    {
+        Value = value;
+    }
+
+    public byte Value;
+    public static implicit operator bool(Poke v) => v.Value > 0;
+}
+
 
 [Save]
 public struct ProjectileHit : IComponentData, IEnableableComponent
