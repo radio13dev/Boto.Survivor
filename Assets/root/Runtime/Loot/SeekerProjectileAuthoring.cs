@@ -33,7 +33,7 @@ public class SeekerProjectileAuthoring : MonoBehaviour
     }
 }
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileMovementSystemGroup))]
 public partial struct SeekerProjectileSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

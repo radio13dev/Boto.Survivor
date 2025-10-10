@@ -1,0 +1,28 @@
+{
+  "name": "BovineLabs.Core.Tests",
+  "rootNamespace": "",
+  "references": [
+    "BovineLabs.Core",
+    "BovineLabs.Testing",
+    "Unity.Burst",
+    "Unity.Collections",
+    "Unity.Entities",
+    "Unity.Mathematics",
+    "Unity.Mathematics.Extensions",
+    "Unity.PerformanceTesting",
+    "Unity.Scenes",
+    "Unity.Transforms"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": true,
+  "autoReferenced": false,
+  "versionDefines": [],
+  "noEngineReferences": false
+}

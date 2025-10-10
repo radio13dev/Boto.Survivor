@@ -107,7 +107,7 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
-[UpdateBefore(typeof(ProjectileSystemGroup))]
+[UpdateBefore(typeof(ProjectileMovementSystemGroup))]
 [BurstCompile]
 public partial struct CompiledStatsSystem : ISystem
 {
@@ -261,7 +261,7 @@ public partial struct CompiledStatsSystem : ISystem
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
-[UpdateBefore(typeof(ProjectileSystemGroup))]
+[UpdateBefore(typeof(ProjectileMovementSystemGroup))]
 [BurstCompile]
 public partial struct PersistentProjectileProcToggleSystem : ISystem
 {

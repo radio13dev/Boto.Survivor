@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ProjectileAuthoring : MonoBehaviour
 {
+    public bool Lightweight = false;
+
     public partial class Baker : Baker<ProjectileAuthoring>
     {
         public override void Bake(ProjectileAuthoring authoring)
@@ -16,20 +18,22 @@ public class ProjectileAuthoring : MonoBehaviour
             SetComponentEnabled<ProjectileHit>(entity, false);
             AddBuffer<ProjectileHitEntity>(entity);
             AddBuffer<ProjectileIgnoreEntity>(entity);
-            
-            AddComponent(entity, ProjectileLoopTrigger.Empty);
+            AddComponent<SurvivorProjectileTag>(entity);
             AddComponent(entity, new DestroyAtTime());
             
-            AddComponent<SurvivorProjectileTag>(entity);
+            if (!authoring.Lightweight)
+            {
+                AddComponent(entity, ProjectileLoopTrigger.Empty);
             
-            AddComponent<Crit>(entity);
-            AddComponent<Chain>(entity);
-            AddComponent<Cut>(entity);
-            AddComponent<Degenerate>(entity);
-            AddComponent<Subdivide>(entity);
-            AddComponent<Decimate>(entity);
-            AddComponent<Dissolve>(entity);
-            AddComponent<Poke>(entity);
+                AddComponent<Crit>(entity);
+                AddComponent<Chain>(entity);
+                AddComponent<Cut>(entity);
+                AddComponent<Degenerate>(entity);
+                AddComponent<Subdivide>(entity);
+                AddComponent<Decimate>(entity);
+                AddComponent<Dissolve>(entity);
+                AddComponent<Poke>(entity);
+            }
         }
     }       
 }

@@ -23,7 +23,7 @@ public class ParticleOnDamageAuthoring : MonoBehaviour
     }
 }
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct ProjectileHitSystem_Particle : ISystem
 {

@@ -4,21 +4,24 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Damage : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         state.RequireForUpdate<NetworkIdMapping>();
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        
         state.Dependency = new Job()
         {
-            HealthLookup = SystemAPI.GetComponentLookup<Health>(false),
+            ecb = delayedEcb.AsParallelWriter(),
             networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
         }.Schedule(state.Dependency);
     }
@@ -26,18 +29,19 @@ public partial struct ProjectileHitSystem_Damage : ISystem
     [WithAll(typeof(ProjectileHit))]
     partial struct Job : IJobEntity
     {
-        public ComponentLookup<Health> HealthLookup;
+        public EntityCommandBuffer.ParallelWriter ecb;
         [ReadOnly] public NetworkIdMapping networkIdMapping;
     
-        public void Execute(in DynamicBuffer<ProjectileHitEntity> hits, in Projectile projectile)
+        public void Execute([ChunkIndexInQuery] int Key, in DynamicBuffer<ProjectileHitEntity> hits, in Projectile projectile
+        )
         {
             for (int i = 0; i < hits.Length; i++)
             {
                 var e = networkIdMapping[hits[i].Value];
-                if (HealthLookup.TryGetRefRW(e, out var otherEntityF))
+                if (e != Entity.Null)
                 {
-                    otherEntityF.ValueRW.Value -= projectile.Damage;
-                    GameEvents.Trigger(GameEvents.Type.EnemyHealthChanged, e, -projectile.Damage);
+                    ecb.AppendToBuffer(Key, e, Pending.Damage(projectile.Damage));
+                    ecb.SetComponentEnabled<Pending.Dirty>(Key, e, true);
                 }
             }
         }

@@ -34,7 +34,7 @@ public class OrbitProjectileAuthoring : MonoBehaviour
     }
 }
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileMovementSystemGroup))]
 public partial struct OrbitProjectileSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

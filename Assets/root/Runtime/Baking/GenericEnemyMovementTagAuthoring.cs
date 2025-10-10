@@ -292,7 +292,7 @@ public struct EnemyTrapProjectileAnimation : IComponentData
 }
 
 [RequireMatchingQueriesForUpdate]
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileMovementSystemGroup))]
 public partial struct EnemyTrapProjectileSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

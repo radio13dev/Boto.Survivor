@@ -210,7 +210,7 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_07_Chain,
-                curve.linear(0.3f, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.zero,
                 curve.zero,
                 new string[] { "Chain" },
@@ -221,7 +221,7 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_08_Cut,
-                curve.linear(0, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 10),
                 curve.zero,
                 new string[] { "Cut" },
@@ -232,18 +232,18 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_09_Degenerate,
-                curve.linear(0, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 1),
                 curve.zero,
                 new string[] { "Degenerate" },
-                new string[] { "Chance to degenerate enemies, adding damage-over-time" },
+                new string[] { "Chance to degenerate enemies, increasing damage taken" },
                 new string[] { "Degenerate Chance:" },
                 new string[] { "Degenerations Applied:" },
                 new string[] { "" }
             ),
             new(
                 TiledStat.Stat_10_Subdivide,
-                curve.linear(0, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 1),
                 curve.zero,
                 new string[] { "Subdivide" },
@@ -265,7 +265,7 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_12_Decimate,
-                curve.linear(0, 0.01f),
+                curve.linear(0.3f, 0.01f),
                 curve.linear(0, 1),
                 curve.zero,
                 new string[] { "Decimate" },
@@ -276,18 +276,18 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_13_Dissolve,
-                curve.linear(0, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 0.01f),
                 curve.zero,
                 new string[] { "Dissolve" },
-                new string[] { "Chance to dissolve enemies, increasing damage taken" },
+                new string[] { "Chance to dissolve enemies, adding damage-over-time" },
                 new string[] { "Dissolve Chance:" },
-                new string[] { "Dissolve Increase:" },
+                new string[] { "Dissolves Applied:" },
                 new string[] { "" }
             ),
             new(
                 TiledStat.Stat_14_Poke,
-                curve.linear(0, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 5),
                 curve.zero,
                 new string[] { "Poke" },

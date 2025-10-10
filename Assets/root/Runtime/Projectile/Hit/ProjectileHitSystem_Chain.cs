@@ -8,7 +8,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Chain : ISystem
 {

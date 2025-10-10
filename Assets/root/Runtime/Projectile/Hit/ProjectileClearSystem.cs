@@ -4,7 +4,7 @@ using Unity.Jobs;
 /// <summary>
 /// Destroys projectiles when hit.
 /// </summary>
-[UpdateInGroup(typeof(ProjectileSystemGroup), OrderLast = true)]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup), OrderLast = true)]
 [RequireMatchingQueriesForUpdate]
 public partial struct ProjectileClearSystem : ISystem
 {

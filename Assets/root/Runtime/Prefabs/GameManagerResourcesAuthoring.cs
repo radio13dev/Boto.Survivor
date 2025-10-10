@@ -84,6 +84,17 @@ public struct GameManager : IComponentData
         public const int TerrainGroup_ChallengeWall = 5;
         public const int PlayerProjectile_Chain = 6;
         public const int PlayerProjectile_ChainVisual = 7;
+        
+        public const int Status_cutVisual = 8;
+        public const int Status_degenerateVisual = 9; 
+        public const int Status_subdivideVisual = 10;
+        public const int Status_decimateVisual = 11;
+        public const int Status_dissolveVisual = 12;
+        
+        public const int Status_cutDamageVisual = 13;
+        public const int Status_pokeDamageVisual = 14;
+        
+        public const int PlayerProjectile_Decimate = 15;
 
         public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
         {

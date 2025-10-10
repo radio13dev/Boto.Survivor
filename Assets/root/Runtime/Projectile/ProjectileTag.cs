@@ -259,6 +259,8 @@ public struct Degenerate : IComponentData, IEnableableComponent
 
     public byte Value;
     public static implicit operator bool(Degenerate v) => v.Value > 0;
+    public float Multiplier => 1 + Value*k_MultiplierPerPoint;
+    const float k_MultiplierPerPoint = 0.05f;
 }
 
 [Save]
@@ -271,6 +273,12 @@ public struct Subdivide : IComponentData, IEnableableComponent
 
     public byte Value;
     public static implicit operator bool(Subdivide v) => v.Value > 0;
+    
+    public struct Timer : IComponentData
+    {
+        public const double Duration = 5;
+        public double TriggerTime;
+    }
 }
 
 [Save]
@@ -283,6 +291,17 @@ public struct Decimate : IComponentData, IEnableableComponent
 
     public byte Value;
     public static implicit operator bool(Decimate v) => v.Value > 0;
+    public const double k_LifespanMin = 0.5d;
+    public const double k_LifespanVariance = 0.2d;
+
+    public static void Setup(ref EntityCommandBuffer.ParallelWriter ecb, in int Key, in Entity decimateTemplate, in Random r, in LocalTransform localTransform, in double time)
+    {
+        var decimateE = ecb.Instantiate(Key, decimateTemplate);
+
+        ecb.SetComponent(Key, decimateE, new Projectile(1000, false));
+        ecb.SetComponent(Key, decimateE, localTransform.Translate(r.NextFloat3Direction()));
+        ecb.SetComponent(Key, decimateE, new DestroyAtTime(time + Decimate.k_LifespanMin + r.NextDouble(k_LifespanVariance)));
+    }
 }
 
 [Save]
@@ -339,6 +358,11 @@ public struct ProjectileIgnoreEntity : IBufferElementData
 
 [UpdateBefore(typeof(CollisionSystemGroup))]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
-public partial class ProjectileSystemGroup : ComponentSystemGroup
+public partial class ProjectileMovementSystemGroup : ComponentSystemGroup
+{
+}
+[UpdateAfter(typeof(CollisionSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+public partial class ProjectileDamageSystemGroup : ComponentSystemGroup
 {
 }

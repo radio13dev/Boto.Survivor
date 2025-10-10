@@ -47,7 +47,7 @@ public struct ProjectileLoopTriggerQueue : IBufferElementData
     }
 }
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 [RequireMatchingQueriesForUpdate]
 public partial struct ProjectileHitSystem_LoopTrigger : ISystem

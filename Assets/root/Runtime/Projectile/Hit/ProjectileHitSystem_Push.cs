@@ -4,7 +4,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Transforms;
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Push : ISystem
 {

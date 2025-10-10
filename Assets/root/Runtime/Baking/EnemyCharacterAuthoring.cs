@@ -35,6 +35,24 @@ public class EnemyCharacterAuthoring : MonoBehaviour
                     AddComponent(entity, authoring.Health);
                     AddComponent<SpawnAnimation>(entity);
                     SetComponentEnabled<SpawnAnimation>(entity, false);
+                    
+                    AddBuffer<Pending>(entity);
+                    AddComponent<Pending.Dirty>(entity);
+                    SetComponentEnabled<Pending.Dirty>(entity, false);
+            
+                    AddComponent<Cut>(entity);
+                    SetComponentEnabled<Cut>(entity, false);
+                    AddComponent<Degenerate>(entity);
+                    SetComponentEnabled<Degenerate>(entity, false);
+                    AddComponent<Subdivide>(entity);
+                    AddComponent<Subdivide.Timer>(entity);
+                    SetComponentEnabled<Subdivide>(entity, false);
+                    AddComponent<Decimate>(entity);
+                    SetComponentEnabled<Decimate>(entity, false);
+                    AddComponent<Dissolve>(entity);
+                    SetComponentEnabled<Dissolve>(entity, false);
+                    AddComponent<Poke>(entity);
+                    SetComponentEnabled<Poke>(entity, false);
                     break;
 
                 case Type.Projectile:
