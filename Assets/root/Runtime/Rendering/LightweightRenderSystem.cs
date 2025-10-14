@@ -63,8 +63,9 @@ public partial class RenderSystemGroup : ComponentSystemGroup
 [UpdateInGroup(typeof(RenderSystemGroup))]
 public unsafe partial struct LightweightRenderSystem : ISystem
 {
-    bool m_Init;
+    bool m_Init => m_InstanceQueries.IsCreated;
     NativeArray<Matrix4x4> m_InstanceMats;
+    public NativeArray<EntityQuery> m_InstanceQueries;
 
     public void OnCreate(ref SystemState state)
     {
@@ -85,7 +86,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
         
         if (!m_Init)
         {
-            m_Init = true;
+            m_InstanceQueries = new NativeArray<EntityQuery>(resources.Length, Allocator.Persistent);
             for (int resourceIt = 0; resourceIt < resources.Length; resourceIt++)
             {
                 var resource = resources.ElementAt(resourceIt);
@@ -100,7 +101,7 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 if (resourceData.IsTorus) queryBuilder = queryBuilder.WithAll<TorusMin>();
                 if (resourceData.IsCone) queryBuilder = queryBuilder.WithAll<TorusCone>();
                 
-                resourceData.Query = queryBuilder.Build(ref state);
+                m_InstanceQueries[resourceIt] = queryBuilder.Build(ref state);
             }
         }
 
@@ -109,18 +110,19 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             if (!resources[resourceIt].Valid) continue;
             
             var resource = resources[resourceIt].Instance.Value;
-            resource.Query.SetSharedComponentFilter(new InstancedResourceRequest(resourceIt));
-            if (resource.Query.IsEmpty)
+            var query = m_InstanceQueries[resourceIt];
+            query.SetSharedComponentFilter(new InstancedResourceRequest(resourceIt));
+            if (query.IsEmpty)
                 continue;
             
-            NativeArray<LocalTransform> transforms = resource.Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
+            NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
             int toRender = math.min(transforms.Length, m_InstanceMats.Length); 
 
             NativeArray<LocalTransformLast> transformsLast = default;
             
             if (resource.UseLastTransform)
             {
-                transformsLast = resource.Query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
+                transformsLast = query.ToComponentDataArray<LocalTransformLast>(Allocator.TempJob);
                 AsyncRenderTransformGenerator asyncRenderTransformGenerator = new AsyncRenderTransformGenerator
                 {
                     transforms = transforms,
@@ -144,15 +146,15 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             NativeArray<float> spriteIndicesf = default;
             if (resource.Animated)
             {
-                spriteIndices = resource.Query.ToComponentDataArray<SpriteAnimFrame>(Allocator.TempJob);
+                spriteIndices = query.ToComponentDataArray<SpriteAnimFrame>(Allocator.TempJob);
                 spriteIndicesf = spriteIndices.Reinterpret<float>();
             }
             
             NativeArray<float> lifespan = default;
             if (resource.HasLifespan)
             {
-                var destroyAtTime = resource.Query.ToComponentDataArray<DestroyAtTime>(Allocator.Temp).Reinterpret<double>();
-                var spawnAtTime = resource.Query.ToComponentDataArray<SpawnTimeCreated>(Allocator.Temp).Reinterpret<double>();
+                var destroyAtTime = query.ToComponentDataArray<DestroyAtTime>(Allocator.Temp).Reinterpret<double>();
+                var spawnAtTime = query.ToComponentDataArray<SpawnTimeCreated>(Allocator.Temp).Reinterpret<double>();
                 lifespan = new NativeArray<float>(destroyAtTime.Length, Allocator.Temp);
                 for (int lifeIt = 0; lifeIt < destroyAtTime.Length; lifeIt++)
                     lifespan[lifeIt] = math.clamp((float)((SystemAPI.Time.ElapsedTime - spawnAtTime[lifeIt])/(destroyAtTime[lifeIt] - spawnAtTime[lifeIt])), 0, 1);
@@ -163,13 +165,13 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             NativeArray<float> torusRads = default;
             if (resource.IsTorus)
             {
-                torusRads = resource.Query.ToComponentDataArray<TorusMin>(Allocator.Temp).Reinterpret<float>();
+                torusRads = query.ToComponentDataArray<TorusMin>(Allocator.Temp).Reinterpret<float>();
             }
             
             NativeArray<float> torusAngles = default;
             if (resource.IsCone)
             {
-                torusAngles = resource.Query.ToComponentDataArray<TorusCone>(Allocator.Temp).Reinterpret<float>();
+                torusAngles = query.ToComponentDataArray<TorusCone>(Allocator.Temp).Reinterpret<float>();
             }
             
             var mesh = resource.Mesh;

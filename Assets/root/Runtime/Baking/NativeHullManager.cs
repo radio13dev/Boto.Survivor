@@ -10,11 +10,16 @@ public unsafe class NativeHullManager : MonoBehaviour
 {
     public MeshDatabase Database;
     NativeArray<NativeHull> m_localHulls;
-    
+
     public static readonly SharedStatic<IntPtr> m_Hulls = SharedStatic<IntPtr>.GetOrCreate<m_HullsKey>();
-    class m_HullsKey{}
-    
+
+    class m_HullsKey
+    {
+    }
+
+#if UNITY_EDITOR
     [InitializeOnLoadMethod]
+#endif
     [RuntimeInitializeOnLoadMethod]
     private static void Initialize()
     {

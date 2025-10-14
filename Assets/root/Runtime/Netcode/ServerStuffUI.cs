@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -14,6 +15,13 @@ public class ServerStuffUI : MonoBehaviour
     public TMP_Text LobbyCodeText;
     public GameObject ResyncButton;
 
+    private IEnumerator Start()
+    {
+        yield return new WaitUntil(() => GameInput.Inputs?.UI.AdminShortcut != null);
+        GameInput.Inputs.UI.AdminShortcut.performed += o => { gameObject.SetActive(!gameObject.activeSelf); };
+        gameObject.SetActive(false); // Disable on launch
+    }
+    
     private void OnEnable()
     {
         PingClientBehaviour.OnLobbyJoinStart += RefreshLobbyCodeDisplay;

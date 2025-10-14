@@ -119,7 +119,10 @@ public unsafe partial struct ParticleEffectRenderSystem : ISystem
         //    if (!resources[resourceIt].Valid) continue;
             if (m_ChainQuery.IsEmpty) return;
             
-            var resource = resources[GameManager.InstancedResources.ChainVisualIndex].Instance.Value;
+            var resourceIndex = GameManager.InstancedResources.ChainVisualIndex;
+            var resource = resources[resourceIndex].Instance.Value;
+            var query = state.WorldUnmanaged.GetUnsafeSystemRef<LightweightRenderSystem>(state.WorldUnmanaged.GetExistingUnmanagedSystem<LightweightRenderSystem>())
+                .m_InstanceQueries[resourceIndex];
             
             NativeArray<LocalTransform> transforms = m_ChainQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
             NativeArray<Chain.Visual> stretch = m_ChainQuery.ToComponentDataArray<Chain.Visual>(Allocator.Temp);
@@ -136,8 +139,8 @@ public unsafe partial struct ParticleEffectRenderSystem : ISystem
             NativeArray<float> lifespan = default;
             //if (resource.HasLifespan)
             {
-                var destroyAtTime = resource.Query.ToComponentDataArray<DestroyAtTime>(Allocator.Temp).Reinterpret<double>();
-                var spawnAtTime = resource.Query.ToComponentDataArray<SpawnTimeCreated>(Allocator.Temp).Reinterpret<double>();
+                var destroyAtTime = query.ToComponentDataArray<DestroyAtTime>(Allocator.Temp).Reinterpret<double>();
+                var spawnAtTime = query.ToComponentDataArray<SpawnTimeCreated>(Allocator.Temp).Reinterpret<double>();
                 lifespan = new NativeArray<float>(destroyAtTime.Length, Allocator.Temp);
                 for (int lifeIt = 0; lifeIt < destroyAtTime.Length; lifeIt++)
                     lifespan[lifeIt] = math.clamp((float)((SystemAPI.Time.ElapsedTime - spawnAtTime[lifeIt])/(destroyAtTime[lifeIt] - spawnAtTime[lifeIt])), 0, 1);

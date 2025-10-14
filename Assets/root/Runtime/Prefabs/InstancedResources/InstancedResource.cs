@@ -61,7 +61,6 @@ public class InstancedResource : ScriptableObject
         }
     }
 
-    [NonSerialized] [HideInInspector] internal EntityQuery Query;
     [NonSerialized] bool m_Setup;
     [NonSerialized] RenderParams m_RenderParams;
     [NonSerialized] RenderParams m_MapRenderParams;

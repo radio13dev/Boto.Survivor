@@ -46,7 +46,13 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
             Tiles.RemoveAt(Tiles.Count - 1);
         }
 
-        OnValidate();
+            CoroutineHost.FixOnValidateError(this, () =>
+            {
+                var demoStats = TiledStatsTree.Demo;
+                RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
+                RefreshGrid();
+                UpdateMask();
+            });
     }
 
     private void OnEnable()
@@ -150,8 +156,14 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
 
         while (Tiles.Count > c)
         {
-            DestroyImmediate(Tiles[^1].gameObject);
+            #if UNITY_EDITOR
+            if (!Application.isPlaying) 
+                DestroyImmediate(Tiles[^1].gameObject);
+            else
+            #endif
+                Destroy(Tiles[^1].gameObject);
             Tiles.RemoveAt(Tiles.Count - 1);
+            
         }
         
 
@@ -252,16 +264,16 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
         RebuildTilesFull();
     }
 
-    private void OnValidate()
-    {
-        CoroutineHost.FixOnValidateError(this, () =>
-        {
-            var demoStats = TiledStatsTree.Demo;
-            RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
-            RefreshGrid();
-            UpdateMask();
-        });
-    }
+    //private void OnValidate()
+    //{
+    //    CoroutineHost.FixOnValidateError(this, () =>
+    //    {
+    //        var demoStats = TiledStatsTree.Demo;
+    //        RebuildTiles(Wallet.Demo, demoStats, CompiledStats.GetDemo(demoStats), Ring.DemoArray);
+    //        RefreshGrid();
+    //        UpdateMask();
+    //    });
+    //}
 
     public float delDist = 0.3f;
     private void Update()
