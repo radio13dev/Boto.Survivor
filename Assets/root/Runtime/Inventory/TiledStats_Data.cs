@@ -265,7 +265,7 @@ public static class TiledStatsFull
             ),
             new(
                 TiledStat.Stat_12_Decimate,
-                curve.linear(0.3f, 0.01f),
+                curve.linear(0.0f, 0.01f),
                 curve.linear(0, 1),
                 curve.zero,
                 new string[] { "Decimate" },

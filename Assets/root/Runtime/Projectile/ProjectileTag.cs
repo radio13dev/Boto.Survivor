@@ -33,7 +33,7 @@ public struct Projectile : IComponentData
         in CompiledStats compiledStats,
         in PlayerControlled playerId, in RingPrimaryEffect effect, in byte tier, in byte projSpawnIt, in double destroyTime)
     {
-        var (damageWithMods, baseDamage, crit, chain, cut, degenerate, subdivide, decimate, dissolve, poke) = compiledStats.RollDamage(ref random);
+        var (damageWithMods, baseDamage, crit, chain, cut, degenerate, subdivide, decimate, dissolve, poke) = compiledStats.RollDamage(ref random, effect);
 
         ecb.SetComponent(projectileE, new Projectile(damageWithMods, effect.IsDoT()));
         if (crit) ecb.SetComponent(projectileE, crit);
@@ -62,7 +62,7 @@ public struct Projectile : IComponentData
         in CompiledStats compiledStats,
         in PlayerControlled playerId, in RingPrimaryEffect effect, in byte tier, in byte projSpawnIt, in double destroyTime)
     {
-        var (damageWithMods, baseDamage, crit, chain, cut, degenerate, subdivide, decimate, dissolve, poke) = compiledStats.RollDamage(ref random);
+        var (damageWithMods, baseDamage, crit, chain, cut, degenerate, subdivide, decimate, dissolve, poke) = compiledStats.RollDamage(ref random, effect);
 
         ecb.SetComponent(Key, projectileE, new Projectile(damageWithMods, effect.IsDoT()));
         if (crit) ecb.SetComponent(Key, projectileE, crit);

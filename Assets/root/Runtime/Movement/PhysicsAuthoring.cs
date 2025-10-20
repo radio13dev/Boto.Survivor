@@ -198,6 +198,7 @@ public struct PhysicsResponse : IComponentData
 
 [BurstCompile]
 [UpdateInGroup(typeof(MovementSystemGroup))]
+[GameTypeOnlySystem(1)]
 public partial struct TorusGravitySystem : ISystem
 {
     public void OnCreate(ref SystemState state)

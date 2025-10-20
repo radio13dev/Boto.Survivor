@@ -1,37 +1,34 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using Unity.Collections;
+using UnityEngine;
 
-[StructLayout(layoutKind: LayoutKind.Sequential)]
-public struct FullStepData
+[Serializable]
+[StructLayout(LayoutKind.Explicit, Size = StepInput.Length*PingServerBehaviour.k_MaxPlayerCount + 12, Pack = 4)]
+public unsafe struct FullStepData
 {
-    public long Step;
-    public StepInput P0;
-    public StepInput P1;
-    public StepInput P2;
-    public StepInput P3;
-    public byte ExtraActionCount;
+    
+    public const int Length = PingServerBehaviour.k_MaxPlayerCount;
+    [SerializeField] [FieldOffset(0)] public long Step;
+    [SerializeField] [FieldOffset(8)] public byte ExtraActionCount;
+    [SerializeField] [FieldOffset(12)] public fixed long P[PingServerBehaviour.k_MaxPlayerCount];
+
+    public bool HasData => Step != 0;
 
     public StepInput this[int index]
     {
         get
         {
-            if (index == 0) return P0;
-            if (index == 1) return P1;
-            if (index == 2) return P2;
-            if (index == 3) return P3;
-            return default;
+            fixed (long* p = P)
+                return *(((StepInput*)p) + index);
         }
 
         set
         {
-            if (index == 0) P0 = value;
-            if (index == 1) P1 = value;
-            if (index == 2) P2 = value;
-            if (index == 3) P3 = value;
+            fixed (long* p = P)
+                ((StepInput*)p)[index] = value;
         }
     }
-    
-    public int Length => PingServerBehaviour.k_MaxPlayerCount;
 
     public FullStepData(long step, NativeArray<Client> connections) : this()
     {
@@ -45,8 +42,6 @@ public struct FullStepData
         for (int i = 0; i < inputs.Length; i++)
             this[i] = inputs[i];
     }
-
-    public bool HasData => Step != 0;
 
     public unsafe void Write(ref DataStreamWriter writer, byte extraActionCount, GameRpc* extraActionPtr)
     {

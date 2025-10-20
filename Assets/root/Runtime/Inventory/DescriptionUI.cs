@@ -70,6 +70,8 @@ public class DescriptionUI : MonoBehaviour
         }
         
         public Action ButtonPress;
+        public Action ButtonPress1;
+        public Action ButtonPress2;
         
         public struct Row
         {
@@ -105,11 +107,14 @@ public class DescriptionUI : MonoBehaviour
     
     public TMP_Text CostFieldText;
     public TMP_Text ButtonText;
-    public GameObject ButtonDisabledOverlay;
+    public KeyIconEnableDisableEffect ButtonDisabledOverlay;
     
     public SerializedDictionary<eBottomRowVariant, GameObject[]> BottomRowVariants = new();
     
     public ChoiceUIRow[] ChoiceUIElements = Array.Empty<ChoiceUIRow>();
+    
+    public GameObject Button1;
+    public GameObject Button2;
     
     public static GameObject m_CustomZero; 
 
@@ -121,6 +126,11 @@ public class DescriptionUI : MonoBehaviour
     private void OnDisable()
     {
         UIFocus.OnFocus -= OnFocus;
+    }
+    
+    public void RefreshFocus()
+    {
+        UIFocus.Refresh();
     }
 
     private void OnFocus()
@@ -162,10 +172,25 @@ public class DescriptionUI : MonoBehaviour
     {
         m_ButtonPress?.Invoke();
     }
+    Action m_ButtonPress1;
+    public void ButtonPress1()
+    {
+        m_ButtonPress1?.Invoke();
+    }
+    Action m_ButtonPress2;
+    public void ButtonPress2()
+    {
+        m_ButtonPress2?.Invoke();
+    }
 
     public void SetText(Data data)
     {
         m_ButtonPress = data.ButtonDisabled ? null : data.ButtonPress;
+        
+        if (Button1) Button1.SetActive(data.ButtonPress1 != null);
+        if (Button2) Button2.SetActive(data.ButtonPress2 != null);
+        m_ButtonPress1 = data.ButtonPress1;
+        m_ButtonPress2 = data.ButtonPress2;
         
         Title.text = data.Title;
         
@@ -269,7 +294,7 @@ public class DescriptionUI : MonoBehaviour
         {
             ButtonText.text = data.ButtonText;
             ButtonText.transform.parent.gameObject.SetActive(true);
-            ButtonDisabledOverlay.gameObject.SetActive(data.ButtonDisabled);
+            ButtonDisabledOverlay.Set(!data.ButtonDisabled);
         }
         else
         {

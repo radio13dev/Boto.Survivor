@@ -32,7 +32,7 @@ public class KeyIconEnableDisableEffect : MonoBehaviour
     [EditorButton]
     public void Set(bool v)
     {
-        m_IsDisabled = v;
+        m_IsDisabled = !v;
         Refresh();
     }
 
@@ -42,5 +42,17 @@ public class KeyIconEnableDisableEffect : MonoBehaviour
         Background.material.SetColor(OutlineColor, m_IsDisabled ? DisabledColorMul*Colors[1] : Colors[1]);
         Icon.material.color = m_IsDisabled ? DisabledColorMul*Colors[2] : Colors[2];
         Text.color = m_IsDisabled ? DisabledColorMul*Colors[3] : Colors[3];
+        
+        //if (TryGetComponent<Collider>(out var collider))
+        //    collider.enabled = !m_IsDisabled;
+        if (TryGetComponent<SingleActionOnClick>(out var btn))
+            btn.enabled = !m_IsDisabled;
+        if (TryGetComponent<SingleActionOnInputKeyPress>(out var keybtn))
+            keybtn.enabled = !m_IsDisabled;
+        //if (TryGetComponent<Focusable>(out var focusable))
+        //    focusable.enabled = !m_IsDisabled;
+        //if (TryGetComponent<FocusableRequest>(out var focusRequest))
+        //    focusRequest.enabled = !m_IsDisabled;
+        
     }
 }

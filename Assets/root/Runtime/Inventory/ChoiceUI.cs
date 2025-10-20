@@ -13,6 +13,9 @@ public class ChoiceUI : MonoBehaviour, HandUIController.IStateChangeListener
     public RingDisplay RingDisplay;
     public DescriptionUI DescriptionUI;
     
+    public KeyIconEnableDisableEffect InnerSellKey;
+    public KeyIconEnableDisableEffect InnerDropKey;
+    
     public static bool IsActive => Instance && Instance.Container.activeInHierarchy;
     public static Ring ActiveRing { get; private set; }
     public static int ActiveRingIndex { get; private set; } = -1;
@@ -48,6 +51,9 @@ public class ChoiceUI : MonoBehaviour, HandUIController.IStateChangeListener
     
     public void Setup(RingDisplay grabbed)
     {
+        InnerSellKey.Set(false);
+        InnerDropKey.Set(false);
+        
         GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats);
         Setup(stats, grabbed.Ring, grabbed.Index);
         RingDisplay.CopyTransform(grabbed);
@@ -55,12 +61,23 @@ public class ChoiceUI : MonoBehaviour, HandUIController.IStateChangeListener
 
     public void Close()
     {
+        InnerSellKey.Set(true);
+        InnerDropKey.Set(true);
+        
         ActiveRingIndex = -1;
         OnActiveRingChange?.Invoke(ActiveRingIndex);
         
         Container.SetActive(false);
     }
-    
+
+    private void Update()
+    {
+        if (GameInput.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
+        {
+            Close();
+        }
+    }
+
     public void Setup(CompiledStats stats, Ring ring, int ringIndex) => _Setup(stats, ring, ringIndex, default);
     public void Setup(CompiledStats stats, Ring ring, float3 pickupPosition) => _Setup(stats, ring, -1, pickupPosition);
     private void _Setup(CompiledStats stats, Ring ring, int ringIndex, float3 pickupPosition)

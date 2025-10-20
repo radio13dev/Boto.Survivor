@@ -13,6 +13,7 @@ using Random = Unity.Mathematics.Random;
 
 [BurstCompile]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[GameTypeOnlySystem(1)]
 public partial struct RingSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

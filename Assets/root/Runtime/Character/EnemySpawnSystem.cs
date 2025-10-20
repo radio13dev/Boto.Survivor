@@ -59,18 +59,21 @@ public static class EnemySpawnerModeExtensions
                 return new SpawnRadius(SpawnRadius.DEFAULT_MIN_RAD, SpawnRadius.DEFAULT_MAX_RAD);
         }
     }
+    
     public static int GetEnemyChance(this EnemySpawnerMode mode, int enemy)
     {
         switch (mode)
         {
             case EnemySpawnerMode.Wave_01_Common:
-            case EnemySpawnerMode.Wave_03_Common:
-            case EnemySpawnerMode.Wave_04_Common:
-            case EnemySpawnerMode.Wave_05_Common:
                 return enemy == 0 ? 100 : enemy == 1 ? 4 : 0;
-                
             case EnemySpawnerMode.Wave_02_4SecBurst:
                 return enemy == 0 ? 100 : 0;
+            case EnemySpawnerMode.Wave_03_Common:
+                return enemy == 0 ? 100 : enemy == 1 ? 4 : enemy == 2 ? 2 : enemy == 3 ? 2 : 0;
+            case EnemySpawnerMode.Wave_04_Common:
+                return enemy == 0 ? 90 : enemy == 1 ? 3 : enemy == 2 ? 2 : enemy == 3 ? 2 : enemy == 4 ? 10 : enemy == 5 ? 1 : 0;
+            case EnemySpawnerMode.Wave_05_Common:
+                return enemy == 0 ? 50 : enemy == 1 ? 8 : enemy == 2 ? 2 : enemy == 3 ? 2 : enemy == 4 ? 50 : enemy == 5 ? 2 : 0;
                 
             default:
                 return 0;
@@ -119,6 +122,7 @@ public struct EnemySpawner : IComponentData
 
 [RequireMatchingQueriesForUpdate]
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
+[GameTypeOnlySystem(1)]
 public partial struct EnemySpawnSystem : ISystem
 {
     EntityQuery m_PlayerTransformsQuery;

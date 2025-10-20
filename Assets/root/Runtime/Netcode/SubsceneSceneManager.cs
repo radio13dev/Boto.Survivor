@@ -7,10 +7,13 @@ public class SubsceneSceneManager : MonoBehaviour
     
     public static bool Ready => m_Instance;
     public static SubScene GameManagerScene => m_Instance.gameManagerScene;
-    public static SubScene GameScene => m_Instance.gameScene;
+    public static SubScene[] GameScenes => m_Instance.gameScenes;
     
+    [Header("All game types use the same manager")]
     public SubScene gameManagerScene;
-    public SubScene gameScene;
+    
+    [Header("Lobby: 0, Game: 1")]
+    public SubScene[] gameScenes;
 
     private void Start()
     {

@@ -33,6 +33,25 @@ public interface IGameFactory
     Game Invoke();
 }
 
+public class LobbyFactory : IGameFactory
+{
+    public bool ShowVisuals;
+    public IStepProvider StepProvider;
+    public string WorldName;
+
+    public LobbyFactory(string worldName, bool showVisuals = true, IStepProvider stepProvider = null)
+    {
+        WorldName = worldName;
+        ShowVisuals = showVisuals;
+        StepProvider = stepProvider ?? new RateStepProvider();
+    }
+
+    public Game Invoke()
+    {
+        return new Game(WorldName, ShowVisuals, StepProvider, 0);
+    }
+}
+
 public class GameFactory : IGameFactory
 {
     public bool ShowVisuals;
@@ -48,7 +67,7 @@ public class GameFactory : IGameFactory
 
     public Game Invoke()
     {
-        return new Game(WorldName, ShowVisuals, StepProvider);
+        return new Game(WorldName, ShowVisuals, StepProvider, 1);
     }
 }
 
@@ -65,15 +84,17 @@ public class Game : IDisposable
         {
             if (s_ClientGame == value) return;
             s_ClientGame = value;
+            OnClientGameChanged?.Invoke();
             CameraTarget.MainTarget = null;
         }
     }
 
     static Game s_ClientGame;
+    public static event Action OnClientGameChanged;
     
     public static LinkedList<Game> AllGames = new();
     
-    public int PlayerIndex
+    public byte PlayerIndex
     {
         get
         {
@@ -85,7 +106,7 @@ public class Game : IDisposable
             ClientPlayerIndex.Data = value;
         }
     }
-    public int m_PlayerIndex = -1;
+    public byte m_PlayerIndex = byte.MaxValue;
     
     public static readonly SharedStatic<int> ClientPlayerIndex = SharedStatic<int>.GetOrCreate<k_ClientPlayerIndex>();
     private class k_ClientPlayerIndex { }
@@ -98,9 +119,11 @@ public class Game : IDisposable
 
     public World World => m_World;
     public long Step => m_StepController.GetSingleton<StepController>().Step;
+    public int GameType => m_GameType;
 
     private IStepProvider m_StepProvider;
     private bool m_ShowVisuals;
+    private int m_GameType;
     private World m_World;
     private EntityQuery m_SaveRequest;
     private EntityQuery m_SaveBuffer;
@@ -109,6 +132,7 @@ public class Game : IDisposable
     private SystemHandle m_RenderSystemGroup;
 
     public NativeQueue<GameRpc> RpcSendBuffer;
+    public Dictionary<GameRpc, Action> RpcCallbacks = new();
 
     private Entity m_GameManagerSceneE;
     private Entity m_GameSceneE;
@@ -157,8 +181,9 @@ public class Game : IDisposable
         m_SaveStarted = false;
     }
 
-    public Game(string worldName, bool showVisuals, IStepProvider stepProvider)
+    public Game(string worldName, bool showVisuals, IStepProvider stepProvider, int gameType)
     {
+        m_GameType = gameType;
         m_StepProvider = stepProvider;
         m_ShowVisuals = showVisuals;
 
@@ -167,7 +192,10 @@ public class Game : IDisposable
         var systems = DefaultWorldInitialization
             .GetAllSystems(showVisuals ? WorldSystemFilterFlags.LocalSimulation | WorldSystemFilterFlags.Presentation : WorldSystemFilterFlags.ServerSimulation).ToList();
         systems.RemoveAll(s => s.Name == typeof(UpdateWorldTimeSystem).Name);
+        systems.RemoveAll(s => s.GetCustomAttributes(typeof(GameTypeOnlySystemAttribute), true).Any(c => c is GameTypeOnlySystemAttribute gameTypeRestrict && gameTypeRestrict.GameType != m_GameType));
+        
         DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(m_World, systems);
+        m_World.EntityManager.CreateSingleton(new GameTypeSingleton(){Value = gameType});
         
         if (m_ShowVisuals)
         {
@@ -209,21 +237,28 @@ public class Game : IDisposable
 
     public void LoadScenes()
     {
+        // All games use same manager scene
         Debug.Log($"Loading subscene with GUID: {SubsceneSceneManager.GameManagerScene.SceneGUID}");
         m_GameManagerSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SubsceneSceneManager.GameManagerScene.SceneGUID);
 
-        Debug.Log($"Loading subscene with GUID: {SubsceneSceneManager.GameScene.SceneGUID}");
-        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, SubsceneSceneManager.GameScene.SceneGUID);
+        // Load game scene for given game type
+        var scene = SubsceneSceneManager.GameScenes[GameType];
+        Debug.Log($"Loading subscene with GUID: {scene.SceneGUID}");
+        m_GameSceneE = SceneSystem.LoadSceneAsync(m_World.Unmanaged, scene.SceneGUID);
     }
 
     public void Dispose()
     {
+        
         if (ClientGame == this)
             ClientGame = null;
         RpcSendBuffer.Dispose();
         if (m_World.IsCreated)
         {
-            //m_World.DestroyAllSystemsAndLogException(out _);
+            // Don't need to dispose of the scenes, I think? World dispose should do it.
+            //if (m_GameManagerSceneE != Entity.Null) SceneSystem.UnloadScene(m_World.Unmanaged, m_GameManagerSceneE, SceneSystem.UnloadParameters.DestroyMetaEntities);
+            //if (m_GameSceneE != Entity.Null) SceneSystem.UnloadScene(m_World.Unmanaged, m_GameSceneE, SceneSystem.UnloadParameters.DestroyMetaEntities);
+            
             m_World.Dispose();
             AllGames.Remove(this);
         }
@@ -320,7 +355,7 @@ public class Game : IDisposable
         // Apply inputs
         {
             using var query = entityManager.CreateEntityQuery(typeof(StepInput), typeof(PlayerControlled));
-            for (int i = 0; i < stepData.Length; i++)
+            for (byte i = 0; i < PingServerBehaviour.k_MaxPlayerCount; i++)
             {
                 query.SetSharedComponentFilter(new PlayerControlled() { Index = i });
                 if (query.CalculateEntityCount() == 0)
@@ -335,6 +370,16 @@ public class Game : IDisposable
         }
 
         m_World.Update();
+        
+        // Do RPC callbacks
+        if (RpcCallbacks.Count > 0 && stepData.ExtraActionCount > 0)
+        {
+            for (byte i = 0; i < stepData.ExtraActionCount; i++)
+            {
+                if (RpcCallbacks.Remove(extraActionPtr[i], out var callback))
+                    callback();
+            }
+        }
     }
 
     public void ApplyRender()
@@ -543,6 +588,11 @@ public static class GameEvents
 
         o = default;
         return false;
+    }
+    
+    public static T GetComponent<T>(Entity entity) where T : unmanaged, IComponentData
+    {
+        return Game.ClientGame.World.EntityManager.GetComponentData<T>(entity);
     }
     
     public static bool TryGetComponent2<T>(Entity entity, out T o) where T : unmanaged, IComponentData

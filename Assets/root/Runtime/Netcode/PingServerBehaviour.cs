@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using BovineLabs.Core.Extensions;
+using JetBrains.Annotations;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Collections;
@@ -9,8 +11,12 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Networking.Transport;
+using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
+using Debug = UnityEngine.Debug;
 
 public struct Client
 {
@@ -33,7 +39,7 @@ public struct Client
 /// <summary>Component that will listen for ping connections and answer pings.</summary>
 public unsafe class PingServerBehaviour : GameHostBehaviour
 {
-    public const int k_MaxPlayerCount = 4;
+    public const int k_MaxPlayerCount = 16;
 
     public const byte CODE_SendStep = 0b0000_0000;
     public const byte CODE_SendSave = 0b0000_0001;
@@ -42,7 +48,8 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     public static event Action OnLobbyHostStart;
 
     public override bool Idle => m_Idle;
-    public string JoinCode;
+    public string RelayJoinCode;
+    public Lobby Lobby;
 
     private BiggerDriver m_ServerDriver;
     private NativeArray<Client> m_ServerConnections;
@@ -68,6 +75,12 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     private void OnDestroy()
     {
+        if (Lobby != null)
+        {
+            LobbyService.Instance.RemovePlayerAsync(Lobby.Id, AuthenticationService.Instance.PlayerId);
+            Lobby = null;
+        }
+
         Game?.Dispose();
 
         if (m_ServerDriver.IsCreated)
@@ -86,7 +99,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     /// <summary>Start establishing a connection to the server and listening for connections.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect(Action OnSuccess, Action OnFailure)
+    public IEnumerator Connect(string lobbyName, Action OnSuccess = null, Action OnFailure = null)
     {
         var signInTask = GameLaunch.SignIn();
         while (!signInTask.IsCompleted)
@@ -120,12 +133,13 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             yield break;
         }
 
-        JoinCode = joinCodeTask.Result;
+        RelayJoinCode = joinCodeTask.Result;
         JavascriptHook.SetUrlArg("lobby", joinCodeTask.Result);
 
         // Do this on another thread because it kills performance
         var relayServerData = allocation.ToRelayServerData("wss");
         var settings = Netcode.NetworkSettings(ref relayServerData);
+        settings = settings.WithNetworkConfigParameters(disconnectTimeoutMS: 3000);
 
         m_ServerDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
 
@@ -146,8 +160,24 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         }
 
         Debug.Log("Server is now listening for connections.");
+        
+        var createOptions = new CreateLobbyOptions
+        {
+            IsPrivate = false,
+            Data = new()
+            {
+                ["RelayJoinCode"] = new DataObject(DataObject.VisibilityOptions.Public, value: RelayJoinCode),
+            }
+        };
+        var lobbyHostTask = LobbyService.Instance.CreateLobbyAsync(lobbyName, PingServerBehaviour.k_MaxPlayerCount, createOptions);
+        while (!lobbyHostTask.IsCompleted)
+            yield return null;
+        Lobby = lobbyHostTask.Result;
+        Debug.Log($"Hosting lobby {Lobby.Name} with id {Lobby.Id}");
+        
         OnSuccess?.Invoke();
         OnLobbyHostStart?.Invoke();
+        
     }
 
     // Job to clean up old connections and accept new ones.
@@ -156,6 +186,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
     {
         public BiggerDriver Driver;
         public NativeArray<Client> Connections;
+        public NativeQueue<GameRpc>.ParallelWriter SpecialActionQueue;
 
         public void Execute()
         {
@@ -170,6 +201,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
                     Debug.Log($"Got new client {connection} at index {i}");
                     Connections[i] = new Client(connection) { RequestedSave = true };
+                    SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                     break;
                 }
             }
@@ -270,17 +302,30 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         connection.InputBuffer = input;
         m_ServerConnections[connectionId] = connection;
     }
+    
+    Stopwatch m_LobbyHeartbestSw;
 
     private void Update()
     {
+        if (Lobby != null)
+        {
+            if (m_LobbyHeartbestSw == null) m_LobbyHeartbestSw = Stopwatch.StartNew();
+            if (m_LobbyHeartbestSw.Elapsed.Seconds > 10)
+            {
+                m_LobbyHeartbestSw.Restart();
+                LobbyService.Instance.SendHeartbeatPingAsync(Lobby.Id);
+            }
+        }
+        
         if (m_ServerDriver.IsCreated)
         {
+        
             // First, complete the previously-scheduled job chain.
             m_ServerJobHandle.Complete();
 
             SaveLoop:
             var saveState = Game.SaveState;
-            for (int i = 0; i < m_ServerConnections.Length; i++)
+            for (byte i = 0; i < m_ServerConnections.Length; i++)
                 if (m_ServerConnections[i].RequestedSave)
                 {
                     if (saveState == SaveState.Idle)
@@ -314,6 +359,7 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             {
                 Driver = m_ServerDriver,
                 Connections = m_ServerConnections,
+                SpecialActionQueue = m_SpecialActionQueue.AsParallelWriter()
             };
             var eventsJobs = new ConnectionsRelayEventsJobs
             {
@@ -424,14 +470,16 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
 
     public void AddLocalPlayer()
     {
+        m_ServerJobHandle.Complete();
+        
         for (byte i = 0; i < m_ServerConnections.Length; i++)
         {
             if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
             {
-                m_SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                 Game.PlayerIndex = i;
 
                 m_ServerConnections.ElementAt(i).Disabled = true;
+                m_SpecialActionQueue.Enqueue(GameRpc.PlayerJoin(i, 0));
                 return;
             }
         }

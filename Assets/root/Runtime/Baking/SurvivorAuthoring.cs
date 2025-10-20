@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using Drawing;
 using Unity.Collections;
@@ -8,18 +10,30 @@ using Unity.Mathematics;
 
 public struct PlayerControlled : ISharedComponentData
 {
-    public int Index;
+    public byte Index;
+
+    [Pure]
+    public static byte GetPlayerIndex(in World world, in Entity player)
+    {
+        var players = world.EntityManager.GetSingletonBuffer<PlayerControlledLink>(true);
+        for (byte i = 0; i < players.Length; i++)
+        {
+            if (players[i].Value == player)
+                return i;
+        }
+        return byte.MaxValue;
+    }
 }
 
 [Save]
 public struct PlayerControlledSaveable : IComponentData
 {
-    public int Index;
+    public byte Index;
 }
 
 public class SurvivorAuthoring : MonoBehaviourGizmos
 {
-    public Health Health = new Health(100);
+    public int Health = 6;
     public RingStats[] InitialRings = new RingStats[8];
     public List<Gem> InitialGems = new();
     public AbilityType AbilityType;
@@ -39,10 +53,10 @@ public class SurvivorAuthoring : MonoBehaviourGizmos
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             
             // Basic character setup
-            AddComponent(entity, new PlayerControlledSaveable(){ Index = -1 });
+            AddComponent(entity, new PlayerControlledSaveable(){ Index = byte.MaxValue });
             AddComponent(entity, new CharacterTag());
             AddComponent(entity, new SurvivorTag());
-            AddComponent(entity, authoring.Health);
+            AddComponent(entity, new Health(authoring.Health));
             
             AddComponent<EnemySpawner>(entity);
             

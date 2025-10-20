@@ -117,7 +117,7 @@ public unsafe struct TiledStatsTree : IComponentData
     [Pure]
     public long GetLevelUpCost(TiledStat stat)
     {
-        return (10L << (int)GetLevelsSpent());
+        return (10L * (int)GetLevelsSpent());
     }
 
     [Pure]

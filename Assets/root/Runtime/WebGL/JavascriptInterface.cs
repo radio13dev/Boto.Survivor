@@ -26,6 +26,6 @@ public class JavascriptHook : MonoBehaviour
     public void JoinLobby(string lobbyCode)
     {
         if (!GameLaunch.Main) GameLaunch.Create(new GameFactory("main"));
-        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinLobby(lobbyCode));
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinRelay(lobbyCode));
     }
 }

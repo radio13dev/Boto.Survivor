@@ -15,7 +15,7 @@ public abstract class GameTestBase
     public void OneTimeSetup()
     {
         GameInitialize.EnableMainContentLoad = false;
-        GameInitialize.EnableInitGameLaunch = false;
+        GameInitialize.InitMode = GameInitialize.eMode.None;
         
         if (m_TestScene == default)
             m_TestScene = EditorSceneManager.LoadSceneInPlayMode(
@@ -93,7 +93,7 @@ public class DesyncTests : GameTestBase
         using var mockServer = GameLaunch.Create(new GameFactory("mockServer", stepProvider: stubStepProvider));
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider));
         yield return mockServer.CreateServer(); // Start server
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -114,7 +114,7 @@ public class DesyncTests : GameTestBase
         using var mockServer = GameLaunch.Create(new GameFactory("mockServer", stepProvider: stubStepProvider));
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider));
         yield return mockServer.CreateServer(); // Start server
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -134,7 +134,7 @@ public class DesyncTests : GameTestBase
         using var mockServer = GameLaunch.Create(new GameFactory("mockServer", stepProvider: stubStepProvider));
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider));
         yield return mockServer.CreateServer(); // Start server
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -155,7 +155,7 @@ public class DesyncTests : GameTestBase
         using var mockServer = GameLaunch.Create(new GameFactory("mockServer", stepProvider: stubStepProvider));
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider));
         yield return mockServer.CreateServer(); // Start server
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -193,7 +193,7 @@ public class DesyncTests : GameTestBase
 
         // Connect the client now
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider));
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -232,7 +232,7 @@ public class DesyncTests : GameTestBase
 
         // Connect the client now
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient", stepProvider: stubStepProvider, showVisuals: false));
-        yield return mockClient.JoinLobby(mockServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
 
         // Act
@@ -336,7 +336,7 @@ public class GameLaunchTests : GameTestBase
 
         // Act
         LogAssert.Expect(LogType.Error, ErrorMessage.JoinRelayFail);
-        yield return gameLaunch.JoinLobby(FAKE_LOBBY_CODE);
+        yield return gameLaunch.JoinRelay(FAKE_LOBBY_CODE);
         yield return new WaitUntil(() => gameLaunch.Idle);
 
         // Assert
@@ -354,7 +354,7 @@ public class GameLaunchTests : GameTestBase
         using var mockClient = GameLaunch.Create(new GameFactory("mockClient"));
 
         // Act
-        yield return mockClient.JoinLobby(stubServer.Server.JoinCode); // This method should interrupt the singleplayer launch and join directly to server
+        yield return mockClient.JoinRelay(stubServer.Server.RelayJoinCode); // This method should interrupt the singleplayer launch and join directly to server
         yield return new WaitUntil(() => mockClient.Idle);
 
         // Assert
@@ -397,7 +397,7 @@ public class GameLaunchTests : GameTestBase
 
         // Act
         LogAssert.Expect(LogType.Error, ErrorMessage.JoinRelayFail);
-        yield return mockGame.JoinLobby(FAKE_LOBBY_CODE);
+        yield return mockGame.JoinRelay(FAKE_LOBBY_CODE);
 
         // Assert
         Assert.IsTrue(mockGame.IsSingleplayer);
@@ -415,7 +415,7 @@ public class GameLaunchTests : GameTestBase
         yield return new WaitUntil(() => mockClient.InitializedAndIdle); // Wait for singleplayer
 
         // Act
-        yield return mockClient.JoinLobby(stubServer.Server.JoinCode);
+        yield return mockClient.JoinRelay(stubServer.Server.RelayJoinCode);
 
         // Assert
         Assert.IsFalse(stubServer.IsSingleplayer);

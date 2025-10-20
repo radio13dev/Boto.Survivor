@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,12 +11,16 @@ using Unity.Mathematics;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
 using Unity.Networking.Transport.Utilities;
+using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 
 public static class ErrorMessage
 {
     public const string SignInFail = "Failed to sign in.";
+    public const string LobbyJoinFail = "Failed to join the Lobby.";
     public const string JoinRelayFail = "Failed to join the Relay allocation.";
 }
 
@@ -77,8 +82,9 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     public static event Action OnLobbyJoinStart;
     
     public override bool Idle => m_Idle;
-    public string JoinCode;
-
+    public string RelayJoinCode;
+    public Lobby Lobby;
+    
     private BiggerDriver m_ClientDriver;
     private NativeReference<StepInput> m_FrameInput;
     private NativeQueue<FullStepData> m_ServerMessageBuffer;
@@ -109,6 +115,12 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
 
     private void OnDestroy()
     {
+        if (Lobby != null)
+        {
+            LobbyService.Instance.RemovePlayerAsync(Lobby.Id, AuthenticationService.Instance.PlayerId);
+            Lobby = null;
+        }
+        
         Game?.Dispose();
         
         if (m_ClientDriver.IsCreated)
@@ -132,10 +144,66 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
     Action m_OnFailureAfterLoad;
     /// <summary>Start establishing a connection to the server.</summary>
     /// <returns>Enumerator for a coroutine.</returns>
-    public IEnumerator Connect(IGameFactory gameFactory, string joinCode, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
+    public IEnumerator Connect_Lobby(IGameFactory gameFactory, string lobbyId, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
     {
         m_GameFactory = gameFactory;
-        JoinCode = joinCode;
+        OnLobbyJoinStart?.Invoke();
+        
+        this.m_OnGameLoad = OnGameLoad;
+        this.m_OnFailureBeforeLoad = OnFailureBeforeLoad;
+        this.m_OnFailureAfterLoad = OnFailureAfterLoad;
+    
+        var signInTask = GameLaunch.SignIn();
+        while (!signInTask.IsCompleted)
+            yield return null;
+        if (signInTask.IsFaulted)
+        {
+            Debug.LogError(ErrorMessage.SignInFail);
+            Debug.LogError(signInTask.Exception);
+            m_OnFailureBeforeLoad?.Invoke();
+            yield break;
+        }
+    
+        // Join lobby
+        var lobbyJoinTask = LobbyService.Instance.JoinLobbyByIdAsync(lobbyId);
+        while (!lobbyJoinTask.IsCompleted)
+            yield return null;
+        if (lobbyJoinTask.IsFaulted)
+        {
+            Debug.LogError(ErrorMessage.LobbyJoinFail);
+            Debug.LogError(lobbyJoinTask.Exception);
+            m_OnFailureBeforeLoad?.Invoke();
+            yield break;
+        }
+        Lobby = lobbyJoinTask.Result;
+        Debug.Log($"Joined lobby {Lobby.Name}");
+        
+        // Join relay
+        RelayJoinCode = Lobby.Data["RelayJoinCode"].Value;
+        var joinTask = RelayService.Instance.JoinAllocationAsync(RelayJoinCode);
+        while (!joinTask.IsCompleted)
+            yield return null;
+        if (joinTask.IsFaulted)
+        {
+            Debug.LogError(ErrorMessage.JoinRelayFail);
+            Debug.LogError(joinTask.Exception);
+            m_OnFailureBeforeLoad?.Invoke();
+            yield break;
+        }
+
+        // Setup network driver
+        var relayServerData = joinTask.Result.ToRelayServerData("wss");
+        var settings = Netcode.NetworkSettings(ref relayServerData);
+        m_ClientDriver = new BiggerDriver(NetworkDriver.Create(new WebSocketNetworkInterface(), settings));
+
+        m_ClientConnection.Value = new Server(m_ClientDriver.Driver.Connect());
+    }
+    /// <summary>Start establishing a connection to the server.</summary>
+    /// <returns>Enumerator for a coroutine.</returns>
+    public IEnumerator Connect_Relay(IGameFactory gameFactory, string relayJoinCode, Action OnGameLoad, Action OnFailureBeforeLoad, Action OnFailureAfterLoad)
+    {
+        m_GameFactory = gameFactory;
+        RelayJoinCode = relayJoinCode;
         OnLobbyJoinStart?.Invoke();
         
         this.m_OnGameLoad = OnGameLoad;
@@ -152,7 +220,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             yield break;
         }
     
-        var joinTask = RelayService.Instance.JoinAllocationAsync(joinCode);
+        var joinTask = RelayService.Instance.JoinAllocationAsync(relayJoinCode);
         while (!joinTask.IsCompleted)
             yield return null;
         if (joinTask.IsFaulted)
@@ -327,6 +395,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         {
             // First, complete the previously-scheduled job chain.
             m_ClientJobHandle.Complete();
+            
 
             if (m_SaveBuffer.Length != 0)
             {
@@ -365,14 +434,24 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
             {
                 bool ready = Game.IsReady;
                 m_Idle = ready;
+                bool didStep = false;
+                
+                TryStep:
                 if (ready && 
                     m_ServerMessageBuffer.Count > 0 && 
                     (Game.CanStep() || m_ServerMessageBuffer.Count > k_FrameDelay) && 
                     m_ServerMessageBuffer.TryDequeue(out var msg))
                 {
                     shouldSend = true;
+                    
+                    if (didStep) Game.CompleteDependencies();
+                    didStep = true;
+                    
                     Game.ApplyStepData(msg, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
+                    
                     NetworkPing.ClientExecuteTimes.Data.Add((DateTime.Now, (int)msg.Step));
+                    
+                    goto TryStep;
                 }
                 else if (!ready) Game.World.Update(); // Completes save loading
                 else
@@ -403,7 +482,7 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
                 GenericMessageBuffer = m_GenericMessageBuffer.AsParallelWriter(),
                 SaveBuffer = m_SaveBuffer,
                 SpecialActionsArray = m_SpecialActionArr,
-                Now = DateTime.Now.Ticks
+                Now = DateTime.UtcNow.Ticks
             };
 
             // If it's time to send, schedule a send job.
@@ -440,4 +519,44 @@ public unsafe class PingClientBehaviour : GameHostBehaviour
         }
     }
 
+    public IEnumerator GameSearch(string gameSearchKey, float timeoutSeconds, Action<Lobby> OnSuccess, Action OnFailure)
+    {
+        // Attempt every 0.5s until timeout
+        float t = 0;
+        while (t < timeoutSeconds)
+        {
+            var queryTask = LobbyService.Instance.QueryLobbiesAsync(new QueryLobbiesOptions
+            {
+                Filters = new List<QueryFilter>()
+                {
+                    new QueryFilter(
+                        field: QueryFilter.FieldOptions.Name,
+                        op: QueryFilter.OpOptions.EQ,
+                        value: gameSearchKey)
+                },
+                Count = 1
+            });
+            while (!queryTask.IsCompleted)
+                yield return null;
+            if (queryTask.IsFaulted)
+            {
+                Debug.LogError("Game search failed.");
+                OnFailure?.Invoke();
+                yield break;
+            }
+
+            var queryResult = queryTask.Result;
+            if (queryResult.Results.Count > 0)
+            {
+                Debug.Log($"Game search found lobby {queryResult.Results[0].Name}.");
+                OnSuccess?.Invoke(queryResult.Results[0]);
+                yield break;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            t += 0.5f;
+        }
+        
+        OnFailure?.Invoke();
+    }
 }

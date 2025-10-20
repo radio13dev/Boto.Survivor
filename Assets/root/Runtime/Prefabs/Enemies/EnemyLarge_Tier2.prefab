@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 1276742715247795018}
   - component: {fileID: 484891261290821242}
   m_Layer: 0
-  m_Name: EnemyLarge
+  m_Name: EnemyLarge_Tier2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,9 +56,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
   type: 0
-  Health:
-    Value: 10
-  Chance: 4
+  Health: 500
 --- !u!114 &4710129199327565736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    _Asset: {fileID: 11400000, guid: 20ab9f9d10ca3374fbb5ffc6154cbc83, type: 2}
+    _Asset: {fileID: 11400000, guid: b790c88d9803eee4a8c7c5b695d566ce, type: 2}
 --- !u!114 &8164776769268316261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +148,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
   Drops:
   - Type: 0
-    Chance: 100
+    Chance: 1000
+    MinCount: 4
+    MaxCount: 10
+  - Type: 1
+    Chance: 10
     MinCount: 4
     MaxCount: 10
 --- !u!114 &-2345145132516463796

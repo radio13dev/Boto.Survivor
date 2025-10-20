@@ -53,7 +53,7 @@ public class ServerStuffUI : MonoBehaviour
 
     public void OnConnectButton()
     {
-        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinLobby(LobbyField.text));
+        GameLaunch.Main.StartCoroutine(GameLaunch.Main.JoinRelay(LobbyField.text));
     }
 
     public void OnDisconnectButton()
@@ -69,13 +69,13 @@ public class ServerStuffUI : MonoBehaviour
     public void RefreshLobbyCodeDisplay()
     {
         if (GameLaunch.Main)
-            LobbyCodeText.text = GameLaunch.Main.Server?.JoinCode ??
-                                 GameLaunch.Main.Client?.JoinCode;
+            LobbyCodeText.text = GameLaunch.Main.Server?.RelayJoinCode ??
+                                 GameLaunch.Main.Client?.RelayJoinCode;
     }
 
     public void OnCopyLobbyCodeButton()
     {
-        ClipboardBridge.CopyToClipboard(GameLaunch.Main.Server?.JoinCode);
+        ClipboardBridge.CopyToClipboard(GameLaunch.Main.Server?.RelayJoinCode);
         Debug.Log($"Copied lobby code: {LobbyField.text}");
     }
 }

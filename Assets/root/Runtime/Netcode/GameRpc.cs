@@ -9,11 +9,12 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Collider = Collisions.Collider;
 using Random = Unity.Mathematics.Random;
 
 [Save]
 [Serializable]
-[StructLayout(LayoutKind.Explicit, Size = 16, Pack = 2)]
+[StructLayout(LayoutKind.Explicit, Size = GameRpc.Length, Pack = 2)]
 public unsafe struct GameRpc : IComponentData
 {
     public enum Code : byte
@@ -32,6 +33,9 @@ public unsafe struct GameRpc : IComponentData
         PlayerJoin = 0b0000_0110,
         PlayerLevelStat = 0b0000_0111,
         PlayerSellRing = 0b0000_1000,
+        PlayerOpenLobby = 0b0000_1001,
+        PlayerInviteToPrivateLobby = 0b0000_1010,
+        PlayerSetLobbyPrivate = 0b0000_1011,
 
         
         // Admin Actions
@@ -106,6 +110,23 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerJoin(byte playerId, byte characterType)
     {
         return new GameRpc(){ Type = GameRpc.Code.PlayerJoin, PlayerId = playerId, SpawnType = characterType };
+    }
+    #endregion
+    
+    #region PlayerOpenLobby
+    [FieldOffset(2)] public bool IsPrivateLobby;
+    public static GameRpc PlayerOpenLobby(byte playerId, float3 position, bool isPrivateLobby)
+    {
+        return new GameRpc(){ Type = GameRpc.Code.PlayerOpenLobby, PlayerId = playerId, InteractPosition = position, IsPrivateLobby = isPrivateLobby };
+    }
+    [FieldOffset(2)] public byte InvitedPlayerId;
+    public static GameRpc PlayerInviteToPrivateLobby(byte playerId, byte otherPlayerId)
+    {
+        return new GameRpc(){ Type = GameRpc.Code.PlayerInviteToPrivateLobby, PlayerId = playerId, InvitedPlayerId = otherPlayerId };
+    }
+    public static GameRpc PlayerSetLobbyPrivate(byte playerId, bool setPrivate)
+    {
+        return new GameRpc(){ Type = GameRpc.Code.PlayerSetLobbyPrivate, PlayerId = playerId, IsPrivateLobby = setPrivate };
     }
     #endregion
 
@@ -237,6 +258,12 @@ public partial struct GameRpcSystem : ISystem
                 
                 case GameRpc.Code.PlayerJoin:
                 {
+                    if (playerId >= PingServerBehaviour.k_MaxPlayerCount)
+                    {
+                        Debug.Log($"Player {playerId} is invalid, too many connections");
+                        continue;
+                    }
+                
                     using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled));
                     playerQuery.SetSharedComponentFilter(playerTag);
                     if (playerQuery.CalculateEntityCount() > 0)
@@ -294,6 +321,122 @@ public partial struct GameRpcSystem : ISystem
                     playerQuery.SetSharedComponentFilter(playerTag);
                     ecb.DestroyEntity(playerQuery, EntityQueryCaptureMode.AtPlayback);
                     Debug.Log($"Player {playerId} removed.");
+                    break;
+                }
+                
+                case GameRpc.Code.PlayerOpenLobby:
+                {
+                    if (SystemAPI.GetSingleton<GameTypeSingleton>().Value != 0)
+                    {
+                        Debug.LogWarning($"Can only create a lobby from the lobby game mode.");
+                        break;
+                    }
+                
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<LocalTransform>()) continue;
+                    
+                    var playerT = playerQuery.GetSingleton<LocalTransform>();
+                    playerT.Position = TorusMapper.SnapToSurface(playerT.Position);
+                    
+                    // Attempt to open a lobby in the nearest 'free space' to the player
+                    using var lobbyQuery = state.EntityManager.CreateEntityQuery(typeof(LobbyZone), typeof(LocalTransform), typeof(Collisions.Collider));
+                    using var lobbyTransforms = lobbyQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+                    using var lobbyColliders = lobbyQuery.ToComponentDataArray<Collisions.Collider>(Allocator.Temp);
+                    
+                    // We can 'shift' away once, but will just fail if it happens a second time.
+                    var potentialLobbyC = Collider.Sphere(LobbyZone.ColliderRadius).Apply(playerT);
+                    bool didShift = false;
+                    bool didFail = false;
+                    for (int i = 0; i < lobbyTransforms.Length; i++)
+                    {
+                        var lobbyC = lobbyColliders[i].Apply(lobbyTransforms[i]);
+                        if (!potentialLobbyC.Overlaps(lobbyC)) continue;
+                        
+                        if (didShift)
+                        {
+                            didFail = true;
+                            break;
+                        }
+                        
+                        // Shift away from the center of the lobby
+                        var surfacePoint = lobbyC.GetPointOnSurface(potentialLobbyC);
+                        var shift = (surfacePoint - potentialLobbyC.Center)*1.2f; // A little extra movement
+                        playerT = playerT.Translate(shift);
+                        playerT.Position = TorusMapper.SnapToSurface(playerT.Position);
+                        potentialLobbyC = Collider.Sphere(LobbyZone.ColliderRadius).Apply(playerT);
+                        
+                        didShift = true;
+                        i = -1; // Restart the loop
+                    }
+                    
+                    if (didFail)
+                    {
+                        Debug.LogWarning($"No space to create lobby for player {playerId} at {rpc.InteractPosition}, too close to other lobbies.");
+                        break;
+                    }
+                    
+                    // Create the lobby at this point
+                    var lobbyTemplates = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>(true)[GameManager.Prefabs.LobbyTemplate];
+                    var lobbyE = ecb.Instantiate(lobbyTemplates.Entity);
+                    ecb.SetComponent(lobbyE, new LobbyZone(){ IsPrivate = rpc.IsPrivateLobby, Owner = playerId });
+                    ecb.SetComponent(lobbyE, playerT);
+                    ecb.SetBuffer<PrivateLobbyWhitelist>(lobbyE).Add(new PrivateLobbyWhitelist(){ Player = playerId });
+                    break;
+                }
+                case GameRpc.Code.PlayerInviteToPrivateLobby:
+                {
+                    if (SystemAPI.GetSingleton<GameTypeSingleton>().Value != 0)
+                    {
+                        Debug.LogWarning($"Can only interact with lobbies from the lobby game mode.");
+                        break;
+                    }
+                
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<LocalTransform>()) continue;
+                    
+                    var playerT = playerQuery.GetSingleton<LocalTransform>();
+                    playerT.Position = TorusMapper.SnapToSurface(playerT.Position);
+                    
+                    // Attempt to open a lobby in the nearest 'free space' to the player
+                    using var lobbyQuery = state.EntityManager.CreateEntityQuery(typeof(LobbyZone), typeof(PrivateLobbyWhitelist));
+                    using var lobbyEntities = lobbyQuery.ToEntityArray(Allocator.Temp);
+                    using var lobbyComponents = lobbyQuery.ToComponentDataArray<LobbyZone>(Allocator.Temp);
+                    for (int i = 0; i < lobbyEntities.Length; i++)
+                    {
+                        if (!lobbyComponents[i].IsPrivate) continue;
+                        if (lobbyComponents[i].Owner != playerId) continue;
+                        
+                        
+                        var whitelist = SystemAPI.GetBuffer<PrivateLobbyWhitelist>(lobbyEntities[i]);
+                        bool contains = false;
+                        for (int j = 0; j < whitelist.Length; j++)
+                        {
+                            if (whitelist[j].Player == rpc.InvitedPlayerId)
+                            {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains) whitelist.Add(new PrivateLobbyWhitelist(){ Player = rpc.InvitedPlayerId });
+                    }
+                    break;
+                }
+                case GameRpc.Code.PlayerSetLobbyPrivate:
+                {
+                    using var lobbyQuery = state.EntityManager.CreateEntityQuery(typeof(LobbyZone), typeof(PrivateLobbyWhitelist));
+                    using var lobbyEntities = lobbyQuery.ToEntityArray(Allocator.Temp);
+                    using var lobbyComponents = lobbyQuery.ToComponentDataArray<LobbyZone>(Allocator.Temp);
+                    for (int i = 0; i < lobbyEntities.Length; i++)
+                    {
+                        if (lobbyComponents[i].Owner != playerId) continue;
+                        
+                        SystemAPI.SetComponent(lobbyEntities[i], new LobbyZone(){ IsPrivate = rpc.IsPrivateLobby, Owner = lobbyComponents[i].Owner });
+                        var buffer = SystemAPI.GetBuffer<PrivateLobbyWhitelist>(lobbyEntities[i]);
+                        buffer.Clear();
+                        buffer.Add(new PrivateLobbyWhitelist(){ Player = playerId });
+                    }
                     break;
                 }
                 

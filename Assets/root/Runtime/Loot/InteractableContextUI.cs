@@ -4,25 +4,17 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InteractableContextUI : MonoBehaviour, IPointerClickHandler, HandUIController.IStateSource
+public class InteractableContextUI : MonoBehaviour, HandUIController.IStateSource
 {
+    public static InteractableContextUI Instance;
     public HandUIController.State GetUIState() => HandUIController.State.Inventory;
-    
-    public void OnPointerClick(PointerEventData eventData)
+
+    private void Awake()
     {
-        Interact();
+        Instance = this;
     }
 
-    private void Update()
-    {
-        if (GameInput.Inputs.UI.Drop.WasPressedThisFrame() || 
-            (HandUIController.GetState() == HandUIController.State.Closed && GameInput.Inputs.UI.Submit.WasPressedThisFrame()))
-        {
-            Interact();
-        }
-    }
-
-    private void Interact()
+    public void Interact()
     {
         var e = GetComponentInParent<ShowInInteractRangeUI>().m_Entity;
         if (e == Entity.Null) return;
@@ -49,7 +41,7 @@ public class InteractableContextUI : MonoBehaviour, IPointerClickHandler, HandUI
     void _Reset(int _)
     {
         gameObject.SetActive(true);
-        HandUIController.RemoveStateLayer(this);
         ChoiceUI.OnActiveRingChange -= _Reset;
+        HandUIController.RemoveStateLayer(this);
     }
 }

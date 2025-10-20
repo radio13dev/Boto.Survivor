@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -166,19 +168,6 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         else
             data.Title = "(Pickup)".Color(Color.mediumPurple).Size(30);
 
-        if (ChoiceUI.IsActive)
-        {
-            if (Ring.Stats.IsValid) data.ButtonText = "Swap";
-            else data.ButtonText = "Equip";
-        }
-        if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
-        {
-            // Dragging NO LONGER SUPPORTED
-            data.ButtonText = "Swap";
-        }
-        else if (Ring.Stats.IsValid)
-            data.ButtonText = "Move";
-
         if (Ring.Stats.IsValid)
         {
             sb.AppendLine($"{Ring.Stats.GetTitleString()}".Size(36));
@@ -188,7 +177,8 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         }
         else
         {
-            sb.AppendLine("Empty Slot".Color(new Color(0.2f, 0.2f, 0.2f)).Size(30));
+            sb.AppendLine($"Empty Slot".Size(36));
+            sb.AppendLine($"Equip rings you find into this slot...".Size(30));
         }
 
         data.Description = sb.ToString();
@@ -214,8 +204,45 @@ public class RingDisplay : MonoBehaviour, DescriptionUI.ISource
         }
         
         data.ButtonPress = ChoiceUIGrab;
+        data.ButtonPress1 = SellPress;
+        data.ButtonPress2 = DropPress;
+        
+        if (ChoiceUI.IsActive)
+        {
+            if (Ring.Stats.IsValid) data.ButtonText = "Swap";
+            else data.ButtonText = "Equip";
+        }
+        else if (interact && interact != focus && interact.TryGetComponent<RingDisplay>(out var heldRing))
+        {
+            // Dragging NO LONGER SUPPORTED
+            data.ButtonText = "Swap";
+        }
+        else if (Ring.Stats.IsValid)
+            data.ButtonText = "Move";
+        else if (InteractableContextUI.Instance && InteractableContextUI.Instance.TryGetComponent<ShowInInteractRangeUI>(out var show) && show.m_Entity != Entity.Null)
+        {
+            data.ButtonText = "Equip";
+            data.ButtonPress = EquipFromFloor;
+            data.ButtonPress1 = null;
+            data.ButtonPress2 = null;
+        }
         
         return data;
+    }
+    
+    private void EquipFromFloor()
+    {
+        if (InteractableContextUI.Instance && InteractableContextUI.Instance.TryGetComponent<ShowInInteractRangeUI>(out var show) && show.m_Entity != Entity.Null)
+        {
+            GameEvents.TryGetComponent2<LocalTransform>(show.m_Entity, out var ringT);
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.PlayerPickupRing((byte)Game.ClientGame.PlayerIndex,
+                    (byte)this.Index,
+                    ringT.Position
+                ));
+            UIFocus.Refresh();
+            if (GetComponentInParent<TiledStatsUI>() is {} ui) ui.RebuildHighlights();
+        }
     }
 
     private void ChoiceUIGrab()

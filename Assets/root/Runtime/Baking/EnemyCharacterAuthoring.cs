@@ -11,7 +11,7 @@ public class EnemyCharacterAuthoring : MonoBehaviour
     }
     
     public Type type;
-    public Health Health = new Health(10);
+    public int Health = 10;
     
     partial class Baker : Baker<EnemyCharacterAuthoring>
     {
@@ -32,7 +32,7 @@ public class EnemyCharacterAuthoring : MonoBehaviour
                 case Type.Generic:
                     // Basic character setup
                     AddComponent<CharacterTag>(entity);
-                    AddComponent(entity, authoring.Health);
+                    AddComponent(entity, new Health(authoring.Health));
                     AddComponent<SpawnAnimation>(entity);
                     SetComponentEnabled<SpawnAnimation>(entity, false);
                     
@@ -62,7 +62,7 @@ public class EnemyCharacterAuthoring : MonoBehaviour
                     AddComponent<EnemyTrapProjectileAnimation>(entity);
                     AddComponent<MovementDisabled>(entity);
                     SetComponentEnabled<MovementDisabled>(entity, false);
-                    AddComponent(entity, authoring.Health);
+                    AddComponent(entity, new Health(authoring.Health));
                     break;
             }
         }

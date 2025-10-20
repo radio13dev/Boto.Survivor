@@ -35,6 +35,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
         m_InitComplete = true;
         
         Game.PlayerIndex = 0;
+        Game.RpcSendBuffer.Enqueue(GameRpc.PlayerJoin(0,0));
     }
 
     private void OnDestroy()

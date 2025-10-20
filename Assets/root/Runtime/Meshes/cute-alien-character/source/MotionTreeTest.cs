@@ -12,6 +12,8 @@ public class MotionTreeTest : EntityLinkMono
 
     private void Update()
     {
+        if (!Game.World.EntityManager.HasComponent<StepInput>(Entity)) return;
+        
         StepInput input = Game.World.EntityManager.GetComponentData<StepInput>(Entity);
         m_Last = Mathf.MoveTowards(m_Last, math.length(input.Direction), Time.deltaTime*10f);
         animator.SetFloat(Speed, m_Last);

@@ -3,7 +3,6 @@ using BovineLabs.Saving;
 using Unity.Entities;
 using UnityEngine.Serialization;
 
-[Serializable]
 [Save]
 public struct Health : IComponentData
 {

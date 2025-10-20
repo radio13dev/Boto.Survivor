@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Collider = Collisions.Collider;
 
 public class CirclableAuthoring : MonoBehaviour
 {

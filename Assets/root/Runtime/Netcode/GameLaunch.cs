@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 public abstract class GameHostBehaviour : MonoBehaviour
@@ -44,10 +46,10 @@ public class GameLaunch : MonoBehaviour, IDisposable
         if (Server)
         {
             var other = Create(m_GameFactory);
-            other.StartCoroutine(other.JoinLobby(Server.JoinCode));
+            other.StartCoroutine(other.JoinRelay(Server.RelayJoinCode));
         }
     }
-    
+
     public void Dispose()
     {
         Destroy(gameObject);
@@ -55,8 +57,6 @@ public class GameLaunch : MonoBehaviour, IDisposable
 
     private IEnumerator Start()
     {
-        Main = this;
-
         if (!Idle) yield return new WaitUntil(() => Idle);
         if (gameObject.GetComponents<GameHostBehaviour>().Length > 0)
         {
@@ -84,14 +84,14 @@ public class GameLaunch : MonoBehaviour, IDisposable
         if (!Idle) yield return new WaitUntil(() => Idle);
     }
 
-    public IEnumerator JoinLobby(string lobbyCode)
+    public IEnumerator JoinLobby2(string lobbyId, Action OnSuccess, Action OnFailure)
     {
         if (!Idle) yield return new WaitUntil(() => Idle);
 
         // Start a new game, attempting to load data from the lobby code
         var newClient = gameObject.AddComponent<PingClientBehaviour>();
         newClient.StartCoroutine(
-            newClient.Connect(m_GameFactory, lobbyCode,
+            newClient.Connect_Lobby(m_GameFactory, lobbyId,
                 // Called after the game is downloaded from the server
                 OnGameLoad: () =>
                 {
@@ -102,7 +102,50 @@ public class GameLaunch : MonoBehaviour, IDisposable
                     foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
                     {
                         if (gameBehaviour == newClient) continue;
-                        if (gameBehaviour is PingServerBehaviour server && server.JoinCode == lobbyCode) continue;
+                        if (gameBehaviour is PingServerBehaviour server && server.RelayJoinCode == newClient.RelayJoinCode) continue;
+                        Destroy((MonoBehaviour)gameBehaviour);
+                    }
+                    
+                    OnSuccess?.Invoke();
+                },
+                // Called if a failure occurs before the game has loaded
+                OnFailureBeforeLoad: () =>
+                {
+                    Destroy(newClient);
+                    OnFailure();
+                },
+                // Called if a failure occurs after the game has loaded
+                OnFailureAfterLoad: () =>
+                {
+                    var failedGame = newClient.Game;
+                    newClient.Game = null; // Prevents the game from being destroyed
+                    failedGame.CleanForSingleplayer();
+                    StartCoroutine(StartSingleplayer(failedGame));
+                })
+        );
+        
+        if (!Idle) yield return new WaitUntil(() => Idle);
+    }
+
+    public IEnumerator JoinRelay(string relayCode)
+    {
+        if (!Idle) yield return new WaitUntil(() => Idle);
+
+        // Start a new game, attempting to load data from the lobby code
+        var newClient = gameObject.AddComponent<PingClientBehaviour>();
+        newClient.StartCoroutine(
+            newClient.Connect_Relay(m_GameFactory, relayCode,
+                // Called after the game is downloaded from the server
+                OnGameLoad: () =>
+                {
+                    // Make the new game active
+                    Game.ClientGame = newClient.Game;
+
+                    // Destroy any existing games
+                    foreach (var gameBehaviour in gameObject.GetComponents<GameHostBehaviour>())
+                    {
+                        if (gameBehaviour == newClient) continue;
+                        if (gameBehaviour is PingServerBehaviour server && server.RelayJoinCode == newClient.RelayJoinCode) continue;
                         Destroy((MonoBehaviour)gameBehaviour);
                     }
                 },
@@ -129,8 +172,32 @@ public class GameLaunch : MonoBehaviour, IDisposable
         
         if (!Idle) yield return new WaitUntil(() => Idle);
     }
+    
+    public IEnumerator JoinGame(string GameSearchKey, float TimeoutSeconds, Action OnSuccess, Action OnFailure)
+    {
+        if (!Idle) yield return new WaitUntil(() => Idle);
+        
 
-    public IEnumerator CreateServer()
+        // Start a new game, attempting to load data from the lobby code
+        Lobby lobby = null;
+        var newClient = gameObject.AddComponent<PingClientBehaviour>();
+        newClient.StartCoroutine(newClient.GameSearch(GameSearchKey, TimeoutSeconds,
+            OnSuccess: (foundLobby) =>
+            {
+                lobby = foundLobby;
+            },
+            OnFailure: () =>
+            {
+                Destroy(newClient);
+                OnFailure?.Invoke();
+            })
+        );
+        if (!Idle) yield return new WaitUntil(() => Idle);
+            
+        yield return JoinLobby2(lobby.Id, OnSuccess, OnFailure);
+    }
+
+    public IEnumerator CreateServer(string lobbyName = "lobby", Action OnSuccess = null, Action OnFailure = null)
     {
         if (!Idle) yield return new WaitUntil(() => Idle);
 
@@ -140,19 +207,21 @@ public class GameLaunch : MonoBehaviour, IDisposable
         var singleplayer = Singleplayer;
         var server = gameObject.AddComponent<PingServerBehaviour>();
         server.Game = Singleplayer.Game;
-        server.StartCoroutine(server.Connect(
+        server.StartCoroutine(server.Connect(lobbyName,
             OnSuccess: () =>
             {
                 server.AddLocalPlayer();
                 singleplayer.Game = null; // Null out our game so we don't destroy the server when we destroy this component
                 Destroy(singleplayer);
                 Game.ClientGame = server.Game;
+                OnSuccess?.Invoke();
             },
             OnFailure: () =>
             {
                 Debug.LogError($"Failed to start server");
                 server.Game = null;
                 Destroy(server);
+                OnFailure?.Invoke();
             })
         );
         

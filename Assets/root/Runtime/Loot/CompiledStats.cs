@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using BovineLabs.Saving;
 using Unity.Burst;
 using Unity.Collections;
@@ -22,10 +23,13 @@ public struct CompiledStats : IComponentData
         };
     }
 
-    public (int damageWithMods, int baseDamage, Crit crit, Chain chain, Cut cut, Degenerate degenerate, Subdivide subdivide, Decimate decimate, 
-        Dissolve dissolve, Poke poke) RollDamage(ref Random random)
+    [Pure]
+    public (int damageWithMods, int baseDamage, Crit crit, Chain chain, Cut cut, Degenerate degenerate, Subdivide subdivide, Decimate decimate, Dissolve dissolve, Poke poke)
+        RollDamage(ref Random random, in RingPrimaryEffect effect)
     {
         int baseDamage = CompiledStatsTree.Damage;
+        if (effect.IsDoT()) baseDamage = (int)math.ceil(baseDamage*Projectile.PerFrameDamageMod);
+        
         int damageWithMods = baseDamage;
 
         Crit crit;
@@ -109,6 +113,7 @@ public struct CompiledStatsDirty : IComponentData, IEnableableComponent
 [UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 [UpdateBefore(typeof(ProjectileMovementSystemGroup))]
 [BurstCompile]
+[GameTypeOnlySystem(1)]
 public partial struct CompiledStatsSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -327,7 +332,7 @@ public partial struct PersistentProjectileProcToggleSystem : ISystem
             if (!CompiledStatsLookup.TryGetComponent(playerE, out var compiledStats)) return;
             
             var random = SharedRandom.Get(owned.PlayerId*7 + (int)owned.Key.PrimaryEffect*17 + owned.Key.Index);
-            (projectile.Damage, _, crit, chain, cut, degenerate, subdivide, decimate, dissolve, _) = compiledStats.RollDamage(ref random);
+            (projectile.Damage, _, crit, chain, cut, degenerate, subdivide, decimate, dissolve, _) = compiledStats.RollDamage(ref random, owned.Key.PrimaryEffect);
             
             critState.ValueRW = crit;
             chainState.ValueRW = chain;
@@ -361,7 +366,7 @@ public partial struct PersistentProjectileProcToggleSystem : ISystem
             if (!CompiledStatsLookup.TryGetComponent(playerE, out var compiledStats)) return;
             
             var random = SharedRandom.Get(owned.PlayerId*7 + (int)owned.Key.PrimaryEffect*17 + owned.Key.Index);
-            (_, _, _, _, _, _, _, _, _, poke) = compiledStats.RollDamage(ref random);
+            (_, _, _, _, _, _, _, _, _, poke) = compiledStats.RollDamage(ref random, owned.Key.PrimaryEffect);
             
             pokeState.ValueRW = poke;
         }

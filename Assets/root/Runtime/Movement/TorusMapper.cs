@@ -174,6 +174,28 @@ public static class TorusMapper
         normalIfClamped = math.normalizesafe(offset);
         newPos = circleCenter + normalIfClamped * (Thickness.Data + heightOffset);
     }
+    
+    //[BurstCompile]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ClampBelowSurface(float3 worldSpace, float heightOffset, out float3 newPos, out bool clamped, out float3 normalIfClamped)
+    {
+        var circleCenter = GetTorusCircleCenter(worldSpace);
+
+        // TODO: Do a check to reduce the lengthsq comps
+        float3 offset = worldSpace - circleCenter;
+        var lengthsq = math.lengthsq(offset);
+        if (lengthsq <= math.square(Thickness.Data - heightOffset))
+        {
+            clamped = false;
+            normalIfClamped = -offset; // This isn't actually the normal
+            newPos = worldSpace;
+            return;
+        }
+
+        clamped = true;
+        normalIfClamped = math.normalizesafe(-offset);
+        newPos = circleCenter + normalIfClamped * (Thickness.Data - heightOffset);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 SnapToSurface(float3 worldSpace)
@@ -320,5 +342,25 @@ public static class TorusMapper
             
             a += majorDir * len / segments;
         }
+    }
+    
+    public static float3 MovePointInDirection(float3 a, float3 dir, int segments = 4)
+    {
+        var a0 = a;
+        var majorDir = math.normalize(dir);
+        var len = math.length(dir);
+        var jump = len/segments;
+        
+        // Iterate from a to b over 'segments' steps
+        // For each step, create a center vertex, and two shifted vertices offset by 'width'
+        // along the vector perpendicular to the normal and the 'direction' of the a-b line
+        for (int i = 0; i < segments; i++)
+        {
+            SnapToSurface(a, 0, out a, out var up);
+            majorDir = math.cross(up, math.cross(math.normalizesafe(majorDir), up));
+            a += majorDir * jump;
+        }
+        a = SnapToSurface(a);
+        return a;
     }
 }

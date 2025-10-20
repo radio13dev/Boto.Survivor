@@ -31,7 +31,10 @@ public class HandUIController : MonoBehaviour
     {
         Closed,
         Inventory,
-        Map
+        Map,
+        
+        // Utility
+        Any
     }
 
     public interface IStateSource
@@ -112,6 +115,12 @@ public class HandUIController : MonoBehaviour
 
     private void Update()
     {
+        if (Game.ClientGame != null && Game.ClientGame.GameType == 0)
+        {
+            if (m_StateCore != State.Closed) SetState(State.Closed);
+            return;
+        }
+        
         if (GameInput.Inputs.UI.InventoryShortcut.WasPressedThisFrame())
             if (m_StateCore == State.Inventory) SetState(State.Closed);
             else SetState(State.Inventory);

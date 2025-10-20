@@ -1,3 +1,4 @@
+using System;
 using Unity.Entities;
 
 /// <summary>
@@ -19,4 +20,18 @@ public partial class WorldInitSystemGroup : ComponentSystemGroup
         base.OnCreate();
         Enabled = false; // Disable by default, enable when needed
     }
+}
+
+public class GameTypeOnlySystemAttribute : Attribute
+{
+    public int GameType { get; private set; }
+    public GameTypeOnlySystemAttribute(int gameType)
+    {
+        GameType = gameType;
+    }
+}
+
+public struct GameTypeSingleton : IComponentData
+{
+    public int Value;
 }

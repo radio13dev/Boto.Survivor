@@ -30,12 +30,16 @@ public class StepInputAuthoring : MonoBehaviour
     }
 }
 
-[StructLayout(layoutKind: LayoutKind.Sequential)]
 [Save]
-public struct StepInput : IComponentData
+[StructLayout(LayoutKind.Explicit, Size = StepInput.Length, Pack = 4)]
+public unsafe struct StepInput : IComponentData
 {
-    public byte Input;
-    public float3 Direction;
+    public const int Length = sizeof(long)*2;
+    [SerializeField] [FieldOffset(0)] long m_WRITE0;
+    [SerializeField] [FieldOffset(8)] long m_WRITE1;
+    
+    [FieldOffset(0)] public byte Input;
+    [FieldOffset(4)] public float3 Direction;
         
     // @formatter:off
     public const byte AdjustInventoryInput = 0b0000_0100;
@@ -50,18 +54,13 @@ public struct StepInput : IComponentData
 
     public void Write(ref DataStreamWriter writer)
     {
-        writer.WriteByte(Input);
-        writer.WriteFloat(Direction.x);
-        writer.WriteFloat(Direction.y);
-        writer.WriteFloat(Direction.z);
+        writer.WriteLong(m_WRITE0);
+        writer.WriteLong(m_WRITE1);
     }
 
     public static StepInput Read(ref DataStreamReader reader)
     {
-        var input = reader.ReadByte();
-        var direction = new float3(reader.ReadFloat(), reader.ReadFloat(), reader.ReadFloat());
-    
-        return new StepInput(){Input = input, Direction = direction};
+        return new StepInput(){m_WRITE0 = reader.ReadLong(), m_WRITE1 = reader.ReadLong()};
     }
 
     public void Collect(Camera camera)

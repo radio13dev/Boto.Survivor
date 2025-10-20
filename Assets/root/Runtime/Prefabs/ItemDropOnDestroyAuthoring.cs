@@ -51,7 +51,7 @@ public class Drop
     }
 
     public DropType Type;
-    [Range(0, 100)] public int Chance;
+    [Range(0, 1000)] public int Chance;
     public int MinCount;
     public int MaxCount;
 }
@@ -106,7 +106,7 @@ public partial struct ItemDropOnDestroySystem : ISystem
             var random = baseRandom;
             for (int i = 0; i < items.Length; i++)
             {
-                if (random.NextInt(100) >= items[i].Chance) continue;
+                if (random.NextInt(1000) >= items[i].Chance) continue;
 
                 var count = random.NextInt(items[i].MinCount, items[i].MaxCount + 1);
                 Entity newDropE;

@@ -7,6 +7,7 @@ public class SingleActionOnInputKeyPress : MonoBehaviour
 {
     public UnityEvent OnKeyPress;
     public KeyCode Key;
+    public HandUIController.State StateRestriction = HandUIController.State.Any;
     
     public enum KeyCode
     {
@@ -18,6 +19,7 @@ public class SingleActionOnInputKeyPress : MonoBehaviour
     private void Update()
     {
         if (GameInput.Inputs?.Player == null) return;
+        if (StateRestriction != HandUIController.State.Any && StateRestriction != HandUIController.GetState()) return;
         
         switch (Key)
         {

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 240200278457971943}
   - component: {fileID: 3557533656269071170}
+  - component: {fileID: 4710129199327565736}
   - component: {fileID: 8164776769268316261}
   - component: {fileID: 8235055791634373634}
   - component: {fileID: 2943698238182725417}
@@ -19,11 +20,9 @@ GameObject:
   - component: {fileID: 5878207292333736380}
   - component: {fileID: 638238371282637465}
   - component: {fileID: 1276742715247795018}
-  - component: {fileID: 4699350325879992131}
-  - component: {fileID: 3117608193158535689}
-  - component: {fileID: 4300871667675154463}
+  - component: {fileID: 484891261290821242}
   m_Layer: 0
-  m_Name: EnemyTrap
+  m_Name: EnemyLarge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,9 +55,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
-  Health:
-    Value: 10
-  Chance: 50
+  type: 0
+  Health: 100
+--- !u!114 &4710129199327565736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
+  Particle:
+    _Asset: {fileID: 11400000, guid: 20ab9f9d10ca3374fbb5ffc6154cbc83, type: 2}
 --- !u!114 &8164776769268316261
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +84,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
-  Radius: 1
+  Radius: 2.85
   ColliderType: 1
   TorusMin: 0
   ConeAngle: 0
@@ -136,9 +148,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
   Drops:
   - Type: 0
-    Chance: 100
-    MinCount: 1
-    MaxCount: 4
+    Chance: 1000
+    MinCount: 4
+    MaxCount: 10
+  - Type: 1
+    Chance: 10
+    MinCount: 4
+    MaxCount: 10
 --- !u!114 &-2345145132516463796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
---- !u!114 &4699350325879992131
+--- !u!114 &484891261290821242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,34 +237,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
+  m_Script: {fileID: 11500000, guid: e38a1b3a223845b89e2109be77b254ee, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 1414673601964052844, guid: 443180a5a7203384d9c3f2fb39f975d7, type: 3}
-  Dynamic: 1
---- !u!114 &3117608193158535689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  Particle:
-    _Asset: {fileID: 11400000, guid: ddda589eed9d4ae47864c19dbbefa3b7, type: 2}
---- !u!114 &4300871667675154463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bc91f1eb794426ca25d4c4b1820b6c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemyTrapMovementAuthoring
+  m_EditorClassIdentifier: Boto.Survivor::GenericEnemyMovementTagAuthoring

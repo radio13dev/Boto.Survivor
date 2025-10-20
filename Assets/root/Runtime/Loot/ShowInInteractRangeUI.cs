@@ -19,7 +19,7 @@ public class ShowInInteractRangeUI : MonoBehaviour
         GameEvents.OnEvent -= OnGameEvent;
     }
 
-    private void OnGameEvent(GameEvents.Data data)
+    public virtual void OnGameEvent(GameEvents.Data data)
     {
         var eType = data.Type;
         if (eType != GameEvents.Type.InteractableStart && eType != GameEvents.Type.InteractableEnd) return;
@@ -32,6 +32,7 @@ public class ShowInInteractRangeUI : MonoBehaviour
         }
         else
         {
+            m_Entity = Entity.Null;
             OnInteractEnd?.Invoke();
         }
     }
