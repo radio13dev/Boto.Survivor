@@ -101,6 +101,62 @@ public static class TorusMeshGenerator
         }
     }
 }
+
+
+    /// <summary>
+    /// Generates a torus mesh with customizable parameters.
+    /// </summary>
+    /// <param name="ringRadius">Distance from the center of the torus to the center of the tube.</param>
+    /// <param name="thickness">Radius of the tube.</param>
+    /// <param name="ringSegments">Number of segments around the main ring.</param>
+    /// <param name="tubeSegments">Number of segments around the tube.</param>
+    /// <param name="vertices">Output array of vertices.</param>
+    /// <param name="triangles">Output array of triangle indices.</param>
+    public static void GenerateTorusBlob(
+        uint seed,
+        float3 zero, float groundOffset, int blobSegments, float blobSize, int triangleSegments,
+        out float3[] vertices, out int[] triangles, out float3[] normals, out float2[] uvs)
+    {
+        Random r = Random.CreateFromIndex(seed);
+    
+        vertices = new float3[blobSegments + 1];
+        normals = new float3[vertices.Length];
+        uvs = new float2[vertices.Length];
+        triangles = new int[(blobSegments-1)*3];
+        
+        TorusMapper.SnapToSurface(zero, 0, out zero, out float3 zeroNormal);
+        
+        // Get the forward and right vectors from the zeroNormal
+        float3 forward = math.cross(zeroNormal, math.right());
+        float3 right = math.cross(zeroNormal, forward);
+
+        // Create a 'blob' shaped polygon around the zero point on the x-z plane.
+        for (int i = 0; i < blobSegments; i++)
+        {
+            float ang = math.PI2*i/blobSegments;
+            float3 dir = math.cos(ang)*forward + math.sin(ang)*right;
+            float3 target = dir*blobSize;
+            
+            // Shift the target in a random direction
+            var shiftScale = 0.4f*math.PI2*blobSize/blobSegments;
+            var shift = r.NextFloat2Direction()*shiftScale;
+            target += shift.x*forward + shift.y*right;
+            
+            var len = math.length(target);
+            dir = math.normalize(target);
+            
+            var point = zero;
+            for (int j = 0; j < triangleSegments; j++)
+            {
+                point = TorusMapper.MovePointInDirection(point, dir*len/triangleSegments, 1);
+            }
+        }
+        
+        // Close the loop
+        triangles[^3] = 0;
+        triangles[^2] = 1;
+        triangles[^1] = vertices.Length-1;
+    }
 }
 
 

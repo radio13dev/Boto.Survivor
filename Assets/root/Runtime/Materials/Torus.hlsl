@@ -14,7 +14,29 @@ void GetToroidalCoord_float(float3 worldPosition, float3 cameraPosition, float2 
 	//theta %= 3.14*mapDivision;
 	//if (theta > 3.14/2) theta = 3.14 - theta;
 	//else if (theta < -3.14/2) theta = -3.14 - theta;
-
+	//bool negative = theta < 0;
+	//float pi = 3.14159265359;
+	//float scale = 8;
+	//
+	//theta = theta/pi;
+	//if (negative) theta = -theta;
+	//
+	//theta = theta*scale;
+	//int div = floor(theta);
+	//theta = theta - div;
+//
+	//if (theta < 0.5) theta = theta;
+	//else theta = 1-theta;//2*theta-2*theta*theta+(1-theta-(2*theta-2*theta*theta))*(theta-0.5)*2;
+	////if (theta > 0.479) theta = 0.4;
+	//
+	////theta = theta + div;
+	////theta = theta/scale;
+	//
+	//if ((div % 2) == 1) theta = -theta;
+	//
+	//if (negative) theta = -theta;
+	//theta = theta*pi;
+	
 	toroidalPosition = float2(theta, phi);
 		
 	// The more we travel around the torus the more 'curved' any parallel lines become.
@@ -23,12 +45,12 @@ void GetToroidalCoord_float(float3 worldPosition, float3 cameraPosition, float2 
 	
 	// Now transform this so that distances on the inside of the torus match distances on the outside
 	// FIRST: Determine the inner radius and outer radius
-	float innerRadius = ringRadius - thickness * 0.5;
-	float outerRadius = ringRadius + thickness * 0.5;
-	// SECOND: As the toroidalPosition.y goes from -pi/2 to pi/2, we want distances in the 'theta' direction to scale
-	toroidalPosition.x *= lerp(1, 
-		outerRadius / innerRadius, 
-		(1 + cos(toroidalPosition.y)) * 0.5);
+	//float innerRadius = ringRadius - thickness * 0.5;
+	//float outerRadius = ringRadius + thickness * 0.5;
+	//// SECOND: As the toroidalPosition.y goes from -pi/2 to pi/2, we want distances in the 'theta' direction to scale
+	//toroidalPosition.x *= lerp(1, 
+	//	outerRadius / innerRadius, 
+	//	(1 + cos(toroidalPosition.y)) * 0.5);
 }
 
 // Torus SDF (signed distance function)
