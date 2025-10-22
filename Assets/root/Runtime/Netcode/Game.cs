@@ -465,7 +465,7 @@ public class Game : IDisposable
     {
         var seed = (uint)(DateTime.UtcNow.Ticks % uint.MaxValue);
         World.EntityManager.SetSingleton(new SharedRandom(){ Seed = seed, Random = Unity.Mathematics.Random.CreateFromIndex(seed)});
-        var initSystemGroup = World.GetExistingSystemManaged<WorldInitSystemGroup>();
+        var initSystemGroup = World.GetExistingSystemManaged<SurvivorWorldInitSystemGroup>();
         initSystemGroup.Enabled = true;
         initSystemGroup.Update();
         initSystemGroup.Enabled = false;

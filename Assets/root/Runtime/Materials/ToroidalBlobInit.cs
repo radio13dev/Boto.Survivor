@@ -6,8 +6,10 @@ using Object = UnityEngine.Object;
 [ExecuteInEditMode]
 public class ToroidalBlobInit : MonoBehaviour
 {
-    public const int BLOB_COUNT = 3;
-    public const int METABALL_COUNT = 20;
+    // ALSO EDIT IN ToroidalBlobInit.hlsl
+    public const int BLOB_COUNT = 3; // <<<<<<<<<<<<<
+    public const int METABALL_COUNT = 40; // <<<<<<<<<<<
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     public Blob[] Blobs = new Blob[BLOB_COUNT];
     static bool m_BlobsDirty;
@@ -46,6 +48,7 @@ public class ToroidalBlobInit : MonoBehaviour
         ToroidalBlobMono[] metaballs = new ToroidalBlobMono[METABALL_COUNT];
         foreach (var metaball in Object.FindObjectsByType<ToroidalBlobMono>(FindObjectsSortMode.None))
         {
+            if (!metaball.isActiveAndEnabled) continue;
             if (index >= metaballs.Length) break;
             
             metaballs[index] = metaball;

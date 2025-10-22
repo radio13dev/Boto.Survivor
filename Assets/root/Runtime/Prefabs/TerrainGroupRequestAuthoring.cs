@@ -1,4 +1,5 @@
 ﻿using System;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
 using BovineLabs.Saving.Data;
 using Unity.Collections;
@@ -6,6 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class TerrainGroupRequestAuthoring : MonoBehaviour
 {
@@ -31,7 +33,7 @@ public struct TerrainGroupRequest : IComponentData
     public int Index;
 }
 
-[UpdateInGroup(typeof(WorldInitSystemGroup))]
+[UpdateInGroup(typeof(SurvivorWorldInitSystemGroup))]
 public partial struct TerrainGroupInitSystem : ISystem
 {
     const int NonRandomGroupCount = 5;
@@ -140,5 +142,19 @@ public partial struct TerrainGroupInitSystem : ISystem
             entityManager.SetComponentData(childE, finalT);
         }
         return instGroup;
+    }
+}
+
+[UpdateInGroup(typeof(SurvivorWorldInitSystemGroup))]
+public partial struct MapGenSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        // Spawn zones
+        // Spawn events (bosses, collectables, shops, etc...)
+        // Spawn walls (These can spawn on the edges of zones to divide up the map)
+        // Spawn small terrain (Rocks, etc..)
+        // Spawn enemies (These enemies will have an aggro range. Spawned enemies only update if a player is inside their zone (or they have been aggro'd)
+        
     }
 }

@@ -3,7 +3,7 @@
 
 // IF YOU MAKE ANY CHANGES HERE DO THIS vvvvv
 #define BLOB_COUNT 3	 // ALSO UPDATE IN: ToroidalBlobInit.cs
-#define METABALL_COUNT 20 // ALSO UPDATE IN: ToroidalBlobInit.cs
+#define METABALL_COUNT 40 // ALSO UPDATE IN: ToroidalBlobInit.cs
 // IF YOU MAKE ANY CHANGES HERE DO THIS ^^^^^
 
 

@@ -13,7 +13,7 @@ public partial class SurvivorSimulationSystemGroup : ComponentSystemGroup
     }
 }
 
-public partial class WorldInitSystemGroup : ComponentSystemGroup
+public partial class SurvivorWorldInitSystemGroup : ComponentSystemGroup
 {
     protected override void OnCreate()
     {
