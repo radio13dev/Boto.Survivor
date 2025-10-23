@@ -274,6 +274,21 @@ public static class TorusMapper
         float3 projectedDir = dir - math.dot(dir, normal) * normal;
         return projectedDir;
     }
+    
+    public static float3 GetDirection(float3 a, float3 b)
+    {
+        var aT = CartesianToToroidal(a);
+        var bT = CartesianToToroidal(b);
+        var testT = aT + math.normalize(bT - aT)*0.01f;
+        var test = ToroidalToCartesian(testT);
+        return math.normalize(ProjectOntoSurface(a, test-a));
+    }
+    
+    public static float3 GetNormal(float3 a)
+    {
+        SnapToSurface(a, 0, out _, out float3 normal);
+        return normal;
+    }
 
     public static void CreateRectangularMesh(float3 a, float3 b, float width, float height, int segments, ref Mesh mesh)
     {

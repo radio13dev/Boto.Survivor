@@ -144,17 +144,3 @@ public partial struct TerrainGroupInitSystem : ISystem
         return instGroup;
     }
 }
-
-[UpdateInGroup(typeof(SurvivorWorldInitSystemGroup))]
-public partial struct MapGenSystem : ISystem
-{
-    public void OnUpdate(ref SystemState state)
-    {
-        // Spawn zones
-        // Spawn events (bosses, collectables, shops, etc...)
-        // Spawn walls (These can spawn on the edges of zones to divide up the map)
-        // Spawn small terrain (Rocks, etc..)
-        // Spawn enemies (These enemies will have an aggro range. Spawned enemies only update if a player is inside their zone (or they have been aggro'd)
-        
-    }
-}

@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 public class ToroidalBlobInit : MonoBehaviour
 {
     // ALSO EDIT IN ToroidalBlobInit.hlsl
-    public const int BLOB_COUNT = 3; // <<<<<<<<<<<<<
+    public const int BLOB_COUNT = 6; // <<<<<<<<<<<<<
     public const int METABALL_COUNT = 40; // <<<<<<<<<<<
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -31,12 +31,12 @@ public class ToroidalBlobInit : MonoBehaviour
 
     private void OnValidate()
     {
-        if (Blobs.Length != BLOB_COUNT) Array.Resize(ref Blobs, BLOB_COUNT);
         ApplyToShader();
     }
     
     public void ApplyToShader()
     {
+        if (Blobs.Length != BLOB_COUNT) Array.Resize(ref Blobs, BLOB_COUNT);
         var cA = ZeroMat.GetColor("_HashAColor");
         var cB = ZeroMat.GetColor("_HashBColor");
 
