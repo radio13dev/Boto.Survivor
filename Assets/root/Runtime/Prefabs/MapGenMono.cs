@@ -30,6 +30,11 @@ public class MapGenMono : MonoBehaviourGizmos
     {
         foreach (var zone in GetComponentsInChildren<ToroidalBlobMono>())
             DestroyImmediate(zone.gameObject);
+        var toDestroy = WallMeshContainer.GetComponentsInChildren<MapGenWallMesh>();
+        foreach (var wallMesh in toDestroy)
+            DestroyImmediate(wallMesh.gameObject);
+        m_Connections = null;
+        m_ConnectionsPath = null;
 
         Random r = Random.CreateFromIndex((uint)DateTime.UtcNow.Ticks);
 
@@ -366,6 +371,20 @@ public class MapGenMono : MonoBehaviourGizmos
                             break;
                         }
                     }
+                    
+                    // Check against the generated path (if we have one)
+                    if (m_ConnectionsPath?.Count > 0)
+                    {
+                        foreach (var connection in m_ConnectionsPath)
+                        {
+                            var wallPoint = blobs[connection.IntersectBlobIndex].m_WallsActual[connection.IntersectWallIndex];
+                            if (math.distancesq(pos, wallPoint) < math.square(mesh.Radius + 30f))
+                            {
+                                canSpawn = false;
+                                break;
+                            }
+                        }
+                    }
 
                     if (!canSpawn) return;
 
@@ -385,6 +404,296 @@ public class MapGenMono : MonoBehaviourGizmos
             var materials = WallMeshMaterials[blobs[toSpawn.blobIndex].Index];
             mesh.MeshRenderer.material = materials[toSpawn.meshIndex % materials.Length];
         }
+    }
+    
+    [Range(1, 10)]
+    public float NodeGraphStepSize = 2f;
+    [NonSerialized] [HideInInspector] public Dictionary<int, ToroidalBlobMono.BlobConnection>[] m_Connections = null;
+    [NonSerialized] [HideInInspector] public List<ToroidalBlobMono.BlobConnection> m_ConnectionsPath = null;
+    
+    [EditorButton]
+    public void Demo_NodeGraphGeneration()
+    {
+        // For each node, path towards nearest different type node
+        // When our raycast is over a different type, search for the nearest wall point
+        // Record that wall point and continue navigation:
+        //  - If we hit the target, that wall point is valid and the two nodes are connected
+        //  - If we hit a different type, the two nodes are NOT connected
+        //  - If we stay on the same type the entire time, then the nodes are connected on the same blob
+        
+        var blobs = GetComponentsInChildren<ToroidalBlobMono>();
+        using var blobsNative = new NativeArray<Metaball>(blobs.Select(b => b.GetMetaball()).ToArray(), Allocator.Temp);
+        
+        for (int i = 0; i < blobs.Length; i++)
+        {
+            var source = blobs[i];
+            for (int j = i+1; j < blobs.Length; j++)
+            {
+                var target = blobs[j];
+                var targetPoint = (float3)target.transform.position;
+                
+                float3 point = source.transform.position;
+                const int MAX_STEPS = 500;
+                float3? testPoint = null;
+                int hit = 0;
+                
+                for (int stepAttempt = 0; stepAttempt < MAX_STEPS; stepAttempt++)
+                {
+                    var dir = TorusMapper.GetDirection(point, targetPoint);
+                    point = TorusMapper.MovePointInDirection(point, dir*NodeGraphStepSize, 1);
+                    
+                    var stepIndex = MapGenSystem.GetBlobAtPoint(point, blobsNative);
+                    if (!testPoint.HasValue && stepIndex != source.Index)
+                    {
+                        testPoint = point;
+                        hit = stepIndex;
+                    }
+                    else if (testPoint.HasValue && stepIndex != hit)
+                    {
+                        // The target cannot be reached without going over multiple walls, fail.
+                        goto FailPathToTarget;
+                    }
+                    
+                    // Check if we're near the target
+                    if (math.distancesq(point, targetPoint) < NodeGraphStepSize*NodeGraphStepSize*2)
+                    {
+                        // Success, record the path
+                        break;
+                    }
+                }
+                
+                if (testPoint.HasValue)
+                {
+                    // Find the wall point nearest that, as well as the blob that owns it
+                    float3 nearestWallPoint = default;
+                    float nearestDistSqr = float.MaxValue;
+                    int nearestBlobIndex = -1;
+                    int nearestWallIndex = -1;
+                    
+                    for (int k = 0; k < blobs.Length; k++)
+                    {
+                        if (blobs[k].Index != source.Index) continue;
+
+                        for (var blobWallIndex = 0; blobWallIndex < blobs[k].m_WallsActual.Count; blobWallIndex++)
+                        {
+                            var wallPoint = blobs[k].m_WallsActual[blobWallIndex];
+                            float distSqr = math.distancesq(wallPoint, testPoint.Value);
+                            if (distSqr < nearestDistSqr)
+                            {
+                                nearestDistSqr = distSqr;
+                                nearestWallPoint = wallPoint;
+                                nearestBlobIndex = k;
+                                nearestWallIndex = blobWallIndex;
+                            }
+                        }
+                    }
+                    
+                    source.AddConnection(i, j, target, nearestBlobIndex, nearestWallIndex);
+                    target.AddConnection(j, i, source, nearestBlobIndex, nearestWallIndex);
+                }
+                else
+                {
+                    // This is a direct path inside a blob, record the connection
+                    source.AddDirectConnection(i, j, target);
+                    target.AddDirectConnection(j, i, source);
+                }
+                
+                FailPathToTarget: continue;
+            }
+        }
+        
+        // Go over all blobs again
+        int groupIdIterator = 0;
+        for (int i = 0; i < blobs.Length; i++)
+        {
+            // Recursively go through this blobs connections and assign a group ID to it and
+            // all direct connections, and all their direct connections, etc...
+            var source = blobs[i];
+            if (source.GroupID != -1) continue;
+            Queue<ToroidalBlobMono> toProcess = new();
+            toProcess.Enqueue(source);
+            while (toProcess.Count > 0)
+            {
+                var current = toProcess.Dequeue();
+                if (current.GroupID != -1) continue;
+                current.GroupID = groupIdIterator;
+
+                foreach (var con in current.m_Connections)
+                {
+                    if (!con.Direct) continue;
+                    var other = blobs[con.OtherIndex];
+                    if (other.GroupID == -1)
+                        toProcess.Enqueue(other);
+                }
+            }
+            groupIdIterator++;
+        }
+        
+        // For every connection between groups, select the shortest connection as the 'best' connection
+        Dictionary<int, ToroidalBlobMono.BlobConnection>[] bestConnectionsForGroup = new Dictionary<int, ToroidalBlobMono.BlobConnection>[groupIdIterator];
+        for (int i = 0; i < blobs.Length; i++)
+        {
+            var bestConnections = bestConnectionsForGroup[blobs[i].GroupID] ??= new();
+            foreach (var con in blobs[i].m_Connections)
+            {
+                var other = blobs[con.OtherIndex];
+                if (blobs[i].GroupID == other.GroupID) continue; // Same group, ignore
+
+                // Compare this connection to the current best
+                if (bestConnections.TryGetValue(other.GroupID, out var existing))
+                {
+                    // Compare distances
+                    var distSqrExisting = math.distancesq(blobs[i].transform.position, blobs[existing.OtherIndex].transform.position);
+                    var distSqrNew = math.distancesq(blobs[i].transform.position, other.transform.position);
+                    if (distSqrNew < distSqrExisting)
+                    {
+                        bestConnections[other.GroupID] = con;
+                    }
+                }
+                else
+                {
+                    bestConnections[other.GroupID] = con;
+                }
+            }
+        }
+        
+        // Finally, save this for rendering
+        m_Connections = bestConnectionsForGroup;
+        
+        // EXTENSION: Select a subset of connections to be the 'path'.
+        // Any group should be able to connect to any other group through this path.
+        // This will let us create a maze.
+        // Algorithm:
+        /*  1. Make the initial cell the current cell and mark it as visited
+            2. While there are unvisited cells
+                2.1. If the current cell has any neighbours which have not been visited
+                    2.1.1. Choose randomly one of the unvisited neighbours
+                    2.1.2. Push the current cell to the stack
+                    2.1.3. Remove the wall between the current cell and the chosen cell
+                    2.1.4. Make the chosen cell the current cell and mark it as visited
+                2.2. Else if stack is not empty
+                    2.2.1. Pop a cell from the stack
+                    2.2.2. Make it the current cell
+         */
+        List<ToroidalBlobMono.BlobConnection> path = new();
+        HashSet<int> visitedGroups = new();
+        SortedList<float, ToroidalBlobMono.BlobConnection> connectionQueue = new();
+
+        if (m_Connections?.Length > 0)
+        {
+            // Start with the first group
+            visitedGroups.Add(0);
+
+            // Add all connections from the first group to the queue
+            foreach (var connection in m_Connections[0].Values)
+            {
+                float distance = math.distancesq(
+                    blobs[connection.SourceIndex].transform.position,
+                    blobs[connection.OtherIndex].transform.position
+                );
+                connectionQueue.Add(distance, connection);
+            }
+
+            // Process the queue until all groups are visited
+            while (visitedGroups.Count < m_Connections.Length && connectionQueue.Count > 0)
+            {
+                var nextConnection = connectionQueue.Values[0];
+                connectionQueue.RemoveAt(0);
+                int otherGroup = blobs[nextConnection.OtherIndex].GroupID;
+
+                if (!visitedGroups.Contains(otherGroup))
+                {
+                    path.Add(nextConnection);
+                    visitedGroups.Add(otherGroup);
+
+                    // Add new connections from the newly visited group
+                    foreach (var connection in m_Connections[otherGroup].Values)
+                    {
+                        if (!visitedGroups.Contains(blobs[connection.OtherIndex].GroupID))
+                        {
+                            float distance = math.distancesq(
+                                blobs[connection.SourceIndex].transform.position,
+                                blobs[connection.OtherIndex].transform.position
+                            );
+                            connectionQueue.Add(distance, connection);
+                        }
+                    }
+                }
+            }
+            m_ConnectionsPath = path;
+        }
+    }
+
+    public override void DrawGizmos()
+    {
+        /*
+        if (m_Connections?.Length > 0)
+        {
+            using (Draw.WithLineWidth(2, false))
+            {
+                NativeArray<float3> connectionPath = new NativeArray<float3>(10, Allocator.Temp);
+                var blobs = GetComponentsInChildren<ToroidalBlobMono>();
+                foreach (var group in m_Connections)
+                {
+                    foreach (var (otherGroupId, connection) in group)
+                    {
+                        var source = blobs[connection.SourceIndex];
+                        var target = blobs[connection.OtherIndex];
+                        var path = TorusMapper.GetShortestPath((float3)source.transform.position, (float3)target.transform.position);
+                        path.Write(ref connectionPath);
+                        Draw.Polyline(connectionPath);
+                         
+                        if (!connection.Direct)
+                            Draw.WireSphere(blobs[connection.IntersectBlobIndex].m_WallsActual[connection.IntersectWallIndex], 5, Color.red);
+                    }
+                }
+                connectionPath.Dispose();
+            }
+        }
+        */
+        
+        if (m_ConnectionsPath?.Count > 0)
+        {
+            using (Draw.WithLineWidth(2, false))
+            {
+                NativeArray<float3> connectionPath = new NativeArray<float3>(10, Allocator.Temp);
+                var blobs = GetComponentsInChildren<ToroidalBlobMono>();
+                foreach (var connection in m_ConnectionsPath)
+                {
+                    var source = blobs[connection.SourceIndex];
+                    var target = blobs[connection.OtherIndex];
+                    var path = TorusMapper.GetShortestPath((float3)source.transform.position, (float3)target.transform.position);
+                    path.Write(ref connectionPath);
+                    Draw.Polyline(connectionPath);
+                         
+                    if (!connection.Direct)
+                        Draw.WireSphere(blobs[connection.IntersectBlobIndex].m_WallsActual[connection.IntersectWallIndex], 5, Color.red);
+                }
+                connectionPath.Dispose();
+            }
+        }
+    
+        //using (Draw.WithLineWidth(2, false))
+        //{
+        //    NativeArray<float3> connectionPath = new NativeArray<float3>(10, Allocator.Temp);
+        //    var blobs = GetComponentsInChildren<ToroidalBlobMono>();
+        //    for (int i = 0; i < blobs.Length; i++)
+        //    {
+        //        foreach (var con in blobs[i].m_Connections)
+        //        {
+        //            if (con.Direct) continue;
+        //            
+        //            var other = blobs[con.OtherIndex];
+        //            var path = TorusMapper.GetShortestPath((float3)blobs[i].transform.position, (float3)other.transform.position);
+        //            path.Write(ref connectionPath);
+        //            Draw.Polyline(connectionPath);
+        //             
+        //            if (!con.Direct)
+        //                Draw.WireSphere(blobs[con.IntersectBlobIndex].m_WallsActual[con.IntersectWallIndex], 5, Color.red);
+        //        }
+        //    }
+        //    connectionPath.Dispose();
+        //}
     }
 }
 

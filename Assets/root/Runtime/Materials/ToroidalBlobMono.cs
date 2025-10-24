@@ -10,8 +10,10 @@ public class ToroidalBlobMono : MonoBehaviourGizmos
     public float Radius;
     public byte Index;
     
+    [NonSerialized] [HideInInspector] public int GroupID = -1;
     [NonSerialized] [HideInInspector] public List<(float3, byte)> m_Walls = new();
     [NonSerialized] [HideInInspector] public List<Vector3> m_WallsActual = new();
+    [NonSerialized] [HideInInspector] public List<BlobConnection> m_Connections = new();
     
     public Metaball GetMetaball() => new Metaball()
     {
@@ -40,5 +42,36 @@ public class ToroidalBlobMono : MonoBehaviourGizmos
         {
             ToroidalBlobInit.SetDirty();
         }
+    }
+    
+    public struct BlobConnection
+    {
+        public int SourceIndex;
+        public int OtherIndex;
+        public bool Direct;
+        public int IntersectBlobIndex;
+        public int IntersectWallIndex;
+    }
+
+    public void AddDirectConnection(int sourceIndex, int targetIndex, ToroidalBlobMono target)
+    {
+        m_Connections.Add(new BlobConnection()
+        {
+            SourceIndex = sourceIndex,
+            OtherIndex = targetIndex,
+            Direct = true
+        });
+    }
+
+    public void AddConnection(int sourceIndex, int targetIndex, ToroidalBlobMono target, int wallOwnerIndex, int wallIntersectIndex)
+    {
+        m_Connections.Add(new BlobConnection()
+        {
+            SourceIndex = sourceIndex,
+            OtherIndex = targetIndex,
+            Direct = false,
+            IntersectBlobIndex = wallOwnerIndex,
+            IntersectWallIndex = wallIntersectIndex
+        });
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -377,5 +378,33 @@ public static class TorusMapper
         }
         a = SnapToSurface(a);
         return a;
+    }
+
+    public static Path GetShortestPath(float3 a, float3 b)
+    {
+        var aT = CartesianToToroidal(a);
+        var bT = CartesianToToroidal(b);
+        
+        return new Path(aT, bT);
+    }
+    
+    public struct Path
+    {
+        public readonly float2 AT;
+        public readonly float2 BT;
+        public Path(float2 aT, float2 bT)
+        {
+            AT = aT;
+            BT = bT;
+        }
+        public void Write(ref NativeArray<float3> vertices)
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                float t = (float)i / (vertices.Length - 1);
+                float2 posT = math.float2(mathu.lerpangle(AT.x, BT.x, t), mathu.lerpangle(AT.y, BT.y, t));
+                vertices[i] = ToroidalToCartesian(posT);
+            }
+        }
     }
 }
