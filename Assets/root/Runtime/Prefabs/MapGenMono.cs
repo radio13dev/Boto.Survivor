@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AYellowpaper.SerializedCollections;
 using Drawing;
 using Unity.Collections;
 using Unity.Entities;
@@ -310,6 +311,71 @@ public class MapGenMono : MonoBehaviourGizmos
             
             source.m_Walls = path;
             source.m_WallsActual = actualPath;
+        }
+    }
+    
+    public Transform WallMeshContainer;
+    public MapGenWallMesh[] WallMeshTemplates;
+    public SerializedDictionary<int, Material[]> WallMeshMaterials = new();
+    
+    [Range(0,2f)] 
+    public float WallRandDistance = 0f;
+    [Range(-10,10)]
+    public float FloorOffsetMin = -2f;
+    [Range(-10,10)]
+    public float FloorOffsetMax = -4f;
+    
+    [EditorButton]
+    public void Demo_PlaceWallMeshes()
+    {
+        var toDestroy = WallMeshContainer.GetComponentsInChildren<MapGenWallMesh>();
+        foreach (var wallMesh in toDestroy)
+            DestroyImmediate(wallMesh.gameObject);
+        
+        int blobIndex = -1;
+        var blobs = GetComponentsInChildren<ToroidalBlobMono>();
+        List<(float3 position, int meshIndex, int blobIndex)> spawned = new();
+        foreach (var blob in blobs)
+        {
+            blobIndex++;
+            Random r = Random.CreateFromIndex((uint)blobIndex);
+            
+            foreach (var point in blob.m_WallsActual)
+            {
+                // Choose a random mesh to spawn
+                var meshIndex = r.NextInt(WallMeshTemplates.Length);
+                var mesh = WallMeshTemplates[meshIndex];
+                var pos = (float3)point;
+                pos += r.NextFloat3Direction()*mesh.Radius*WallRandDistance;
+                pos += TorusMapper.GetNormal(pos)*r.NextFloat(FloorOffsetMin, FloorOffsetMax);
+            
+                // Check if we can spawn here
+                bool canSpawn = true;
+                foreach (var other in spawned)
+                {
+                    if (math.distancesq(pos, other.position) < math.square(mesh.Radius + WallMeshTemplates[other.meshIndex].Radius))
+                    {
+                        canSpawn = false;
+                        break;
+                    }
+                }
+
+                if (!canSpawn) continue;
+                
+
+                // Spawn wall mesh
+                spawned.Add((pos, meshIndex, blobIndex));
+            }
+        }
+        
+        Random finalR = Random.CreateFromIndex((uint)spawned.Count);
+        foreach (var toSpawn in spawned)
+        {
+            var rot = finalR.NextQuaternionRotation();
+            if (TestIndex != -1 && toSpawn.blobIndex != TestIndex) continue;
+            var mesh = Instantiate(WallMeshTemplates[toSpawn.meshIndex], toSpawn.position, rot, WallMeshContainer);
+            var materials = WallMeshMaterials[blobs[toSpawn.blobIndex].Index];
+            mesh.MeshRenderer.material = materials[toSpawn.meshIndex % materials.Length];
         }
     }
 }

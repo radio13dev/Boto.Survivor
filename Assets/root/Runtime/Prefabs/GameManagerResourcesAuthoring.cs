@@ -39,7 +39,7 @@ public struct GameManager : IComponentData
         {
             if (!Instance.Value || !Instance.Value.Mesh || !Instance.Value.Material)
             {
-                Debug.Log($"{Instance.Value} invalid. Mesh or Mat null: {Instance.Value.Mesh}, {Instance.Value.Material}");
+                Debug.Log($"{Instance.Value} invalid. Mesh or Mat null: {(Instance.Value ? Instance.Value.Mesh : null)}, {(Instance.Value ? Instance.Value.Material : null)}");
                 Valid = false;
             }
             else

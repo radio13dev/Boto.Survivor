@@ -72,7 +72,7 @@ void ToroidalBlobHue_float(float3 pos, float4 aIn, float4 bIn, float tintScale, 
 		else
 		{
 			// Edge
-			const float threshold2 = 0.03;
+			const float threshold2 = 0.02;
 			if ((infl-edge) < threshold2)
 			{
 				aOut = aIn + _blob_border[hitIndex]; 
