@@ -339,32 +339,40 @@ public class MapGenMono : MonoBehaviourGizmos
         {
             blobIndex++;
             Random r = Random.CreateFromIndex((uint)blobIndex);
-            
-            foreach (var point in blob.m_WallsActual)
+
+            for (var wallIndex = 0; wallIndex < blob.m_WallsActual.Count; wallIndex++)
             {
-                // Choose a random mesh to spawn
-                var meshIndex = r.NextInt(WallMeshTemplates.Length);
-                var mesh = WallMeshTemplates[meshIndex];
-                var pos = (float3)point;
-                pos += r.NextFloat3Direction()*mesh.Radius*WallRandDistance;
-                pos += TorusMapper.GetNormal(pos)*r.NextFloat(FloorOffsetMin, FloorOffsetMax);
-            
-                // Check if we can spawn here
-                bool canSpawn = true;
-                foreach (var other in spawned)
-                {
-                    if (math.distancesq(pos, other.position) < math.square(mesh.Radius + WallMeshTemplates[other.meshIndex].Radius))
-                    {
-                        canSpawn = false;
-                        break;
-                    }
-                }
-
-                if (!canSpawn) continue;
+                // Attempt 2 times per wall index: At t=0.0, then at t=0.5
+                var point = blob.m_WallsActual[wallIndex];
+                TrySpawnWall(point);
+                TrySpawnWall((point + blob.m_WallsActual[(wallIndex+1) % blob.m_WallsActual.Count])/2);
                 
+                void TrySpawnWall(Vector3 point)
+                {
+                    // Choose a random mesh to spawn
+                    var meshIndex = r.NextInt(WallMeshTemplates.Length);
+                    var mesh = WallMeshTemplates[meshIndex];
+                    var pos = (float3)point;
+                    pos += r.NextFloat3Direction() * mesh.Radius * WallRandDistance;
+                    pos += TorusMapper.GetNormal(pos) * r.NextFloat(FloorOffsetMin, FloorOffsetMax);
 
-                // Spawn wall mesh
-                spawned.Add((pos, meshIndex, blobIndex));
+                    // Check if we can spawn here
+                    bool canSpawn = true;
+                    foreach (var other in spawned)
+                    {
+                        if (math.distancesq(pos, other.position) < math.square(mesh.Radius + WallMeshTemplates[other.meshIndex].Radius))
+                        {
+                            canSpawn = false;
+                            break;
+                        }
+                    }
+
+                    if (!canSpawn) return;
+
+
+                    // Spawn wall mesh
+                    spawned.Add((pos, meshIndex, blobIndex));
+                }
             }
         }
         
