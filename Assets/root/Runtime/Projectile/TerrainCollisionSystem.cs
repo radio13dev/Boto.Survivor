@@ -81,12 +81,12 @@ namespace Collisions
 
             unsafe public void Execute(in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB = collider.Add(transform);
-                fixed (Force* force_ptr = &force)
-                {
-                    var visitor = new CollisionVisitor((transform, collider), force_ptr);
-                    tree.Range(adjustedAABB, ref visitor);
-                }
+                //var adjustedAABB = collider.Add(transform);
+                //fixed (Force* force_ptr = &force)
+                //{
+                //    var visitor = new CollisionVisitor((transform, collider), force_ptr);
+                //    tree.Range(adjustedAABB, ref visitor);
+                //}
             }
 
             public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, Collider c)>

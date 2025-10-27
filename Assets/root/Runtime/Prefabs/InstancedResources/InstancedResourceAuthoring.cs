@@ -71,6 +71,23 @@ public class InstancedResourceAuthoring : MonoBehaviour
             {
                 AddComponent<TorusCone>(entity);
             }
+            
+            if (authoring.Particle.Asset.IsColorBaseColor)
+            {
+                AddComponent<ColorBaseColor>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorA)
+            {
+                AddComponent<ColorA>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorB)
+            {
+                AddComponent<ColorB>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorC)
+            {
+                AddComponent<ColorC>(entity);
+            }
         }
     }
 

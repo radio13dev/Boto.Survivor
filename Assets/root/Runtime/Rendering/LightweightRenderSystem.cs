@@ -1,5 +1,4 @@
 using System;
-using BovineLabs.Saving;
 using Collisions;
 using Unity.Burst;
 using Unity.Collections;
@@ -101,6 +100,11 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 if (resourceData.IsTorus) queryBuilder = queryBuilder.WithAll<TorusMin>();
                 if (resourceData.IsCone) queryBuilder = queryBuilder.WithAll<TorusCone>();
                 
+                if (resourceData.IsColorBaseColor) queryBuilder = queryBuilder.WithAll<ColorBaseColor>();
+                if (resourceData.IsColorA) queryBuilder = queryBuilder.WithAll<ColorA>();
+                if (resourceData.IsColorB) queryBuilder = queryBuilder.WithAll<ColorB>();
+                if (resourceData.IsColorC) queryBuilder = queryBuilder.WithAll<ColorC>();
+                
                 m_InstanceQueries[resourceIt] = queryBuilder.Build(ref state);
             }
         }
@@ -174,41 +178,53 @@ public unsafe partial struct LightweightRenderSystem : ISystem
                 torusAngles = query.ToComponentDataArray<TorusCone>(Allocator.Temp).Reinterpret<float>();
             }
             
+            NativeArray<float4> colorBaseColor = default;
+            NativeArray<float4> colorA = default;
+            NativeArray<float4> colorB = default;
+            NativeArray<float4> colorC = default;
+            if (resource.IsColorBaseColor) colorBaseColor = query.ToComponentDataArray<ColorBaseColor>(Allocator.Temp).Reinterpret<float4>();
+            if (resource.IsColorA) colorA = query.ToComponentDataArray<ColorA>(Allocator.Temp).Reinterpret<float4>();
+            if (resource.IsColorB) colorB = query.ToComponentDataArray<ColorB>(Allocator.Temp).Reinterpret<float4>();
+            if (resource.IsColorC) colorC = query.ToComponentDataArray<ColorC>(Allocator.Temp).Reinterpret<float4>();
+            
+            var instanceMats = m_InstanceMats;
             var mesh = resource.Mesh;
-            var renderParams = resource.RenderParams;
-            
-            for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
-            {
-                int count = math.min(Profiling.k_MaxInstances, toRender - j);
-            
-                if (resource.Animated)
-                {
-                    renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new Span<float>(&((float*)spriteIndices.GetUnsafePtr())[j], count).ToArray());
-                }
-                if (resource.HasLifespan)
-                {
-                    renderParams.matProps.SetFloatArray("lifespanBuffer", new Span<float>(&((float*)lifespan.GetUnsafePtr())[j], count).ToArray());
-                }
-                if (resource.IsTorus)
-                {
-                    renderParams.matProps.SetFloatArray("torusMinBuffer", new Span<float>(&((float*)torusRads.GetUnsafePtr())[j], count).ToArray());
-                }
-                if (resource.IsCone)
-                {
-                    renderParams.matProps.SetFloatArray("torusAngleBuffer", new Span<float>(&((float*)torusAngles.GetUnsafePtr())[j], count).ToArray());
-                }
-                
-                Graphics.RenderMeshInstanced(renderParams, mesh, 0, m_InstanceMats, count, j);
-            }
+            DoRender(resource.RenderParams);
             
             if (resource.ShowOnMap)
+                DoRender(resource.MapRenderParams);
+            
+            void DoRender(RenderParams renderParams)
             {
-                var mapRenderParams = resource.MapRenderParams;
                 for (int j = 0; j < toRender; j += Profiling.k_MaxInstances)
                 {
                     int count = math.min(Profiling.k_MaxInstances, toRender - j);
-                
-                    Graphics.RenderMeshInstanced(mapRenderParams, mesh, 0, m_InstanceMats, count, j);
+            
+                    if (resource.Animated)
+                    {
+                        renderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new Span<float>(&((float*)spriteIndices.GetUnsafePtr())[j], count).ToArray());
+                    }
+                    if (resource.HasLifespan)
+                    {
+                        renderParams.matProps.SetFloatArray("lifespanBuffer", new Span<float>(&((float*)lifespan.GetUnsafePtr())[j], count).ToArray());
+                    }
+                    if (resource.IsTorus)
+                    {
+                        renderParams.matProps.SetFloatArray("torusMinBuffer", new Span<float>(&((float*)torusRads.GetUnsafePtr())[j], count).ToArray());
+                    }
+                    if (resource.IsCone)
+                    {
+                        renderParams.matProps.SetFloatArray("torusAngleBuffer", new Span<float>(&((float*)torusAngles.GetUnsafePtr())[j], count).ToArray());
+                    }
+                    if (resource.IsColorBaseColor)
+                        renderParams.matProps.SetVectorArray("colorBaseColorBuffer", new Span<Vector4>(&((Vector4*)colorBaseColor.GetUnsafePtr())[j], count).ToArray());
+                    if (resource.IsColorA)
+                        renderParams.matProps.SetVectorArray("colorABuffer", new Span<Vector4>(&((Vector4*)colorA.GetUnsafePtr())[j], count).ToArray());
+                    if (resource.IsColorB)
+                        renderParams.matProps.SetVectorArray("colorBBuffer", new Span<Vector4>(&((Vector4*)colorB.GetUnsafePtr())[j], count).ToArray());
+                    if (resource.IsColorC)
+                        renderParams.matProps.SetVectorArray("colorCBuffer", new Span<Vector4>(&((Vector4*)colorC.GetUnsafePtr())[j], count).ToArray());
+                    Graphics.RenderMeshInstanced(renderParams, mesh, 0, instanceMats, count, j);
                 }
             }
             
@@ -219,6 +235,10 @@ public unsafe partial struct LightweightRenderSystem : ISystem
             if (lifespan.IsCreated) lifespan.Dispose();
             if (torusRads.IsCreated) torusRads.Dispose();
             if (torusAngles.IsCreated) torusAngles.Dispose();
+            if (colorBaseColor.IsCreated) colorBaseColor.Dispose();
+            if (colorA.IsCreated) colorA.Dispose();
+            if (colorB.IsCreated) colorB.Dispose();
+            if (colorC.IsCreated) colorC.Dispose();
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
+using BovineLabs.Core.Extensions;
 using Drawing;
 using Unity.Collections;
 using Unity.Entities;
@@ -25,6 +26,16 @@ public class MapGenMono : MonoBehaviourGizmos
 
     public AnimationCurve AttemptCountCurve = AnimationCurve.Linear(0, 3, 1, 6);
 
+    [EditorButton]
+    public void Demo()
+    {
+        Demo_RespawnZones();
+        Demo_GenerateWalls2();
+        Demo_NodeGraphGeneration();
+        Demo_PlaceWallMeshes();
+        Demo_PlaceEvents();
+    }
+    
     [EditorButton]
     public void Demo_RespawnZones()
     {
@@ -395,14 +406,29 @@ public class MapGenMono : MonoBehaviourGizmos
             }
         }
         
-        Random finalR = Random.CreateFromIndex((uint)spawned.Count);
-        foreach (var toSpawn in spawned)
+        if (Game.ClientGame != null)
         {
-            var rot = finalR.NextQuaternionRotation();
-            if (TestIndex != -1 && toSpawn.blobIndex != TestIndex) continue;
-            var mesh = Instantiate(WallMeshTemplates[toSpawn.meshIndex], toSpawn.position, rot, WallMeshContainer);
-            var materials = WallMeshMaterials[blobs[toSpawn.blobIndex].Index];
-            mesh.MeshRenderer.material = materials[toSpawn.meshIndex % materials.Length];
+            var wallTemplates = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.WallTemplates>();
+            using EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        
+            Random finalR = Random.CreateFromIndex((uint)spawned.Count);
+            foreach (var toSpawn in spawned)
+            {
+                var rot = finalR.NextQuaternionRotation();
+                if (TestIndex != -1 && toSpawn.blobIndex != TestIndex) continue;
+                var mesh = Instantiate(WallMeshTemplates[toSpawn.meshIndex], toSpawn.position, rot, WallMeshContainer);
+                var materials = WallMeshMaterials[blobs[toSpawn.blobIndex].Index];
+                mesh.MeshRenderer.material = materials[toSpawn.meshIndex % materials.Length];
+            
+                var wallE = ecb.Instantiate(wallTemplates[toSpawn.meshIndex].Entity);
+                ecb.SetComponent(wallE, LocalTransform.FromPositionRotationScale(mesh.transform.position, mesh.transform.rotation, mesh.transform.lossyScale.x));
+                ecb.SetComponent(wallE, new ColorBaseColor(mesh.MeshRenderer.material.GetColor("_BaseColor")));
+                ecb.SetComponent(wallE, new ColorA(mesh.MeshRenderer.material.GetColor("_A")));
+                ecb.SetComponent(wallE, new ColorB(mesh.MeshRenderer.material.GetColor("_B")));
+                ecb.SetComponent(wallE, new ColorC(mesh.MeshRenderer.material.GetColor("_C")));
+            }
+        
+            ecb.Playback(Game.ClientGame.World.EntityManager);
         }
     }
     
@@ -621,6 +647,100 @@ public class MapGenMono : MonoBehaviourGizmos
                 }
             }
             m_ConnectionsPath = path;
+        }
+    }
+    
+    
+    
+    public SerializedDictionary<int, GameEventObject[]> EventPrefabs = new();
+    public Transform EventContainer;
+    
+    [EditorButton]
+    public void Demo_PlaceEvents()
+    {
+        foreach (var oldEvent in EventContainer.GetComponentsInChildren<GameEventObject>())
+            DestroyImmediate(oldEvent.gameObject);
+        
+        
+        var gameEventTemplates = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.GameEventTemplates>();
+        EntityCommandBuffer ecb = default;
+        if (Game.ClientGame != null) ecb = new EntityCommandBuffer(Allocator.Temp);
+        
+        // Attempt to spawn an event at:
+        // - The center of each blob
+        // - 20 more random points
+        Random r = Random.CreateFromIndex(0);
+        
+        List<GameEventObject> spawnedEvents = new();
+        var walls = WallMeshContainer.GetComponentsInChildren<MapGenWallMesh>();
+        var blobs = GetComponentsInChildren<ToroidalBlobMono>(true);
+        using var blobsNative = new NativeArray<Metaball>(blobs.Select(b => b.GetMetaball()).ToArray(), Allocator.Temp);
+        foreach (var blob in blobs)
+        {
+            // Attempt placement at random points around the blob 10 times
+            for (int placementAttempt = 0; placementAttempt < 10; placementAttempt++)
+            {
+                var attemptPos = (float3)blob.transform.position + TorusMapper.ProjectOntoSurface(blob.transform.position, r.NextFloat3Direction()) * r.NextFloat() * blob.Radius;
+                attemptPos = TorusMapper.SnapToSurface(attemptPos);
+                byte blobType = MapGenSystem.GetBlobAtPoint(attemptPos, blobsNative);
+                if (!EventPrefabs.TryGetValue(blobType, out var prefabs)) continue;
+                int prefabIndex = r.NextInt(prefabs.Length);
+                if (!AttemptPlacement(attemptPos, blobType, prefabIndex, prefabs[prefabIndex]))
+                    continue;
+                break;
+            }
+        }
+        
+        for (int i = 0; i < 20; i++)
+        {
+            // Choose a random position
+            float2 posToroidal = r.NextFloat2(0, math.PI2);
+            float3 pos = TorusMapper.ToroidalToCartesian(posToroidal);
+            
+            // Get the blob type here
+            pos = TorusMapper.SnapToSurface(pos);
+            byte blobType = MapGenSystem.GetBlobAtPoint(pos, blobsNative);
+            if (!EventPrefabs.TryGetValue(blobType, out var prefabs)) continue;
+            int prefabIndex = r.NextInt(prefabs.Length);
+            if (!AttemptPlacement(pos, blobType, prefabIndex, prefabs[prefabIndex]))
+                continue;
+        }
+        
+        bool AttemptPlacement(float3 position, int blobType, int prefabIndex, GameEventObject prefab)
+        {
+            position = TorusMapper.SnapToSurface(position);
+            
+            // Check against existing events
+            foreach (var existing in spawnedEvents)
+            {
+                if (math.distancesq(position, existing.transform.position) < math.square(prefab.ExclusionRadius + existing.ExclusionRadius))
+                    return false;
+            }
+
+            // Check against walls
+            foreach (var wall in walls)
+            {
+                if (math.distancesq(position, wall.transform.position) < math.square(prefab.ExclusionRadius + wall.Radius))
+                    return false;
+            }
+
+            // Spawn it
+            var instance = Instantiate(prefab, position, TorusMapper.GetNormalQuaternion(position, r.NextFloat3Direction()), EventContainer);
+            instance.gameObject.SetActive(true);
+            spawnedEvents.Add(instance);
+            
+            if (ecb.IsCreated)
+            {
+                var gameEventE = ecb.Instantiate(gameEventTemplates[blobType*5 + prefabIndex].Entity);
+                ecb.SetComponent(gameEventE, LocalTransform.FromPositionRotation(instance.transform.position, instance.transform.rotation));
+            }
+            return true;
+        }
+        
+        if (ecb.IsCreated)
+        {
+            ecb.Playback(Game.ClientGame.World.EntityManager);
+            ecb.Dispose();
         }
     }
 

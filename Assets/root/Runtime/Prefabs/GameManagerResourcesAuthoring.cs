@@ -168,6 +168,16 @@ public struct GameManager : IComponentData
     {
         public Entity Entity;
     }
+    
+    public struct WallTemplates : IBufferElementData
+    {
+        public Entity Entity;
+    }
+    
+    public struct GameEventTemplates : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
@@ -185,6 +195,8 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
     public RingDropAuthoring[] RingDropTemplates;
     public SurvivorAuthoring[] Survivors;
     public GenericDatabase Prefabs;
+    public GameObject[] WallTemplates;
+    public GameObject[] GameEventTemplates;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -320,6 +332,24 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Survivors.Length; i++)
                 {
                     buffer.Add(new GameManager.Survivors(){ Entity = GetEntity(authoring.Survivors[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.WallTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.WallTemplates>(entity);
+                for (int i = 0; i < authoring.WallTemplates.Length; i++)
+                {
+                    buffer.Add(new GameManager.WallTemplates(){ Entity = GetEntity(authoring.WallTemplates[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.GameEventTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.GameEventTemplates>(entity);
+                for (int i = 0; i < authoring.GameEventTemplates.Length; i++)
+                {
+                    buffer.Add(new GameManager.GameEventTemplates(){ Entity = GetEntity(authoring.GameEventTemplates[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }

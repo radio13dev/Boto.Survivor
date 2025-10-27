@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/InstancedResourcesDatabase", order = 1)]
 public class InstancedResource : ScriptableObject
@@ -12,6 +13,10 @@ public class InstancedResource : ScriptableObject
     public bool UseLastTransform;
     public bool IsTorus;
     public bool IsCone;
+    public bool IsColorBaseColor;
+    public bool IsColorA;
+    public bool IsColorB;
+    public bool IsColorC;
     public bool ShowOnMap;
     
     public bool IsStretch;
@@ -36,18 +41,33 @@ public class InstancedResource : ScriptableObject
         {
             matProps = new()
         };
-        if (Animated) m_RenderParams.matProps.SetFloatArray("spriteAnimFrameBuffer", new float[Profiling.k_MaxInstances]);
-        if (HasLifespan) m_RenderParams.matProps.SetFloatArray("lifespanBuffer", new float[Profiling.k_MaxInstances]);
-        if (IsTorus) m_RenderParams.matProps.SetFloatArray("torusMinBuffer", new float[Profiling.k_MaxInstances]);
-        if (IsCone) m_RenderParams.matProps.SetFloatArray("torusAngleBuffer", new float[Profiling.k_MaxInstances]);
-        if (IsStretch) m_RenderParams.matProps.SetVectorArray("stretchBuffer", new Vector4[Profiling.k_MaxInstances]);
+        SetupProps(m_RenderParams.matProps);
         
         if (ShowOnMap)
         {
             // These render params should be on the 'Map' layer
-            m_MapRenderParams = new RenderParams(Material);
+            m_MapRenderParams = new RenderParams(Material)
+            {
+                matProps = new()
+            };
+            SetupProps(m_MapRenderParams.matProps);
+            m_MapRenderParams.matProps.SetFloat("_IsMap", 1);
             m_MapRenderParams.layer = LayerMask.NameToLayer("Map");
             
+        }
+        
+        void SetupProps(in MaterialPropertyBlock matProps)
+        {
+            if (Animated) matProps.SetFloatArray("spriteAnimFrameBuffer", new float[Profiling.k_MaxInstances]);
+            if (HasLifespan) matProps.SetFloatArray("lifespanBuffer", new float[Profiling.k_MaxInstances]);
+            if (IsTorus) matProps.SetFloatArray("torusMinBuffer", new float[Profiling.k_MaxInstances]);
+            if (IsCone) matProps.SetFloatArray("torusAngleBuffer", new float[Profiling.k_MaxInstances]);
+            if (IsStretch) matProps.SetVectorArray("stretchBuffer", new Vector4[Profiling.k_MaxInstances]);
+        
+            if (IsColorBaseColor) matProps.SetVectorArray("colorBaseColorBuffer", new Vector4[Profiling.k_MaxInstances]);
+            if (IsColorA) matProps.SetVectorArray("colorABuffer", new Vector4[Profiling.k_MaxInstances]);
+            if (IsColorB) matProps.SetVectorArray("colorBBuffer", new Vector4[Profiling.k_MaxInstances]);
+            if (IsColorC) matProps.SetVectorArray("colorCBuffer", new Vector4[Profiling.k_MaxInstances]);
         }
     }
 

@@ -290,6 +290,12 @@ public static class TorusMapper
         SnapToSurface(a, 0, out _, out float3 normal);
         return normal;
     }
+    
+    public static quaternion GetNormalQuaternion(float3 a, float3 forward)
+    {
+        SnapToSurface(a, 0, out _, out float3 normal);
+        return quaternion.LookRotationSafe(ProjectOntoSurface(a, forward) , a);
+    }
 
     public static void CreateRectangularMesh(float3 a, float3 b, float width, float height, int segments, ref Mesh mesh)
     {
