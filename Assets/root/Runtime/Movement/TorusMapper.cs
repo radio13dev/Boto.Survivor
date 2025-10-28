@@ -394,6 +394,11 @@ public static class TorusMapper
         return new Path(aT, bT);
     }
     
+    public static float3 LerpCartesian(float3 a, float3 b, float t)
+    {
+        return GetShortestPath(a,b).Evaluate(t);
+    }
+    
     public struct Path
     {
         public readonly float2 AT;
@@ -408,9 +413,27 @@ public static class TorusMapper
             for (int i = 0; i < vertices.Length; i++)
             {
                 float t = (float)i / (vertices.Length - 1);
-                float2 posT = math.float2(mathu.lerpangle(AT.x, BT.x, t), mathu.lerpangle(AT.y, BT.y, t));
+                float2 posT = math.float2(lerpangle(AT.x, BT.x, t, math.PI2), lerpangle(AT.y, BT.y, t, math.PI2));
                 vertices[i] = ToroidalToCartesian(posT);
             }
+        }
+        public float3 Evaluate(float t)
+        {
+            float2 posT = math.float2(lerpangle(AT.x, BT.x, t, math.PI2), lerpangle(AT.y, BT.y, t, math.PI2));
+            return ToroidalToCartesian(posT);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float lerpangle(float a, float b, float t, float length)
+        {
+            var num = repeat(b - a, length);
+            if (num > length/2)
+                num -= length;
+            return a + num * math.clamp(t,0,1);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float repeat(float t, float length)
+        {
+            return math.clamp(t - math.floor(t / length) * length, 0.0f, length);
         }
     }
 }

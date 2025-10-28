@@ -2,6 +2,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHandler, IPointerMoveHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
@@ -9,7 +10,7 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     public Transform MapCameraTransform;
     public Camera MapCamera;
     
-    public Transform CursorTransform;
+    public SmoothMovementTransform CursorTransform;
     public Collider MapCollider;
     public Vector2 TextureScale;
     
@@ -115,21 +116,44 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
         MapCamera.farClipPlane = distFromCam + 500;
     }
 
+    /*
+    [ExecuteInEditMode]
+    public void LateUpdate()
+    {
+        Vector3[] testPositions = new Vector3[]
+        {
+            new Vector3(0, 0, 0),
+            new Vector3(((RectTransform)transform).rect.width, 0, 0),
+            new Vector3(0, ((RectTransform)transform).rect.height, 0),
+            new Vector3(((RectTransform)transform).rect.width, ((RectTransform)transform).rect.height, 0)
+        };
+        
+        for (int i = 0; i < testPositions.Length; i++)
+        {
+            // As the mouse moves around on the surface move the cursor
+            var screenPos = testPositions[i];
+            screenPos.x /= ((RectTransform)transform).rect.width;
+            screenPos.y /= ((RectTransform)transform).rect.height;
+        
+            Ray ray = MapCamera.ViewportPointToRay(screenPos);
+            Debug.DrawRay(ray.origin, ray.direction*1000);
+        }
+    }
+    */
+
     public void OnPointerMove(PointerEventData eventData)
     {
         // As the mouse moves around on the surface move the cursor
         var worldPos = eventData.pointerCurrentRaycast.worldPosition;
         var screenPos = transform.InverseTransformPoint(worldPos);
-        screenPos.x /= TextureScale.x;
-        screenPos.y /= TextureScale.y;
-        screenPos += new Vector3(0.5f, 0f, 0);
+        screenPos.x /= ((RectTransform)transform).rect.width;
+        screenPos.y /= ((RectTransform)transform).rect.height;
         
         Ray ray = MapCamera.ViewportPointToRay(screenPos);
-        
         if (MapCollider.Raycast(ray, out var hitInfo, 10000))
         {
-            CursorTransform.position = hitInfo.point;
-            CursorTransform.rotation = Quaternion.LookRotation(hitInfo.normal, Vector3.up);
+            
+            CursorTransform.SetTarget(hitInfo.point, Quaternion.LookRotation(-hitInfo.normal, Vector3.up));
             CursorTransform.gameObject.SetActive(true);
         }
         else

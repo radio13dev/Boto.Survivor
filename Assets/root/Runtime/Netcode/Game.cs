@@ -14,6 +14,7 @@ using Unity.Jobs;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Object = UnityEngine.Object;
 
 public enum SaveState
 {
@@ -469,6 +470,14 @@ public class Game : IDisposable
         initSystemGroup.Enabled = true;
         initSystemGroup.Update();
         initSystemGroup.Enabled = false;
+        
+        // Spawn the terrain
+        CompleteDependencies();
+        if (GameType == 1)
+        {
+            var mapGen = Object.FindFirstObjectByType<MapGenMono>();
+            mapGen.Demo();
+        }
     }
 }
 

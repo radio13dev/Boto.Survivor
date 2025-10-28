@@ -6,6 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = Unity.Mathematics.Random;
 
 public unsafe class SingleplayerBehaviour : GameHostBehaviour
@@ -30,6 +31,7 @@ public unsafe class SingleplayerBehaviour : GameHostBehaviour
 
         // Randomise seed
         Game.InitWorld();
+            
         
         // Complete
         m_InitComplete = true;
