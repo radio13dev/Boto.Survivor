@@ -33,9 +33,26 @@ public class CameraRegistry : MonoBehaviour
     }
 
     static Camera m_UI;
+
+    public static Camera Map
+    {
+        get
+        {
+            if (m_Map) return m_Map;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) 
+                return Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).FirstOrDefault(c => c.gameObject.name == "Map Camera");
+#endif
+            return null;
+        }
+        private set => m_Map = value;
+    }
+
+    static Camera m_Map;
     
     public bool IsMain;
     public bool IsUI;
+    public bool IsMap;
     
     public static int UILayer;
 
@@ -44,11 +61,13 @@ public class CameraRegistry : MonoBehaviour
         UILayer = LayerMask.NameToLayer("UI");
         if (IsMain) Main = GetComponent<Camera>();
         if (IsUI) UI = GetComponent<Camera>();
+        if (IsMap) Map = GetComponent<Camera>();
     }
 
     private void OnDisable()
     {
         if (IsMain && Main && Main.gameObject == gameObject) Main = null;
         if (IsUI && UI && UI.gameObject == gameObject) UI = null;
+        if (IsMap && Map && Map.gameObject == gameObject) Map = null;
     }
 }

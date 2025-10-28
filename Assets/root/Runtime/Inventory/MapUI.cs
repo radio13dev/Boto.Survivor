@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHandler, IPointerMoveHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener
+public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Transform MapCameraTransform;
     public Camera MapCamera;
@@ -13,6 +13,7 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     public SmoothMovementTransform CursorTransform;
     public Collider MapCollider;
     public Vector2 TextureScale;
+    public MapDrawing MapDrawing;
     
     public Vector2 DragRate;
     
@@ -36,6 +37,7 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
     protected override void Awake()
     {
         base.Awake();
+        CursorTransform.gameObject.SetActive(false);
         OnDeselect(default);
     }
     
@@ -162,12 +164,31 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
         }
     }
 
-    public override void OnPointerDown(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        base.OnPointerDown(eventData);
-        if (eventData.button != PointerEventData.InputButton.Left)
-            return;
-            
+        if (m_Dragging) return;
+        
+        var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+        var screenPos = transform.InverseTransformPoint(worldPos);
+        screenPos.x /= ((RectTransform)transform).rect.width;
+        screenPos.y /= ((RectTransform)transform).rect.height;
+        
+        Ray ray = MapCamera.ViewportPointToRay(screenPos);
+        if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+        {
+            // Draw something
+            MapDrawing.AddPoint(hitInfo.point);
+        }
+    }
+
+    public void OnSubmit(BaseEventData eventData)
+    {
+        // Ping at the cursor position
+        // TODO
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
         // Drag!
         m_Dragging = true;
         m_AutoTrack = false;
@@ -185,16 +206,9 @@ public class MapUI : Selectable, IPointerDownHandler, IPointerUpHandler, IDragHa
         }
     }
 
-    public override void OnPointerUp(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)
     {
-        base.OnPointerUp(eventData);
         m_Dragging = false;
-    }
-
-    public void OnSubmit(BaseEventData eventData)
-    {
-        // Ping at the cursor position
-        // TODO
     }
 
     public void OnCancel(BaseEventData eventData)
