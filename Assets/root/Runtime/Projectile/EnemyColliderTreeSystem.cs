@@ -105,7 +105,7 @@ namespace Collisions
         public void OnCreate(ref SystemState state)
         {
             Tree = new(
-                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
+                new(min: new float3(-350, -200, -350), max: new float3(350, 200, 350)),
                 Allocator.Persistent
             );
             Query = SystemAPI.QueryBuilder().WithAll<NetworkId, LocalTransform, Collider>().WithAll<EnemyTag>().Build();
