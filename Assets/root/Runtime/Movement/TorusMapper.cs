@@ -413,27 +413,40 @@ public static class TorusMapper
             for (int i = 0; i < vertices.Length; i++)
             {
                 float t = (float)i / (vertices.Length - 1);
-                float2 posT = math.float2(lerpangle(AT.x, BT.x, t, math.PI2), lerpangle(AT.y, BT.y, t, math.PI2));
+                float2 posT = math.float2(lerpangle(AT.x, BT.x, t), lerpangle(AT.y, BT.y, t));
                 vertices[i] = ToroidalToCartesian(posT);
             }
         }
         public float3 Evaluate(float t)
         {
-            float2 posT = math.float2(lerpangle(AT.x, BT.x, t, math.PI2), lerpangle(AT.y, BT.y, t, math.PI2));
+            float2 posT = math.float2(lerpangle(AT.x, BT.x, t), lerpangle(AT.y, BT.y, t));
             return ToroidalToCartesian(posT);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float lerpangle(float a, float b, float t, float length)
+        public static float lerpangle(float a, float b, float t)
         {
-            var num = repeat(b - a, length);
-            if (num > length/2)
-                num -= length;
+            var num = repeat(b - a, math.PI2);
+            if (num > math.PI)
+                num -= math.PI2;
             return a + num * math.clamp(t,0,1);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float repeat(float t, float length)
         {
             return math.clamp(t - math.floor(t / length) * length, 0.0f, length);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float deltaAngle(float a, float b)
+        {
+            var num = repeat(b - a, math.PI2);
+            if (num > math.PI)
+                num -= math.PI2;
+            return num;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float2 deltaAngle(float2 a, float2 b)
+        {
+            return new float2(deltaAngle(a.x, b.x), deltaAngle(a.y, b.y));
         }
     }
 }

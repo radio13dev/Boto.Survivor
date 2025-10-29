@@ -13,7 +13,7 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
     public SmoothMovementTransform CursorTransform;
     public Collider MapCollider;
     public Vector2 TextureScale;
-    public MapDrawing MapDrawing;
+    public MapDrawing2 MapDrawing;
     
     public Vector2 DragRate;
     
@@ -198,16 +198,34 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
     {
         if (m_Dragging)
         {
-            // Rotate the camera
-            var delta = eventData.delta;
-            MapCameraTransform.rotation = Quaternion.AngleAxis(delta.x*DragRate.x, MapCameraTransform.up) 
-                                          * Quaternion.AngleAxis(delta.y*DragRate.y, MapCameraTransform.right)
-                                          * MapCameraTransform.rotation;
+            if (Mouse.current.rightButton.isPressed)
+            {
+                var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+                var screenPos = transform.InverseTransformPoint(worldPos);
+                screenPos.x /= ((RectTransform)transform).rect.width;
+                screenPos.y /= ((RectTransform)transform).rect.height;
+        
+                Ray ray = MapCamera.ViewportPointToRay(screenPos);
+                if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+                {
+                    // Draw something
+                    MapDrawing.AddSketchPoint(hitInfo.point);
+                }
+            }
+            else
+            {
+                // Rotate the camera
+                var delta = eventData.delta;
+                MapCameraTransform.rotation = Quaternion.AngleAxis(delta.x*DragRate.x, MapCameraTransform.up) 
+                                              * Quaternion.AngleAxis(delta.y*DragRate.y, MapCameraTransform.right)
+                                              * MapCameraTransform.rotation;
+            }
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        MapDrawing.EndSketchPoint();
         m_Dragging = false;
     }
 
