@@ -15,13 +15,19 @@ public class GenericPrefabAuthoring : MonoBehaviour
 {
     public GameObject ToSpawn;
     public bool Dynamic;
+    public bool InWorldSpace;
 
     public class Baker : Baker<GenericPrefabAuthoring>
     {
         public override void Bake(GenericPrefabAuthoring authoring)
         {
+            if (!DependsOn(authoring.ToSpawn))
+            {
+                Debug.LogError($"Invalid prefab on {authoring}: {authoring.ToSpawn}");
+                return;
+            }
             var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
-            AddComponent(entity, new GenericPrefabRequest(authoring.ToSpawn));
+            AddComponent(entity, new GenericPrefabRequest(authoring.ToSpawn, authoring.InWorldSpace));
             if (authoring.Dynamic)
                 AddComponent(entity, new GenericPrefabRequest.DynamicTag());
         }
@@ -104,7 +110,7 @@ public partial class GenericPrefabSpawnSystem : SystemBase
     protected override void OnUpdate()
     {
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        foreach ((var request, var transform, var entity) in SystemAPI.Query<RefRO<GenericPrefabRequest>, RefRO<LocalToWorld>>().WithNone<GenericPrefabProxy, Hidden>().WithEntityAccess())
+        foreach ((var request, var transform, var entity) in SystemAPI.Query<RefRO<GenericPrefabRequest>, RefRO<LocalTransform>>().WithNone<GenericPrefabProxy, Hidden>().WithEntityAccess())
         {
             GameObject spawned = null;
             if (request.ValueRO.ToSpawn)
