@@ -431,6 +431,12 @@ public static class TorusMapper
             return a + num * math.clamp(t,0,1);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float bezierlerpangle(float a, float b, float c, float d, float t)
+        {
+            
+            return lerpangle(lerpangle(a,b,t),lerpangle(c,d,t),t);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float repeat(float t, float length)
         {
             return math.clamp(t - math.floor(t / length) * length, 0.0f, length);

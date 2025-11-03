@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Drawing;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -18,14 +16,13 @@ public class MapDrawing2 : MonoBehaviour
     Mesh GetCreateMesh() {
         if (!m_Mesh)
         {
-            const int MAX_POINTS = 1000;
-            
             m_Mesh = new Mesh();
-            m_VertexArray = new (MAX_POINTS*2, Allocator.Persistent);
-            m_NormalArray = new (MAX_POINTS*2, Allocator.Persistent);
-            m_TangentArray = new (MAX_POINTS*2, Allocator.Persistent);
-            m_IndexArray = new ((MAX_POINTS-1)*6, Allocator.Persistent);
         }
+        const int MAX_POINTS = 1000;
+        if (!m_VertexArray.IsCreated) m_VertexArray = new (MAX_POINTS*3, Allocator.Persistent);
+        if (!m_NormalArray.IsCreated) m_NormalArray = new (MAX_POINTS*3, Allocator.Persistent);
+        if (!m_TangentArray.IsCreated) m_TangentArray = new (MAX_POINTS*3, Allocator.Persistent);
+        if (!m_IndexArray.IsCreated) m_IndexArray = new ((MAX_POINTS-1)*12, Allocator.Persistent);
         return m_Mesh;
     }
     Mesh m_Mesh;
@@ -69,6 +66,20 @@ public class MapDrawing2 : MonoBehaviour
         if (m_TangentArray.IsCreated) m_TangentArray.Dispose();
         if (m_IndexArray.IsCreated) m_IndexArray.Dispose();
     }
+    
+    [EditorButton]
+    private void Demo()
+    {
+        Clear();
+        if (m_Mesh) if (Application.isPlaying) Destroy(m_Mesh); else DestroyImmediate(m_Mesh);
+        AddPoint(math.float3(100, 100, 0));
+        AddPoint(math.float3(100, 100, 10));
+        AddPoint(math.float3(120, 100, 20));
+        AddPoint(math.float3(140, 50, 40));
+        AddPoint(math.float3(100, 20, 0));
+        AddPoint(math.float3(10, 100, 100));
+        AddPoint(math.float3(10, -100, -100));
+    }
 
     public void Clear()
     {
@@ -92,35 +103,46 @@ public class MapDrawing2 : MonoBehaviour
         var tangents = m_TangentArray;
         var indices = m_IndexArray;
         
-        int pointCount = math.min(Path.Count, m_VertexArray.Length/2);
+        int pointCount = math.min(Path.Count, m_VertexArray.Length/3);
         for (int i = 0; i < pointCount; i++)
         {
             // Fill the mesh with a line along the path, using LineWidth as the width
-            var right = math.cross(math.normalizesafe(Path[i+1]-Path[i]) , PathNormals[i]);
-            vertices[i] = Path[i] - right*LineWidth;
-            vertices[i+1] = Path[i] + right*LineWidth;
+            var dir = i == pointCount - 1 ? Path[i] - Path[i-1] : Path[i+1] - Path[i];
+            var right = math.cross(math.normalizesafe(dir) , PathNormals[i]);
+            vertices[i*3] = Path[i] - right*LineWidth;
+            vertices[i*3+1] = Path[i];
+            vertices[i*3+2] = Path[i] + right*LineWidth;
             
-            normals[i] = PathNormals[i];
-            normals[i+1] = PathNormals[i];
+            normals[i*3] = PathNormals[i];
+            normals[i*3+1] = PathNormals[i];
+            normals[i*3+2] = PathNormals[i];
             
-            tangents[i] = new float4(-right, 1);
-            tangents[i+1] = new float4(right, 1);
+            tangents[i*3] = new float4(-right, 1);
+            tangents[i*3+1] = new float4(0,0,0,1);
+            tangents[i*3+2] = new float4(right, 1);
             
             if (i != 0)
             {
-                indices[i*6 + 0] = (i-1)*2 + 0;
-                indices[i*6 + 1] = (i-1)*2 + 1;
-                indices[i*6 + 2] = (i)*2 + 0;
-                indices[i*6 + 3] = (i-1)*2 + 1;
-                indices[i*6 + 4] = (i)*2 + 1;
-                indices[i*6 + 5] = (i)*2 + 0;
+                indices[i*12 + 0] = (i-1)*3 + 0;
+                indices[i*12 + 1] = (i-1)*3 + 1;
+                indices[i*12 + 2] = (i)*3 + 0;
+                indices[i*12 + 3] = (i-1)*3 + 1;
+                indices[i*12 + 4] = (i)*3 + 1;
+                indices[i*12 + 5] = (i)*3 + 0;
+                
+                indices[i*12 + 6] = (i-1)*3 + 1;
+                indices[i*12 + 7] = (i-1)*3 + 2;
+                indices[i*12 + 8] = (i)*3 + 1;
+                indices[i*12 + 9] = (i-1)*3 + 2;
+                indices[i*12 + 10] = (i)*3 + 2;
+                indices[i*12 + 11] = (i)*3 + 1;
             }
         }
         
-        mesh.SetVertices(m_VertexArray, 0, pointCount*2);
-        mesh.SetNormals(m_NormalArray, 0, pointCount*2);
-        mesh.SetTangents(m_TangentArray, 0, pointCount*2);
-        mesh.SetIndices(m_IndexArray, 0, math.max((pointCount-1)*6, 0));
+        mesh.SetVertices(m_VertexArray, 0, pointCount*3);
+        mesh.SetNormals(m_NormalArray, 0, pointCount*3);
+        mesh.SetTangents(m_TangentArray, 0, pointCount*3);
+        mesh.SetIndices(m_IndexArray,  indicesStart: 0, indicesLength: math.max((pointCount-1)*12, 0), MeshTopology.Triangles, 0);
         
         LineMeshFilter.sharedMesh = mesh;
         OutlineMeshFilter.sharedMesh = mesh;
@@ -137,19 +159,6 @@ public class MapDrawing2 : MonoBehaviour
         // Add all toroidal points back in again
         for (int i = 0; i < oldPoints.Count; i++)
             AddPoint(oldPoints[i]);
-    }
-    
-    [EditorButton]
-    private void Demo()
-    {
-        Clear();
-        AddPoint(math.float3(100, 100, 0));
-        AddPoint(math.float3(100, 100, 10));
-        AddPoint(math.float3(120, 100, 20));
-        AddPoint(math.float3(140, 50, 40));
-        AddPoint(math.float3(100, 20, 0));
-        AddPoint(math.float3(10, 100, 100));
-        AddPoint(math.float3(10, -100, -100));
     }
     
     bool m_HasSketch = false;
@@ -234,5 +243,10 @@ public class MapDrawing2 : MonoBehaviour
             Path.Add(cartesianPoint);
             PathNormals.Add(normal);
         }
+    }
+    
+    public static void ConvertPathToVerticesOfLineWithWidth(List<float3> path, List<Vector3> vertices, List<int> indices)
+    {
+        
     }
 }

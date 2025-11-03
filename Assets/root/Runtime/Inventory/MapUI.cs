@@ -13,7 +13,7 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
     public SmoothMovementTransform CursorTransform;
     public Collider MapCollider;
     public Vector2 TextureScale;
-    public MapDrawing2 MapDrawing;
+    public MapDrawing MapDrawing;
     
     public Vector2 DragRate;
     

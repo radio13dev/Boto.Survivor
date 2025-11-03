@@ -9,10 +9,13 @@ using UnityEngine.Serialization;
 [ExecuteInEditMode]
 public class MapDrawing : MonoBehaviour
 {
+    public const int MAX_NODES = 200;
+
     public List<Vector3> Path = new();
     public List<Vector3> PathNormals = new();
     public List<float3> Nodes = new();
     public List<float2> PointsToroidal = new();
+    public List<int> NodeSectionLengths = new();
     List<Vector3> m_PathOutline_GeneratedPerFrame = new();
     
     public int SEGMENT_SIZE = 10;
@@ -50,6 +53,7 @@ public class MapDrawing : MonoBehaviour
         PathNormals.Clear();
         Nodes.Clear();
         PointsToroidal.Clear();
+        NodeSectionLengths.Clear();
     }
 
     private void OnValidate()
@@ -132,6 +136,16 @@ public class MapDrawing : MonoBehaviour
             m_HasSketch = false;
         }
         
+        while (Path.Count > MAX_NODES)
+        {
+            var nodesToRemove = NodeSectionLengths[0];
+            NodeSectionLengths.RemoveAt(0);
+            Nodes.RemoveAt(0);
+            PointsToroidal.RemoveAt(0);
+            Path.RemoveRange(0, nodesToRemove);
+            PathNormals.RemoveRange(0, nodesToRemove);
+        }
+        
         PointsToroidal.Add(TorusMapper.CartesianToToroidal(point));
         Nodes.Add(TorusMapper.ToroidalToCartesian(PointsToroidal[^1]));
         
@@ -152,7 +166,10 @@ public class MapDrawing : MonoBehaviour
                 Path.Add(cartesianPoint);
                 PathNormals.Add(normal);
             }
+            NodeSectionLengths.Add(sectionSize);
         }
+        else
+            NodeSectionLengths.Add(1);
 
         // Always add the node point to the end of the path
         {
