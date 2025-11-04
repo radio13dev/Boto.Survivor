@@ -207,7 +207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.003566133
+      value: -0.003566134
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -260,9 +260,85 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::RotateWithTorusSurface
   KeepHeight: 1
   Height: 0
+--- !u!1 &2136771811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2136771813}
+  - component: {fileID: 2136771812}
+  - component: {fileID: 2136771814}
+  - component: {fileID: 2136771815}
+  m_Layer: 0
+  m_Name: SpawnDisabledZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2136771812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e445128fd934aabbc4af07d48acad1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerFlagZoneAuthoring
+  Zone:
+    RadiusSqr: 200
+    Mode: 0
+--- !u!4 &2136771813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.0019539043, y: -0.0035661336, z: 0.10295048, w: 0.9946782}
+  m_LocalPosition: {x: 143.57597, y: 78.30359, z: 3.2399092}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2136771814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &2136771815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
+  Particle:
+    _Asset: {fileID: 11400000, guid: 4e8deddc8791c2147901f2185310ab9c, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 359834467}
   - {fileID: 1480697493}
+  - {fileID: 2136771813}

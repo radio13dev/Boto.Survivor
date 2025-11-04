@@ -57,12 +57,13 @@ public partial struct EnemySpawnerFlagZoneSystem : ISystem
         zoneFlags.Dispose(state.Dependency);
     }
     
+    [WithPresent(typeof(EnemySpawner))]
     partial struct Job : IJobEntity
     {
         [ReadOnly] public NativeArray<LocalTransform> ZoneTransforms;
         [ReadOnly] public NativeArray<EnemySpawnerFlagZone> ZoneFlags;
     
-        public void Execute(in LocalTransform transform, ref EnemySpawner spawner)
+        public void Execute(in LocalTransform transform, ref EnemySpawner spawner, EnabledRefRW<EnemySpawner> spawnerEnabled)
         {
             spawner.Mode = EnemySpawnerMode.Wave_01_Common;
             
@@ -97,6 +98,8 @@ public partial struct EnemySpawnerFlagZoneSystem : ISystem
                     insideT = ZoneTransforms[i];
                 }
             }
+            
+            spawnerEnabled.ValueRW = spawner.Mode != EnemySpawnerMode.None;
         }
     }
 }

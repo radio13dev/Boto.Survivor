@@ -30,7 +30,9 @@ public partial struct GenericEnemyMovementSystem : ISystem
 
     public void OnCreate(ref SystemState state)
     {
-        m_TargetQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlled, LocalTransform>().Build();
+        state.RequireForUpdate<SharedRandom>();
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        m_TargetQuery = SystemAPI.QueryBuilder().WithAll<PlayerControlled, LocalTransform, EnemySpawner>().Build();
         state.RequireForUpdate(m_TargetQuery);
     }
 
@@ -40,18 +42,22 @@ public partial struct GenericEnemyMovementSystem : ISystem
         // TODO: Order this list.
         var targets = m_TargetQuery.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        var sharedRandom = SystemAPI.GetSingleton<SharedRandom>();
         
         var a = new GenericEnemyMovementJob()
         {
+            Random = sharedRandom,
             Targets = targets,
         }.Schedule(state.Dependency);
         var b = new WheelEnemyMovementJob()
         {
+            Random = sharedRandom,
             dt = SystemAPI.Time.DeltaTime,
             Targets = targets,
         }.Schedule(a);
         var c = new EnemyTrapMovementJob()
         {
+            Random = sharedRandom,
             ecb = delayedEcb,
             Time = SystemAPI.Time.ElapsedTime,
             dt = SystemAPI.Time.DeltaTime,
@@ -63,32 +69,10 @@ public partial struct GenericEnemyMovementSystem : ISystem
         targets.Dispose(state.Dependency);
     }
     
-    [BurstCompile]
-    [WithAll(typeof(GenericEnemyMovementTag))]
-    partial struct GenericEnemyMovementJob : IJobEntity
-    {   
-        [ReadOnly] public NativeArray<LocalTransform> Targets;
-        public void Execute(in LocalTransform localTransform, in Movement movement, ref StepInput input)
-        {
-            float3 dir = float3.zero;
-            float bestDist = float.MaxValue;
-            for (int i = 0; i < Targets.Length; i++)
-            {
-                var dif = math.abs(localTransform.Position - Targets[i].Position);
-                var dist = dif.x + dif.y + dif.z;
-                if (dist < bestDist)
-                {
-                    bestDist = dist;
-                    dir = Targets[i].Position - localTransform.Position;
-                }
-            }
-            input = new StepInput(){Direction = dir };
-        }
-    }
-    
-    public static void GetClosest(in NativeArray<LocalTransform> targets, in float3 p, out float bestDistSqr, out int bestTarget)
+    const float MAX_FOLLOW_DIST_SQR = 100f*100f;
+    private static void GetClosest(in NativeArray<LocalTransform> targets, in float3 p, out float bestDistSqr, out int bestTarget)
     {
-        bestDistSqr = float.MaxValue;
+        bestDistSqr = MAX_FOLLOW_DIST_SQR;
         bestTarget = -1;
         for (int i = 0; i < targets.Length; i++)
         {
@@ -100,6 +84,42 @@ public partial struct GenericEnemyMovementSystem : ISystem
             }
         }
     }
+
+    private static void DoIdleMovement(SharedRandom random, ref StepInput input, in LocalTransform localTransform)
+    {
+        // Idle wander
+        var r = random.Random;
+        var i = (math.abs(r.NextInt()) + (int)math.abs(math.floor(localTransform.Position.x*7 + localTransform.Position.y*13 + localTransform.Position.z*5)))%(int)GameDebug.A;
+        if (i <= (int)GameDebug.B)
+        {
+            input = new StepInput(){Direction = r.NextFloat3Direction() };
+        }
+        else if (i <= (int)GameDebug.C)
+        {
+            input = default;
+        }
+    }
+    
+    [BurstCompile]
+    [WithAll(typeof(GenericEnemyMovementTag))]
+    partial struct GenericEnemyMovementJob : IJobEntity
+    {   
+        [ReadOnly] public SharedRandom Random;
+        [ReadOnly] public NativeArray<LocalTransform> Targets;
+        public void Execute(in LocalTransform localTransform, in Movement movement, ref StepInput input)
+        {
+        
+            GetClosest(in Targets, in localTransform.Position, out float bestDistSqr, out int bestTarget);
+            if (bestTarget == -1)
+            {
+                DoIdleMovement(Random, ref input, in localTransform);
+            }
+            else
+            {
+                input = new StepInput(){Direction = Targets[bestTarget].Position - localTransform.Position };
+            }
+        }
+    }
     
     [BurstCompile]
     [WithPresent(typeof(MovementInputLockout))]
@@ -107,6 +127,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
     {   
         public const float LOCK_ON_RANGE_SQR = 400f;
     
+        [ReadOnly] public SharedRandom Random;
         [ReadOnly] public float dt;
         [ReadOnly] public NativeArray<LocalTransform> Targets;
         public void Execute(in LocalTransform localTransform, in Movement movement, EnabledRefRW<MovementInputLockout> movementLockout, ref WheelEnemyMovement wheel, ref StepInput input, ref Force force)
@@ -120,7 +141,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     GetClosest(in Targets, in localTransform.Position, out float bestDistSqr, out int bestTarget);
                     if (bestTarget == -1)
                     {
-                        input = default;
+                        DoIdleMovement(Random, ref input, in localTransform);
                     }
                     else
                     {
@@ -214,6 +235,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
         public const float LOCK_ON_RANGE_SQR = 400f;
     
         public EntityCommandBuffer ecb;
+        [ReadOnly] public SharedRandom Random;
         [ReadOnly] public double Time;
         [ReadOnly] public float dt;
         [ReadOnly] public NativeArray<LocalTransform> Targets;
@@ -230,7 +252,7 @@ public partial struct GenericEnemyMovementSystem : ISystem
                     GetClosest(in Targets, in localTransform.Position, out float bestDistSqr, out int bestTarget);
                     if (bestTarget == -1)
                     {
-                        input = default;
+                        DoIdleMovement(Random, ref input, in localTransform);
                     }
                     else
                     {

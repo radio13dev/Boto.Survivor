@@ -115,7 +115,7 @@ public readonly struct SpawnRadius
     }
 }
 
-public struct EnemySpawner : IComponentData
+public struct EnemySpawner : IComponentData, IEnableableComponent
 {
     public EnemySpawnerMode Mode;
 }

@@ -59,6 +59,7 @@ public class SurvivorAuthoring : MonoBehaviourGizmos
             AddComponent(entity, new Health(authoring.Health));
             
             AddComponent<EnemySpawner>(entity);
+            SetComponentEnabled<EnemySpawner>(entity, true);
             
             // Abilities and Input Lockouts
             AddComponent(entity, new MovementInputLockout());
