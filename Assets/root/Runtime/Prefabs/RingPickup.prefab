@@ -49,7 +49,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 19
     _Asset: {fileID: 11400000, guid: 2cb427e720b130842a9bcb3d0a16f678, type: 2}
 --- !u!114 &1234742855914670883
 MonoBehaviour:
@@ -63,14 +62,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -1
-    y: -1
-    z: -1
-  Max:
-    x: 1
-    y: 1
+  EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 4
+  Radius: 1
+  ColliderType: 0
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &497324972839419108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,6 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::RingPickupAuthoring
   SpecificRing:
     PrimaryEffect: 0
+    BoostedStats: 000000
+    BoostedStatsBoosts: 000000
   LootKey: 1
 --- !u!114 &-6448945524902120671
 MonoBehaviour:
@@ -112,3 +117,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
   ToSpawn: {fileID: 6090904747135311173, guid: 9518b941fb2758344a89f797c0bb9396, type: 3}
   Dynamic: 1
+  InWorldSpace: 0

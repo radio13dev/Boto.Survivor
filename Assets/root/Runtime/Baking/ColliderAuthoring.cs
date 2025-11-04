@@ -16,6 +16,8 @@ public struct EnableColliderOnDestroy : IComponentData
 public class ColliderAuthoring : MonoBehaviourGizmos
 {
     public bool EnableColliderOnDestroy;
+    
+    public CollidesWithTerrain.AuthoringEnum TerrainCollisionMask = CollidesWithTerrain.AuthoringEnum.All;
 
     public float Radius = 1;
     public ColliderType ColliderType = ColliderType.AABB;
@@ -68,6 +70,10 @@ public class ColliderAuthoring : MonoBehaviourGizmos
             {
                 AddComponent<EnableColliderOnDestroy>(entity);
                 SetComponentEnabled<Collisions.Collider>(entity, false);
+            }
+            if (authoring.TerrainCollisionMask != CollidesWithTerrain.AuthoringEnum.None && !GetComponent<TerrainAuthoring>())
+            {
+                AddComponent(entity, new CollidesWithTerrain() { Mode = authoring.TerrainCollisionMask.ToMask() });
             }
         }
     }

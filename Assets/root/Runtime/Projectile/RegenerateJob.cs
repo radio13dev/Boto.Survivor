@@ -21,10 +21,11 @@ namespace Collisions
     }
     public partial struct RegenerateJob_Collider : IJob
     {
-        public NativeTrees.NativeOctree<(Entity e, Collider c)> tree;
+        public NativeTrees.NativeOctree<(Entity e, Collider c, TerrainCollisionSystem.Mask m)> tree;
         [ReadOnly] public NativeArray<Entity> entities;
         [ReadOnly] public NativeArray<Collider> colliders;
         [ReadOnly] public NativeArray<LocalTransform> transforms;
+        [ReadOnly] public NativeArray<TerrainTag> terrains;
 
         public void Execute()
         {
@@ -32,7 +33,7 @@ namespace Collisions
             for (int i = 0; i < colliders.Length; i++)
             {
                 var c = colliders[i].Apply(transforms[i]);
-                tree.Insert((entities[i], c), c.AABB);
+                tree.Insert((entities[i], c, terrains[i].Mask), c.AABB);
             }
         }
     }

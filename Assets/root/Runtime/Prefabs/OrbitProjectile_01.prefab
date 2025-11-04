@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9fc89639284d18825bb54aa8c18d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ProjectileAuthoring
+  Lightweight: 0
 --- !u!114 &4801726877944496533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,6 +177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 0
   Radius: 0.73
   ColliderType: 0
   TorusMin: 0

@@ -65,6 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 1
+  TerrainCollisionMask: 0
   Radius: 1
   ColliderType: 2
   TorusMin: 0.53
@@ -136,6 +137,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
   type: 1
-  Health:
-    Value: 0
-  Chance: 0
+  Health: 10

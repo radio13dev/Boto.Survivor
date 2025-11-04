@@ -29,7 +29,6 @@ public class OrbitProjectileAuthoring : MonoBehaviour
             AddComponent(entity, new MovementSettings() { Speed = 1 });
             AddComponent(entity, new OwnedProjectile());
             AddComponent<Pierce>(entity, Pierce.Infinite);
-            AddComponent<IgnoresTerrain>(entity);
         }
     }
 }

@@ -207,7 +207,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.003566134
+      value: -0.0035661345
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -272,6 +272,8 @@ GameObject:
   - component: {fileID: 2136771812}
   - component: {fileID: 2136771814}
   - component: {fileID: 2136771815}
+  - component: {fileID: 2136771817}
+  - component: {fileID: 2136771816}
   m_Layer: 0
   m_Name: SpawnDisabledZone
   m_TagString: Untagged
@@ -335,6 +337,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
     _Asset: {fileID: 11400000, guid: 4e8deddc8791c2147901f2185310ab9c, type: 2}
+--- !u!114 &2136771816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
+  Radius: 14.142136
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
+  Mesh:
+    _Asset: {fileID: 0}
+--- !u!114 &2136771817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136771811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

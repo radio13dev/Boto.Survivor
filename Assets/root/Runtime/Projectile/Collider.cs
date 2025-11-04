@@ -332,15 +332,15 @@ namespace Collisions
                 case ColliderType.Sphere:
                 {
                     var d = math.distance(p, Center);
-                    return math.normalizesafe(p - Center)*(Radius - d);
+                    return p + math.normalizesafe(p - Center)*((Radius+other.Radius) - d);
                 }
                 case ColliderType.Torus:
                 {
                     var d = math.distance(p, Center);
                     if (d >= (TorusMin + Radius) / 2)
-                        return math.normalizesafe(p - Center)*(Radius - d);
+                        return p + math.normalizesafe(p - Center)*((Radius+other.Radius) - d);
                     else
-                        return math.normalizesafe(p - Center)*(TorusMin - d);
+                        return p + math.normalizesafe(p - Center)*((TorusMin-other.Radius) - d);
                 }
                 case ColliderType.MeshCollider:
                 {

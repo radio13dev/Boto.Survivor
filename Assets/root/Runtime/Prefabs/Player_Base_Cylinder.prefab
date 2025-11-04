@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 2
   Radius: 1
   ColliderType: 1
   TorusMin: 0
@@ -144,6 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
   ToSpawn: {fileID: 957610706970675159, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
   Dynamic: 1
+  InWorldSpace: 0
 --- !u!114 &4341140175045690747
 MonoBehaviour:
   m_ObjectHideFlags: 0

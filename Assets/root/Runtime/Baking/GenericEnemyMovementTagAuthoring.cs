@@ -87,14 +87,22 @@ public partial struct GenericEnemyMovementSystem : ISystem
 
     private static void DoIdleMovement(SharedRandom random, ref StepInput input, in LocalTransform localTransform)
     {
+        const int WANDER_SEED_MOD = 2000;
+        const int WANDER_CHANCE = 4;
+        const int IDLE_CHANCE = 30;
+    
         // Idle wander
         var r = random.Random;
-        var i = (math.abs(r.NextInt()) + (int)math.abs(math.floor(localTransform.Position.x*7 + localTransform.Position.y*13 + localTransform.Position.z*5)))%(int)GameDebug.A;
-        if (i <= (int)GameDebug.B)
+        var i = (math.abs(r.NextInt()) + (int)math.abs(math.floor(
+            localTransform.Position.x*7 + 
+            localTransform.Position.y*13 + 
+            localTransform.Position.z*5)
+        ))%WANDER_SEED_MOD;
+        if (i <= WANDER_CHANCE)
         {
             input = new StepInput(){Direction = r.NextFloat3Direction() };
         }
-        else if (i <= (int)GameDebug.C)
+        else if (i <= IDLE_CHANCE)
         {
             input = default;
         }
