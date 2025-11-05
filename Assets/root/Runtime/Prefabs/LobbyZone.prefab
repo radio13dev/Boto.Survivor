@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2.01
   ColliderType: 1
   TorusMin: 0
@@ -81,6 +82,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &7009472383582892447
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,6 +147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
   ToSpawn: {fileID: 957610706970675159, guid: 9ebc0dee62022f042acd753b8b6e1314, type: 3}
   Dynamic: 1
+  InWorldSpace: 0
 --- !u!114 &2997335420636117245
 MonoBehaviour:
   m_ObjectHideFlags: 0

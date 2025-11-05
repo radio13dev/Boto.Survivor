@@ -203,11 +203,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0019539043
+      value: -0.001953904
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.0035661354
+      value: -0.003566136
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -271,7 +271,6 @@ GameObject:
   - component: {fileID: 2136771813}
   - component: {fileID: 2136771812}
   - component: {fileID: 2136771814}
-  - component: {fileID: 2136771815}
   - component: {fileID: 2136771817}
   - component: {fileID: 2136771816}
   - component: {fileID: 2136771818}
@@ -324,20 +323,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
---- !u!114 &2136771815
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
-  Particle:
-    _Asset: {fileID: 11400000, guid: 4e8deddc8791c2147901f2185310ab9c, type: 2}
 --- !u!114 &2136771816
 MonoBehaviour:
   m_ObjectHideFlags: 0

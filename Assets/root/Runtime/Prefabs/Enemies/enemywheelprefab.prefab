@@ -88,6 +88,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &1778139747627459531
 PrefabInstance:
@@ -135,6 +136,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7612548578835763684, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
+      propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7581839955916734032, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
@@ -272,6 +277,10 @@ PrefabInstance:
     - target: {fileID: 4993247010217307183, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -2.1057208
+      objectReference: {fileID: 0}
+    - target: {fileID: 5334458455040493856, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6525607936865869595, guid: d5fbb2d33fefb184c8d9f662ea8e70f0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
