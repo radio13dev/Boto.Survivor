@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ElementFocus : MonoBehaviour
@@ -40,7 +41,7 @@ public class ElementFocus : MonoBehaviour
             scale = Vector3.one;
             
             if (m_ForcedFocus.TryGetComponent<IFocusScale>(out var scaler))
-                scale *= scaler.GetFocusScale();
+                scale *= (float3)scaler.GetFocusScale();
             
             if (!m_Active)
             {
@@ -62,7 +63,7 @@ public class ElementFocus : MonoBehaviour
             scale = FocusedScale;
             
             if (UIFocus.Interact.TryGetComponent<IFocusScale>(out var scaler))
-                scale *= scaler.GetFocusScale();
+                scale *= (float3)scaler.GetFocusScale();
         }
         else if (UIFocus.Focus)
         {
@@ -78,7 +79,7 @@ public class ElementFocus : MonoBehaviour
             scale = Vector3.one;
             
             if (UIFocus.Focus.TryGetComponent<IFocusScale>(out var scaler))
-                scale *= scaler.GetFocusScale();
+                scale *= (float3)scaler.GetFocusScale();
             
             if (!m_Active)
             {
