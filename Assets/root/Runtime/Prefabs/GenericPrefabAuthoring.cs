@@ -119,6 +119,7 @@ public partial class GenericPrefabSpawnSystem : SystemBase
                     request.ValueRO.InWorldSpace ? float3.zero : transform.ValueRO.Position,
                     request.ValueRO.InWorldSpace ? quaternion.identity : transform.ValueRO.Rotation
                 );
+                spawned.transform.localScale = Vector3.one*transform.ValueRO.Scale;
                 foreach (var link in spawned.GetComponentsInChildren<EntityLinkMono>(true))
                     link.SetLink(GameReference, entity);
 
@@ -214,7 +215,10 @@ public partial struct GenericPrefabTrackSystem : ISystem
             var finalForward = math.lerp(oldForward, newForward, dt);
             var finalRot = quaternion.LookRotationSafe(finalForward, newUp);
         
+            var scale = math.lerp(transformsLast[index].Value.Scale, transforms[index].Scale, T);
+            
             transform.SetPositionAndRotation(finalPos, finalRot);
+            transform.localScale = new Vector3(scale, scale, scale);
         }
     }
 }
@@ -271,6 +275,8 @@ public partial struct GenericPrefabTrackSystem_Light : ISystem
         public void Execute(int index, TransformAccess transform)
         {
             transform.SetPositionAndRotation(transforms[index].Position, transforms[index].Rotation);
+            var scale = transforms[index].Scale;
+            transform.localScale = new Vector3(scale, scale, scale);
         }
     }
 }

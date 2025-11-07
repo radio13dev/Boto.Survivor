@@ -203,11 +203,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.001953904
+      value: -0.0019539038
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.003566136
+      value: -0.0035661375
       objectReference: {fileID: 0}
     - target: {fileID: 7000380137355549543, guid: 4625fd9f0f2c41941bd275e0badc559e, type: 3}
       propertyPath: m_LocalRotation.z
@@ -260,125 +260,67 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::RotateWithTorusSurface
   KeepHeight: 1
   Height: 0
---- !u!1 &2136771811
-GameObject:
+--- !u!1001 &4724629499386077914
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2136771813}
-  - component: {fileID: 2136771812}
-  - component: {fileID: 2136771814}
-  - component: {fileID: 2136771817}
-  - component: {fileID: 2136771816}
-  - component: {fileID: 2136771818}
-  m_Layer: 0
-  m_Name: SpawnDisabledZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2136771812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e445128fd934aabbc4af07d48acad1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerFlagZoneAuthoring
-  Zone:
-    RadiusSqr: 200
-    Mode: 0
---- !u!4 &2136771813
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0019539043, y: -0.0035661336, z: 0.10295048, w: 0.9946782}
-  m_LocalPosition: {x: 143.57597, y: 78.30359, z: 3.2399092}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2136771814
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
---- !u!114 &2136771816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  EnableColliderOnDestroy: 0
-  TerrainCollisionMask: 1
-  Radius: 14.142136
-  ColliderType: 1
-  TorusMin: 0
-  ConeAngle: 0
-  ConeDirection:
-    x: 0
-    y: 0
-    z: 1
-  Mesh:
-    _Asset: {fileID: 0}
---- !u!114 &2136771817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
-  Mask: 2
---- !u!114 &2136771818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2136771811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 659194748135722010, guid: cecc4ae8d8115af4c955c20dbcadfcf2, type: 3}
-  Dynamic: 0
-  InWorldSpace: 0
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 142513335708862768, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_Name
+      value: SpawnDisabledZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 143.57597
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 78.30359
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.2399092
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9946782
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.0019539043
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0035661336
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.10295048
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 359834467}
   - {fileID: 1480697493}
-  - {fileID: 2136771813}
+  - {fileID: 4724629499386077914}

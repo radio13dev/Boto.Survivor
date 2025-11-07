@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -67,6 +68,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &3813260025947509946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,6 +82,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &457616823477374415
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,7 +210,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 403800044264836794}
-  - component: {fileID: 7818820415214851543}
   - component: {fileID: 2886296556778442393}
   - component: {fileID: 9203168092180471440}
   m_Layer: 0
@@ -231,21 +234,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7000380137355549543}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7818820415214851543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727927787352593932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e445128fd934aabbc4af07d48acad1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerFlagZoneAuthoring
-  Zone:
-    RadiusSqr: 500
-    Mode: 0
 --- !u!114 &2886296556778442393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,6 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -455,6 +444,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &4602889432896326893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -467,6 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &2662817539102453513
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,6 +518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -534,6 +527,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8040238379122860920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -546,6 +541,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &2775313513813029329
 GameObject:
   m_ObjectHideFlags: 0
@@ -841,6 +837,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -849,6 +846,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &222209934717030684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -861,6 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &4043706611485547362
 GameObject:
   m_ObjectHideFlags: 0
@@ -979,6 +979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -987,6 +988,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &2677548640404490082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -999,6 +1002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &4488410351959484215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,6 +1062,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1066,6 +1071,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &4968225774664344966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1078,6 +1085,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &4618793040935008666
 GameObject:
   m_ObjectHideFlags: 0
@@ -1255,6 +1263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1263,6 +1272,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &9121811138344114186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1275,6 +1286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &5212722020516171411
 GameObject:
   m_ObjectHideFlags: 0
@@ -1452,6 +1464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1460,6 +1473,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &4930345380050385425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1472,6 +1487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &5526961173134412416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,6 +1547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1539,6 +1556,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &7018489834849733483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1551,6 +1570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &5940595799835900964
 GameObject:
   m_ObjectHideFlags: 0
@@ -1669,6 +1689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1677,6 +1698,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &2970341212172234487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1689,6 +1712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &6036599750753480118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1748,6 +1772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1756,6 +1781,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8526899009433067021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1768,6 +1795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &6428211872137981950
 GameObject:
   m_ObjectHideFlags: 0
@@ -1827,6 +1855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1835,6 +1864,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &981989966506188188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1847,6 +1878,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &6840475520937801316
 GameObject:
   m_ObjectHideFlags: 0
@@ -1965,6 +1997,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -1973,6 +2006,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8575068699688835581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1985,6 +2020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &7009472383582892447
 GameObject:
   m_ObjectHideFlags: 0
@@ -2057,6 +2093,7 @@ Transform:
   - {fileID: 2289630027899870747}
   - {fileID: 3022869463830380561}
   - {fileID: 403800044264836794}
+  - {fileID: 670721694538272628}
   - {fileID: 882088133608104811}
   - {fileID: 7378735272987794579}
   - {fileID: 1239742391231086680}
@@ -2265,6 +2302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2273,6 +2311,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &1446963679594742511
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2285,6 +2325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &7183954185196452730
 GameObject:
   m_ObjectHideFlags: 0
@@ -2403,6 +2444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2411,6 +2453,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &6782932998830584037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2423,6 +2467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &7614800127842623262
 GameObject:
   m_ObjectHideFlags: 0
@@ -2482,6 +2527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2490,6 +2536,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &1009279328614093951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2502,6 +2550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &8047843502973528271
 GameObject:
   m_ObjectHideFlags: 0
@@ -2561,6 +2610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2569,6 +2619,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &8615986566534574929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2581,6 +2633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &8169682367460214822
 GameObject:
   m_ObjectHideFlags: 0
@@ -2640,6 +2693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2648,6 +2702,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &1216197616834029941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2660,6 +2716,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &8466933982795424961
 GameObject:
   m_ObjectHideFlags: 0
@@ -2719,6 +2776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2727,6 +2785,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &5103634429364019079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2739,6 +2799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &8612593326926613582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2798,6 +2859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
   EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 1
   Radius: 2
   ColliderType: 1
   TorusMin: 0
@@ -2806,6 +2868,8 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &7018083987457080635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2818,6 +2882,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e73c2e020bbcb1488eb08bb75f45e77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::TerrainAuthoring
+  Mask: 255
 --- !u!1 &8939701616436823689
 GameObject:
   m_ObjectHideFlags: 0
@@ -3133,4 +3198,82 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2845609448633241007, guid: 256e471a891740f4f89a98ca095f679d, type: 3}
   m_PrefabInstance: {fileID: 4691389708487528764}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7796046448394057168
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7000380137355549543}
+    m_Modifications:
+    - target: {fileID: 142513335708862768, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_Name
+      value: SafeZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 20.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 20.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 20.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9946782
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.0019539043
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0035661336
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.10295048
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+--- !u!4 &670721694538272628 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7313844847052536484, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+  m_PrefabInstance: {fileID: 7796046448394057168}
   m_PrefabAsset: {fileID: 0}

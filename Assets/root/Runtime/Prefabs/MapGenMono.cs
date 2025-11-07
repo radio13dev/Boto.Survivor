@@ -731,8 +731,10 @@ public class MapGenMono : MonoBehaviourGizmos
             
             if (ecb.IsCreated)
             {
-                var gameEventE = ecb.Instantiate(gameEventTemplates[blobType*5 + prefabIndex].Entity);
-                ecb.SetComponent(gameEventE, LocalTransform.FromPositionRotation(instance.transform.position, instance.transform.rotation));
+                var templateE = gameEventTemplates[blobType*5 + prefabIndex].Entity;
+                var gameEventE = ecb.Instantiate(templateE);
+                var oldT = Game.ClientGame.World.EntityManager.GetComponentData<LocalTransform>(templateE);
+                ecb.SetComponent(gameEventE, LocalTransform.FromPositionRotationScale(instance.transform.position, instance.transform.rotation, oldT.Scale));
             }
             return true;
         }

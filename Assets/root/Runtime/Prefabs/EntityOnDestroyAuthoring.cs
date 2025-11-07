@@ -20,6 +20,16 @@ public class EntityOnDestroyAuthoring : MonoBehaviour
     {
         public override void Bake(EntityOnDestroyAuthoring authoring)
         {
+            if (!DependsOn(authoring.Prefab))
+            {
+                Debug.LogError($"EntityOnDestroyAuthoring must have a Prefab assigned: {authoring.gameObject}", authoring);
+                return;
+            }
+            if (!DependsOn(GetComponent<DestroyableAuthoring>()))
+            {
+                Debug.LogError($"EntityOnDestroyAuthoring must have a DestroyableAuthoring component on the same GameObject: {authoring.gameObject}", authoring);
+                return;
+            }
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             AddComponent(entity, new EntityOnDestroy(){ Prefab = GetEntity(authoring.Prefab, TransformUsageFlags.None), Count = authoring.Count });
         }
@@ -48,8 +58,8 @@ public partial struct EntityOnDestroySystem : ISystem
             )
         {
             Random random = SystemAPI.GetSingleton<SharedRandom>().Random;
-            Debug.Log($"Creating {10} entities on destroy");
-            for (int i = 0; i < 10; i++)
+            Debug.Log($"Creating {onDestroy.ValueRO.Count} entities on destroy");
+            for (int i = 0; i < onDestroy.ValueRO.Count; i++)
             {
                 var entity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);
                 delayedEcb.SetComponent(entity, transform.ValueRO);

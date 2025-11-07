@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 403800044264836794}
-  - component: {fileID: 7818820415214851543}
   - component: {fileID: 2886296556778442393}
   - component: {fileID: 9203168092180471440}
   m_Layer: 0
@@ -34,21 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7000380137355549543}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7818820415214851543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 727927787352593932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e445128fd934aabbc4af07d48acad1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EnemySpawnerFlagZoneAuthoring
-  Zone:
-    RadiusSqr: 0
-    Mode: 0
 --- !u!114 &2886296556778442393
 MonoBehaviour:
   m_ObjectHideFlags: 0

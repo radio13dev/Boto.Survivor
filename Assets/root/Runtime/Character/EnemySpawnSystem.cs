@@ -208,6 +208,11 @@ public struct SpawnAnimation : IComponentData, IEnableableComponent
     public float t;
     public float s;
     
+    public SpawnAnimation(float scale)
+    {
+        t = 0;
+        s = scale;
+    }
     public SpawnAnimation(LocalTransform zeroT)
     {
         t = 0;

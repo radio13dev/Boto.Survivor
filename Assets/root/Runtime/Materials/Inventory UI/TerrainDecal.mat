@@ -56,6 +56,7 @@ Material:
     - Normal_Blend: 0.5
     - _Blending: 0
     - _BlobTintScale: 1
+    - _DecalBorderThickness: 0.01
     - _DecalMeshBiasType: 0
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
@@ -67,9 +68,10 @@ Material:
     - _Thickness: 80
     - _Tiling: 0.1
     m_Colors:
-    - _Base_Colour: {r: 0.43854573, g: 0.6283542, b: 0.6886792, a: 1}
+    - _Base_Colour: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 1}
+    - _DecalBorderColor: {r: 1, g: 1, b: 1, a: 1}
     - _EdgeColor: {r: 1, g: 0.7863691, b: 0.3726415, a: 1}
-    - _HashAColor: {r: 1, g: 1, b: 1, a: 1}
+    - _HashAColor: {r: 0, g: 0, b: 0, a: 1}
     - _HashBColor: {r: 1, g: 1, b: 1, a: 1}
     - _Scale: {r: 12.08, g: 7, b: 0, a: 0}
   m_BuildTextureStacks: []
