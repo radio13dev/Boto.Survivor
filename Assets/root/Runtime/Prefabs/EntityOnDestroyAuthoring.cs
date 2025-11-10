@@ -78,10 +78,35 @@ public partial struct EntityOnDestroySystem : ISystem
                     delayedEcb.SetComponent(newEntity, newEntityMovement);
                 }
 
+                // I don't like this but this is here... Dakota.
                 if (SystemAPI.HasComponent<SurvivorTag>(entity))
                 {
                     var playerSaveable = SystemAPI.GetComponent<PlayerControlledSaveable>(entity);
                     delayedEcb.SetComponent(newEntity, playerSaveable);
+                    
+                    delayedEcb.SetComponent(newEntity, SystemAPI.GetComponent<Wallet>(entity));
+
+                    var oldRingBuffer = SystemAPI.GetBuffer<Ring>(entity);
+                    var newRingBuffer = delayedEcb.SetBuffer<Ring>(newEntity);
+                    for (int ringIndex = 0; ringIndex < oldRingBuffer.Length; ringIndex++)
+                    {
+                        newRingBuffer.Add(oldRingBuffer[ringIndex]);
+                    }
+                    
+                    var oldEquippedGems = SystemAPI.GetBuffer<EquippedGem>(entity);
+                    var newEquippedGems = delayedEcb.SetBuffer<EquippedGem>(newEntity);
+                    for (int gemIndex = 0; gemIndex < oldEquippedGems.Length; gemIndex++)
+                    {
+                        newEquippedGems.Add(oldEquippedGems[gemIndex]);
+                    }
+
+                    var oldInventoryGems = SystemAPI.GetBuffer<InventoryGem>(entity);
+                    var newInventoryGems = delayedEcb.SetBuffer<InventoryGem>(newEntity);
+                    for (int gemIndex = 0; gemIndex < oldInventoryGems.Length; gemIndex++)
+                    {
+                        newInventoryGems.Add(oldInventoryGems[gemIndex]);
+                    } 
+                    
                     GameEvents.Trigger(GameEvents.Type.PlayerDied, entity, playerSaveable.Index);
                 }
             }
