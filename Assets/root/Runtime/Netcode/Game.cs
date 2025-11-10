@@ -487,12 +487,12 @@ public static class GameEvents
     {
         InventoryChanged,
         PlayerHealthChanged,
-        PlayerDied,
         InteractableStart,
         InteractableEnd,
         VisualsUpdated,
         WalletChanged,
-        EnemyHealthChanged
+        EnemyHealthChanged,
+        PlayerDied
     }
     
     

@@ -43,6 +43,7 @@ public unsafe struct GameRpc : IComponentData
         AdminPlaceGem = 0b0100_0001,
         AdminPlayerLevelStat = 0b0100_0010,
         AdminPlaceRing = 0b0100_0011,
+        AdminKillBind = 0b0100_0100,
     }
 
     public const int Length = sizeof(long)*2;
@@ -213,6 +214,11 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc AdminPlaceRing(byte player, Vector3 placePosition)
     {
         return new GameRpc() { Type = Code.AdminPlaceRing, PlayerId = player, PlacePosition = placePosition };
+    }
+
+    public static GameRpc AdminKillBind(byte player)
+    {
+        return new GameRpc() { Type = Code.AdminKillBind, PlayerId = player };
     }
     #endregion
 }
@@ -841,6 +847,17 @@ public partial struct GameRpcSystem : ISystem
                     var ringE = ecb.Instantiate(ringTemplates[ring.Tier].Entity);
                     Debug.Log($"Generated: {ring} ring");
                     Ring.SetupEntity(ringE, playerId, ref r, ref ecb, LocalTransform.FromPosition(rpc.PlacePosition), default, ring);
+                    break;
+                }
+                case GameRpc.Code.AdminKillBind:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Health));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Health>()) continue;
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var health = SystemAPI.GetComponent<Health>(playerE);
+                    health.Value = 0;
+                    SystemAPI.SetComponent(playerE, health);
                     break;
                 }
             }

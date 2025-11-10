@@ -16,7 +16,8 @@ public class WorldClickTool : MonoBehaviour
         PlaceGem,
         PlaceEnemyWheel,
         PlaceEnemyTrap,
-        PlaceRing
+        PlaceRing,
+        KillBind
     }
 
     private void Awake()
@@ -79,6 +80,9 @@ public class WorldClickTool : MonoBehaviour
                     break;
                 case ClickMode.PlaceRing:
                     Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminPlaceRing((byte)Game.ClientGame.PlayerIndex, Visual.transform.position));
+                    break;
+                case ClickMode.KillBind:
+                    Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.AdminKillBind((byte)Game.ClientGame.PlayerIndex));
                     break;
             }
     }
