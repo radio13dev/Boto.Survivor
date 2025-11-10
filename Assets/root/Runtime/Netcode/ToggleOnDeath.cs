@@ -7,15 +7,15 @@ public class ToggleOnDeath : MonoBehaviour
         
     private void Awake()
     {
-        GameEvents.OnEvent += OnGemEvent;
+        GameEvents.OnEvent += OnGameEvent;
     }
 
     private void OnDestroy()
     {
-        GameEvents.OnEvent -= OnGemEvent;
+        GameEvents.OnEvent -= OnGameEvent;
     }
 
-    private void OnGemEvent(GameEvents.Data data)
+    private void OnGameEvent(GameEvents.Data data)
     {
         var eType = data.Type; var entity = data.Entity;
         if (eType != GameEvents.Type.PlayerDied) return;
