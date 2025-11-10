@@ -851,13 +851,22 @@ public partial struct GameRpcSystem : ISystem
                 }
                 case GameRpc.Code.AdminKillBind:
                 {
-                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Health));
+                    // Set health to 0 version
+                    // using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Health));
+                    // playerQuery.SetSharedComponentFilter(playerTag);
+                    // if (!playerQuery.HasSingleton<Health>()) continue;
+                    // var health = SystemAPI.GetComponent<Health>(playerE);
+                    // health.Value = 0;
+                    // SystemAPI.SetComponent(playerE, health);
+                    
+                    // Set destroy flag version
+                    // using var playerQuery = SystemAPI.QueryBuilder().WithAll<EntityOnDestroy, DestroyFlag>().WithOptions(EntityQueryOptions.IgnoreComponentEnabledState).Build();
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(new EntityQueryDesc() { All = new [] { new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(DestroyFlag)) }, Options = EntityQueryOptions.IgnoreComponentEnabledState} );
                     playerQuery.SetSharedComponentFilter(playerTag);
-                    if (!playerQuery.HasSingleton<Health>()) continue;
+                    // if (!playerQuery.HasSingleton<DestroyFlag>()) continue;
                     var playerE = playerQuery.GetSingletonEntity();
-                    var health = SystemAPI.GetComponent<Health>(playerE);
-                    health.Value = 0;
-                    SystemAPI.SetComponent(playerE, health);
+                    ecb.SetComponentEnabled<DestroyFlag>(playerE, true);
+                    
                     break;
                 }
             }

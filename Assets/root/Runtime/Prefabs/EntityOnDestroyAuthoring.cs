@@ -83,8 +83,8 @@ public partial struct EntityOnDestroySystem : ISystem
                 {
                     var playerSaveable = SystemAPI.GetComponent<PlayerControlledSaveable>(entity);
                     delayedEcb.SetComponent(newEntity, playerSaveable);
-                    
                     delayedEcb.SetComponent(newEntity, SystemAPI.GetComponent<Wallet>(entity));
+                    delayedEcb.SetComponent(newEntity, SystemAPI.GetComponent<TiledStatsTree>(entity));
 
                     var oldRingBuffer = SystemAPI.GetBuffer<Ring>(entity);
                     var newRingBuffer = delayedEcb.SetBuffer<Ring>(newEntity);
