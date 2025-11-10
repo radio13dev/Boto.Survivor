@@ -46,6 +46,7 @@ public class MapDrawing : MonoBehaviour
     public Color Map_OutlineColor = Color.white;
     public bool Map_ConnectLines = true;
     
+    [EditorButton]
     public void Clear()
     {
         m_HasSketch = false;

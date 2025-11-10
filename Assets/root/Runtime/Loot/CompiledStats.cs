@@ -125,17 +125,16 @@ public partial struct CompiledStatsSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        using var ecb = new EntityCommandBuffer(Allocator.TempJob);
-        new Job()
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        state.Dependency = new Job()
         {
-            ecb = ecb,
+            ecb = delayedEcb,
             
             Time = SystemAPI.Time.ElapsedTime,
             SharedRandom = SystemAPI.GetSingleton<SharedRandom>(),
             Projectiles = SystemAPI.GetSingletonBuffer<GameManager.Projectiles>(true),
             NetworkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
-        }.Run();
-        ecb.Playback(state.EntityManager);
+        }.Schedule(state.Dependency);
     }
     
     [RequireMatchingQueriesForUpdate]
