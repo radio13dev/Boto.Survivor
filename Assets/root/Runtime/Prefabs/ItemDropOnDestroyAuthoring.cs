@@ -103,6 +103,8 @@ public partial struct ItemDropOnDestroySystem : ISystem
 
         public void Execute(Entity entity, in DynamicBuffer<ItemDropOnDestroy> items, in LocalTransform transform)
         {
+            if (PlayerControlled.Length == 0) return;
+        
             var random = baseRandom;
             for (int i = 0; i < items.Length; i++)
             {
