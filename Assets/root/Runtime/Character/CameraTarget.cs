@@ -14,8 +14,8 @@ public class CameraTarget : EntityLinkMono
         get
         {
             if (!HasLink()) return -1;
-            if (Game.World.EntityManager.HasComponent<PlayerControlled>(Entity))
-                    return Game.World.EntityManager.GetSharedComponent<PlayerControlled>(Entity).Index;
+            if (Game.World.EntityManager.HasComponent<PlayerControlledSaveable>(Entity))
+                    return Game.World.EntityManager.GetComponentData<PlayerControlledSaveable>(Entity).Index;
             return -1;
         }
     }
@@ -27,6 +27,7 @@ public class CameraTarget : EntityLinkMono
             Debug.LogError("No Game found for CameraTarget");
             return;
         }
+        
         if (PlayerIndex == Game.PlayerIndex)
         {
             MainTarget = this;
