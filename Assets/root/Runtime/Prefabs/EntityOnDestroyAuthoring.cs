@@ -64,13 +64,19 @@ public partial struct EntityOnDestroySystem : ISystem
                 var newEntity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);
                 delayedEcb.SetComponent(newEntity, transform.ValueRO);
                 
-                var inertia = new RotationalInertia();
-                inertia.Set(random.NextFloat3(), 1);
-                delayedEcb.SetComponent(newEntity, inertia);
+                if (SystemAPI.HasComponent<RotationalInertia>(onDestroy.ValueRO.Prefab))
+                {
+                    var inertia = new RotationalInertia();
+                    inertia.Set(random.NextFloat3(), 1);
+                    delayedEcb.SetComponent(newEntity, inertia);
+                }
                 
-                var newEntityMovement = new Movement();
-                newEntityMovement.Velocity = movement.ValueRO.Velocity + (math.length(movement.ValueRO.Velocity)/2 + 1) * random.NextFloat3();
-                delayedEcb.SetComponent(newEntity, newEntityMovement);
+                if (SystemAPI.HasComponent<Movement>(onDestroy.ValueRO.Prefab))
+                {
+                    var newEntityMovement = new Movement();
+                    newEntityMovement.Velocity = movement.ValueRO.Velocity + (math.length(movement.ValueRO.Velocity)/2 + 1) * random.NextFloat3();
+                    delayedEcb.SetComponent(newEntity, newEntityMovement);
+                }
 
                 if (SystemAPI.HasComponent<SurvivorTag>(entity))
                 {
