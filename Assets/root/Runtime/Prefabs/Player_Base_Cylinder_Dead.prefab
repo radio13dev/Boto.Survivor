@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 240200278457971943}
-  - component: {fileID: 6061478738849763825}
   - component: {fileID: 3243524279367401719}
   - component: {fileID: 6264614865234835065}
   - component: {fileID: -2977659499843593134}
@@ -17,10 +16,9 @@ GameObject:
   - component: {fileID: 4341140175045690747}
   - component: {fileID: -3846072663541975928}
   - component: {fileID: 900170924473941128}
-  - component: {fileID: 8968431526063313881}
-  - component: {fileID: -1972603713845305123}
+  - component: {fileID: -8766920649868613352}
   m_Layer: 0
-  m_Name: Player_Base_Cylinder
+  m_Name: Player_Base_Cylinder_Dead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,47 +39,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6061478738849763825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bed4a64841004d24da1e97a0ebd5b20d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
-  Health: 6
-  InitialRings:
-  - PrimaryEffect: 128
-    BoostedStats: 000000
-    BoostedStatsBoosts: 010000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
-    BoostedStats: 000000
-    BoostedStatsBoosts: 000000
-  InitialGems: []
-  AbilityType: 1
-  UnlockAllSkills: 0
 --- !u!114 &3243524279367401719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
-  ToSpawn: {fileID: 957610706970675159, guid: f3b08234c27e0ff469c1a2aabe6b5723, type: 3}
+  ToSpawn: {fileID: 5069493793870690537, guid: 3640bafabd075b84fa3a0326fcfef92e, type: 3}
   Dynamic: 1
   InWorldSpace: 0
 --- !u!114 &4341140175045690747
@@ -160,7 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::StepInputAuthoring
   MovementSettings:
-    Speed: 1
+    Speed: 0.1
 --- !u!114 &-3846072663541975928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
---- !u!114 &8968431526063313881
+--- !u!114 &-8766920649868613352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -217,25 +174,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 091f2f7794764319ac9dd19ed9179aba, type: 3}
+  m_Script: {fileID: 11500000, guid: b44ab1c4638548e8a5915ba6c53f3c23, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::CirclingAuthoring
-  Circling:
-    Radius: 6
-    Charge: 0
-    MaxCharge: 2
-    LastChargeTime: 0
---- !u!114 &-1972603713845305123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7419757055955712054}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c42431cfaed4abba7f98ef9c8d1557f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::EntityOnDestroyAuthoring
-  Prefab: {fileID: 7419757055955712054, guid: 4014da6cb66f6c14abcc5788e2f1a018, type: 3}
-  Count: 1
+  m_EditorClassIdentifier: Boto.Survivor::DeadSurvivorAuthoring

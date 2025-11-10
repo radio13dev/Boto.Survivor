@@ -53,24 +53,29 @@ public partial struct EntityOnDestroySystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        foreach (var (onDestroy, transform, movement) in SystemAPI.Query<RefRO<EntityOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
-            .WithAll<DestroyFlag>()
+        foreach (var (onDestroy, transform, movement, entity) in SystemAPI.Query<RefRO<EntityOnDestroy>, RefRO<LocalTransform>, RefRO<Movement>>()
+            .WithAll<DestroyFlag>().WithEntityAccess()
             )
         {
             Random random = SystemAPI.GetSingleton<SharedRandom>().Random;
             Debug.Log($"Creating {onDestroy.ValueRO.Count} entities on destroy");
             for (int i = 0; i < onDestroy.ValueRO.Count; i++)
             {
-                var entity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);
-                delayedEcb.SetComponent(entity, transform.ValueRO);
+                var newEntity = delayedEcb.Instantiate(onDestroy.ValueRO.Prefab);
+                delayedEcb.SetComponent(newEntity, transform.ValueRO);
                 
                 var inertia = new RotationalInertia();
                 inertia.Set(random.NextFloat3(), 1);
-                delayedEcb.SetComponent(entity, inertia);
+                delayedEcb.SetComponent(newEntity, inertia);
                 
                 var newEntityMovement = new Movement();
                 newEntityMovement.Velocity = movement.ValueRO.Velocity + (math.length(movement.ValueRO.Velocity)/2 + 1) * random.NextFloat3();
-                delayedEcb.SetComponent(entity, newEntityMovement);
+                delayedEcb.SetComponent(newEntity, newEntityMovement);
+
+                if (SystemAPI.HasComponent<SurvivorTag>(entity))
+                {
+                    delayedEcb.SetComponent(newEntity, SystemAPI.GetComponent<PlayerControlledSaveable>(entity));
+                }
             }
         }
     }
