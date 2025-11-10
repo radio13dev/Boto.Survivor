@@ -17,10 +17,10 @@ public class ToggleOnDeath : MonoBehaviour
 
     private void OnGameEvent(GameEvents.Data data)
     {
-        var eType = data.Type; var entity = data.Entity;
+        var eType = data.Type;
+        var playerIndex = data.Int0; 
         if (eType != GameEvents.Type.PlayerDied) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (playerIndex != Game.ClientGame.PlayerIndex) return;
         _onLocalPlayerDeath?.Invoke();
     }
 }

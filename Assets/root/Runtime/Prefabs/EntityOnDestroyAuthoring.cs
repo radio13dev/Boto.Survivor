@@ -74,8 +74,9 @@ public partial struct EntityOnDestroySystem : ISystem
 
                 if (SystemAPI.HasComponent<SurvivorTag>(entity))
                 {
-                    delayedEcb.SetComponent(newEntity, SystemAPI.GetComponent<PlayerControlledSaveable>(entity));
-                    GameEvents.Trigger(GameEvents.Type.PlayerDied, entity);
+                    var playerSaveable = SystemAPI.GetComponent<PlayerControlledSaveable>(entity);
+                    delayedEcb.SetComponent(newEntity, playerSaveable);
+                    GameEvents.Trigger(GameEvents.Type.PlayerDied, entity, playerSaveable.Index);
                 }
             }
         }
