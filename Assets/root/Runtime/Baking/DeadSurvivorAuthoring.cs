@@ -1,6 +1,7 @@
 ﻿using Drawing;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 
 public class DeadSurvivorAuthoring : MonoBehaviourGizmos
@@ -31,6 +32,21 @@ public class DeadSurvivorAuthoring : MonoBehaviourGizmos
             var equippedGems = AddBuffer<EquippedGem>(entity);
             equippedGems.Resize(Ring.k_RingCount*Gem.k_GemsPerRing, NativeArrayOptions.ClearMemory);
             var inventoryGems = AddBuffer<InventoryGem>(entity);
+        }
+    }
+}
+
+public partial struct DeadSurvivorReviveSystem : ISystem
+{
+    public void OnUpdate(ref SystemState state)
+    {
+        foreach (var (circlable, transform, e) in SystemAPI.Query<RefRO<Circlable>, RefRO<LocalTransform>>().WithEntityAccess().WithAll<DeadSurvivorTag>())
+        {
+            if (circlable.ValueRO.Charge >= circlable.ValueRO.MaxCharge)
+            {
+                // Destroy this
+                SystemAPI.SetComponentEnabled<DestroyFlag>(e, true);
+            }
         }
     }
 }
