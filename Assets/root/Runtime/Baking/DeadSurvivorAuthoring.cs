@@ -17,7 +17,11 @@ public class DeadSurvivorAuthoring : MonoBehaviourGizmos
             
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
             
+            // Basic setup
             AddComponent(entity, new PlayerControlledSaveable(){ Index = byte.MaxValue });
+            AddComponent(entity, new DeadSurvivorTag());
+            
+            // Stats to track for reviving
             AddComponent(entity, new Wallet(){ Value = 0 });
             AddComponent(entity, TiledStatsTree.Default);
             

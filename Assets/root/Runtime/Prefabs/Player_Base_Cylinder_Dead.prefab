@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 240200278457971943}
+  - component: {fileID: -8766920649868613352}
   - component: {fileID: 3243524279367401719}
   - component: {fileID: 6264614865234835065}
   - component: {fileID: -2977659499843593134}
@@ -16,7 +17,7 @@ GameObject:
   - component: {fileID: 4341140175045690747}
   - component: {fileID: -3846072663541975928}
   - component: {fileID: 900170924473941128}
-  - component: {fileID: -8766920649868613352}
+  - component: {fileID: -2967290622526416793}
   m_Layer: 0
   m_Name: Player_Base_Cylinder_Dead
   m_TagString: Untagged
@@ -39,6 +40,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-8766920649868613352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44ab1c4638548e8a5915ba6c53f3c23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DeadSurvivorAuthoring
 --- !u!114 &3243524279367401719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
---- !u!114 &-8766920649868613352
+--- !u!114 &-2967290622526416793
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,6 +187,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7419757055955712054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b44ab1c4638548e8a5915ba6c53f3c23, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c42431cfaed4abba7f98ef9c8d1557f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Boto.Survivor::DeadSurvivorAuthoring
+  m_EditorClassIdentifier: Boto.Survivor::EntityOnDestroyAuthoring
+  Prefab: {fileID: 7419757055955712054, guid: 6765c9dc661a5b34c97f79187f0be07e, type: 3}
+  Count: 1

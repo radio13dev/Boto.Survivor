@@ -79,7 +79,7 @@ public partial struct EntityOnDestroySystem : ISystem
                 }
 
                 // I don't like this but this is here... Dakota.
-                if (SystemAPI.HasComponent<SurvivorTag>(entity))
+                if (SystemAPI.HasComponent<SurvivorTag>(entity) || SystemAPI.HasComponent<DeadSurvivorTag>(entity))
                 {
                     var playerSaveable = SystemAPI.GetComponent<PlayerControlledSaveable>(entity);
                     delayedEcb.SetComponent(newEntity, playerSaveable);
@@ -105,9 +105,17 @@ public partial struct EntityOnDestroySystem : ISystem
                     for (int gemIndex = 0; gemIndex < oldInventoryGems.Length; gemIndex++)
                     {
                         newInventoryGems.Add(oldInventoryGems[gemIndex]);
-                    } 
-                    
-                    GameEvents.Trigger(GameEvents.Type.PlayerDied, entity, playerSaveable.Index);
+                    }
+
+                    if (SystemAPI.HasComponent<SurvivorTag>(entity))
+                    {
+                        GameEvents.Trigger(GameEvents.Type.PlayerDied, entity, playerSaveable.Index);
+                    }
+
+                    if (SystemAPI.HasComponent<DeadSurvivorTag>(entity))
+                    {
+                        GameEvents.Trigger(GameEvents.Type.PlayerRevived, entity, playerSaveable.Index);
+                    }
                 }
             }
         }

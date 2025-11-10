@@ -492,7 +492,8 @@ public static class GameEvents
         VisualsUpdated,
         WalletChanged,
         EnemyHealthChanged,
-        PlayerDied
+        PlayerDied,
+        PlayerRevived
     }
     
     

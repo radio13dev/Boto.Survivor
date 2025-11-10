@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public class ToggleOnDeath : MonoBehaviour
 {
     [SerializeField] private UnityEvent _onLocalPlayerDeath;
+    [SerializeField] private UnityEvent _onLocalPlayerRevived;
         
     private void Awake()
     {
@@ -19,9 +20,17 @@ public class ToggleOnDeath : MonoBehaviour
     {
         var eType = data.Type;
         var playerIndex = data.Int0; 
-        if (eType != GameEvents.Type.PlayerDied) return;
         if (playerIndex != Game.ClientGame.PlayerIndex) return;
-        _onLocalPlayerDeath?.Invoke();
+        
+        if (eType == GameEvents.Type.PlayerDied)
+        {
+            _onLocalPlayerDeath?.Invoke();
+        }
+
+        if (eType == GameEvents.Type.PlayerRevived)
+        {
+            _onLocalPlayerRevived?.Invoke();
+        }
     }
     
     [EditorButton]
