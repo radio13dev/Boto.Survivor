@@ -49,7 +49,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour
     }
     public void SetIndex(int2 index)
     {
-        TargetIndex = index;
+        TargetIndex = (int2)mathu.repeat(index, new int2(CountX, CountY));
         SetPosition(TargetIndex);
     }
     public void SetPosition(float2 position)
@@ -62,7 +62,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour
     IEnumerator _SetPositionCo(float2 position)
     {
         float t = 0;
-        var length = new float2(CountX, CountY);
+        var length = new float2(CountX, CountY)/2;
         while (t < 10f)
         {
             var old = FocusedIndex;
@@ -73,7 +73,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
-        FocusedIndex = mathu.lerprepeat(FocusedIndex, position, 1, length);
+        FocusedIndex = mathu.repeat(position, length*2);
         Demo();
     }
     
