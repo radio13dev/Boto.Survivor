@@ -4,8 +4,6 @@ public class TorusSettings : MonoBehaviour
 {
     public float RingRadius = 100f;
     public float Thickness = 5f;
-    public float XRotScale = 0.01f;
-    public float YRotScale = 0.1f;
     
     public int RingSegments = 30;
     public int TubeSegments = 5;
@@ -17,8 +15,6 @@ public class TorusSettings : MonoBehaviour
         
         TorusMapper.RingRadius.Data = RingRadius;
         TorusMapper.Thickness.Data = Thickness;
-        TorusMapper.XRotScale.Data = XRotScale;
-        TorusMapper.YRotScale.Data = YRotScale;
     }
     
     [EditorButton]
