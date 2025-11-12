@@ -45,6 +45,8 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     public MeshRenderer[,] ColumnLines;
 
     public eState[] Unlocked;
+    
+    public TorusTerrainTool CylinderTemplate;
 
     public enum eState
     {
@@ -134,6 +136,9 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         if (RowLineTemplate.TryGetComponent<TorusTerrainTool>(out var rowLine))
             rowLine.GenerateMeshSection(1 + RowLineOffset, RowLineThickness, MeshRingSegments, MeshTubeSegments, math.PI2/CountX);
 
+        if (CylinderTemplate)
+            CylinderTemplate.GenerateCylinderMesh(ColumnLineThickness, MeshRingSegments, MeshTubeSegments);
+
         Clear();
         Demo();
     }
@@ -213,27 +218,28 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             if (ColumnLineContainer && ColumnLineTemplate)
             {
                 MeshRenderer column;
-                if (x < columns.Length)
-                    column = columns[x];
+                if (tileIndex < columns.Length)
+                    column = columns[tileIndex];
                 else
                     column = Instantiate(ColumnLineTemplate.gameObject, ColumnLineContainer).GetComponent<MeshRenderer>();
                 column.sharedMaterial = ColumnLineTextures[x % ColumnLineTextures.Length];
-
-                var columnNormal = torusZero.GetNormalQuaternion(pos, torusZero.ToroidalToCartesian(toroidal + new float2(0.01f, 0)) - pos);
-                column.transform.SetLocalPositionAndRotation(pos,
+                
+                var posZero = torusZero.ToroidalToCartesian(toroidal, ItemOffset);
+                var columnNormal = torusZero.GetNormalQuaternion(posZero, torusZero.ToroidalToCartesian(toroidal + new float2(-0.01f, 0)) - posZero);
+                column.transform.SetLocalPositionAndRotation(posZero,
                     math.mul(columnNormal, quaternion.AxisAngle(math.right(), math.PIHALF)));
             }
             if (RowLineContainer && RowLineTemplate)
             {
                 MeshRenderer row;
-                if (y < rows.Length)
-                    row = rows[y];
+                if (tileIndex < rows.Length)
+                    row = rows[tileIndex];
                 else
                     row = Instantiate(RowLineTemplate.gameObject, RowLineContainer).GetComponent<MeshRenderer>();
                 row.sharedMaterial = RowLineTextures[y % RowLineTextures.Length];
                 row.transform.localPosition = new float3(0, pos.y, 0);
-                row.transform.localRotation = normal;
-                row.transform.localScale = pos.x * Vector3.one;
+                row.transform.localRotation = quaternion.Euler(0,-toroidal.x,0);
+                row.transform.localScale = math.length(pos.xz) * Vector3.one;
             }
             
             tileIndex++;
