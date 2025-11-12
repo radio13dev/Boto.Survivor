@@ -26,6 +26,24 @@ public class TorusTerrainTool : MonoBehaviour
         
         MeshFilter.sharedMesh = m_Mesh;
     }
+    [EditorButton]
+    public void GenerateMeshSection(float radius, float thickness, int ringSegments, int tubeSegments, float sectionAngleRadians)
+    {
+        if (!m_GeneratedMesh)
+        {
+            m_Mesh = new Mesh();
+            m_GeneratedMesh = true;
+        }
+        
+        TorusMeshGenerator.GenerateTorusMesh(radius, thickness, ringSegments, tubeSegments, TorusMeshGenerator.Axis.y, out var verts, out var tris, out var normals, out var uvs, sectionAngleRadians: sectionAngleRadians);
+        m_Mesh.SetVertices(Array.ConvertAll(verts, v => (Vector3)v));
+        m_Mesh.SetTriangles(tris, 0);
+        m_Mesh.SetNormals(Array.ConvertAll(normals, v => (Vector3)v));
+        m_Mesh.SetUVs(0, Array.ConvertAll(uvs, v => (Vector2)v));
+        m_Mesh.RecalculateTangents();
+        
+        MeshFilter.sharedMesh = m_Mesh;
+    }
 
     private void OnDestroy()
     {

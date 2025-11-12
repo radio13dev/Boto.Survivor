@@ -15,7 +15,7 @@ public static class TorusMeshGenerator
     /// <param name="triangles">Output array of triangle indices.</param>
     public static void GenerateTorusMesh(
     float ringRadius, float thickness, int ringSegments, int tubeSegments, Axis upAxis,
-    out float3[] vertices, out int[] triangles, out float3[] normals, out float2[] uvs)
+    out float3[] vertices, out int[] triangles, out float3[] normals, out float2[] uvs, float sectionAngleRadians = math.PI2)
 {
     int vertCountR = ringSegments + 1;
     int vertCountT = tubeSegments + 1;
@@ -27,7 +27,7 @@ public static class TorusMeshGenerator
 
     for (int i = 0; i < vertCountR; i++)
     {
-        float theta = 2 * math.PI * i / ringSegments;
+        float theta = sectionAngleRadians * i / ringSegments;
         float cosTheta = math.cos(theta);
         float sinTheta = math.sin(theta);
 
