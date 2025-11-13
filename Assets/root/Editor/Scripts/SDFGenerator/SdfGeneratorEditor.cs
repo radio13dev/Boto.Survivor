@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -61,80 +64,101 @@ public class SdfGeneratorEditor : EditorWindow
                 Debug.LogWarning("No source texture assigned on SdfGenerator.");
                 return;
             }
+            
+            EditorUtility.DisplayProgressBar("Generating sdf", "Starting sdf gen", 0f);
+            
+            var oldImporter = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(m_Generator.Texture)) as TextureImporter;
+            if (!oldImporter.isReadable)
+            {
+                EditorUtility.DisplayProgressBar("Generating sdf", "Making texture readable", 0f);
+                oldImporter.isReadable = true;
+                oldImporter.SaveAndReimport();
+            }
 
             var src = m_Generator.Texture;
-            m_Generated = new Texture2D(src.width, src.height);
+            int2 dest2 = new int2((int)math.ceil(src.width*m_Generator.OutputScale), (int)math.ceil(src.height*m_Generator.OutputScale));
+            int2 padding = (int2)(m_Generator.Padding*(float2)dest2);
+            m_Generated = new Texture2D(dest2.x + padding.x*2, dest2.y + padding.y*2);
 
             try
             {
                 var srcPixels = src.GetPixels();
-                int w = src.width;
-                int h = src.height;
 
                 float threshold = 0.5f;
 
-                var outPixels = new Color[w * h];
+                var outPixels = new Color[m_Generated.width * m_Generated.height];
+                
+                var spiral = Spiral(new int2(src.width,src.height)).ToArray();
 
-                for (int y = 0; y < h; y++)
+                for (int yIt = 0; yIt < m_Generated.height; yIt++)
                 {
-                    for (int x = 0; x < w; x++)
+                    int y = yIt;
+                    EditorUtility.DisplayProgressBar("Generating sdf", $"Writing pixel: ({0},{y})", (float)y/m_Generated.width);
+                    Parallel.For(0, m_Generated.width, x =>
                     {
-                        int idx = y * w + x;
-                        var c = srcPixels[idx];
+                        int2 idp = new int2((int)math.floor((x-padding.x)/m_Generator.OutputScale),(int)math.floor((y-padding.y)/m_Generator.OutputScale));
+                        
+                        Color c;
+                        if (idp.y < 0 || idp.y >= src.height || idp.x < 0 || idp.x >= src.width)
+                            c = Color.clear;
+                        else
+                        {
+                            int inId = idp.y * src.width + idp.x;
+                            c = srcPixels[inId];
+                        }
+                        
                         bool isInside = c.a > threshold;
 
-                        float dist;
+                        float minDistSq = float.MaxValue;
+                        float maxSearchD = float.MaxValue;
+                        for (int i = 0; i < spiral.Length; i++)
                         {
-                            
-                            int maxRadius = 0;
-                            if (m_Generator != null)
-                                maxRadius = isInside ? m_Generator.InsideDistance : m_Generator.OutsideDistance;
-
-                            int minX = Mathf.Max(0, x - maxRadius);
-                            int maxX = Mathf.Min(w - 1, x + maxRadius);
-                            int minY = Mathf.Max(0, y - maxRadius);
-                            int maxY = Mathf.Min(h - 1, y + maxRadius);
-
-                            float minDistSq = float.MaxValue;
-                            for (int yy = minY; yy <= maxY; yy++)
+                            bool isInside2;
+                            var p = idp + spiral[i];
+                            int idx2 = p.y * src.width + p.x;
+                            if (p.x < 0 || p.x >= src.width || p.y < 0 || p.y >= src.height || idx2 < 0 || idx2 >= srcPixels.Length)
                             {
-                                for (int xx = minX; xx <= maxX; xx++)
-                                {
-                                    int idx2 = yy * w + xx;
-                                    var c2 = srcPixels[idx2];
-                                    bool isInside2 = c2.a > threshold;
-                                    if (isInside2 == isInside) continue;
-
-                                    int dx = xx - x;
-                                    int dy = yy - y;
-                                    float d2 = dx * dx + dy * dy;
-                                    if (d2 < minDistSq) minDistSq = d2;
-                                }
+                                isInside2 = false;
                             }
-
-                            if (minDistSq == float.MaxValue)
-                                dist = maxRadius; // fallback when no opposite pixel found within search area
                             else
-                                dist = Mathf.Sqrt(minDistSq);
+                            {
+                                var c2 = srcPixels[idx2];
+                                isInside2 = c2.a > threshold;
+                            }
+                            
+                            if (isInside2 == isInside) continue;
+
+                            var d = math.lengthsq(spiral[i]);
+                            if (d < minDistSq)
+                            {
+                                minDistSq = d;
+                                // Assume this is the 'corner' of a square. Search out until we hit the radius that a circle would encapsulate that square
+                                maxSearchD = d*2;
+                            }
+                            else if (d >= maxSearchD)
+                            {
+                                break;
+                            }
                         }
 
 
                         float val;
                         if (isInside)
                         {
-                            val = (m_Generator != null && m_Generator.InsideDistance > 0)
-                                ? 0.5f + Mathf.Clamp01(dist / m_Generator.InsideDistance)/2
+                            val = (m_Generator.InsideDistance > 0)
+                                ? 0.5f + Mathf.Clamp01(math.sqrt(minDistSq) / m_Generator.OutsideDistance)/2
                                 : 1f;
                         }
                         else
                         {
-                            val = (m_Generator != null && m_Generator.OutsideDistance > 0)
-                                ? 0.5f - Mathf.Clamp01(dist / m_Generator.OutsideDistance)/2
+                            val = (m_Generator.OutsideDistance > 0)
+                                ? 0.5f - Mathf.Clamp01(math.sqrt(minDistSq) / m_Generator.OutsideDistance)/2
                                 : 0f;
                         }
 
-                        outPixels[idx] = new Color(val, val, val, 1f);
-                    }
+                        int outId = y * m_Generated.width + x;
+                        outPixels[outId] = new Color(val, val, val, 1f);
+                    });
                 }
 
                 m_Generated.SetPixels(outPixels);
@@ -143,6 +167,10 @@ public class SdfGeneratorEditor : EditorWindow
             catch (UnityException)
             {
                 Debug.LogWarning("Source texture is not readable; created an empty texture with the same size.");
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
             }
 
             Debug.Log($"Created new texture {m_Generated.width}x{m_Generated.height}");
@@ -200,6 +228,10 @@ public class SdfGeneratorEditor : EditorWindow
                 TextureImporterSettings settings = new();
                 oldImporter.ReadTextureSettings(settings);
                 importer.SetTextureSettings(settings);
+                importer.filterMode = FilterMode.Trilinear;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.compressionQuality = 100;
+                importer.spritePixelsPerUnit = 1000.0f*m_Generated.width/(512.0f*(1+m_Generator.Padding*2));
                 importer.SaveAndReimport();
             }
 
@@ -220,7 +252,7 @@ public class SdfGeneratorEditor : EditorWindow
         curr = default;
         dir = new int2(1, 0);
 
-        while (math.all(math.abs(curr) < bounds*2))
+        while (math.all(math.abs(curr) < bounds/2))
         {
             yield return curr;
             var next = curr + dir;
@@ -255,4 +287,8 @@ public class SdfGenerator
     public Texture2D Texture;
     public int InsideDistance;
     public int OutsideDistance;
+    [Range(0.01f, 1f)]
+    public float OutputScale = 1f;
+    [Range(0, 1f)]
+    public float Padding = 0.1f;
 }
