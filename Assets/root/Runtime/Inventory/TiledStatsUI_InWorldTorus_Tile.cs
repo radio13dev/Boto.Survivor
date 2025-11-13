@@ -66,9 +66,11 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
             }
         }
         
-        MainRenderers[0].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
-        MainRenderers[1].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
-        MainRenderers[2].sharedMaterial = state == TiledStatsUI_InWorldTorus.eState.Purchased ? Material : MaterialDisabled;
+        for (int i = 0; i < MainRenderers.Length; i++)
+            MainRenderers[i].sharedMaterial = Material;
+        //MainRenderers[0].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
+        //MainRenderers[1].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
+        //MainRenderers[2].sharedMaterial = state == TiledStatsUI_InWorldTorus.eState.Purchased ? Material : MaterialDisabled;
         
         if (MainRenderers.Length == 0) return;
         var col = Material.GetColor("_Dither_ColorA");
@@ -78,7 +80,7 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Available)
         {
-            col = col * new Color(0.7f, 0.7f, 0.7f, 0.7f);
+            col = col;
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Purchased)
         {
