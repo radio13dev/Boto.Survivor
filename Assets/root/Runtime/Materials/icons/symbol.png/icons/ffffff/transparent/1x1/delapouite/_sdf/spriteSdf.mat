@@ -54,10 +54,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _OutlineMax: -4.89
-    - _OutlineMin: -21.96
+    - _Gradient_GradientScale: 0.5
+    - _OutlineMax: 0
+    - _OutlineMin: -34.89
     - _SdfSampleScale: 100
+    - _Time_Offset: 0
+    - _Time_Scale: 0.01
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Dither_ColorA: {r: 1, g: 1, b: 1, a: 1}
+    - _Dither_ColorB: {r: 1, g: 1, b: 1, a: 1}
+    - _Dither_Tiling: {r: 5, g: 5, b: 0, a: 0}
+    - _Dither_TimeOffset: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

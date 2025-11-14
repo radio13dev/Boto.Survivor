@@ -14,6 +14,7 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
     
     public Material Material;
     public Material MaterialDisabled;
+    public Material MaterialPurchased;
     
     public SerializedDictionary<TiledStatsUI_InWorldTorus.eState, GameObject[]> StateVisuals = new();
     
@@ -33,10 +34,11 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         }
     }
     
-    public void SetMaterials(Material material, Material materialDisabled)
+    public void SetMaterials(Material material, Material materialDisabled, Material materialPurchased)
     {
         Material = material;
         MaterialDisabled = materialDisabled;
+        MaterialPurchased = materialPurchased;
     }
     
     public void SetSprite(Sprite sprite)
@@ -68,23 +70,27 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         
         for (int i = 0; i < MainRenderers.Length; i++)
             MainRenderers[i].sharedMaterial = Material;
-        //MainRenderers[0].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
-        //MainRenderers[1].sharedMaterial = state != TiledStatsUI_InWorldTorus.eState.Locked ? Material : MaterialDisabled;
-        //MainRenderers[2].sharedMaterial = state == TiledStatsUI_InWorldTorus.eState.Purchased ? Material : MaterialDisabled;
+        MainRenderers[0].sharedMaterial = state == TiledStatsUI_InWorldTorus.eState.Purchased ? Material : MaterialDisabled;
+        MainRenderers[1].sharedMaterial = state == TiledStatsUI_InWorldTorus.eState.Purchased ? Material : MaterialDisabled;
+        MainRenderers[2].sharedMaterial = MaterialPurchased;
+        MainRenderers[3].sharedMaterial = MaterialDisabled;
         
         if (MainRenderers.Length == 0) return;
         var col = Material.GetColor("_Dither_ColorA");
         if (state == TiledStatsUI_InWorldTorus.eState.Locked)
         {
-            col = col * new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            col = col * new Color(0.5f, 0.5f, 0.5f, 0);
+            transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Available)
         {
-            col = col;
+            col = col * new Color(1,1,1,0);
+            transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Purchased)
         {
-            col = Color.Lerp(col, Color.white, 0.4f);
+            col = col;
+            transform.localScale = new Vector3(0.8f, 0.3f, 0.8f);
         }
         
         for (int i = 0; i < MainColoredSprites.Length; i++)

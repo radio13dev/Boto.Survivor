@@ -30,6 +30,8 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     public float ColumnLineThickness = 0.01f;
     public float RowLineOffset = 0.001f;
     public float RowLineThickness = 0.01f;
+    
+    public float PurchasedTextureOffset = 0.3f;
 
 
     public int2 TargetIndex;
@@ -156,6 +158,73 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             if (Application.isPlaying) Destroy(obj.gameObject);
             else DestroyImmediate(obj.gameObject);
     }
+    
+    [EditorButton]
+    public void SetDefaultUnlocks()
+    {
+        Unlocked = new []
+        {
+            eState.Purchased
+        };
+        Demo();
+    }
+    
+    [EditorButton]
+    public void SetAllLocked()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = eState.Locked;
+        }
+        Demo();
+    }
+    
+    [EditorButton]
+    public void SetAllPurchased()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = eState.Purchased;
+        }
+        Demo();
+    }
+    
+    [EditorButton]
+    public void SetAlternatingPurchased()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = ((i % 2) == 0) ? eState.Purchased : eState.Locked;
+        }
+        Demo();
+    }
+    [EditorButton]
+    public void SetAlternatingPurchased2()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = ((i % 3) == 0) ? eState.Purchased : eState.Locked;
+        }
+        Demo();
+    }
+    [EditorButton]
+    public void SetAlternatingPurchased3()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = ((i % 4) == 0) ? eState.Purchased : eState.Locked;
+        }
+        Demo();
+    }
+    [EditorButton]
+    public void SetAlternatingPurchased4()
+    {
+        for (int i = 0; i < Unlocked.Length; i++)
+        {
+            Unlocked[i] = ((i % 5) == 0) ? eState.Purchased : eState.Locked;
+        }
+        Demo();
+    }
 
     [EditorButton]
     public void Demo()
@@ -194,7 +263,10 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
 
             tile.SetMesh(TileMeshes[x % TileMeshes.Length]);
             tile.SetOutlineMesh(TileOutlineMeshes[x % TileMeshes.Length]);
-            tile.SetMaterials(TileTextures[y % TileTextures.Length], TileDisabledTextures[y % TileTextures.Length]);
+            tile.SetMaterials(TileTextures[y % TileTextures.Length], 
+                TileDisabledTextures[y % TileDisabledTextures.Length], 
+                TileTextures[(y + (int)math.ceil(PurchasedTextureOffset*TileTextures.Length)) % TileTextures.Length]
+                );
             tile.SetSprite(TileSprites[tileIndex % TileSprites.Length]);
             {
                 bool isUnlocked = Unlocked[tileIndex] == eState.Purchased;
@@ -204,10 +276,10 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                                          Unlocked[GetIndex(new int2(x-1,y))] == eState.Purchased;
                 tile.SetUnlocked(isUnlocked ? eState.Purchased : neighbourUnlocked ? eState.Available : eState.Locked);
             }
-            if (math.all(new int2(x, y) == TargetIndex))
-                tile.DemoHovered();
-            else
-                tile.DemoUnhovered();
+            //if (math.all(new int2(x, y) == TargetIndex))
+            //    tile.DemoHovered();
+            //else
+            //    tile.DemoUnhovered();
 
             var toroidal = GetToroidalForXY(x,y);
             var pos = torus.ToroidalToCartesian(toroidal, ItemOffset);
