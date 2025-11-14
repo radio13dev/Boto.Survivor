@@ -16,6 +16,8 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
     public Material MaterialDisabled;
     public Material MaterialPurchased;
     
+    public Animator Animator;
+    
     public SerializedDictionary<TiledStatsUI_InWorldTorus.eState, GameObject[]> StateVisuals = new();
     
     public void SetMesh(Mesh mesh)
@@ -80,23 +82,22 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         if (state == TiledStatsUI_InWorldTorus.eState.Locked)
         {
             col = col * new Color(0.5f, 0.5f, 0.5f, 0);
-            transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Available)
         {
             col = col * new Color(1,1,1,0);
-            transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Purchased)
         {
             col = col;
-            transform.localScale = new Vector3(0.8f, 0.3f, 0.8f);
         }
         
         for (int i = 0; i < MainColoredSprites.Length; i++)
         {
             MainColoredSprites[i].color = col;
         }
+        
+        Animator.SetInteger("State", (int)state);
     }
     
     [EditorButton]
@@ -114,6 +115,7 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         {
             HoveredVisuals[i].SetActive(true);
         }
+        Animator.SetBool("Hovered", true);
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -126,6 +128,7 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         {
             HoveredVisuals[i].SetActive(false);
         }
+        Animator.SetBool("Hovered", false);
     }
     public void OnPointerExit(PointerEventData eventData)
     {
