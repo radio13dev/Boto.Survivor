@@ -18,6 +18,8 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
     
     public Animator Animator;
     
+    public PooledParticle LevelUpParticle;
+    
     public SerializedDictionary<TiledStatsUI_InWorldTorus.eState, GameObject[]> StateVisuals = new();
     
     public void SetMesh(Mesh mesh)
@@ -51,8 +53,22 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         }
     }
 
+    TiledStatsUI_InWorldTorus.eState m_LastState;
     public void SetUnlocked(TiledStatsUI_InWorldTorus.eState state)
     {
+        if (m_LastState != TiledStatsUI_InWorldTorus.eState.Purchased && state == TiledStatsUI_InWorldTorus.eState.Purchased)
+        {
+            m_LastState = state;
+            if (Application.isPlaying)
+            {
+                var particle = LevelUpParticle.GetFromPool();
+                particle.transform.SetPositionAndRotation(transform.position, transform.rotation);
+                particle.transform.localScale = Vector3.one * 100;
+            }
+            
+        }
+        m_LastState = state;
+    
         // Disable all
         foreach (var kvp in StateVisuals)
         {

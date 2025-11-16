@@ -239,6 +239,21 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         if (ColumnLineTextures.Length == 0) return;
         
         TorusMesh.sharedMaterial.SetVector("_OffsetPercentage", new float4(FocusedIndex/new float2(CountX,CountY),0,0));
+        
+        var floorPos = math.floor(FocusedIndex);
+        var ceilPos = math.ceil(FocusedIndex);
+        if (floorPos.y != ceilPos.y)
+        {
+            var t = math.unlerp(floorPos.y, ceilPos.y, FocusedIndex.y);
+            var floorMat = TileTextures[(int)mathu.modabs(floorPos.y, TileTextures.Length)];
+            var ceilMat = TileTextures[(int)mathu.modabs(ceilPos.y, TileTextures.Length)];
+            TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", Color.Lerp(floorMat.GetColor("_Dither_ColorA"), ceilMat.GetColor("_Dither_ColorA"), t));
+        }
+        else
+        {
+            TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", TileTextures[(int)mathu.modabs(FocusedIndex.y, TileTextures.Length)].GetColor("_Dither_ColorA"));
+        }
+        
 
         if (Unlocked.Length != CountX * CountY)
         {
@@ -448,6 +463,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                     Unlocked[index] = Unlocked[index] == eState.Locked ? eState.Available :
                         Unlocked[index] == eState.Available ? eState.Purchased :
                         eState.Locked;
+                    Demo();
                 }
                 else
                     SetIndex(index2d);
