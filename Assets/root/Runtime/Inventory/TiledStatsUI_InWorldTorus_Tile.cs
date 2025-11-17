@@ -174,6 +174,10 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
             {
                 GetComponentInParent<TiledStatsUI_InWorldTorus>().UnlockTile(this);
             },
+            ButtonPress1 = () =>
+            {
+                GetComponentInParent<TiledStatsUI_InWorldTorus>().Close();
+            },
             ButtonDisabled = m_LastState != TiledStatsUI_InWorldTorus.eState.Available,
             FillColor = fillColor,
             OutlineColor = outlineColor

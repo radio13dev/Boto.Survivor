@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListener
 {
     public TransitionPoint InventoryT;
     public TransitionPoint ClosedT;
+    public TransitionPoint SkillsT;
     ExclusiveCoroutine Co;
 
     private void OnEnable()
@@ -24,15 +27,20 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
             case HandUIController.State.Inventory:
                 target = InventoryT;
                 break;
-            default:
             case HandUIController.State.Closed:
                 target = ClosedT;
                 break;
+            case HandUIController.State.Skills:
+                target = SkillsT;
+                break;
+            default:
+                throw new Exception($"Cannot transition to state {newState}");
         }
 
         Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
     }
 
+    HandUIController.State m_DebugState = HandUIController.State.Closed;
     [EditorButton]
     public void GotoClosed()
     {
@@ -40,7 +48,8 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
         {
             if (o is not HandUIController.IStateChangeListener change)
                 continue;
-            change.OnStateChanged(HandUIController.State.Inventory, HandUIController.State.Closed);
+            change.OnStateChanged(m_DebugState, HandUIController.State.Closed);
+            m_DebugState = HandUIController.State.Closed;
         }
     }
 
@@ -51,7 +60,20 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
         {
             if (o is not HandUIController.IStateChangeListener change)
                 continue;
-            change.OnStateChanged(HandUIController.State.Closed, HandUIController.State.Inventory);
+            change.OnStateChanged(m_DebugState, HandUIController.State.Inventory);
+            m_DebugState = HandUIController.State.Inventory;
+        }
+    }
+
+    [EditorButton]
+    public void GotoSkills()
+    {
+        foreach (var o in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (o is not HandUIController.IStateChangeListener change)
+                continue;
+            change.OnStateChanged(m_DebugState, HandUIController.State.Skills);
+            m_DebugState = HandUIController.State.Skills;
         }
     }
 }

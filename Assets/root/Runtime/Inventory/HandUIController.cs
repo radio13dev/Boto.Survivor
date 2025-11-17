@@ -32,6 +32,7 @@ public class HandUIController : MonoBehaviour
         Closed,
         Inventory,
         Map,
+        Skills,
         
         // Utility
         Any

@@ -9,8 +9,10 @@ using UnityEngine.InputSystem;
 using UnityEditor;
 #endif
 
-public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
+public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, HandUIController.IStateChangeListener
 {
+    static event Action s_DoOnceOnClose;
+    
     public MeshRenderer TorusMesh;
     public Transform TileContainer;
     public TiledStatsUI_InWorldTorus_Tile TileTemplate;
@@ -36,9 +38,15 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
 
     public int2 TargetIndex;
     public float2 FocusedIndex;
+    public float2 AnimFocusedIndex => FocusedIndex + m_RevealAnimOffset;
+    
     public float2 ZeroOffset = new float2(math.PI, math.PIHALF);
+    float2 m_ZeroOffset;
     public float2 ItemGrouping = new float2(0.7f, 0.4f);
+    float2 m_ItemGrouping;
     public float2 ItemGroupingSmoothing = new float2(1f, 1f);
+    float2 m_ItemGroupingSmoothing;
+    
 
     public Transform RowLineContainer;
     public Transform ColumnLineContainer;
@@ -103,9 +111,21 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         StartFocus();
     }
 
-    private void OnEnable()
+    // Close on first awake
+    private void Awake()
     {
         HandUIController.Attach(this);
+        Close();
+    }
+
+    private void OnDestroy()
+    {
+        HandUIController.Detach(this);
+    }
+
+    ExclusiveCoroutine m_RevealItemsCo;
+    private void OnEnable()
+    {
 
         GameEvents.OnEvent += OnGameEvent;
         if (CameraTarget.MainTarget) Demo();
@@ -119,11 +139,40 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         
         StartFocus();
     }
+    
+    [Header("Reveal Animation")]
+    public float2 InitZero;
+    public float2 InitItemGrouping = 1f;
+    public float2 InitItemGroupingSmoothing = 1f;
+    public float2 InitRevealAnimOffset = new float2(0, 2f);
+    public float Duration = 1f;
+    public ease.Mode EasingMode;
+    float2 m_RevealAnimOffset;
+    
+    [EditorButton]
+    public void RevealItems()
+    {
+        m_RevealItemsCo.StartCoroutine(this, RevealItemsCo());
+    }
+    IEnumerator RevealItemsCo()
+    {
+        float t = 0;
+        while (t < Duration)
+        {
+            t += Time.deltaTime;
+            t = math.clamp(t, 0, Duration);
+            var tEase = EasingMode.Evaluate(t/Duration);
+            m_ZeroOffset = mathu.lerprepeat(InitZero, ZeroOffset, tEase, math.PI);
+            m_ItemGrouping = math.lerp(InitItemGrouping, ItemGrouping, tEase);
+            m_ItemGroupingSmoothing = math.lerp(InitItemGroupingSmoothing, ItemGroupingSmoothing, tEase);
+            m_RevealAnimOffset = math.lerp(InitRevealAnimOffset, 0, tEase);
+            Demo();
+            yield return null;
+        }
+    }
 
     private void OnDisable()
     {
-        HandUIController.Detach(this);
-
         GameEvents.OnEvent -= OnGameEvent;
         
         ClearFocus();
@@ -137,6 +186,42 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
         if (player.Index != Game.ClientGame.PlayerIndex) return;
         Demo();
+    }
+
+    public static void OpenUI(Action DoOnceOnClose)
+    {
+        s_DoOnceOnClose += DoOnceOnClose;
+        HandUIController.SetState(HandUIController.State.Skills);
+    }
+
+    [EditorButton]
+    public void Open()
+    {
+        HandUIController.SetState(HandUIController.State.Skills);
+    }
+    
+    [EditorButton]
+    public void Close()
+    {
+        HandUIController.SetState(HandUIController.State.Closed);
+    }
+    public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
+    {
+        if (newState == HandUIController.State.Skills)
+        {
+            StartFocus();
+            if (oldState != HandUIController.State.Skills) RevealItems();
+        }
+        else
+        {
+            if (Application.isPlaying)
+            {
+                ClearFocus();
+                var close = s_DoOnceOnClose;
+                s_DoOnceOnClose = null;
+                close?.Invoke();
+            }
+        }
     }
 
     private void ClearFocus()
@@ -236,6 +321,20 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         return GameEvents.GetComponent<TiledStatsTree>(CameraTarget.MainTarget.Entity);
     }
 
+    public float delDist = 0.3f;
+    private void Update()
+    {
+        float dist = math.distance(FocusedIndex, TargetIndex);
+        if (HandUIController.GetState() == HandUIController.State.Skills)
+        {
+            var dir = GameInput.Inputs.UI.Navigate.ReadValue<Vector2>();
+            if (dist < delDist && dir.magnitude > 0.5f)
+            {
+                // Get the current focused tile and select the one in the direction of input
+                SetIndex((int2)math.round((float2)dir) + TargetIndex);
+            }
+        }
+    }
 
     [EditorButton]
     public void Demo()
@@ -249,20 +348,20 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         if (RowLineTextures.Length == 0) return;
         if (ColumnLineTextures.Length == 0) return;
         
-        TorusMesh.sharedMaterial.SetVector("_OffsetPercentage", new float4(FocusedIndex/new float2(TiledStats.TileCols, TiledStats.TileRows),0,0));
+        TorusMesh.sharedMaterial.SetVector("_OffsetPercentage", new float4(AnimFocusedIndex/new float2(TiledStats.TileCols, TiledStats.TileRows),0,0));
         
-        var floorPos = math.floor(FocusedIndex);
-        var ceilPos = math.ceil(FocusedIndex);
+        var floorPos = math.floor(AnimFocusedIndex);
+        var ceilPos = math.ceil(AnimFocusedIndex);
         if (floorPos.y != ceilPos.y)
         {
-            var t = math.unlerp(floorPos.y, ceilPos.y, FocusedIndex.y);
+            var t = math.unlerp(floorPos.y, ceilPos.y, AnimFocusedIndex.y);
             var floorMat = TileTextures[(int)mathu.modabs(floorPos.y, TileTextures.Length)];
             var ceilMat = TileTextures[(int)mathu.modabs(ceilPos.y, TileTextures.Length)];
             TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", Color.Lerp(floorMat.GetColor("_Dither_ColorA"), ceilMat.GetColor("_Dither_ColorA"), t));
         }
         else
         {
-            TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", TileTextures[(int)mathu.modabs(FocusedIndex.y, TileTextures.Length)].GetColor("_Dither_ColorA"));
+            TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", TileTextures[(int)mathu.modabs(AnimFocusedIndex.y, TileTextures.Length)].GetColor("_Dither_ColorA"));
         }
         
         var unlocked = GetUnlocked();
@@ -339,7 +438,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 column.sharedMaterial = ColumnVertexMats[tileIndex];
                 column.sharedMaterial.CopyMatchingPropertiesFromMaterial(ColumnLineTextures[x % ColumnLineTextures.Length]);
                 column.sharedMaterial.SetVector("_MinAngleDeltaAngle", new Vector4(toroidal.x-ColumnWidth, toroidal.y, ColumnWidth*2, delta.y));
-                column.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/TiledStats.TileRows);
+                column.sharedMaterial.SetFloat("_Offset", AnimFocusedIndex.y/TiledStats.TileRows);
                 bool isUnlocked = unlocked[tileIndex]>0;
                 bool neighbourUnlocked = unlocked[GetIndex(new int2(x,y+1))]>0;
                 column.sharedMaterial.SetColor("_Color", 
@@ -371,7 +470,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 row.sharedMaterial = RowVertexMats[tileIndex];
                 row.sharedMaterial.CopyMatchingPropertiesFromMaterial(RowLineTextures[x % RowLineTextures.Length]);
                 row.sharedMaterial.SetVector("_MinAngleDeltaAngle", new Vector4(toroidal.x, toroidal.y-RowHeight, delta.x, RowHeight*2));
-                row.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/TiledStats.TileRows);
+                row.sharedMaterial.SetFloat("_Offset", AnimFocusedIndex.y/TiledStats.TileRows);
                 bool isUnlocked = unlocked[tileIndex]>0;
                 bool neighbourUnlocked = unlocked[GetIndex(new int2(x+1,y))]>0;
                 row.sharedMaterial.SetColor("_Color", 
@@ -388,13 +487,13 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
 
     private float2 GetToroidalForXY(float x, float y)
     {
-        float2 toroidal = new float2((x - FocusedIndex.x) * math.PI2 / TiledStats.TileCols, (y - FocusedIndex.y) * math.PI2 / TiledStats.TileRows);
+        float2 toroidal = new float2((x - AnimFocusedIndex.x) * math.PI2 / TiledStats.TileCols, (y - AnimFocusedIndex.y) * math.PI2 / TiledStats.TileRows);
         toroidal.x = mathu.lerprepeat(toroidal.x, 0,
-            ItemGrouping.x * math.clamp(ease.cubic_out(ItemGroupingSmoothing.x * math.abs(mathu.deltaangle(math.PI, toroidal.x)) / math.PI), 0, 1), math.PI);
+            m_ItemGrouping.x * math.clamp(ease.cubic_out(m_ItemGroupingSmoothing.x * math.abs(mathu.deltaangle(math.PI, toroidal.x)) / math.PI), 0, 1), math.PI);
         toroidal.y = mathu.lerprepeat(toroidal.y, 0,
-            ItemGrouping.y * math.clamp(ease.cubic_out(ItemGroupingSmoothing.y * math.abs(mathu.deltaangle(math.PI, toroidal.y)) / math.PI), 0, 1), math.PI);
-        toroidal.x += ZeroOffset.x;
-        toroidal.y -= ZeroOffset.y;
+            m_ItemGrouping.y * math.clamp(ease.cubic_out(m_ItemGroupingSmoothing.y * math.abs(mathu.deltaangle(math.PI, toroidal.y)) / math.PI), 0, 1), math.PI);
+        toroidal.x += m_ZeroOffset.x;
+        toroidal.y -= m_ZeroOffset.y;
         return toroidal;
     }
     
