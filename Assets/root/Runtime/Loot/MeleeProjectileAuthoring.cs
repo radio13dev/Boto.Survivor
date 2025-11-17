@@ -14,10 +14,11 @@ public struct MeleeProjectileData : IComponentData
     public const int TemplateIndex = OrbitProjectileData.TemplateIndex + 8;
     public const float SheathAngle = 90f;
     public const float SheathRadius = 2f;
-    public const float SwingRadius = 5f;
+    public const float SwingRadius = 15f;
     public const float SwingDelay = 0.05f;
-    public const float SwingTime = 1f;
-    public const float RotRateModifier = 15f;
+    public const float SwingTime = 0.4f;
+    public const float FollowStiffnessMod = 0.3f;  
+    public const float RotStiffnessMod = 0.8f;
 
     public float SwingCooldown;
     public bool SwingToggle;
@@ -125,8 +126,8 @@ public partial struct MeleeProjectileSystem : ISystem
             targetPos += playerT.Up() * 1;
             
             // ... move towards that position smoothly
-            var predictedPos = transform.Position + movement.Velocity * dt * 4;
-            force.Velocity += math.clamp(targetPos - predictedPos, -5, 5) * dt * speed.Speed;
+            var shiftRate = 1f - math.exp(-speed.Speed * dt * MeleeProjectileData.FollowStiffnessMod);
+            force.Shift = (targetPos - transform.Position) * shiftRate;
             
             // Rotate to face away from player
             var targetForward = math.normalize(transform.Position - playerT.Position);
@@ -142,7 +143,7 @@ public partial struct MeleeProjectileSystem : ISystem
                 math.dot(currentFwdOnPlane, targetFwdOnPlane));
             
             // ... set rotation rate
-            var rotRate = rotAngleDifference * MeleeProjectileData.RotRateModifier;
+            var rotRate = rotAngleDifference * speed.Speed * MeleeProjectileData.RotStiffnessMod;
             rotationalInertia.Set(playerT.Up(), rotRate);
         }
     }
