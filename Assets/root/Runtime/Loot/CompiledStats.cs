@@ -249,6 +249,35 @@ public partial struct CompiledStatsSystem : ISystem
                             }
                             break;
                         }
+
+                        case RingPrimaryEffect.Projectile_Melee:
+                        {
+                            var template = Projectiles[MeleeProjectileData.TemplateIndex + (tier - 1)];
+                            byte spawnCount = (byte)(2 + stats.CompiledStatsTree.ExtraProjectiles);
+                            for (byte projSpawnIt = 0; projSpawnIt < spawnCount; projSpawnIt++)
+                            {
+                                Debug.Log($"Creating {effect} projectile...");
+
+                                var projectileE = ecb.Instantiate(template.Entity);
+                                var projectileT = transform;
+                                projectileT.Position += r.NextFloat3Direction();
+                                projectileT.Scale = stats.CompiledStatsTree.Size;
+                                ecb.SetComponent(projectileE, projectileT);
+
+                                ecb.SetComponent(projectileE, new MeleeProjectileData()
+                                {
+                                    SwingCooldown = effect.GetCooldown(0) * stats.CompiledStatsTree.Cooldown,
+                                    SwingToggle = false,
+                                    CreateTime = Time,
+                                    ProjectileCount = spawnCount,
+                                    ProjectileSize = stats.CompiledStatsTree.Size
+                                });
+
+                                Projectile.Setup(ref ecb, ref r, in projectileE, in stats, in playerId, in effect, in tier, (byte)projSpawnIt, double.MaxValue);
+                                Projectile.SetSpeed(ref ecb, in projectileE, in stats, 30);
+                            }
+                            break;
+                        }
                     }
                 }
             }

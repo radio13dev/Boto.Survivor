@@ -27,6 +27,7 @@ public static class StatExtensions
     {
         if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) return true;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) return true;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) return true;
         return false;
     }
     
@@ -38,6 +39,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseCD = 1f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseCD = 0.2f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseCD = 5f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseCD = 2f;
         return baseCD*(modifier >= 0 ? 1/(1 + modifier) : 1/modifier);
     }
     
@@ -50,6 +52,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseSpeed = 20f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseSpeed = 30f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseSpeed = 30f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseSpeed = 30f;
         return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSpeed;
     }
     
@@ -73,6 +76,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseDamage = 100;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseDamage = 100;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Orbit) != 0) baseDamage = 100;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseDamage = 100;
         return baseDamage + modifier;
     }
     
@@ -84,6 +88,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseSize = 1f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseSize = 1f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseSize = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseSize = 1f;
         return (modifier >= 0 ? 1/(1 + modifier) : 1/modifier) * baseSize;
     }
 }
