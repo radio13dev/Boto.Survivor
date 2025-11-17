@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, DescriptionUI.ISource
 {
     public MeshFilter[] MainMeshes;
     public MeshFilter[] MainOutlineMeshes;
@@ -19,8 +19,17 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
     public Animator Animator;
     
     public PooledParticle LevelUpParticle;
+    public float ParticleScale = 0.2f;
+    public float ParticleOffset = 0.2f;
     
     public SerializedDictionary<TiledStatsUI_InWorldTorus.eState, GameObject[]> StateVisuals = new();
+    
+    public TiledStat Stat;
+    
+    public void SetStat(TiledStat stat)
+    {
+        Stat = stat;
+    }
     
     public void SetMesh(Mesh mesh)
     {
@@ -62,10 +71,9 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
             if (Application.isPlaying)
             {
                 var particle = LevelUpParticle.GetFromPool();
-                particle.transform.SetPositionAndRotation(transform.position, transform.rotation);
-                particle.transform.localScale = Vector3.one * 100;
+                particle.transform.SetPositionAndRotation(transform.position + transform.up*ParticleOffset, transform.rotation);
+                particle.transform.localScale = Vector3.one * ParticleScale;
             }
-            
         }
         m_LastState = state;
     
@@ -95,17 +103,17 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
         
         if (MainRenderers.Length == 0) return;
         var col = Material.GetColor("_Dither_ColorA");
-        if (state == TiledStatsUI_InWorldTorus.eState.Locked)
-        {
-            col = col * new Color(0.5f, 0.5f, 0.5f, 0);
-        }
-        else if (state == TiledStatsUI_InWorldTorus.eState.Available)
+        if (state == TiledStatsUI_InWorldTorus.eState.Available)
         {
             col = col * new Color(1,1,1,0);
         }
         else if (state == TiledStatsUI_InWorldTorus.eState.Purchased)
         {
             col = col;
+        }
+        else //if (state == TiledStatsUI_InWorldTorus.eState.Locked)
+        {
+            col = col * new Color(0.5f, 0.5f, 0.5f, 0);
         }
         
         for (int i = 0; i < MainColoredSprites.Length; i++)
@@ -148,5 +156,27 @@ public class TiledStatsUI_InWorldTorus_Tile : MonoBehaviour, IPointerEnterHandle
     }
     public void OnPointerExit(PointerEventData eventData)
     {
+    }
+
+    const float ZeroAlpha = 2.0f/255f;
+    public DescriptionUI.Data GetDescription()
+    {
+        var color = Material.GetColor("_Dither_ColorA")*new Color(1.2f, 1.2f, 1.2f, 1);
+        var fillColor = color;
+        var outlineColor = color;
+        outlineColor.a = ZeroAlpha;
+        return new DescriptionUI.Data()
+        {
+            Title = Stat.GetTitle(),
+            Description = Stat.GetDescription(),
+            ButtonText = m_LastState == TiledStatsUI_InWorldTorus.eState.Purchased ? "Unlocked" : m_LastState == TiledStatsUI_InWorldTorus.eState.AvailableNoPoints ? "No Points" : "Unlock",
+            ButtonPress = () =>
+            {
+                GetComponentInParent<TiledStatsUI_InWorldTorus>().UnlockTile(this);
+            },
+            ButtonDisabled = m_LastState != TiledStatsUI_InWorldTorus.eState.Available,
+            FillColor = fillColor,
+            OutlineColor = outlineColor
+        };
     }
 }

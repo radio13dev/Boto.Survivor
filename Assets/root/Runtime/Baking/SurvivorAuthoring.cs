@@ -71,6 +71,7 @@ public class SurvivorAuthoring : MonoBehaviourGizmos
             
             // Stats
             AddComponent(entity, new Wallet(){ Value = 0 });
+            AddComponent(entity, new PlayerLevel(){ Level = 3 });
             AddComponent(entity, TiledStatsTree.Default);
             AddComponent(entity, new CompiledStats());
             AddComponent(entity, new CompiledStatsDirty());

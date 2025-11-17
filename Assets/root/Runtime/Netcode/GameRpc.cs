@@ -39,6 +39,7 @@ public unsafe struct GameRpc : IComponentData
 
         
         // Admin Actions
+        _AdminActionBit = 0b0100_0000,
         AdminPlaceEnemy = 0b0100_0000, // Admin action flag
         AdminPlaceGem = 0b0100_0001,
         AdminPlayerLevelStat = 0b0100_0010,
@@ -53,6 +54,7 @@ public unsafe struct GameRpc : IComponentData
     [FieldOffset(1)] byte m_Player;
     [FieldOffset(0)] fixed byte m_Data[Length];
     public bool IsValidClientRpc => (m_Type & (byte)Code._ServerActionBit) == 0;
+    public bool IsAdminRpc => (m_Type & (byte)Code._AdminActionBit) != 0;
 
     public Code Type
     {
@@ -765,22 +767,30 @@ public partial struct GameRpcSystem : ISystem
                 case GameRpc.Code.PlayerLevelStat:
                 case GameRpc.Code.AdminPlayerLevelStat:
                 {
-                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(TiledStatsTree), typeof(Wallet));
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(TiledStatsTree), typeof(Wallet), typeof(PlayerLevel));
                     playerQuery.SetSharedComponentFilter(playerTag);
                     if (!playerQuery.HasSingleton<TiledStatsTree>()) continue;
                     
                     var playerE = playerQuery.GetSingletonEntity();
                     var stats = playerQuery.GetSingleton<TiledStatsTree>();
-                    if (stats[rpc.AffectedStat] >= 5 && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
+                    if (stats[rpc.AffectedStat] >= 1 && !rpc.IsAdminRpc)
                     {
                         Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but it was already max level.");
+                        continue;
+                    }
+                    
+                    var playerLevel = playerQuery.GetSingleton<PlayerLevel>();
+                    var levelsSpent = stats.GetLevelsSpent();
+                    if (levelsSpent >= playerLevel.Level && !rpc.IsAdminRpc)
+                    {
+                        Debug.LogWarning($"Player {playerId} attempted to level up {rpc.AffectedStat} but they have already spent {levelsSpent}/{playerLevel.Level} levels");
                         continue;
                     }
                     
                     var wallet = playerQuery.GetSingleton<Wallet>();
                     
                     var cost = stats.GetLevelUpCost(rpc.AffectedStat);
-                    if (cost > wallet.Value && rpc.Type != GameRpc.Code.AdminPlayerLevelStat)
+                    if (cost > wallet.Value && !rpc.IsAdminRpc)
                     {
                         Debug.LogWarning($"Player {playerId} didn't have enough money to level up {rpc.AffectedStat}: {wallet.Value}/{cost}.");
                         continue;
@@ -788,7 +798,7 @@ public partial struct GameRpcSystem : ISystem
                     
                     wallet.Value = math.max(0, wallet.Value - cost);
                     
-                    if (rpc.Type == GameRpc.Code.AdminPlayerLevelStat && rpc.ShouldLowerStat)
+                    if (rpc.IsAdminRpc && rpc.ShouldLowerStat)
                         stats[rpc.AffectedStat]--;
                     else
                         stats[rpc.AffectedStat]++;

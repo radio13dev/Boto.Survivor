@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -18,8 +20,6 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     public Material[] TileDisabledTextures = Array.Empty<Material>();
     public Sprite[] TileSprites = Array.Empty<Sprite>();
     public TorusTerrainTool TerrainTool;
-    public int CountX = 6;
-    public int CountY = 6;
     public float Radius = 8;
     public float Thickness = 3.5f;
     public float ItemOffset = 0.2f;
@@ -49,14 +49,16 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     
     public float RowHeight = 0.01f;
     public float ColumnWidth = 0.01f;
-
-    public eState[] Unlocked;
     
     public TorusTerrainTool CylinderTemplate;
+    
+    [Header("UI Stuff")]
+    public TMP_Text RemainingPointsText;
 
     public enum eState
     {
         Locked,
+        AvailableNoPoints,
         Available,
         Purchased
     }
@@ -94,8 +96,67 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
 
     public void SetIndex(int2 index)
     {
-        TargetIndex = (int2)mathu.repeat(index, new int2(CountX, CountY));
+        // Unfocus current
+        ClearFocus();
+        TargetIndex = (int2)mathu.repeat(index, new int2(TiledStats.TileCols, TiledStats.TileRows));
         SetPosition(TargetIndex);
+        StartFocus();
+    }
+
+    private void OnEnable()
+    {
+        HandUIController.Attach(this);
+
+        GameEvents.OnEvent += OnGameEvent;
+        if (CameraTarget.MainTarget) Demo();
+        else
+        {
+            Demo();
+        }
+
+        // Focus the UI 
+        SetIndex(default);
+        
+        StartFocus();
+    }
+
+    private void OnDisable()
+    {
+        HandUIController.Detach(this);
+
+        GameEvents.OnEvent -= OnGameEvent;
+        
+        ClearFocus();
+    }
+
+    private void OnGameEvent(GameEvents.Data data)
+    {
+        var eType = data.Type;
+        var entity = data.Entity;
+        if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
+        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
+        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        Demo();
+    }
+
+    private void ClearFocus()
+    {
+        var index = GetIndex(TargetIndex);
+        var tiles = TileContainer.GetComponentsInChildren<TiledStatsUI_InWorldTorus_Tile>();
+        if (index >= 0 && index < tiles.Length && tiles[index].TryGetComponent<Focusable>(out var focusable))
+        {
+            if (Application.isPlaying) UIFocus.EndFocus(focusable);
+        }
+    }
+
+    private void StartFocus()
+    {
+        var index = GetIndex(TargetIndex);
+        var tiles = TileContainer.GetComponentsInChildren<TiledStatsUI_InWorldTorus_Tile>();
+        if (index >= 0 && index < tiles.Length && tiles[index].TryGetComponent<Focusable>(out var focusable))
+        {
+            if (Application.isPlaying) UIFocus.StartFocus(focusable);
+        }
     }
 
     public void SetPosition(float2 position)
@@ -109,7 +170,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     IEnumerator _SetPositionCo(float2 position)
     {
         float t = 0;
-        var length = new float2(CountX, CountY) / 2;
+        var length = new float2(TiledStats.TileCols, TiledStats.TileRows) / 2;
         while (t < 10f)
         {
             var old = FocusedIndex;
@@ -158,73 +219,23 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             if (Application.isPlaying) Destroy(obj.gameObject);
             else DestroyImmediate(obj.gameObject);
     }
-    
-    [EditorButton]
-    public void SetDefaultUnlocks()
+
+    public long GetAvailalePoints()
     {
-        Unlocked = new []
-        {
-            eState.Purchased
-        };
-        Demo();
+        if (!CameraTarget.MainTarget || Game.ClientGame == null) return 0;
+        return GameEvents.GetComponent<PlayerLevel>(CameraTarget.MainTarget.Entity).Level - GameEvents.GetComponent<TiledStatsTree>(CameraTarget.MainTarget.Entity).GetLevelsSpent();
     }
-    
-    [EditorButton]
-    public void SetAllLocked()
+    public long GetSpentPoints()
     {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = eState.Locked;
-        }
-        Demo();
+        if (!CameraTarget.MainTarget || Game.ClientGame == null) return 0;
+        return GameEvents.GetComponent<TiledStatsTree>(CameraTarget.MainTarget.Entity).GetLevelsSpent();
     }
-    
-    [EditorButton]
-    public void SetAllPurchased()
+    private TiledStatsTree GetUnlocked()
     {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = eState.Purchased;
-        }
-        Demo();
+        if (!CameraTarget.MainTarget || Game.ClientGame == null) return default;
+        return GameEvents.GetComponent<TiledStatsTree>(CameraTarget.MainTarget.Entity);
     }
-    
-    [EditorButton]
-    public void SetAlternatingPurchased()
-    {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = ((i % 2) == 0) ? eState.Purchased : eState.Locked;
-        }
-        Demo();
-    }
-    [EditorButton]
-    public void SetAlternatingPurchased2()
-    {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = ((i % 3) == 0) ? eState.Purchased : eState.Locked;
-        }
-        Demo();
-    }
-    [EditorButton]
-    public void SetAlternatingPurchased3()
-    {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = ((i % 4) == 0) ? eState.Purchased : eState.Locked;
-        }
-        Demo();
-    }
-    [EditorButton]
-    public void SetAlternatingPurchased4()
-    {
-        for (int i = 0; i < Unlocked.Length; i++)
-        {
-            Unlocked[i] = ((i % 5) == 0) ? eState.Purchased : eState.Locked;
-        }
-        Demo();
-    }
+
 
     [EditorButton]
     public void Demo()
@@ -238,7 +249,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
         if (RowLineTextures.Length == 0) return;
         if (ColumnLineTextures.Length == 0) return;
         
-        TorusMesh.sharedMaterial.SetVector("_OffsetPercentage", new float4(FocusedIndex/new float2(CountX,CountY),0,0));
+        TorusMesh.sharedMaterial.SetVector("_OffsetPercentage", new float4(FocusedIndex/new float2(TiledStats.TileCols, TiledStats.TileRows),0,0));
         
         var floorPos = math.floor(FocusedIndex);
         var ceilPos = math.ceil(FocusedIndex);
@@ -254,21 +265,19 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             TorusMesh.sharedMaterial.SetColor("_Dither_ColorB", TileTextures[(int)mathu.modabs(FocusedIndex.y, TileTextures.Length)].GetColor("_Dither_ColorA"));
         }
         
-
-        if (Unlocked.Length != CountX * CountY)
-        {
-            Array.Resize(ref Unlocked, CountX * CountY);
-        }
-
+        var unlocked = GetUnlocked();
+        
         var torus = new Torus(Radius, Thickness);
         var torusZero = new Torus(Radius, 0.001f);
         int tileIndex = 0;
         var tiles = TileContainer.GetComponentsInChildren<TiledStatsUI_InWorldTorus_Tile>();
         var columns = ColumnLineContainer.GetComponentsInChildren<MeshRenderer>();
         var rows = RowLineContainer.GetComponentsInChildren<MeshRenderer>();
+        var availablePoints = GetAvailalePoints();
+        var numberUnlocked = GetSpentPoints();
         
-        for (int x = 0; x < CountX; x++)
-        for (int y = 0; y < CountY; y++)
+        for (int x = 0; x < TiledStats.TileCols; x++)
+        for (int y = 0; y < TiledStats.TileRows; y++)
         {
             TiledStatsUI_InWorldTorus_Tile tile;
             if (tileIndex < tiles.Length)
@@ -276,6 +285,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             else
                 tile = Instantiate(TileTemplate, TileContainer);
 
+            tile.SetStat((TiledStat)tileIndex);
             tile.SetMesh(TileMeshes[x % TileMeshes.Length]);
             tile.SetOutlineMesh(TileOutlineMeshes[x % TileMeshes.Length]);
             tile.SetMaterials(TileTextures[y % TileTextures.Length], 
@@ -284,17 +294,18 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 );
             tile.SetSprite(TileSprites[tileIndex % TileSprites.Length]);
             {
-                bool isUnlocked = Unlocked[tileIndex] == eState.Purchased;
-                bool neighbourUnlocked = Unlocked[GetIndex(new int2(x,y+1))] == eState.Purchased || 
-                                         Unlocked[GetIndex(new int2(x,y-1))] == eState.Purchased || 
-                                         Unlocked[GetIndex(new int2(x+1,y))] == eState.Purchased || 
-                                         Unlocked[GetIndex(new int2(x-1,y))] == eState.Purchased;
-                tile.SetUnlocked(isUnlocked ? eState.Purchased : neighbourUnlocked ? eState.Available : eState.Locked);
+                bool isUnlocked = unlocked[tileIndex]>0;
+                bool neighbourUnlocked = numberUnlocked == 0 ||
+                                         unlocked[GetIndex(new int2(x,y+1))]>0 || 
+                                         unlocked[GetIndex(new int2(x,y-1))]>0 || 
+                                         unlocked[GetIndex(new int2(x+1,y))]>0 || 
+                                         unlocked[GetIndex(new int2(x-1,y))]>0;
+                tile.SetUnlocked(isUnlocked ? eState.Purchased : neighbourUnlocked && availablePoints > 0 ? eState.Available : neighbourUnlocked ? eState.AvailableNoPoints : eState.Locked);
             }
-            //if (math.all(new int2(x, y) == TargetIndex))
-            //    tile.DemoHovered();
-            //else
-            //    tile.DemoUnhovered();
+            if (math.all(new int2(x, y) == TargetIndex))
+            {
+                RemainingPointsText.text = $"LEVEL UP SKILLS\n{availablePoints} Points Left";
+            }
 
             var toroidal = GetToroidalForXY(x,y);
             var pos = torus.ToroidalToCartesian(toroidal, ItemOffset);
@@ -312,8 +323,8 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 else
                     column = Instantiate(CylinderTemplate.gameObject, ColumnLineContainer).GetComponent<MeshRenderer>();
                 
-                if (ColumnVertexMats.Length != CountX*CountY)
-                    Array.Resize(ref ColumnVertexMats, CountX*CountY);
+                if (ColumnVertexMats.Length != TiledStats.TileCols*TiledStats.TileRows)
+                    Array.Resize(ref ColumnVertexMats, TiledStats.TileCols*TiledStats.TileRows);
 #if UNITY_EDITOR
                 if (!ColumnVertexMats[tileIndex])
                 {
@@ -328,9 +339,9 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 column.sharedMaterial = ColumnVertexMats[tileIndex];
                 column.sharedMaterial.CopyMatchingPropertiesFromMaterial(ColumnLineTextures[x % ColumnLineTextures.Length]);
                 column.sharedMaterial.SetVector("_MinAngleDeltaAngle", new Vector4(toroidal.x-ColumnWidth, toroidal.y, ColumnWidth*2, delta.y));
-                column.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/CountY);
-                bool isUnlocked = Unlocked[tileIndex] == eState.Purchased;
-                bool neighbourUnlocked = Unlocked[GetIndex(new int2(x,y+1))] == eState.Purchased;
+                column.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/TiledStats.TileRows);
+                bool isUnlocked = unlocked[tileIndex]>0;
+                bool neighbourUnlocked = unlocked[GetIndex(new int2(x,y+1))]>0;
                 column.sharedMaterial.SetColor("_Color", 
                     isUnlocked && neighbourUnlocked ? Color.white :
                     isUnlocked || neighbourUnlocked ? Color.white :
@@ -344,8 +355,8 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 else
                     row = Instantiate(CylinderTemplate.gameObject, RowLineContainer).GetComponent<MeshRenderer>();
                 
-                if (RowVertexMats.Length != CountX*CountY)
-                    Array.Resize(ref RowVertexMats, CountX*CountY);
+                if (RowVertexMats.Length != TiledStats.TileCols*TiledStats.TileRows)
+                    Array.Resize(ref RowVertexMats, TiledStats.TileCols*TiledStats.TileRows);
 #if UNITY_EDITOR
                 if (!RowVertexMats[tileIndex])
                 {
@@ -360,9 +371,9 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
                 row.sharedMaterial = RowVertexMats[tileIndex];
                 row.sharedMaterial.CopyMatchingPropertiesFromMaterial(RowLineTextures[x % RowLineTextures.Length]);
                 row.sharedMaterial.SetVector("_MinAngleDeltaAngle", new Vector4(toroidal.x, toroidal.y-RowHeight, delta.x, RowHeight*2));
-                row.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/CountY);
-                bool isUnlocked = Unlocked[tileIndex] == eState.Purchased;
-                bool neighbourUnlocked = Unlocked[GetIndex(new int2(x+1,y))] == eState.Purchased;
+                row.sharedMaterial.SetFloat("_Offset", FocusedIndex.y/TiledStats.TileRows);
+                bool isUnlocked = unlocked[tileIndex]>0;
+                bool neighbourUnlocked = unlocked[GetIndex(new int2(x+1,y))]>0;
                 row.sharedMaterial.SetColor("_Color", 
                     isUnlocked && neighbourUnlocked ? Color.white :
                     isUnlocked || neighbourUnlocked ? Color.white :
@@ -371,64 +382,13 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             
             tileIndex++;
         }
-
-        /*
-        // Create and position the columns
-        if (ColumnLineContainer && ColumnLineTemplate)
-        {
-            for (int x = 0; x < CountX; x++)
-            {
-                MeshRenderer column;
-                if (x < columns.Length)
-                    column = columns[x];
-                else
-                    column = Instantiate(ColumnLineTemplate.gameObject, ColumnLineContainer).GetComponent<MeshRenderer>();
-                column.sharedMaterial = ColumnLineTextures[x % ColumnLineTextures.Length];
-
-                float2 toroidal = new float2((x - FocusedIndex.x) * math.PI2 / CountX, (TargetIndex.y - FocusedIndex.y) * math.PI2 / CountY);
-                toroidal.x = mathu.lerprepeat(toroidal.x, 0,
-                    ItemGrouping.x * math.clamp(ease.cubic_out(ItemGroupingSmoothing.x * math.abs(mathu.deltaangle(math.PI, toroidal.x)) / math.PI), 0, 1), math.PI);
-                toroidal.y = mathu.lerprepeat(toroidal.y, 0,
-                    ItemGrouping.y * math.clamp(ease.cubic_out(ItemGroupingSmoothing.y * math.abs(mathu.deltaangle(math.PI, toroidal.y)) / math.PI), 0, 1), math.PI);
-                toroidal.x += ZeroOffset.x;
-                toroidal.y -= ZeroOffset.y;
-                var pos = torusZero.ToroidalToCartesian(toroidal, ItemOffset);
-                var normal = torusZero.GetNormalQuaternion(pos, torusZero.ToroidalToCartesian(toroidal + new float2(0.01f, 0)) - pos);
-                column.transform.SetLocalPositionAndRotation(pos,
-                    math.mul(normal, quaternion.AxisAngle(math.right(), math.PIHALF)));
-            }
-        }
-
-        // Create and position the rows
-        if (RowLineContainer && RowLineTemplate)
-        {
-            for (int y = 0; y < CountY; y++)
-            {
-                MeshRenderer row;
-                if (y < rows.Length)
-                    row = rows[y];
-                else
-                    row = Instantiate(RowLineTemplate.gameObject, RowLineContainer).GetComponent<MeshRenderer>();
-                row.sharedMaterial = RowLineTextures[y % RowLineTextures.Length];
-
-                float2 toroidal = new float2(0, (y - FocusedIndex.y) * math.PI2 / CountY);
-                //toroidal.x = mathu.lerprepeat(toroidal.x, 0, ItemGrouping.x*math.clamp(ease.cubic_out(ItemGroupingSmoothing.x*math.abs(mathu.deltaangle(math.PI, toroidal.x))/math.PI),0,1), math.PI);
-                toroidal.y = mathu.lerprepeat(toroidal.y, 0,
-                    ItemGrouping.y * math.clamp(ease.cubic_out(ItemGroupingSmoothing.y * math.abs(mathu.deltaangle(math.PI, toroidal.y)) / math.PI), 0, 1), math.PI);
-                //toroidal.x += ZeroOffset.x;
-                toroidal.y -= ZeroOffset.y;
-                var pos = torus.ToroidalToCartesian(toroidal, ItemOffset);
-                row.transform.localPosition = new float3(0, pos.y, 0);
-
-                row.transform.localScale = pos.x * Vector3.one;
-            }
-        }
-        */
+        
+        UIFocus.Refresh();
     }
 
     private float2 GetToroidalForXY(float x, float y)
     {
-        float2 toroidal = new float2((x - FocusedIndex.x) * math.PI2 / CountX, (y - FocusedIndex.y) * math.PI2 / CountY);
+        float2 toroidal = new float2((x - FocusedIndex.x) * math.PI2 / TiledStats.TileCols, (y - FocusedIndex.y) * math.PI2 / TiledStats.TileRows);
         toroidal.x = mathu.lerprepeat(toroidal.x, 0,
             ItemGrouping.x * math.clamp(ease.cubic_out(ItemGroupingSmoothing.x * math.abs(mathu.deltaangle(math.PI, toroidal.x)) / math.PI), 0, 1), math.PI);
         toroidal.y = mathu.lerprepeat(toroidal.y, 0,
@@ -440,12 +400,12 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
     
     public int2 GetIndex2D(int index)
     {
-        var index2d = new int2(mathu.modabs(index / CountY,CountX),mathu.modabs(index, CountY));
+        var index2d = new int2(mathu.modabs(index / TiledStats.TileRows,TiledStats.TileCols),mathu.modabs(index, TiledStats.TileRows));
         return index2d;
     }
     public int GetIndex(int2 index2D)
     {
-        return mathu.modabs(index2D.x, CountX)*CountY + mathu.modabs(index2D.y, CountY);
+        return mathu.modabs(index2D.x, TiledStats.TileCols)*TiledStats.TileRows + mathu.modabs(index2D.y, TiledStats.TileRows);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -457,17 +417,39 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler
             var index = Array.IndexOf(tiles, tile);
             if (index >= 0)
             {
-                var index2d = new int2(index / CountX, index % CountX);
+                var index2d = GetIndex2D(index);
                 if (math.all(index2d == TargetIndex))
                 {
-                    Unlocked[index] = Unlocked[index] == eState.Locked ? eState.Available :
-                        Unlocked[index] == eState.Available ? eState.Purchased :
-                        eState.Locked;
-                    Demo();
+                    UnlockTile(tile);
                 }
                 else
                     SetIndex(index2d);
             }
         }
+    }
+    
+    public void UnlockTile(TiledStatsUI_InWorldTorus_Tile tile)
+    {
+        // Try find the index of this tile
+        var tiles = TileContainer.GetComponentsInChildren<TiledStatsUI_InWorldTorus_Tile>();
+        var index = Array.IndexOf(tiles, tile);
+        
+        if (Keyboard.current.shiftKey.isPressed)
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex, 
+                    (TiledStat)(index),
+                    true
+                ));
+        else if (Keyboard.current.ctrlKey.isPressed)
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                    (TiledStat)(index),
+                    false
+                ));
+        else
+            Game.ClientGame.RpcSendBuffer.Enqueue(
+                GameRpc.PlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                    (TiledStat)(index)
+                ));
     }
 }

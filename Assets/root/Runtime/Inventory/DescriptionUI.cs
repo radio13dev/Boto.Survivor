@@ -6,6 +6,7 @@ using AYellowpaper.SerializedCollections;
 using TMPro;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Palette : MonoBehaviour
 {
@@ -54,6 +55,9 @@ public class DescriptionUI : MonoBehaviour
         public string BottomRight;
         public eBottomRowVariant BottomVariant;
         
+        public Color? FillColor;
+        public Color? OutlineColor;
+        
         public TiledStatData[] TiledStatsData;
         
         public string CostFieldText;
@@ -99,6 +103,11 @@ public class DescriptionUI : MonoBehaviour
         }
     }
 
+    public Image Fill;
+    Color? m_DefaultFill;
+    public Image Outline;
+    Color? m_DefaultOutline;
+    
     public TMP_Text Title;
     public TMP_Text Description;
     public List<DescriptionUIRow> Rows;
@@ -185,6 +194,20 @@ public class DescriptionUI : MonoBehaviour
 
     public void SetText(Data data)
     {
+        if (data.FillColor.HasValue)
+        {
+            if (!m_DefaultFill.HasValue) m_DefaultFill = Fill.color;
+            Fill.color = data.FillColor.Value;
+        }
+        else if (m_DefaultFill.HasValue) Fill.color = m_DefaultFill.Value;
+        
+        if (data.OutlineColor.HasValue)
+        {
+            if (!m_DefaultOutline.HasValue) m_DefaultOutline = Outline.color;
+            Outline.color = data.OutlineColor.Value;
+        }
+        else if (m_DefaultOutline.HasValue) Outline.color = m_DefaultOutline.Value;
+    
         m_ButtonPress = data.ButtonDisabled ? null : data.ButtonPress;
         
         if (Button1) Button1.SetActive(data.ButtonPress1 != null);

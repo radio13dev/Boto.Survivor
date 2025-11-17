@@ -527,6 +527,459 @@ public static class TiledStatsFull
                 new string[] { "Damage Increase on Ability:" },
                 new string[] { "" }
             ),
+            
+            
+            
+            new(TiledStat.Stat_36,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 36" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_37,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 37" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_38,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 38" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_39,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 39" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_40,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 40" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_41,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 41" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_42,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 42" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_43,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 43" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_44,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 44" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_45,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 45" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_46,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 46" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_47,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 47" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_48,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 48" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_49,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 49" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_50,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 50" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_51,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 51" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_52,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 52" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_53,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 53" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_54,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 54" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_55,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 55" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_56,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 56" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_57,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 57" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_58,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 58" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_59,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 59" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_60,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 60" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_61,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 61" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_62,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 62" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_63,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 63" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_64,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 64" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_65,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 65" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_66,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 66" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_67,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 67" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_68,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 68" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_69,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 69" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_70,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 70" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_71,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 71" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_72,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 72" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_73,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 73" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_74,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 74" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_75,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 75" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_76,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 76" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_77,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 77" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_78,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 78" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_79,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 79" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
+            new(TiledStat.Stat_80,
+                curve.constant(1),
+                curve.linear(0, 1), // Fades over time
+                curve.zero,
+                new string[] { "Stat 80" },
+                new string[] { "Description here" },
+                new string[] { "" },
+                new string[] { "" },
+                new string[] { "" }
+            ),
         };
 
         data = data.OrderBy(d => d.Stat).ToArray();
