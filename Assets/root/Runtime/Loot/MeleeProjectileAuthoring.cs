@@ -14,8 +14,9 @@ public struct MeleeProjectileData : IComponentData
     public const int TemplateIndex = OrbitProjectileData.TemplateIndex + 8;
     public const float SheathAngle = 90f;
     public const float SheathRadius = 2f;
-    public const float SwingRadius = 3f;
-    public const float SwingDelay = 0.5f;
+    public const float SwingRadius = 5f;
+    public const float SwingDelay = 0.05f;
+    public const float SwingTime = 1f;
     public const float RotRateModifier = 15f;
 
     public float SwingCooldown;
@@ -83,6 +84,12 @@ public partial struct MeleeProjectileSystem : ISystem
             var playerE = Players[owned.PlayerId].Value;
             if (!TransformLookup.TryGetComponent(playerE, out var playerT)) return;
             
+            // Determine swing window
+            var swingTime = math.min(MeleeProjectileData.SwingTime, projectile.SwingCooldown);
+            var swingDelay = owned.Key.Index * MeleeProjectileData.SwingDelay;
+            var swingTimer = (float) math.max(0, (Time - projectile.CreateTime - swingDelay) % projectile.SwingCooldown);
+            var swingCount = math.max(0, (int) math.floor((Time - projectile.CreateTime - swingDelay) / projectile.SwingCooldown));
+            
             // Spread behind player
             var sheathAngle = MeleeProjectileData.SheathAngle * math.PI / 180;
             var i = owned.Key.Index;
@@ -91,6 +98,28 @@ public partial struct MeleeProjectileSystem : ISystem
             var angleOffset = projectile.ProjectileCount % 2 == 1 ? math.ceil(i / 2f) : math.floor(i / 2f) + 0.5f;
             angleOffset *= angleBetween * direction;
             var radius = MeleeProjectileData.SheathRadius;
+
+            // If in swing window
+            if (swingTimer <= swingTime && swingCount >= 1)
+            {
+                if ((swingCount % 2 == 0) != projectile.SwingToggle)
+                {
+                    projectile.SwingToggle = swingCount % 2 == 0;
+                    ignoredEntities.Clear();
+                }
+                
+                // ... adjust target angle
+                var totalSwingAngle = math.PI2 - (math.abs(angleOffset) * 2);
+                var progress = (swingTimer / swingTime);
+                var swingAngleOffset = totalSwingAngle * progress * direction;
+                angleOffset = -angleOffset - swingAngleOffset;
+                
+                // ... adjust target radius
+                var easeVal = progress < 0.5f ? ease.cubic(progress * 2f) : ease.cubic((1 - progress) * 2f);
+                radius += (MeleeProjectileData.SwingRadius - MeleeProjectileData.SheathRadius) * easeVal;
+            }
+            
+            // ... get target position
             var targetRot = quaternion.AxisAngle(playerT.Up(), angleOffset);
             var targetPos = playerT.Position + math.mul(targetRot, -playerT.Forward() * radius);
             targetPos += playerT.Up() * 1;

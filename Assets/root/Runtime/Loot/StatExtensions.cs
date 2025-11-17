@@ -39,7 +39,7 @@ public static class StatExtensions
         if ((primaryEffect & RingPrimaryEffect.Projectile_Ring) != 0) baseCD = 1f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_NearestRapid) != 0) baseCD = 0.2f;
         if ((primaryEffect & RingPrimaryEffect.Projectile_Seeker) != 0) baseCD = 5f;
-        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseCD = 1f;
+        if ((primaryEffect & RingPrimaryEffect.Projectile_Melee) != 0) baseCD = 2f;
         return baseCD*(modifier >= 0 ? 1/(1 + modifier) : 1/modifier);
     }
     

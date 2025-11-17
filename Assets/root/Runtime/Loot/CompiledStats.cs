@@ -266,7 +266,7 @@ public partial struct CompiledStatsSystem : ISystem
 
                                 ecb.SetComponent(projectileE, new MeleeProjectileData()
                                 {
-                                    SwingCooldown = stats.CompiledStatsTree.Cooldown,
+                                    SwingCooldown = effect.GetCooldown(0) * stats.CompiledStatsTree.Cooldown,
                                     SwingToggle = false,
                                     CreateTime = Time,
                                     ProjectileCount = spawnCount,
