@@ -11,6 +11,12 @@ using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 [Save]
+public struct PlayerLevel : IComponentData
+{
+    public long Level;
+}
+
+[Save]
 public struct CompiledStats : IComponentData
 {
     public TiledStatsTree CompiledStatsTree;

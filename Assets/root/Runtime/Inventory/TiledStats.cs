@@ -45,6 +45,54 @@ public enum TiledStat : byte
     Stat_33_AbilityCooldownOnDestroy,
     Stat_34_RateOnAbility,
     Stat_35_DamageOnAbility,
+    
+    // Go up all the way to Stat_80
+    Stat_36,
+    Stat_37,
+    Stat_38,
+    Stat_39,
+    Stat_40,
+    Stat_41,
+    Stat_42,
+    Stat_43,
+    Stat_44,
+    Stat_45,
+    Stat_46,
+    Stat_47,
+    Stat_48,
+    Stat_49,
+    Stat_50,
+    Stat_51,
+    Stat_52,
+    Stat_53,
+    Stat_54,
+    Stat_55,
+    Stat_56,
+    Stat_57,
+    Stat_58,
+    Stat_59,
+    Stat_60,
+    Stat_61,
+    Stat_62,
+    Stat_63,
+    Stat_64,
+    Stat_65,
+    Stat_66,
+    Stat_67,
+    Stat_68,
+    Stat_69,
+    Stat_70,
+    Stat_71,
+    Stat_72,
+    Stat_73,
+    Stat_74,
+    Stat_75,
+    Stat_76,
+    Stat_77,
+    Stat_78,
+    Stat_79,
+    Stat_80
+    
 }
 
 [Save]
@@ -117,7 +165,7 @@ public unsafe struct TiledStatsTree : IComponentData
     [Pure]
     public long GetLevelUpCost(TiledStat stat)
     {
-        return (10L * (int)GetLevelsSpent());
+        return 0;//(10L * (int)GetLevelsSpent());
     }
 
     [Pure]
@@ -212,8 +260,8 @@ public unsafe struct TiledStatsTree : IComponentData
 
 public static partial class TiledStats
 {
-    public const int TileRows = 6;
-    public const int TileCols = 6;
+    public const int TileRows = 9;
+    public const int TileCols = 9;
     public static readonly int2 TileCount = new int2(TileCols, TileRows);
 
     public static TiledStat Get(int2 tileKey)
@@ -228,24 +276,24 @@ public static partial class TiledStats
     
     public static string GetTitle(this TiledStat stat)
     {
-        return "(Stat)".Color(Color.gray).Size(30);
+        return stat.GetFull().Localization.Localization_Title[0].Size(36);
     }
     
     public static string GetDescription(this TiledStat stat)
     {
-        return stat.GetFull().Localization.Localization_Title[0].Size(36);
+        return stat.GetFull().Localization.Localization_Description[0].Size(30);
     }
     
-    public static int GetRingIndex(this TiledStat stat)
-    {
-        if (stat == TiledStat.Stat_00_Ring0) return 0;
-        if (stat == TiledStat.Stat_11_Ring1) return 1;
-        if (stat == TiledStat.Stat_16_Ring2) return 2;
-        if (stat == TiledStat.Stat_21_Ring3) return 3;
-        if (stat == TiledStat.Stat_26_Ring4) return 4;
-        if (stat == TiledStat.Stat_31_Ring5) return 5;
-        return -1;
-    }
+    //public static int GetRingIndex(this TiledStat stat)
+    //{
+    //    if (stat == TiledStat.Stat_00_Ring0) return 0;
+    //    if (stat == TiledStat.Stat_11_Ring1) return 1;
+    //    if (stat == TiledStat.Stat_16_Ring2) return 2;
+    //    if (stat == TiledStat.Stat_21_Ring3) return 3;
+    //    if (stat == TiledStat.Stat_26_Ring4) return 4;
+    //    if (stat == TiledStat.Stat_31_Ring5) return 5;
+    //    return -1;
+    //}
     
     
     public static List<(string left, string oldVal, float change, string newVal)> GetDescriptionRows(this TiledStat stat, int specificLevel)

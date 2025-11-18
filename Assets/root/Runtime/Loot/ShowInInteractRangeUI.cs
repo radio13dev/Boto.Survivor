@@ -11,12 +11,27 @@ public class ShowInInteractRangeUI : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnEvent += OnGameEvent;
-        OnInteractEnd?.Invoke();
+        ForceCheckState();
     }
 
     private void OnDisable()
     {
         GameEvents.OnEvent -= OnGameEvent;
+    }
+
+    private void ForceCheckState()
+    {
+        if (Game.ClientGame == null) return;
+        if (!GameEvents.TryGetSingleton<NearestInteractable>(out var nearest) || nearest.Value == Entity.Null)
+        {
+            m_Entity = Entity.Null;
+            OnInteractEnd?.Invoke();
+        }
+        else
+        {
+            m_Entity = nearest.Value;
+            OnInteractStart?.Invoke();
+        }
     }
 
     public virtual void OnGameEvent(GameEvents.Data data)

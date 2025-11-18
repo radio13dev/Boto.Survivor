@@ -1,8 +1,178 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+
+public readonly struct Torus
+{
+    public readonly float RingRadius;
+    public readonly float Thickness;
+
+    public Torus(float radius, float thickness)
+    {
+        RingRadius = radius;
+        Thickness = thickness;
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 GetTorusCircleCenter(float3 worldSpace)
+    {
+        // Get torus parameters from SharedStatic
+        float ringRadius = RingRadius;
+
+        // Compute the angle theta (in the X-z plane) for the projection
+        float theta = math.atan2(worldSpace.z, worldSpace.x);
+
+        // Compute the center of the main torus ring at this angle
+        return new float3(ringRadius * math.cos(theta), 0f, ringRadius * math.sin(theta));
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void ClampAboveSurface(float3 worldSpace, float heightOffset, out float3 newPos, out bool clamped, out float3 normalIfClamped)
+    {
+        var circleCenter = GetTorusCircleCenter(worldSpace);
+
+        // TODO: Do a check to reduce the lengthsq comps
+        float3 offset = worldSpace - circleCenter;
+        var lengthsq = math.lengthsq(offset);
+        if (lengthsq >= math.square(Thickness + heightOffset))
+        {
+            clamped = false;
+            normalIfClamped = offset; // This isn't actually the normal
+            newPos = worldSpace;
+            return;
+        }
+
+        clamped = true;
+        normalIfClamped = math.normalizesafe(offset);
+        newPos = circleCenter + normalIfClamped * (Thickness + heightOffset);
+    }
+    
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void ClampBelowSurface(float3 worldSpace, float heightOffset, out float3 newPos, out bool clamped, out float3 normalIfClamped)
+    {
+        var circleCenter = GetTorusCircleCenter(worldSpace);
+
+        // TODO: Do a check to reduce the lengthsq comps
+        float3 offset = worldSpace - circleCenter;
+        var lengthsq = math.lengthsq(offset);
+        if (lengthsq <= math.square(Thickness - heightOffset))
+        {
+            clamped = false;
+            normalIfClamped = -offset; // This isn't actually the normal
+            newPos = worldSpace;
+            return;
+        }
+
+        clamped = true;
+        normalIfClamped = math.normalizesafe(-offset);
+        newPos = circleCenter + normalIfClamped * (Thickness - heightOffset);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 SnapToSurface(float3 worldSpace)
+    {
+        SnapToSurface(worldSpace, 0, out var pos, out _);
+        return pos;
+    }
+    
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SnapToSurface(float3 worldSpace, float heightOffset, out float3 newPos, out float3 normal)
+    {
+        var circleCenter = GetTorusCircleCenter(worldSpace);
+        float3 offset = worldSpace - circleCenter;
+        normal = math.normalizesafe(offset);
+        newPos = circleCenter + normal * (Thickness + heightOffset);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float2 CartesianToToroidal(float3 position)
+    {
+        CartesianToToroidal(position, out float theta, out float phi, out _);
+        return new float2(theta, phi);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void CartesianToToroidal(float3 position, out float theta, out float phi, out float3 ringCenterOffset)
+    {
+        // Compute theta from the x-z plane.
+        theta = math.atan2(position.z, position.x);
+
+        // Obtain the ring center on the x-y plane.
+        float3 ringCenter = new float3(
+            RingRadius * math.cos(theta),
+            0f,
+            RingRadius * math.sin(theta)
+        );
+        // Derive the offset
+        ringCenterOffset = position - ringCenter;
+        
+        // Determine the x-z plane distance from the ring center so we can determine phi
+        var flatDistFromRing = math.length(ringCenterOffset.xz);
+        if (math.lengthsq(position.xz) < math.square(RingRadius)) flatDistFromRing = -flatDistFromRing;
+        
+        // Calculate phi from the y component and distance from ring center.
+        phi = math.atan2(position.y, flatDistFromRing);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 ToroidalToCartesian(float2 toroidal, float height = 0)
+    {
+        return ToroidalToCartesian(toroidal.x, toroidal.y, height);
+    }
+
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 ToroidalToCartesian(float theta, float phi, float height = 0)
+    {
+        // Compute the cosine and sine for phi.
+        float phiCos = math.cos(phi);
+        // Calculate the x-z components based on ring radius and thickness.
+        var thickness = Thickness + height;
+        float x = (RingRadius + thickness * phiCos) * math.cos(theta);
+        float y = thickness * math.sin(phi);
+        float z = (RingRadius + thickness * phiCos) * math.sin(theta);
+
+        return new float3(x, y, z);
+    }
+    
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 GetNormal(float3 a)
+    {
+        SnapToSurface(a, 0, out _, out float3 normal);
+        return normal;
+    }
+    
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public quaternion GetNormalQuaternion(float3 a, float3 forward)
+    {
+        SnapToSurface(a, 0, out _, out float3 normal);
+        return quaternion.LookRotationSafe(ProjectOntoSurface(a, forward) , normal);
+    }
+    
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public float3 ProjectOntoSurface(float3 worldPos, float3 dir)
+    {
+        SnapToSurface(worldPos, 0, out _, out var normal);
+        
+        // Project the 'dir' vector onto the plane defined by the normal
+        float3 projectedDir = dir - math.dot(dir, normal) * normal;
+        return projectedDir;
+    }
+}
 
 public static class TorusMapper
 {
@@ -18,24 +188,12 @@ public static class TorusMapper
     {
     }
 
-    public static readonly SharedStatic<float> XRotScale = SharedStatic<float>.GetOrCreate<XRotScaleKey>();
-
-    private class XRotScaleKey
-    {
-    }
-
-    public static readonly SharedStatic<float> YRotScale = SharedStatic<float>.GetOrCreate<YRotScaleKey>();
-
-    private class YRotScaleKey
-    {
-    }
-
     public static (float2 Min, float2 Max) MapBounds
     {
         get
         {
-            var min = new float2(-math.PI / TorusMapper.XRotScale.Data, -math.PI / TorusMapper.YRotScale.Data);
-            var max = new float2(math.PI / TorusMapper.XRotScale.Data, math.PI / TorusMapper.YRotScale.Data);
+            var min = new float2(-math.PI, -math.PI);
+            var max = new float2(math.PI, math.PI);
 
             return (min, max);
         }
@@ -46,16 +204,12 @@ public static class TorusMapper
     {
         RingRadius.Data = 160f;
         Thickness.Data = 80f;
-        XRotScale.Data = 0.005f;
-        YRotScale.Data = 0.013f;
     }
     
     static TorusMapper()
     {
         RingRadius.Data = 160f;
         Thickness.Data = 80f;
-        XRotScale.Data = 0.005f;
-        YRotScale.Data = 0.013f;
     }
 
     /// <summary>
@@ -78,42 +232,6 @@ public static class TorusMapper
         float z = Thickness.Data * math.sin(phi);
 
         return new float3(x, y, z);
-    }
-
-    /// <summary>
-    /// Converts a 2D local position into a 3D rotation where the object's up alignment is equal to the torus surface normal.
-    /// The x coordinate is used as theta and the y coordinate as phi (in radians).
-    /// </summary>
-    /// <param name="localPos">2D position with angles in radians</param>
-    /// <returns>A quaternion representing the rotation at that torus point</returns>
-    //[BurstCompile]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void GetPositionAndUpRotation(float2 localPos, ref float3 Position, ref quaternion Rotation, ref float3 Normal)
-    {
-        float theta = localPos.x * XRotScale.Data;
-        float phi = localPos.y * YRotScale.Data;
-        float phiCos = math.cos(phi);
-        float thetaCos = math.cos(theta);
-        float thetaSin = math.sin(theta);
-
-        float3 point = new float3(
-            (RingRadius.Data + Thickness.Data * phiCos) * thetaCos,
-            (RingRadius.Data + Thickness.Data * phiCos) * thetaSin,
-            Thickness.Data * math.sin(phi)
-        );
-
-        // Compute the torus circle center along the main ring.
-        float3 circleCenter = new float3(RingRadius.Data * thetaCos, RingRadius.Data * thetaSin, 0f);
-        // The normal is the direction from the circle center to the point.
-        float3 normal = math.normalize(point - circleCenter);
-
-        // The tangent direction along the torus ring (derivative of [cos(theta), sin(theta)]).
-        float3 tangent = new float3(-thetaSin, thetaCos, 0f);
-
-        // Return a quaternion with forward as tangent and up as the torus surface normal.
-        Position = point;
-        Rotation = quaternion.LookRotation(tangent, normal);
-        Normal = normal;
     }
 
 

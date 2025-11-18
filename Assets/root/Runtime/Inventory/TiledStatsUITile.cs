@@ -33,7 +33,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     public const int MaxLevel = 5;
     
-    public bool IsRing => TiledStats.Get(TileKey).GetRingIndex() >= 0;
+    public bool IsRing => false; //TiledStats.Get(TileKey).GetRingIndex() >= 0;
     public TiledStat Stat => TiledStats.Get(TileKey);
     public Ring Ring { get; private set; }
 
@@ -339,7 +339,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         
         
         
-        var ringIndex = TiledStats.Get(TileKey).GetRingIndex();
+        var ringIndex = -1; //TiledStats.Get(TileKey).GetRingIndex();
         if (ringIndex >= 0)
         {
             if (!m_SpawnedRing) m_SpawnedRing = Instantiate(RingTemplate, RingContainer);
@@ -392,7 +392,7 @@ public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         
         var data = new DescriptionUI.Data();
         
-        if (stat.GetRingIndex() >= 0)
+        if (false) //stat.GetRingIndex() >= 0)
         {
             if (CompiledLevel > 0)
                 return m_SpawnedRing.GetDescription();

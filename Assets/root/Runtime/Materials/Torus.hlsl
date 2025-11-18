@@ -53,6 +53,27 @@ void GetToroidalCoord_float(float3 worldPosition, float3 cameraPosition, float2 
 	//	(1 + cos(toroidalPosition.y)) * 0.5);
 }
 
+
+void GetCartesianToToroidalCoord_float(float3 worldPosition, float ringRadius, out float2 toroidalPosition){
+	float theta = atan2(worldPosition.z, worldPosition.x);
+	
+	float3 ringCenter = float3(ringRadius * cos(theta), 0, ringRadius * sin(theta));
+	float3 ringCenterOffset = worldPosition - ringCenter;
+	float distFromRing = length(ringCenterOffset.xz);
+	if (dot(worldPosition.xz,worldPosition.xz) < ringRadius*ringRadius) distFromRing = -distFromRing;
+	float phi = atan2(worldPosition.y, distFromRing);
+	toroidalPosition = float2(theta, phi);
+}
+void GetToroidalToCartesianCoord_float(float2 toroidalPosition, float ringRadius, float thickness, out float3 cartesianPosition){
+	float phiCos = cos(toroidalPosition.y);
+	
+	cartesianPosition = float3(
+		(ringRadius + thickness*phiCos) * cos(toroidalPosition.x),
+		thickness*sin(toroidalPosition.y),
+		(ringRadius + thickness*phiCos) * sin(toroidalPosition.x)
+	);
+}
+
 // Torus SDF (signed distance function)
 float TorusSDF(float3 p, float ringRadius, float thickness) {
 	float2 q = float2(length(p.xz) - ringRadius, p.y);

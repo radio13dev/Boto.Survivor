@@ -18,6 +18,15 @@ public class InteractableContextUI : MonoBehaviour, HandUIController.IStateSourc
     {
         var e = GetComponentInParent<ShowInInteractRangeUI>().m_Entity;
         if (e == Entity.Null) return;
+        
+        if (GameEvents.HasComponent<LevelUpInteractableTag>(e))
+        {
+            // Open the LevelUp UI
+            gameObject.SetActive(false);
+            TiledStatsUI_InWorldTorus.OpenUI(DoOnceOnClose: () => gameObject.SetActive(true));
+            return;
+        }
+        
         if (!GameEvents.TryGetComponent2<LocalTransform>(e, out var ringT)) return;
         if (!GameEvents.TryGetComponent2<RingStats>(e, out var ring)) return;
         if (!GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats)) return;

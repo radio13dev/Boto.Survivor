@@ -211,13 +211,13 @@ public unsafe struct RingStats : IComponentData
         for (int i = 0; i < k_MaxStats; i++)
         {
             Retry:
-            ringStats.BoostedStats[i] = (byte)random.NextInt(TiledStats.TileCols * TiledStats.TileRows - TiledStats.TileCols);
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_00_Ring0) ringStats.BoostedStats[i]++; // Skip the ring stats
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_11_Ring1) ringStats.BoostedStats[i]++;
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_16_Ring2) ringStats.BoostedStats[i]++;
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_21_Ring3) ringStats.BoostedStats[i]++;
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_26_Ring4) ringStats.BoostedStats[i]++;
-            if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_31_Ring5) ringStats.BoostedStats[i]++;
+            ringStats.BoostedStats[i] = (byte)random.NextInt(TiledStats.TileCols * TiledStats.TileRows);
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_00_Ring0) ringStats.BoostedStats[i]++; // Skip the ring stats
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_11_Ring1) ringStats.BoostedStats[i]++;
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_16_Ring2) ringStats.BoostedStats[i]++;
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_21_Ring3) ringStats.BoostedStats[i]++;
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_26_Ring4) ringStats.BoostedStats[i]++;
+            //if (ringStats.BoostedStats[i] >= (byte)TiledStat.Stat_31_Ring5) ringStats.BoostedStats[i]++;
             
             // Ensure no duplicates
             for (int j = 0; j < i; j++)

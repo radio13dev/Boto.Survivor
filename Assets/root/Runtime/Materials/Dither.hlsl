@@ -6,21 +6,21 @@
 void Dither_float(float2 screenPosition, float3 objectWorldPosition, float3 cameraPosition, out float dither){
 	int2 checker = frac(screenPosition) > 0.5;
 	dither = checker.x ^ checker.y ? 1 : 0;
-	return;
-	
-	float2 floord = abs(floor(screenPosition));
-	float ditherValue = (floord.x + floord.y)%2;
-	dither = ditherValue;
 }
 void Dither_half(float2 screenPosition, float3 objectWorldPosition, float3 cameraPosition, out float dither){
 	int2 checker = frac(screenPosition) > 0.5;
 	dither = checker.x ^ checker.y ? 1 : 0;
-	return;
-	
-	float2 floord = abs(floor(screenPosition));
-	float ditherValue = (floord.x + floord.y)%2;
-	dither = ditherValue;
 }
+
+void Dither_float(float2 screenPosition, out float dither){
+	int2 checker = frac(screenPosition) > 0.5;
+	dither = checker.x ^ checker.y ? 1 : 0;
+}
+void Dither_half(float2 screenPosition, out float dither){
+	int2 checker = frac(screenPosition) > 0.5;
+	dither = checker.x ^ checker.y ? 1 : 0;
+}
+
 void DitherCustom_float(float2 screenPosition, float3 objectWorldPosition, float3 cameraPosition, float4 ditherMods, out float dither){
 	float2 floord = abs(floor(screenPosition));
 	float ditherValue = ((floord.x%ditherMods.x) + (floord.y%ditherMods.y) + (floord.x + floord.y)%ditherMods.z)%ditherMods.w;

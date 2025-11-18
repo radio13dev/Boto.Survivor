@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &142513335708862768
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7313844847052536484}
+  - component: {fileID: 4832874678239163702}
+  - component: {fileID: 4170712194331943834}
+  - component: {fileID: 2428366605901037939}
+  - component: {fileID: 4857249550380118471}
+  m_Layer: 0
+  m_Name: LevelUpInteractable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7313844847052536484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142513335708862768}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.0019574116, y: -0.0035698002, z: 0.10295075, w: 0.99467814}
+  m_LocalPosition: {x: 143.57597, y: 78.30359, z: 3.2399092}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -0.181, y: -0.43, z: 11.819}
+--- !u!114 &4832874678239163702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142513335708862768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &4170712194331943834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142513335708862768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17c182ff2f5a479cac3f2a4cfd16a63e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GenericPrefabAuthoring
+  ToSpawn: {fileID: 3195840260772517490, guid: 59adc055119decd46aed481db0b2f5f8, type: 3}
+  Dynamic: 1
+  InWorldSpace: 0
+--- !u!114 &2428366605901037939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142513335708862768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
+--- !u!114 &4857249550380118471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142513335708862768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee3d95bb14189d40b74c337310215cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::LevelUpInteractableAuthoring

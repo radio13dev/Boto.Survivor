@@ -583,6 +583,18 @@ public static class GameEvents
         s_EventQueue.Data.Enqueue(new (eType, entity, int0));
     }
 
+    public static bool TryGetSingleton<T>(out T o) where T : unmanaged, IComponentData
+    {
+        if (Game.ClientGame == null)
+        {
+            o = default;
+            return false;
+        }
+
+        o = Game.ClientGame.World.EntityManager.GetSingleton<T>();
+        return true;
+    }
+
     public static bool TryGetSharedComponent<T>(Entity entity, out T o) where T : unmanaged, ISharedComponentData
     {
         if (Game.ClientGame == null)
@@ -605,7 +617,20 @@ public static class GameEvents
     {
         return Game.ClientGame.World.EntityManager.GetComponentData<T>(entity);
     }
-    
+    public static bool HasComponent<T>(Entity entity) where T : unmanaged, IComponentData
+    {
+        if (Game.ClientGame == null)
+        {
+            return false;
+        }
+
+        if (Game.ClientGame.World.EntityManager.HasComponent<T>(entity))
+        {
+            return true;
+        }
+
+        return false;
+    }
     public static bool TryGetComponent2<T>(Entity entity, out T o) where T : unmanaged, IComponentData
     {
         if (Game.ClientGame == null)
