@@ -30,6 +30,8 @@ public struct Circling : IComponentData
 {
     public const float DrainDelay = 0.5f;
     public const float DrainRate = 0.5f;
+    public const float ChargeRate = 1f;
+    public const float PerpendicularAngleMax = math.PI / 6f;
 
     public float Radius;
     [HideInInspector] public float Charge;
@@ -79,13 +81,19 @@ public partial struct CirclingSystem : ISystem
                 var circleC = CircleColliders[i];
                 if (d < circleC.Radius * circleC.Radius)
                 {
+                    // If not moving, skip
+                    if (math.lengthsq(movement.Velocity) < math.EPSILON) continue;
+                    
                     // Only charge if the circlir is moving perpendicular to transform.
-                    var toCenter = math.normalize(transform.Position - circleT.Position);
-                    var moveDir = math.normalize(movement.Velocity);
+                    var toCenter = math.normalizesafe(transform.Position - circleT.Position);
+                    var moveDir = math.normalizesafe(movement.Velocity);
                     var dot = math.dot(toCenter, moveDir);
-                    if (dot < 0.5f)
+                    var maxAngleFromPerp = math.sin(Circling.PerpendicularAngleMax);
+                    
+                    if (math.abs(dot) < maxAngleFromPerp)
                     {
-                        circling.Charge = math.min(circling.MaxCharge, circling.Charge + dt*(1-dot));
+                        float chargeToAdd = dt * Circling.ChargeRate * (1.0f - (math.abs(dot) / maxAngleFromPerp));
+                        circling.Charge = math.min(circling.MaxCharge, circling.Charge + chargeToAdd);
                         circling.LastChargeTime = Time;
                         didCharge = true;
                         break;
