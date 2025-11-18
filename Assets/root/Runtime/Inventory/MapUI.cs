@@ -24,11 +24,6 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
     public float SwapInnerAngle = 2.9f;
     public float InnerAngleTransition = 0.1f;
     
-    public TransitionPoint ClosedT;
-    public TransitionPoint InventoryT;
-    public TransitionPoint MapT;
-    ExclusiveCoroutine Co;
-    
     float2 m_CursorPosition;
     DateTime m_LastAdjustTime;
     bool m_Dragging = false;
@@ -236,24 +231,18 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
 
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
-        TransitionPoint target;
         switch (newState)
         {
             case HandUIController.State.Inventory:
-                target = InventoryT;
                 break;
             case HandUIController.State.Map:
-                target = MapT;
                 this.Select();
                 break;
             default:
             case HandUIController.State.Closed:
-                target = ClosedT;
                 m_AutoTrack = true;
                 this.Deselect();
                 break;
         }
-
-        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
     }
 }

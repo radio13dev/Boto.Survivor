@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Object = UnityEngine.Object;
 
 public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListener
@@ -7,6 +8,8 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     public TransitionPoint InventoryT;
     public TransitionPoint ClosedT;
     public TransitionPoint SkillsT;
+    public float AnimationTransitionTime = HandUIController.k_AnimTransitionTime;
+    public ease.Mode EaseMode = ease.Mode.elastic_inout2;
     ExclusiveCoroutine Co;
 
     private void OnEnable()
@@ -37,7 +40,7 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
                 throw new Exception($"Cannot transition to state {newState}");
         }
 
-        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
+        Co.StartCoroutine(this, target.Lerp((RectTransform)transform, AnimationTransitionTime, EaseMode));
     }
 
     HandUIController.State m_DebugState = HandUIController.State.Closed;

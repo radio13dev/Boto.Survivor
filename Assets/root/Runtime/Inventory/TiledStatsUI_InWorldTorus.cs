@@ -115,6 +115,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
     private void Awake()
     {
         HandUIController.Attach(this);
+        SetIndex(default);
         Close();
     }
 
@@ -133,11 +134,6 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
         {
             Demo();
         }
-
-        // Focus the UI 
-        SetIndex(default);
-        
-        StartFocus();
     }
     
     [Header("Reveal Animation")]
@@ -145,7 +141,9 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
     public float2 InitItemGrouping = 1f;
     public float2 InitItemGroupingSmoothing = 1f;
     public float2 InitRevealAnimOffset = new float2(0, 2f);
+    public float InitTime = 0.2f;
     public float Duration = 1f;
+    public float FocusDelay = 0.8f;
     public ease.Mode EasingMode;
     float2 m_RevealAnimOffset;
     
@@ -156,11 +154,15 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
     }
     IEnumerator RevealItemsCo()
     {
-        float t = 0;
+        float t = InitTime;
         while (t < Duration)
         {
+            bool focus = t < FocusDelay;
             t += Time.deltaTime;
             t = math.clamp(t, 0, Duration);
+            if (focus && t >= FocusDelay)
+                StartFocus();
+                
             var tEase = EasingMode.Evaluate(t/Duration);
             m_ZeroOffset = mathu.lerprepeat(InitZero, ZeroOffset, tEase, math.PI);
             m_ItemGrouping = math.lerp(InitItemGrouping, ItemGrouping, tEase);
@@ -169,6 +171,7 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
             Demo();
             yield return null;
         }
+        StartFocus(); // Fallback
     }
 
     private void OnDisable()
@@ -209,8 +212,11 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
     {
         if (newState == HandUIController.State.Skills)
         {
-            StartFocus();
-            if (oldState != HandUIController.State.Skills) RevealItems();
+            if (oldState != HandUIController.State.Skills)
+            {
+                ClearFocus();
+                RevealItems();
+            }
         }
         else
         {
@@ -321,17 +327,29 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
         return GameEvents.GetComponent<TiledStatsTree>(CameraTarget.MainTarget.Entity);
     }
 
-    public float delDist = 0.3f;
+    public const float KeyboardInputCD = 0.1f;
+    public float TimeSinceKeyboardInput = 0f;
     private void Update()
     {
-        float dist = math.distance(FocusedIndex, TargetIndex);
         if (HandUIController.GetState() == HandUIController.State.Skills)
         {
             var dir = GameInput.Inputs.UI.Navigate.ReadValue<Vector2>();
-            if (dist < delDist && dir.magnitude > 0.5f)
+            if (dir.magnitude > 0.5f)
             {
-                // Get the current focused tile and select the one in the direction of input
-                SetIndex((int2)math.round((float2)dir) + TargetIndex);
+                if (TimeSinceKeyboardInput > 0)
+                {
+                    TimeSinceKeyboardInput -= Time.deltaTime;
+                }
+                else
+                {
+                    // Get the current focused tile and select the one in the direction of input
+                    SetIndex((int2)math.round(dir*1.2f) + TargetIndex);
+                    TimeSinceKeyboardInput = KeyboardInputCD;
+                }
+            }
+            else
+            {
+                TimeSinceKeyboardInput = 0;
             }
         }
     }
