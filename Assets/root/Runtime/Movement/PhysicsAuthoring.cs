@@ -73,12 +73,7 @@ public struct Force : IComponentData
 {
     public float3 Velocity;
     public float3 Shift;
-    
-    public void Reset()
-    {
-        Velocity = default;
-        Shift = default;
-    }
+    public quaternion ShiftRot;
 }
 
 [Save]
@@ -379,13 +374,22 @@ public partial struct TorusGravitySystem : ISystem
                     transform.Rotation = math.normalizesafe(math.mul(inertia.GetRotation(dt), transform.Rotation));
                 }
             }
-            else if (inertia.Rate != 0)
-            {
-                var finalRate = inertia.Rate;
-                if (physicsResponse.RotationalDrag != 0) finalRate -= finalRate * physicsResponse.RotationalDrag * dt;
-                if (physicsResponse.RotationalDragLinear != 0) finalRate = mathu.MoveTowards(finalRate, 0, physicsResponse.RotationalDragLinear*dt);
-                inertia.Set(inertia.Normal, finalRate);
-                transform.Rotation = math.normalizesafe(math.mul(inertia.GetRotation(dt), transform.Rotation));
+            else{
+            
+                if (math.any(force.ShiftRot.value != default))
+                {
+                    transform.Rotation = math.mul(force.ShiftRot, transform.Rotation);
+                    force.ShiftRot = default;
+                }
+                
+                if (inertia.Rate != 0)
+                {
+                    var finalRate = inertia.Rate;
+                    if (physicsResponse.RotationalDrag != 0) finalRate -= finalRate * physicsResponse.RotationalDrag * dt;
+                    if (physicsResponse.RotationalDragLinear != 0) finalRate = mathu.MoveTowards(finalRate, 0, physicsResponse.RotationalDragLinear * dt);
+                    inertia.Set(inertia.Normal, finalRate);
+                    transform.Rotation = math.normalizesafe(math.mul(inertia.GetRotation(dt), transform.Rotation));
+                }
             }
         }
     }

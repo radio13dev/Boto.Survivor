@@ -191,6 +191,12 @@ public partial struct TorusGravitySystem_Lobby : ISystem
             }
             else if (inertia.Rate != 0)
             {
+                if (math.any(force.ShiftRot.value != default))
+                {
+                    transform.Rotation = math.mul(force.ShiftRot, transform.Rotation);
+                    force.ShiftRot = default;
+                }
+                
                 var finalRate = inertia.Rate;
                 if (physicsResponse.RotationalDrag != 0) finalRate -= finalRate * physicsResponse.RotationalDrag * dt;
                 if (physicsResponse.RotationalDragLinear != 0) finalRate = mathu.MoveTowards(finalRate, 0, physicsResponse.RotationalDragLinear*dt);
