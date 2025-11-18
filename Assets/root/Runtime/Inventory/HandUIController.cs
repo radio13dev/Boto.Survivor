@@ -33,6 +33,7 @@ public class HandUIController : MonoBehaviour
         Inventory,
         Map,
         Skills,
+        Loot,
         
         // Utility
         Any

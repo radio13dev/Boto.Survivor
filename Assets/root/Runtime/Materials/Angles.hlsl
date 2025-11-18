@@ -11,14 +11,15 @@ void IsWithinRangeWrap_float(float angle, float direction, float range, float wr
         isWithin = 0;
 }
 
-float Repeat(float t, float length)
+void Repeat_float(float t, float length, out float val)
 {
-    return clamp(t-floor(t/length)*length,0,length);
+    val = clamp(t-floor(t/length)*length,0,length);
 }
 
 float LerpRepeat(float a, float b, float t, float length)
 {
-    float num = Repeat(b - a, length*2);
+    float num = 0;
+    Repeat_float(b - a, length*2, num);
     if (num > length)
         num -= length*2;
     return a + num * clamp(t,0,1);
@@ -26,7 +27,8 @@ float LerpRepeat(float a, float b, float t, float length)
 
 float DeltaRepeat(float a, float b, float length)
 {
-    float num = Repeat(b - a, length*2);
+    float num = 0;
+    Repeat_float(b - a, length*2, num);
     if (num > length)
         num -= length*2;
     return num;

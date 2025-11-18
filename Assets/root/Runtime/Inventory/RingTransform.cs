@@ -8,9 +8,20 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     public TransitionPoint InventoryT;
     public TransitionPoint ClosedT;
     public TransitionPoint SkillsT;
+    public TransitionPoint LootT;
+    public TransitionPoint MapT;
     public float AnimationTransitionTime = HandUIController.k_AnimTransitionTime;
     public ease.Mode EaseMode = ease.Mode.elastic_inout2;
     ExclusiveCoroutine Co;
+
+    private void OnValidate()
+    {
+        // Fix for when we add in more states
+        if (ClosedT == default) ClosedT = InventoryT;
+        if (SkillsT == default) SkillsT = ClosedT;
+        if (LootT == default) LootT = SkillsT;
+        if (MapT == default) MapT = LootT;
+    }
 
     private void OnEnable()
     {
@@ -35,6 +46,12 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
                 break;
             case HandUIController.State.Skills:
                 target = SkillsT;
+                break;
+            case HandUIController.State.Loot:
+                target = LootT;
+                break;
+            case HandUIController.State.Map:
+                target = MapT;
                 break;
             default:
                 throw new Exception($"Cannot transition to state {newState}");
@@ -77,6 +94,30 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
                 continue;
             change.OnStateChanged(m_DebugState, HandUIController.State.Skills);
             m_DebugState = HandUIController.State.Skills;
+        }
+    }
+
+    [EditorButton]
+    public void GotoLoot()
+    {
+        foreach (var o in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (o is not HandUIController.IStateChangeListener change)
+                continue;
+            change.OnStateChanged(m_DebugState, HandUIController.State.Loot);
+            m_DebugState = HandUIController.State.Loot;
+        }
+    }
+
+    [EditorButton]
+    public void GotoMap()
+    {
+        foreach (var o in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (o is not HandUIController.IStateChangeListener change)
+                continue;
+            change.OnStateChanged(m_DebugState, HandUIController.State.Map);
+            m_DebugState = HandUIController.State.Map;
         }
     }
 }
