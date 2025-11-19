@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Billboard : MonoBehaviour
 {
+    [EditorButton]
     private void Update()
     {
         //var camForward = CameraRegistry.Main.transform.forward;

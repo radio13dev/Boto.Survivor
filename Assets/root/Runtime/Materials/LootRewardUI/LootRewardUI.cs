@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,15 +11,19 @@ using Random = UnityEngine.Random;
 using UnityEditor;
 #endif
 
+[ExecuteInEditMode]
 public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIController.IStateChangeListener
 {
+    static Entity s_Entity;
+    static LootDropInteractable s_LootDropInteractable;
     static event Action s_DoOnceOnClose;
     
-    public LootRewardUI_Item[] RewardTemplates = Array.Empty<LootRewardUI_Item>();
+    public LootRewardUI_Item RewardTemplate;
     public Transform RewardContainer;
     public LootRewardUI_Item[] ActiveItems => RewardContainer.GetComponentsInChildren<LootRewardUI_Item>();
     
-    public int TargetIndex;
+    public int TargetIndex_Modlesss;
+    public int TargetIndex => (int)mathu.repeat(TargetIndex_Modlesss, ActiveItems.Length);
     public float FocusedIndex;
     public float2 AnimFocusedIndex => FocusedIndex + m_RevealAnimOffset;
     
@@ -56,6 +61,10 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     ExclusiveCoroutine m_Co;
     public float RelativeSpeed = 1f;
     public float LinearSpeed = 1f;
+    
+    [Header("Selection Stuff")]
+    public UIFocusMini Focus;
+    public DescriptionUI Description;
 
     // Close on first awake
     private void Awake()
@@ -64,7 +73,7 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
         Clear();
         AddRewards();
         AddRewards();
-        SetIndex(default);
+        SetIndex(default, true);
         RevealItems();
         Close();
     }
@@ -83,16 +92,18 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
         ClearFocus();
     }
 
-    public static void OpenUI(Action DoOnceOnClose)
+    public static void OpenUI(Entity entity, LootDropInteractable lootDropInteractable, Action DoOnceOnClose)
     {
+        s_Entity = entity;
+        s_LootDropInteractable = lootDropInteractable;
         s_DoOnceOnClose += DoOnceOnClose;
-        HandUIController.SetState(HandUIController.State.Skills);
+        HandUIController.SetState(HandUIController.State.Loot);
     }
 
     [EditorButton]
     public void Open()
     {
-        HandUIController.SetState(HandUIController.State.Skills);
+        HandUIController.SetState(HandUIController.State.Loot);
     }
     
     [EditorButton]
@@ -102,11 +113,13 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     }
     public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
     {
-        if (newState == HandUIController.State.Skills)
+        if (newState == HandUIController.State.Loot)
         {
-            if (oldState != HandUIController.State.Skills)
+            if (oldState != HandUIController.State.Loot)
             {
                 ClearFocus();
+                Clear();
+                AddRewards(s_Entity, s_LootDropInteractable);
                 RevealItems();
             }
         }
@@ -139,7 +152,7 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
                 else
                 {
                     // Get the current focused tile and select the one in the direction of input
-                    SetIndex((dir.x > 0 ? 1 : -1) + TargetIndex);
+                    SetIndex((dir.x > 0 ? 1 : -1) + TargetIndex_Modlesss, false);
                     TimeSinceKeyboardInput = KeyboardInputCD;
                 }
             }
@@ -179,17 +192,15 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     }
     
     [EditorButton]
-    public void AddRewards()
+    public void AddRewards() => AddRewards(default, new LootDropInteractable(){ Random = Unity.Mathematics.Random.CreateFromIndex(0)});
+    public void AddRewards(Entity entity, LootDropInteractable lootDropInteractable)
     {
-        if (RewardTemplates.Length == 0) return;
-        
         Unity.Mathematics.Random r = Unity.Mathematics.Random.CreateFromIndex((uint)(Random.value*1000));
-        int toSpawn = Random.Range(3,6);
-        for (int i = 0; i < toSpawn; i++)
+        foreach (var option in lootDropInteractable.GetOptions())
         {
-            var spawned = Instantiate(RewardTemplates[Random.Range(0,RewardTemplates.Length)], RewardContainer);
+            var spawned = Instantiate(RewardTemplate, RewardContainer);
             spawned.gameObject.SetActive(true);
-            spawned.RingDisplay.UpdateRing(-1, new Ring(){ Stats = RingStats.Generate(ref r) }, true);
+            spawned.RingDisplay.UpdateRing(-1, option.Ring, true);
         }
     }
 
@@ -229,12 +240,14 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     }
     
     [EditorButton]
-    public void SetIndex(int index)
+    public void SetIndex(int index, bool fixMod)
     {
+        //if (fixMod) TargetIndex_Modlesss = TargetIndex;
+        
         // Unfocus current
         ClearFocus();
-        TargetIndex = (int)mathu.repeat(index, ActiveItems.Length);
-        SetPosition(TargetIndex);
+        TargetIndex_Modlesss = index;
+        SetPosition(index);
         StartFocus();
     }
 
@@ -250,33 +263,34 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
         while (t < 10f)
         {
             var old = FocusedIndex;
-            FocusedIndex = mathu.lerprepeat(FocusedIndex, position, Time.deltaTime*RelativeSpeed, length);
-            FocusedIndex += mathu.deltarepeat(FocusedIndex, position, length) * math.clamp(Time.deltaTime * LinearSpeed, 0, 1f);
+            FocusedIndex = math.lerp(FocusedIndex, position, Time.deltaTime*RelativeSpeed);
+            FocusedIndex += (position - FocusedIndex) * math.clamp(Time.deltaTime * LinearSpeed, 0, 1f);
             if (old == FocusedIndex) break;
             t += Time.deltaTime;
             yield return null;
         }
 
+        TargetIndex_Modlesss = TargetIndex;
         FocusedIndex = mathu.repeat(position, length * 2);
     }
     
     private void ClearFocus()
     {
-        var index = TargetIndex;
-        var tiles = ActiveItems;
-        if (index >= 0 && index < tiles.Length && tiles[index].TryGetComponent<Focusable>(out var focusable))
-        {
-            if (Application.isPlaying) UIFocus.EndFocus(focusable);
-        }
+        Focus.Target = null;
+        Description.gameObject.SetActive(false);
     }
     private void StartFocus()
     {
         var index = TargetIndex;
         var tiles = ActiveItems;
-        if (index >= 0 && index < tiles.Length && tiles[index].TryGetComponent<Focusable>(out var focusable))
+        if (index >= 0 && index < tiles.Length)
         {
-            if (Application.isPlaying) UIFocus.StartFocus(focusable);
+            Focus.Target = tiles[index].transform;
+            Description.gameObject.SetActive(true);
+            Description.SetText(tiles[index]);
         }
+        else
+            ClearFocus();
     }
     private float2 GetToroidalForXY(float x, float y, int rewardCount)
     {
@@ -316,7 +330,10 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
                     //UnlockTile(tile);
                 }
                 else
-                    SetIndex(index);
+                {
+                    // Rotate from TargetIndex to Index by adding the required delta to the current TargetIndex.
+                    SetIndex(TargetIndex_Modlesss + (int)mathu.deltarepeat(TargetIndex_Modlesss, index, tiles.Length/2f), true);
+                }
             }
         }
     }

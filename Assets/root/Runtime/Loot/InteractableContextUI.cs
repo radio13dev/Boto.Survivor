@@ -27,6 +27,14 @@ public class InteractableContextUI : MonoBehaviour, HandUIController.IStateSourc
             return;
         }
         
+        if (GameEvents.TryGetComponent2<LootDropInteractable>(e, out var lootDropInteractable))
+        {
+            // Open the LevelUp UI
+            gameObject.SetActive(false);
+            LootRewardUI.OpenUI(e, lootDropInteractable, DoOnceOnClose: () => gameObject.SetActive(true));
+            return;
+        }
+        
         if (!GameEvents.TryGetComponent2<LocalTransform>(e, out var ringT)) return;
         if (!GameEvents.TryGetComponent2<RingStats>(e, out var ring)) return;
         if (!GameEvents.TryGetComponent2<CompiledStats>(CameraTarget.MainTarget.Entity, out var stats)) return;
