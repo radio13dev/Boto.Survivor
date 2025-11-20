@@ -31,6 +31,8 @@ public struct Circlable : IComponentData
 {
     public const float DrainDelay = 0.5f;
     public const float DrainRate = 0.5f;
+    public const float ChargeRate = 1f;
+    public const float PerpendicularAngleMax = math.PI / 6f;
 
     public float Radius;
     [HideInInspector] public float Charge;
@@ -78,14 +80,20 @@ public partial struct CirclableSystem : ISystem
                 var d = math.distancesq(t.Position, transform.Position);
                 if (d < c.Radius * c.Radius)
                 {
-                    // Only charge if the circlir is moving perpendicular to transform.
+                    // If not moving, skip
                     var m = MovementLookup[Circlers[i]];
-                    var toCenter = math.normalize(transform.Position - t.Position);
-                    var moveDir = math.normalize(m.Velocity);
+                    if (math.lengthsq(m.Velocity) < math.EPSILON) continue;
+                    
+                    // Only charge if the circlir is moving perpendicular to transform.
+                    var toCenter = math.normalizesafe(transform.Position - t.Position);
+                    var moveDir = math.normalizesafe(m.Velocity);
                     var dot = math.dot(toCenter, moveDir);
-                    if (dot < 0.5f)
+                    var maxAngleFromPerp = math.sin(Circlable.PerpendicularAngleMax);
+                    
+                    if (math.abs(dot) < maxAngleFromPerp)
                     {
-                        c.Charge = math.min(c.MaxCharge, c.Charge + dt*(1-dot));
+                        float chargeToAdd = dt * Circlable.ChargeRate * (1.0f - (math.abs(dot) / maxAngleFromPerp));
+                        c.Charge = math.min(c.MaxCharge, c.Charge + chargeToAdd);
                         c.LastChargeTime = Time;
                         didCharge = true;
                         break;
