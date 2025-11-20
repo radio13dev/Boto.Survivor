@@ -177,12 +177,11 @@ public partial struct CompiledStatsSystem : ISystem
             
             // Destroy any owned projectiles that are no longer valid
             {
-                PrimaryEffectStack stack = new (rings);
                 for (int ownedIt = 0; ownedIt < ownedProjectiles.Length; ownedIt++)
                 {
                     var key = ownedProjectiles[ownedIt].Key;
                     if (!key.PrimaryEffect.IsPersistent()) continue; // Only manage persistent projectiles
-                    if ((dirtyData.DirtyFlags & key.PrimaryEffect) != 0 || stack.Stacks[key.PrimaryEffect.GetMostSigBit()] < key.Tier)
+                    if ((dirtyData.DirtyFlags & key.PrimaryEffect) != 0)
                     {
                         // Destroy this, we don't have the ring equipped anymore
                         Debug.Log($"Cleaning up {key.PrimaryEffect} projectile...");
@@ -199,15 +198,11 @@ public partial struct CompiledStatsSystem : ISystem
                 var ring = rings[ringIndex];
                 if (!ring.Stats.PrimaryEffect.IsPersistent()) continue;
                 
-                PrimaryEffectStack stack = new(in rings, ringIndex);
-                
                 // Fire projectiles
-                for (int effectIt = 0; effectIt < (int)RingPrimaryEffect.Length; effectIt++)
                 {
-                    byte tier = stack.Stacks[effectIt];
-                    if (tier == 0) continue;
+                    byte tier = 1;
 
-                    RingPrimaryEffect effect = (RingPrimaryEffect)(1 << effectIt);
+                    RingPrimaryEffect effect = ring.Stats.PrimaryEffect;
                     // Skip this if we've already created it
                     bool alreadyCreated = false;
                     for (int ownedIt = 0; ownedIt < ownedProjectiles.Length; ownedIt++)
@@ -237,7 +232,7 @@ public partial struct CompiledStatsSystem : ISystem
                             byte spawnCount = (byte)(5 + stats.CompiledStatsTree.ExtraProjectiles);
                             for (byte projSpawnIt = 0; projSpawnIt < spawnCount; projSpawnIt++)
                             {
-                                Debug.Log($"Creating {effect} projectile {ringIndex}:{effectIt}:{tier}:{projSpawnIt}...");
+                                Debug.Log($"Creating {effect} projectile {ringIndex}:{effect}:{tier}:{projSpawnIt}...");
 
                                 var projectileE = ecb.Instantiate(template.Entity);
                                 var projectileT = transform;
@@ -263,7 +258,7 @@ public partial struct CompiledStatsSystem : ISystem
                             byte spawnCount = (byte)(2 + stats.CompiledStatsTree.ExtraProjectiles);
                             for (byte projSpawnIt = 0; projSpawnIt < spawnCount; projSpawnIt++)
                             {
-                                Debug.Log($"Creating {effect} projectile...");
+                                Debug.Log($"Creating {effect} projectile {ringIndex}:{effect}:{tier}:{projSpawnIt}...");
 
                                 var projectileE = ecb.Instantiate(template.Entity);
                                 var projectileT = transform;

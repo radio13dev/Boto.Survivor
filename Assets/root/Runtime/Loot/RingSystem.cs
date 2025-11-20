@@ -99,15 +99,12 @@ public partial struct RingSystem : ISystem
             var r = SharedRandom;
             ref var ring = ref rings.ElementAt(ringIndex);
 
-            PrimaryEffectStack stack = new(in rings, ringIndex);
-
             // Fire projectiles
-            for (int effectIt = 0; effectIt < (int)RingPrimaryEffect.Length; effectIt++)
             {
-                byte tier = stack.Stacks[effectIt];
-                if (tier == 0) continue;
+                byte tier = 1;
+                if (tier == 0) return;
 
-                RingPrimaryEffect effect = (RingPrimaryEffect)(1 << effectIt);
+                RingPrimaryEffect effect = ring.Stats.PrimaryEffect;
 
                 switch (effect)
                 {

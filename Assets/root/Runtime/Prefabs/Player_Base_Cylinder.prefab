@@ -55,13 +55,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
   Health: 6
   InitialRings:
-  - PrimaryEffect: 128
+  - PrimaryEffect: 8
     BoostedStats: 000000
     BoostedStatsBoosts: 010000
-  - PrimaryEffect: 0
+  - PrimaryEffect: 5
     BoostedStats: 000000
     BoostedStatsBoosts: 000000
-  - PrimaryEffect: 0
+  - PrimaryEffect: 3
     BoostedStats: 000000
     BoostedStatsBoosts: 000000
   - PrimaryEffect: 0
@@ -237,5 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c42431cfaed4abba7f98ef9c8d1557f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EntityOnDestroyAuthoring
+  Prefabs: []
   Prefab: {fileID: 7419757055955712054, guid: 4014da6cb66f6c14abcc5788e2f1a018, type: 3}
   Count: 1

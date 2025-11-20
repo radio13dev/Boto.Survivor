@@ -314,7 +314,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                         {
                             Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
                         }
-                        buffer[kvp.Key.GetMostSigBit()] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
+                        buffer[(byte)kvp.Key] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
                     }
                 }
             }
