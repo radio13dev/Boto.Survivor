@@ -119,6 +119,7 @@ public partial class GenericPrefabSpawnSystem : SystemBase
                     request.ValueRO.InWorldSpace ? float3.zero : transform.ValueRO.Position,
                     request.ValueRO.InWorldSpace ? quaternion.identity : transform.ValueRO.Rotation
                 );
+                Debug.Log($"Spawned generic prefab: {spawned}");
                 spawned.transform.localScale = Vector3.one*transform.ValueRO.Scale;
                 foreach (var link in spawned.GetComponentsInChildren<EntityLinkMono>(true))
                     link.SetLink(GameReference, entity);

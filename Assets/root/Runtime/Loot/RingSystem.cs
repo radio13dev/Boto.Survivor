@@ -222,7 +222,7 @@ public partial struct RingSystem : ISystem
                                 
                             var projectileE = ecb.Instantiate(Key, template.Entity);
                             var projectileT = transform;
-                            projectileT.Position += r.NextFloat3Direction();
+                            projectileT.Position += r.NextFloat3Direction()*1.1f;
                             projectileT.Scale = compiledStats.CompiledStatsTree.Size;
                             ecb.SetComponent(Key, projectileE, projectileT);
 

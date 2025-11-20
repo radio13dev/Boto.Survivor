@@ -26,12 +26,13 @@ public class UIFocusMini : MonoBehaviour
 
     private void Update()
     {
+        var dt = math.clamp(Time.deltaTime, 0, 0.1f);
         if (Target)
         {
             m_LastTargetPos = Target.position;
             m_LastTargetRot = Target.rotation;
             
-            transform.localScale = math.lerp(transform.localScale, Vector3.one, Time.deltaTime * ScaleSpeed);
+            transform.localScale = math.lerp(transform.localScale, Vector3.one, math.clamp(dt * ScaleSpeed, 0, 1));
             
             // On first select: Instantly snap to position.
             if (m_TimeSinceDeselect > 0)
@@ -42,7 +43,7 @@ public class UIFocusMini : MonoBehaviour
         }
         else
         {
-            m_TimeSinceDeselect += Time.deltaTime;
+            m_TimeSinceDeselect += dt;
             if (m_TimeSinceDeselect < FadeDelay)
             {
                 // Nothing
@@ -59,14 +60,14 @@ public class UIFocusMini : MonoBehaviour
         if (targetVel.magnitude > MoveSpeedMax)
             targetVel = targetVel.normalized*MoveSpeedMax;
         
-        m_Velocity = math.lerp(m_Velocity, targetVel, Time.deltaTime * Acceleration);
+        m_Velocity = math.lerp(m_Velocity, targetVel, dt * Acceleration);
         
         //var targetVelRot = Quaternion.(transform.rotation, m_LastTargetRot, RotateSpeed)*Quaternion.Inverse(transform.rotation);
-        //m_VelocityRot = math.slerp(m_VelocityRot, targetVelRot, Time.deltaTime * AccelerationRot);
+        //m_VelocityRot = math.slerp(m_VelocityRot, targetVelRot, dt * AccelerationRot);
         
         // Move to target
-        transform.position += m_Velocity*Time.deltaTime;
-        transform.position = mathu.MoveTowards(transform.position, m_LastTargetPos, Time.deltaTime * MoveSpeedLinear);
-        //transform.rotation = math.slerp(transform.rotation, m_VelocityRot, Time.deltaTime*RotateSpeed);
+        transform.position += m_Velocity*dt;
+        transform.position = mathu.MoveTowards(transform.position, m_LastTargetPos, dt * MoveSpeedLinear);
+        //transform.rotation = math.slerp(transform.rotation, m_VelocityRot, dt*RotateSpeed);
     }
 }

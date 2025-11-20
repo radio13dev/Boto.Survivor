@@ -185,6 +185,7 @@ public partial struct CompiledStatsSystem : ISystem
                     if ((dirtyData.DirtyFlags & key.PrimaryEffect) != 0 || stack.Stacks[key.PrimaryEffect.GetMostSigBit()] < key.Tier)
                     {
                         // Destroy this, we don't have the ring equipped anymore
+                        Debug.Log($"Cleaning up {key.PrimaryEffect} projectile...");
                         ecb.SetComponentEnabled<DestroyFlag>(NetworkIdMapping[ownedProjectiles[ownedIt].NetworkId], true);
                         ownedProjectiles.RemoveAtSwapBack(ownedIt);
                         ownedIt--;
@@ -236,7 +237,7 @@ public partial struct CompiledStatsSystem : ISystem
                             byte spawnCount = (byte)(5 + stats.CompiledStatsTree.ExtraProjectiles);
                             for (byte projSpawnIt = 0; projSpawnIt < spawnCount; projSpawnIt++)
                             {
-                                Debug.Log($"Creating {effect} projectile...");
+                                Debug.Log($"Creating {effect} projectile {ringIndex}:{effectIt}:{tier}:{projSpawnIt}...");
 
                                 var projectileE = ecb.Instantiate(template.Entity);
                                 var projectileT = transform;

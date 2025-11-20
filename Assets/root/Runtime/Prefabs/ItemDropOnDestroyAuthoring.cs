@@ -47,7 +47,8 @@ public class Drop
     public enum DropType
     {
         Gem,
-        Ring
+        Ring,
+        LootDrop
     }
 
     public DropType Type;
@@ -77,14 +78,16 @@ public partial struct ItemDropOnDestroySystem : ISystem
     {
         var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
         var players = m_PlayerQuery.ToComponentDataArray<PlayerControlledSaveable>(Allocator.TempJob);
+        var prefabs = SystemAPI.GetSingletonBuffer<GameManager.Prefabs>(true);
         state.Dependency = new Job()
         {
             ecb = delayedEcb,
-            baseRandom = SystemAPI.GetSingleton<SharedRandom>().Random,
+            SharedRandom = SystemAPI.GetSingleton<SharedRandom>(),
             movementLookup = SystemAPI.GetComponentLookup<Movement>(true),
             GemDropTemplate = SystemAPI.GetSingleton<GameManager.Resources>().GemDropTemplate,
             RingDropTemplates = SystemAPI.GetSingletonBuffer<GameManager.RingDropTemplate>(true),
             GemVisuals = SystemAPI.GetSingletonBuffer<GameManager.GemVisual>(true),
+            LootDropTemplate = prefabs[GameManager.Prefabs.LootDropTemplate].Entity,
             PlayerControlled = players
         }.Schedule(state.Dependency);
         players.Dispose(state.Dependency);
@@ -94,18 +97,19 @@ public partial struct ItemDropOnDestroySystem : ISystem
     partial struct Job : IJobEntity
     {
         public EntityCommandBuffer ecb;
-        [ReadOnly] public Random baseRandom;
+        [ReadOnly] public SharedRandom SharedRandom;
         [ReadOnly] public ComponentLookup<Movement> movementLookup;
         [ReadOnly] public Entity GemDropTemplate;
         [ReadOnly] public DynamicBuffer<GameManager.RingDropTemplate> RingDropTemplates;
         [ReadOnly] public DynamicBuffer<GameManager.GemVisual> GemVisuals;
+        [ReadOnly] public Entity LootDropTemplate;
         [ReadOnly] public NativeArray<PlayerControlledSaveable> PlayerControlled;
 
         public void Execute(Entity entity, in DynamicBuffer<ItemDropOnDestroy> items, in LocalTransform transform)
         {
             if (PlayerControlled.Length == 0) return;
         
-            var random = baseRandom;
+            var random = SharedRandom.Random;
             for (int i = 0; i < items.Length; i++)
             {
                 if (random.NextInt(1000) >= items[i].Chance) continue;
@@ -131,6 +135,16 @@ public partial struct ItemDropOnDestroySystem : ISystem
                             newDropE = ecb.Instantiate(RingDropTemplates[ring.Tier].Entity);
                             Ring.SetupEntity(newDropE, PlayerControlled[random.NextInt(PlayerControlled.Length)].Index, ref random, ref ecb, transform, movementLookup[entity],
                                 ring);
+                        }
+                        break;
+
+                    case Drop.DropType.LootDrop:
+                        // Loot is always dropped once for all players
+                        for (int playerIndex = 0; playerIndex < PlayerControlled.Length; playerIndex++)
+                        {
+                            var loot = LootDropInteractable.Generate(ref random);
+                            newDropE = ecb.Instantiate(LootDropTemplate);
+                            LootDropInteractable.SetupEntity(newDropE, PlayerControlled[playerIndex].Index, ref random, ref ecb, transform, loot);
                         }
                         break;
                         

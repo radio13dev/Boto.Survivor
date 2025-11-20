@@ -97,6 +97,8 @@ public struct GameManager : IComponentData
         public const int PlayerProjectile_Decimate = 15;
         
         public const int LobbyTemplate = 16;
+        
+        public const int LootDropTemplate = 17;
 
         public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
         {

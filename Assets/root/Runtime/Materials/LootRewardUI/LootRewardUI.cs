@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
@@ -65,6 +67,9 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     [Header("Selection Stuff")]
     public UIFocusMini Focus;
     public DescriptionUI Description;
+    
+    [Header("Materials and Visuals")]
+    public Material[] TierMaterials = Array.Empty<Material>();
 
     // Close on first awake
     private void Awake()
@@ -192,7 +197,11 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     }
     
     [EditorButton]
-    public void AddRewards() => AddRewards(default, new LootDropInteractable(){ Random = Unity.Mathematics.Random.CreateFromIndex(0)});
+    public void AddRewards()
+    {
+        var r = Unity.Mathematics.Random.CreateFromIndex((uint)(Random.value*1000));
+        AddRewards(default, new LootDropInteractable(LootTier.Generate(ref r), r));
+    }
     public void AddRewards(Entity entity, LootDropInteractable lootDropInteractable)
     {
         Unity.Mathematics.Random r = Unity.Mathematics.Random.CreateFromIndex((uint)(Random.value*1000));
@@ -201,6 +210,11 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
             var spawned = Instantiate(RewardTemplate, RewardContainer);
             spawned.gameObject.SetActive(true);
             spawned.RingDisplay.UpdateRing(-1, option.Ring, true);
+        }
+        
+        foreach (var material in TierMaterials)
+        {
+            material.SetFloat("_GradientIndex_GradientIndex", (int)lootDropInteractable.Tier);
         }
     }
 
@@ -336,5 +350,15 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
                 }
             }
         }
+    }
+
+    public void Accept()
+    {
+        Game.ClientGame.RpcSendBuffer.Enqueue(
+            GameRpc.PlayerChooseLootReward((byte)Game.ClientGame.PlayerIndex,
+                GameEvents.GetComponent<LocalTransform>(s_Entity).Position,
+                (byte)TargetIndex
+            ));
+        Close();
     }
 }

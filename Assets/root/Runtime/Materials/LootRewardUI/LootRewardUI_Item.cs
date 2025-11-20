@@ -9,7 +9,7 @@ public class LootRewardUI_Item : MonoBehaviour, DescriptionUI.ISource
         var data =  RingDisplay.GetDescription();
         
         data.ButtonText = "Accept";
-        data.ButtonPress = () => GetComponentInParent<LootRewardUI>().Close();
+        data.ButtonPress = () => GetComponentInParent<LootRewardUI>().Accept();
         data.ButtonPress1 = null;
         
         return data;
