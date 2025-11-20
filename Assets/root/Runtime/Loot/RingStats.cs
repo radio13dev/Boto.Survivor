@@ -146,7 +146,7 @@ public unsafe struct RingStats : IComponentData
     public static RingStats Generate(ref Random random)
     {
         RingStats ringStats = new();
-        ringStats.PrimaryEffect = (RingPrimaryEffect)random.NextInt(1 + (int)RingPrimaryEffect.k_Length);
+        ringStats.PrimaryEffect = (RingPrimaryEffect)(1 + random.NextInt((int)RingPrimaryEffect.k_Length));
         
         for (int i = 0; i < k_MaxStats; i++)
         {
