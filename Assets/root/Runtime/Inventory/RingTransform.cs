@@ -14,15 +14,6 @@ public class RingTransform : MonoBehaviour, HandUIController.IStateChangeListene
     public ease.Mode EaseMode = ease.Mode.elastic_inout2;
     ExclusiveCoroutine Co;
 
-    private void OnValidate()
-    {
-        // Fix for when we add in more states
-        if (ClosedT == default) ClosedT = InventoryT;
-        if (SkillsT == default) SkillsT = ClosedT;
-        if (LootT == default) LootT = SkillsT;
-        if (MapT == default) MapT = LootT;
-    }
-
     private void OnEnable()
     {
         HandUIController.Attach(this);
