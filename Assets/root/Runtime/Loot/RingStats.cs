@@ -78,7 +78,7 @@ public enum RingPrimaryEffect : byte
     Projectile_Mark,
     Projectile_Orbit,
     
-    k_Length
+    k_LengthPlusOne
 }
 
 [Save]
@@ -146,7 +146,7 @@ public unsafe struct RingStats : IComponentData
     public static RingStats Generate(ref Random random)
     {
         RingStats ringStats = new();
-        ringStats.PrimaryEffect = (RingPrimaryEffect)(1 + random.NextInt((int)RingPrimaryEffect.k_Length));
+        ringStats.PrimaryEffect = (RingPrimaryEffect)(1 + random.NextInt((int)RingPrimaryEffect.k_LengthPlusOne - 1));
         
         for (int i = 0; i < k_MaxStats; i++)
         {
