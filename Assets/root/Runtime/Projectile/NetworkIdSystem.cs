@@ -42,16 +42,37 @@ public struct NetworkIdMapping : IComponentData
 
 public struct LocalTransformComparer : IComparer<int>
 {
-    NativeArray<LocalTransform> m_Transforms;
-
-    public LocalTransformComparer(NativeArray<LocalTransform> transforms) => m_Transforms = transforms;
+    [ReadOnly] NativeArray<LocalTransform> m_Transforms;
+    public LocalTransformComparer(NativeArray<LocalTransform> transforms)
+    {
+        m_Transforms = transforms;
+        m_DebugEntities = default;
+    }
+    
+#if UNITY_EDITOR
+    [ReadOnly] NativeArray<Entity> m_DebugEntities;
+    public LocalTransformComparer(NativeArray<LocalTransform> transforms, NativeArray<Entity> debugEntities)
+    {
+        m_Transforms = transforms;
+        m_DebugEntities = debugEntities;
+    }
+#endif
 
     public int Compare(int x, int y)
     {
         if (x == y) return 0;
         int c = math.hash(m_Transforms[x].ToMatrix())
             .CompareTo(math.hash(m_Transforms[y].ToMatrix()));
-        if (c == 0) Debug.LogError($"Two transforms at same position: {x}:{m_Transforms[x]} and {y}:{m_Transforms[y]}");
+        if (c == 0)
+        {
+#if UNITY_EDITOR
+            Debug.LogError($"Two transforms at same position {x}/{y}. " +
+                           $"Entities: {(m_DebugEntities.IsCreated ? m_DebugEntities[x] : default)}/{(m_DebugEntities.IsCreated ? m_DebugEntities[y] : default)}. " +
+                           $"Transforms:{m_Transforms[x]}/{m_Transforms[y]}");
+#else
+            Debug.LogError($"Two transforms at same position: {x}:{m_Transforms[x]} and {y}:{m_Transforms[y]}");
+#endif
+        }
         return c;
     }
 }
@@ -60,6 +81,7 @@ public struct LocalTransformComparer : IComparer<int>
 /// PRAYING that entities in these things don't exist for too long.
 /// </summary>
 [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
+[RequireMatchingQueriesForUpdate]
 public partial struct NetworkIdSystem : ISystem
 {
     [NativeDisableUnsafePtrRestriction]
@@ -110,13 +132,20 @@ public partial struct NetworkIdSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
+        if (m_Query.IsEmpty) return;
+        
         using var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         using var entities = m_Query.ToEntityArray(Allocator.Temp);
 
         // Gotta do this based on the Hash ordering of the gem drops
         NativeArray<int> correctOrdering = new NativeArray<int>(transforms.Length, Allocator.Temp);
         for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
+        
+        #if UNITY_EDITOR
+        correctOrdering.Sort(new LocalTransformComparer(transforms, entities));
+        #else
         correctOrdering.Sort(new LocalTransformComparer(transforms)); // Sort to change it into the order of indexes to process (should be consistent across platform)
+        #endif
 
         using EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         var iterator = SystemAPI.GetSingleton<NetworkIdIterator>().Value;

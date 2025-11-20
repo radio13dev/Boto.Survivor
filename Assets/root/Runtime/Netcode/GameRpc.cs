@@ -36,6 +36,7 @@ public unsafe struct GameRpc : IComponentData
         PlayerOpenLobby = 0b0000_1001,
         PlayerInviteToPrivateLobby = 0b0000_1010,
         PlayerSetLobbyPrivate = 0b0000_1011,
+        PlayerChooseLootReward = 0b0000_1100,
 
         
         // Admin Actions
@@ -187,6 +188,13 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc AdminPlayerLevelStat(byte player, TiledStat tiledStat, bool shouldRaise)
     {
         return new GameRpc() { Type = Code.AdminPlayerLevelStat, PlayerId = player, m_AffectedStat = (byte)tiledStat, ShouldLowerStat = !shouldRaise};
+    }
+    #endregion
+    
+    #region Loot Reward Selection
+    public static GameRpc PlayerChooseLootReward(byte player, float3 lootPosition, byte choice)
+    {
+        return new GameRpc() { Type = Code.PlayerChooseLootReward, PlayerId = player, InteractPosition = lootPosition, FromSlotIndex = choice};
     }
     #endregion
 
@@ -768,6 +776,84 @@ public partial struct GameRpcSystem : ISystem
                         Debug.Log($"Generated: {dropped.Stats} ring");
                         Ring.SetupEntity(ringE, playerId, ref r, ref ecb, playerT, default, dropped.Stats);
                     }
+                    break;
+                }
+                case GameRpc.Code.PlayerChooseLootReward:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(Ring), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<Ring>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    var playerT = SystemAPI.GetComponent<LocalTransform>(playerE);
+                    var rings = SystemAPI.GetBuffer<Ring>(playerE);
+                    
+                    int toSlotIndex = 0;
+                    for (int i = 0; i < rings.Length; i++)
+                    {
+                        if (!rings[i].Stats.IsValid)
+                        {
+                            toSlotIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    // Find the nearest interactable to our interact location
+                    float bestD = float.MaxValue;
+                    LootDropInteractable bestInteractable = default;
+                    Entity bestE = Entity.Null;
+                    foreach (var (interactableT, interactableRing, interactableE) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<LootDropInteractable>>().WithAll<Interactable>().WithEntityAccess())
+                    {
+                        if (SystemAPI.HasComponent<Collectable>(interactableE) && SystemAPI.GetComponent<Collectable>(interactableE).PlayerId != playerId)
+                            continue;
+                            
+                        var d = math.distancesq(interactableT.ValueRO.Position, playerT.Position);
+                        if (d < bestD)
+                        {
+                            bestD = d;
+                            bestInteractable = interactableRing.ValueRO;
+                            bestE = interactableE;
+                        }
+                    }
+                    if (bestE == Entity.Null) break;
+                    
+                    // Get the chosen ring
+                    var options = bestInteractable.GetOptions();
+                    var bestR = options[rpc.FromSlotIndex%options.Length].Ring.Stats;
+
+                    // Equip
+                    (rings.ElementAt(toSlotIndex).Stats, bestR) = (bestR, rings[toSlotIndex].Stats);
+                    Debug.Log($"Picked up ring into slot {rpc.ToSlotIndex}");
+                    
+                    var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
+                    dirty.SetDirty(rings[rpc.ToSlotIndex]);
+                    dirty.SetDirty(bestR);
+                    SystemAPI.SetComponent(playerE, dirty);
+                    
+                    // Drop the item
+                    if (bestR.IsValid)
+                    {
+                        var ringTemplates = SystemAPI.GetSingletonBuffer<GameManager.RingDropTemplate>(true);
+                        var r = SystemAPI.GetSingleton<SharedRandom>().Random;
+                        var ringE = ecb.Instantiate(ringTemplates[bestR.Tier].Entity);
+                        Debug.Log($"Generated: {bestR} ring");
+                        Ring.SetupEntity(ringE, playerId, ref r, ref ecb, playerT, default, bestR);
+                        
+                    }
+                    
+                    
+                    var key = state.EntityManager.GetSharedComponent<LootKey>(bestE);
+                    if (key.Value != 0)
+                    {
+                        Debug.Log($"Destroying shared loot key {key.Value}");
+                        var destroyQuery = state.EntityManager.CreateEntityQuery(typeof(Interactable), typeof(LootKey));
+                        destroyQuery.SetSharedComponentFilter(key);
+                        state.EntityManager.DestroyEntity(destroyQuery);
+                    }
+                    else
+                        state.EntityManager.DestroyEntity(bestE);
+                    
+                    SystemAPI.SetComponentEnabled<CompiledStatsDirty>(playerE, true);
                     break;
                 }
                 case GameRpc.Code.PlayerLevelStat:

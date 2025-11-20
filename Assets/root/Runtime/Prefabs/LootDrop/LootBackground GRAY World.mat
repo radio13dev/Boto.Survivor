@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LootBackground GRAY
-  m_Shader: {fileID: -6465566751694194690, guid: 816f19ac86c2e884fa69f4df4a9fc5a4, type: 3}
+  m_Name: LootBackground GRAY World
+  m_Shader: {fileID: -6465566751694194690, guid: 4a10019fe03a04146a23b7aac8a240b5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -71,8 +71,13 @@ Material:
     - _DitherMode: 0
     - _DstBlend: 10
     - _DstBlendAlpha: 10
+    - _GradientIndex: 0
+    - _GradientIndex_GradientIndex: 0
     - _Loot_EdgePower: 1
     - _Loot_EdgeScale: 1.7
+    - _Loot_GradientScaleTime: 0.2
+    - _Loot_OffsetY: 0
+    - _Loot_ScaleY: 0.4
     - _Loot_Speed: 0
     - _QueueControl: 0
     - _QueueOffset: -1

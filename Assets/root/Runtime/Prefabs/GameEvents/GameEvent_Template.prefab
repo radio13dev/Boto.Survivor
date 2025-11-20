@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 7968584179131527645}
   - component: {fileID: -6702662225711071040}
   - component: {fileID: -2943787466722823623}
+  - component: {fileID: 4651849666174475721}
   m_Layer: 7
   m_Name: GameEvent_Template
   m_TagString: Untagged
@@ -65,8 +66,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c42431cfaed4abba7f98ef9c8d1557f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::EntityOnDestroyAuthoring
-  Prefab: {fileID: 142513335708862768, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
-  Count: 1
+  Prefabs:
+  - {fileID: 142513335708862768, guid: 01d8608979c1c5244a1a31ca1bf7f3b6, type: 3}
+  Prefab: {fileID: 0}
+  Count: 0
 --- !u!114 &-7902203295864721369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,3 +209,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::ParticleOnDamageAuthoring
   Particle:
     _Asset: {fileID: -8333230072600633316, guid: 95eb34cd54f5f7a4195a1befee0b14c0, type: 3}
+--- !u!114 &4651849666174475721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396584399163751548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d441d596723349038a4ba229add7a43c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
+  Drops:
+  - Type: 2
+    Chance: 1000
+    MinCount: 1
+    MaxCount: 1

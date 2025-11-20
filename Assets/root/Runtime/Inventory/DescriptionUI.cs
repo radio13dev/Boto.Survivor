@@ -102,6 +102,8 @@ public class DescriptionUI : MonoBehaviour
             };
         }
     }
+    
+    public bool ListensToUIFocus = true;
 
     public Image Fill;
     Color? m_DefaultFill;
@@ -144,6 +146,8 @@ public class DescriptionUI : MonoBehaviour
 
     private void OnFocus()
     {
+        if (!ListensToUIFocus) return;
+        
         GameObject interact = UIFocus.Interact;
         GameObject focus = null;
         if (UIFocus.Interact && (!UIFocus.Focus || !UIFocus.CheckFocus(UIFocus.Focus)))

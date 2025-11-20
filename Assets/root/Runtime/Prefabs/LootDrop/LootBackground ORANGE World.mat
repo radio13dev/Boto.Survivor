@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LootBackground GOOD BLUE
+  m_Name: LootBackground ORANGE World
   m_Shader: {fileID: -6465566751694194690, guid: 4a10019fe03a04146a23b7aac8a240b5, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -28,6 +28,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _Loot_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -54,6 +58,14 @@ Material:
     - _DitherMode: 0
     - _DstBlend: 10
     - _DstBlendAlpha: 10
+    - _GradientIndex: 0
+    - _GradientIndex_GradientIndex: 2
+    - _Loot_EdgePower: 1
+    - _Loot_EdgeScale: 1.7
+    - _Loot_GradientScaleTime: 0.2
+    - _Loot_OffsetY: 0
+    - _Loot_ScaleY: 0.4
+    - _Loot_Speed: 0
     - _QueueControl: 0
     - _QueueOffset: -1
     - _Speed: 0.5
@@ -65,15 +77,16 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _Color: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0.3960784}
-    - _Dither_ColorA: {r: 0.6792453, g: 0.6792453, b: 0.6792453, a: 1}
-    - _Dither_ColorB: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
+    - _Dither_ColorA: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+    - _Dither_ColorB: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
     - _Dither_Tiling: {r: 20, g: 20, b: 0, a: 0}
     - _Dither_TimeOffset: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _Loot_Tiling: {r: 20, g: 20, b: 0, a: 0}
     - _Outline_Color: {r: 0, g: 0, b: 0, a: 0.5529412}
     - _Tiling: {r: 20, g: 20, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &7173204588111071741
+--- !u!114 &8896312252842618507
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

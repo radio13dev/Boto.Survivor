@@ -64,81 +64,21 @@ public struct Ring : IBufferElementData
     }
 }
 
-[Flags]
 public enum RingPrimaryEffect : byte
 {
-    None = 0,
+    None,
 
-    Projectile_Ring = 1 << 0,
-    Projectile_NearestRapid = 1 << 1,
-    Projectile_Seeker = 1 << 2,
-    Projectile_Band = 1 << 3,
+    Projectile_Ring,
+    Projectile_NearestRapid,
+    Projectile_Seeker,
+    Projectile_Band,
 
-    Projectile_Melee = 1 << 4,
-    Projectile_Returning = 1 << 5,
-    Projectile_Mark = 1 << 6,
-    Projectile_Orbit = 1 << 7,
-
-    Length = 8
-}
-
-public static class RingPrimaryEffectExtension
-{
-    public static int GetMostSigBit(this RingPrimaryEffect eff)
-    {
-        return sizeof(int) * 8 - math.lzcnt((uint)eff) - 1;
-    }
-}
-
-public unsafe struct PrimaryEffectStack
-{
-    public fixed byte Stacks[(int)RingPrimaryEffect.Length];
-
-    public PrimaryEffectStack(in DynamicBuffer<Ring> rings)
-    {
-        int depth;
-        int init;
-        const int mask = 1;
-
-        for (int i = 0; i < rings.Length; i++)
-        {
-            depth = 0;
-            init = (int)rings[i].Stats.PrimaryEffect;
-            while (init != 0)
-            {
-                if ((init & mask) != 0)
-                    Stacks[depth]++;
-
-                init >>= 1;
-                depth++;
-            }
-        }
-    }
-
-    public PrimaryEffectStack(in DynamicBuffer<Ring> rings, int ringIndex)
-    {
-        int main = (int)rings[ringIndex].Stats.PrimaryEffect;
-        int comp;
-        int depth;
-        int init;
-        const int mask = 1;
-
-        for (int i = 0; i <= ringIndex; i++)
-        {
-            comp = main;
-            depth = 0;
-            init = (int)rings[i].Stats.PrimaryEffect;
-            while (comp != 0 && init != 0)
-            {
-                if ((comp & mask) != 0 && (init & mask) != 0)
-                    Stacks[depth]++;
-
-                comp >>= 1;
-                init >>= 1;
-                depth++;
-            }
-        }
-    }
+    Projectile_Melee,
+    Projectile_Returning,
+    Projectile_Mark,
+    Projectile_Orbit,
+    
+    k_Length
 }
 
 [Save]
@@ -206,7 +146,7 @@ public unsafe struct RingStats : IComponentData
     public static RingStats Generate(ref Random random)
     {
         RingStats ringStats = new();
-        ringStats.PrimaryEffect = (RingPrimaryEffect)(1 << random.NextInt((int)RingPrimaryEffect.Length));
+        ringStats.PrimaryEffect = (RingPrimaryEffect)random.NextInt(1 + (int)RingPrimaryEffect.k_Length);
         
         for (int i = 0; i < k_MaxStats; i++)
         {
@@ -310,7 +250,7 @@ public unsafe struct RingStats : IComponentData
 
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
-            return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Material;
+            return instances[visuals[(byte)PrimaryEffect].InstancedResourceIndex].Instance.Value.Material;
         }
     }
 
@@ -330,7 +270,7 @@ public unsafe struct RingStats : IComponentData
 
             var visuals = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.RingVisual>(true);
             var instances = Game.ClientGame.World.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true);
-            return instances[visuals[PrimaryEffect.GetMostSigBit()].InstancedResourceIndex].Instance.Value.Mesh;
+            return instances[visuals[(byte)PrimaryEffect].InstancedResourceIndex].Instance.Value.Mesh;
         }
     }
 

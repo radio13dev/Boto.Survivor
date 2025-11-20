@@ -135,6 +135,13 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
             Demo();
         }
     }
+
+    private void OnDisable()
+    {
+        GameEvents.OnEvent -= OnGameEvent;
+        
+        ClearFocus();
+    }
     
     [Header("Reveal Animation")]
     public float2 InitZero;
@@ -172,13 +179,6 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
             yield return null;
         }
         StartFocus(); // Fallback
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnEvent -= OnGameEvent;
-        
-        ClearFocus();
     }
 
     private void OnGameEvent(GameEvents.Data data)
