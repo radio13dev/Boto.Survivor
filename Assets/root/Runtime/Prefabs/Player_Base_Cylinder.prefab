@@ -55,13 +55,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Boto.Survivor::SurvivorAuthoring
   Health: 6
   InitialRings:
-  - PrimaryEffect: 8
-    BoostedStats: 000000
-    BoostedStatsBoosts: 010000
   - PrimaryEffect: 5
     BoostedStats: 000000
+    BoostedStatsBoosts: 010000
+  - PrimaryEffect: 0
+    BoostedStats: 000000
     BoostedStatsBoosts: 000000
-  - PrimaryEffect: 3
+  - PrimaryEffect: 0
     BoostedStats: 000000
     BoostedStatsBoosts: 000000
   - PrimaryEffect: 0

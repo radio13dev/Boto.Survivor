@@ -12,7 +12,7 @@ public class GameInitialize : MonoBehaviour
 {
     public static bool EnableMainContentLoad = true;
 
-    public static eMode InitMode = eMode.Game;
+    public static eMode InitMode = eMode.Singleplayer;
 
     public enum eMode
     {

@@ -94,7 +94,7 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
 
     private void OnDisable()
     {
-        ClearFocus();
+        //ClearFocus();
     }
 
     public static void OpenUI(Entity entity, LootDropInteractable lootDropInteractable, Action DoOnceOnClose)
