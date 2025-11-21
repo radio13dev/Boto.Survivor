@@ -176,12 +176,12 @@ public class DesyncTests : GameTestBase
     }
 
     [UnityTest]
-    public IEnumerator DesyncTest_BotSession_Success([Values(false, true)] bool showVisuals)
+    public IEnumerator DesyncTest_BotSession_Success([Values(false, true)] bool serverVisuals, [Values(false, true)] bool clientVisuals)
     {
         // Arrange
         var stubStepProvider = new ManualStepProvider();
-        using var mockServer = GameLaunch.Create(new GameFactory("mockServer", showVisuals, stepProvider: stubStepProvider));
-        using var mockClient = GameLaunch.Create(new GameFactory("mockClient", showVisuals, stepProvider: stubStepProvider));
+        using var mockServer = GameLaunch.Create(new GameFactory("mockServer", serverVisuals, stepProvider: stubStepProvider));
+        using var mockClient = GameLaunch.Create(new GameFactory("mockClient", clientVisuals, stepProvider: stubStepProvider));
         yield return mockServer.CreateServer(); // Start server
         yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
         var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);

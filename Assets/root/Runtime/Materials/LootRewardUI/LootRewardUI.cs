@@ -76,8 +76,6 @@ public class LootRewardUI : MonoBehaviour, IPointerClickHandler, HandUIControlle
     {
         HandUIController.Attach(this);
         Clear();
-        AddRewards();
-        AddRewards();
         SetIndex(default, true);
         RevealItems();
         Close();
