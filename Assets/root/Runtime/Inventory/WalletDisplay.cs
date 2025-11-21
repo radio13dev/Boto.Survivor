@@ -26,8 +26,8 @@ public class WalletDisplay : MonoBehaviour
         
         HandUIController.Attach(this);
 
-        GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.WalletChanged, CameraTarget.MainTarget.Entity));
+        GameEvents.OnWalletChanged += OnWalletChanged;
+        if (GameEvents.TryGetComponent2(CameraTarget.MainEntity, out Wallet wallet)) OnWalletChanged(CameraTarget.MainEntity, wallet);
         else SetValue(0);
     }
 
@@ -35,19 +35,13 @@ public class WalletDisplay : MonoBehaviour
     {
         HandUIController.Detach(this);
 
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnWalletChanged -= OnWalletChanged;
     }
-    
-    private void OnGameEvent(GameEvents.Data data)
+
+    private void OnWalletChanged(Entity entity, Wallet wallet)
     {
-        var eType = data.Type; var entity = data.Entity;
-        if (eType != GameEvents.Type.WalletChanged) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
-        if (GameEvents.TryGetComponent2<Wallet>(entity, out var wallet))
-        {
-            SetValue(wallet.Value);
-        }
+        if (entity != CameraTarget.MainEntity) return;
+        SetValue(wallet.Value);
     }
 
     

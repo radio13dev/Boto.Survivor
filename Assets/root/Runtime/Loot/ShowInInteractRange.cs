@@ -1,3 +1,4 @@
+using Unity.Entities;
 using UnityEngine.Events;
 
 public class ShowInInteractRange : EntityLinkMono
@@ -7,28 +8,26 @@ public class ShowInInteractRange : EntityLinkMono
     
     private void OnEnable()
     {
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnInteractableStart += OnInteractableStart;
+        GameEvents.OnInteractableEnd += OnInteractableEnd;
+        OnInteractEnd?.Invoke();
+    }
+
+    private void OnInteractableStart(Entity entity)
+    {
+        if (entity != Entity) return;
+        OnInteractStart?.Invoke();
+    }
+
+    private void OnInteractableEnd(Entity entity)
+    {
+        if (entity != Entity) return;
         OnInteractEnd?.Invoke();
     }
 
     private void OnDisable()
     {
-        GameEvents.OnEvent -= OnGameEvent;
-    }
-
-    private void OnGameEvent(GameEvents.Data data)
-    {
-        var eType = data.Type; var entity = data.Entity;
-        if (eType != GameEvents.Type.InteractableStart && eType != GameEvents.Type.InteractableEnd) return;
-        if (entity != Entity) return;
-        
-        if (eType == GameEvents.Type.InteractableStart)
-        {
-            OnInteractStart?.Invoke();
-        }
-        else
-        {
-            OnInteractEnd?.Invoke();
-        }
+        GameEvents.OnInteractableStart -= OnInteractableStart;
+        GameEvents.OnInteractableEnd -= OnInteractableEnd;
     }
 }

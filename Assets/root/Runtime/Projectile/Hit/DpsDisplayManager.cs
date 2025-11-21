@@ -12,22 +12,20 @@ public class DpsDisplayManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnEnemyHealthChanged += OnEnemyHealthChanged;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnEnemyHealthChanged -= OnEnemyHealthChanged;
         
         foreach (var val in DpsDisplayLookup)
             val.Value.ReturnToPool();
         DpsDisplayLookup.Clear();
     }
 
-    private void OnGameEvent(GameEvents.Data data)
+    private void OnEnemyHealthChanged(Entity entity, Health newhealth, int changereceived)
     {
-        var eType = data.Type; var entity = data.Entity;
-        if (eType != GameEvents.Type.EnemyHealthChanged) return;
         if (!GameEvents.TryGetComponent2<Health>(entity, out var health))
         {
             health = new Health();
@@ -37,7 +35,7 @@ public class DpsDisplayManager : MonoBehaviour
         {
             DpsDisplayLookup[entity] = display = DpsDisplayTemplate.GetFromPool();
             display.transform.SetParent(DpsDisplayContainer);
-            display.Setup(this, data.Entity, health.InitHealth, health.Value);
+            display.Setup(this, entity, health.InitHealth, health.Value);
         }
         
         if (GameEvents.TryGetComponent2<LocalTransform>(entity, out var localTransform))
@@ -45,7 +43,7 @@ public class DpsDisplayManager : MonoBehaviour
             display.transform.SetPositionAndRotation(localTransform.Position, localTransform.Rotation);
         }
         
-        display.AddHealth(data.Int0);
+        display.AddHealth(changereceived);
     }
 
     public void Remove(Entity entity)

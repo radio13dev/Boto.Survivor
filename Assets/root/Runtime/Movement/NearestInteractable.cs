@@ -86,8 +86,8 @@ public partial struct FindNearestInteractableSystem : ISystem
             
             SystemAPI.SetSingleton(new NearestInteractable(newInteractableE));
             
-            GameEvents.Trigger(GameEvents.Type.InteractableEnd, lastInteractableE);
-            GameEvents.Trigger(GameEvents.Type.InteractableStart, newInteractableE);
+            GameEvents.InteractableEnd(lastInteractableE);
+            GameEvents.InteractableStart(newInteractableE);
         }
     }
 }

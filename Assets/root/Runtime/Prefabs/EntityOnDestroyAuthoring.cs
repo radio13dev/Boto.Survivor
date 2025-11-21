@@ -149,12 +149,12 @@ public partial struct EntityOnDestroySystem : ISystem
 
                         if (SystemAPI.HasComponent<SurvivorTag>(entity))
                         {
-                            GameEvents.Trigger(GameEvents.Type.PlayerDied, entity, playerSaveable.Index);
+                            GameEvents.PlayerDied(entity, playerSaveable.Index);
                         }
 
                         if (SystemAPI.HasComponent<DeadSurvivorTag>(entity))
                         {
-                            GameEvents.Trigger(GameEvents.Type.PlayerRevived, entity, playerSaveable.Index);
+                            GameEvents.PlayerRevived(entity, playerSaveable.Index);
                         }
                     }
                 }

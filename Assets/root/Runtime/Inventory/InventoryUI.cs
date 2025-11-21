@@ -28,8 +28,8 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
 
         UIFocus.OnFocus += OnFocus;
         UIFocus.OnInteract += OnInteract;
-        GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
+        GameEvents.OnInventoryChanged += OnInventoryChanged;
+        if (CameraTarget.MainTarget) OnInventoryChanged(CameraTarget.MainEntity);
     }
 
     private void OnDisable()
@@ -38,7 +38,7 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
 
         UIFocus.OnFocus -= OnFocus;
         UIFocus.OnInteract -= OnInteract;
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnInventoryChanged -= OnInventoryChanged;
     }
 
     private void OnFocus()
@@ -124,12 +124,9 @@ public class InventoryUI : MonoBehaviour, HandUIController.IStateChangeListener
         Co.StartCoroutine(this, target.Lerp((RectTransform)transform, HandUIController.k_AnimTransitionTime));
     }
 
-    private void OnGameEvent(GameEvents.Data data)
+    private void OnInventoryChanged(Entity entity)
     {
-        var eType = data.Type; var entity = data.Entity;
-        if (eType != GameEvents.Type.InventoryChanged) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (entity != CameraTarget.MainEntity) return;
         if (GameEvents.TryGetBuffer<Ring>(entity, out var rings) && GameEvents.TryGetBuffer<EquippedGem>(entity, out var equippedGems))
         {
             // Update ring display

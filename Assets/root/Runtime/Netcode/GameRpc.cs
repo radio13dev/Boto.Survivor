@@ -902,7 +902,7 @@ public partial struct GameRpcSystem : ISystem
                     var dirty = SystemAPI.GetComponent<CompiledStatsDirty>(playerE);
                     dirty.SetDirty();
                     SystemAPI.SetComponent(playerE, dirty);
-                    GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
+                    GameEvents.WalletChanged(playerE, wallet);
                     break;
                 }
                 

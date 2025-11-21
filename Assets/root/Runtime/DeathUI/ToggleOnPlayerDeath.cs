@@ -1,3 +1,4 @@
+using Unity.Entities;
 using UnityEngine;
 
 public class ToggleOnPlayerDeath : MonoBehaviour
@@ -6,7 +7,8 @@ public class ToggleOnPlayerDeath : MonoBehaviour
     
     private void Awake()
     {
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnPlayerDied += OnPlayerDied;
+        GameEvents.OnPlayerRevived += OnPlayerRevived;
         if (ShowOnDeath)
         {
             gameObject.SetActive(false);
@@ -15,24 +17,20 @@ public class ToggleOnPlayerDeath : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnPlayerDied += OnPlayerDied;
+        GameEvents.OnPlayerRevived += OnPlayerRevived;
     }
 
-    private void OnGameEvent(GameEvents.Data data)
+    private void OnPlayerDied(Entity entity, int playerIndex)
     {
         // Check for local player
-        var eType = data.Type;
-        var playerIndex = data.Int0; 
-        if (playerIndex != Game.ClientGame.PlayerIndex) return;
-        
-        if (eType == GameEvents.Type.PlayerDied)
-        {
-            gameObject.SetActive(ShowOnDeath);
-        }
-
-        if (eType == GameEvents.Type.PlayerRevived)
-        {
-            gameObject.SetActive(!ShowOnDeath);
-        }
+        if (entity != CameraTarget.MainEntity) return;
+        gameObject.SetActive(ShowOnDeath);
+    }
+    private void OnPlayerRevived(Entity entity, int playerIndex)
+    {
+        // Check for local player
+        if (entity != CameraTarget.MainEntity) return;
+        gameObject.SetActive(!ShowOnDeath);
     }
 }

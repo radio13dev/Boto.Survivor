@@ -493,7 +493,9 @@ public static class GameEvents
         WalletChanged,
         EnemyHealthChanged,
         PlayerDied,
-        PlayerRevived
+        PlayerRevived,
+        PlayerLevelProgress,
+        PlayerLevelUp,
     }
     
     
@@ -502,10 +504,17 @@ public static class GameEvents
     {
         [FieldOffset(0)] public readonly Type Type;
         [FieldOffset(4)] public readonly Entity Entity;
-        [FieldOffset(12)] public readonly long _Data;
+        [FieldOffset(12)] public readonly long _Data0;
+        [FieldOffset(12)] public readonly long _Data1;
         
         [FieldOffset(12)] public readonly int Int0;
         [FieldOffset(16)] public readonly int Int1;
+        [FieldOffset(20)] public readonly int Int2;
+        [FieldOffset(24)] public readonly int Int3;
+        
+        [FieldOffset(12)] public readonly Health Health;
+        [FieldOffset(12)] public readonly Wallet Wallet;
+        [FieldOffset(12)] public readonly PlayerLevel PlayerLevel;
         
         public static implicit operator Data((Type type, Entity entity) te) => new Data(te);
         
@@ -517,28 +526,37 @@ public static class GameEvents
             Type = type;
             Entity = entity;
         }
-        public Data(Type type, Entity entity, long data) : this()
+        public Data(Type type, Entity entity, long data0) : this(type, entity)
         {
-            Type = type;
-            Entity = entity;
-            _Data = data;
+            _Data0 = data0;
         }
-        public Data(Type type, Entity entity, int int0) : this()
+        public Data(Type type, Entity entity, int int0) : this(type, entity)
         {
-            Type = type;
-            Entity = entity;
             Int0 = int0;
         }
-        public Data(Type type, Entity entity, int int0, int int1) : this()
+        public Data(Type type, Entity entity, int int0, int int1) : this(type, entity)
         {
-            Type = type;
-            Entity = entity;
             Int0 = int0;
             Int1 = int1;
         }
+        public Data(Type type, Entity entity, Wallet wallet) : this(type, entity)
+        {
+            Wallet = wallet;
+        }
+        public Data(Type type, Entity entity, Health health) : this(type, entity)
+        {
+            Health = health;
+        }
+        public Data(Type type, Entity entity, Health health, int change) : this(type, entity)
+        {
+            Health = health;
+            Int2 = change;
+        }
+        public Data(Type type, Entity entity, PlayerLevel playerLevel) : this(type, entity)
+        {
+            PlayerLevel = playerLevel;
+        }
     }
-
-    public static event Action<Data> OnEvent;
 
     static readonly SharedStatic<NativeQueue<Data>> s_EventQueue = SharedStatic<NativeQueue<Data>>.GetOrCreate<EventQueueKey>();
 
@@ -567,20 +585,133 @@ public static class GameEvents
 
     public static void ExecuteEvents()
     {
-        while (s_EventQueue.Data.TryDequeue(out var eType))
+        while (s_EventQueue.Data.TryDequeue(out var data))
         {
-            OnEvent?.Invoke(eType);
+            switch (data.Type)
+            {
+                case InventoryChangedEnum:
+                    OnInventoryChanged?.Invoke(data.Entity);
+                    break;
+                case PlayerHealthChangedEnum:
+                    OnPlayerHealthChanged?.Invoke(data.Entity, data.Health);
+                    break;
+                case InteractableStartEnum:
+                    OnInteractableStart?.Invoke(data.Entity);
+                    break;
+                case InteractableEndEnum:
+                    OnInteractableEnd?.Invoke(data.Entity);
+                    break;
+                case VisualsUpdatedEnum:
+                    OnVisualsUpdated?.Invoke(data.Entity);
+                    break;
+                case WalletChangedEnum:
+                    OnWalletChanged?.Invoke(data.Entity, data.Wallet);
+                    break;
+                case EnemyHealthChangedEnum:
+                    OnEnemyHealthChanged?.Invoke(data.Entity, data.Health, data.Int2);
+                    break;
+                case PlayerDiedEnum:
+                    OnPlayerDied?.Invoke(data.Entity, data.Int0);
+                    break;
+                case PlayerRevivedEnum:
+                    OnPlayerRevived?.Invoke(data.Entity, data.Int0);
+                    break;
+                case PlayerLevelProgressEnum:
+                    OnPlayerLevelProgress?.Invoke(data.Entity, data.PlayerLevel);
+                    break;
+                case PlayerLevelUpEnum:
+                    OnPlayerLevelUp?.Invoke(data.Entity, data.PlayerLevel);
+                    break;
+            }
         }
     }
 
-    public static void Trigger(Type eType, Entity entity)
+    private const Type InventoryChangedEnum = Type.InventoryChanged;
+    public delegate void OnInventoryChangedDel(Entity entity);
+    public static event OnInventoryChangedDel OnInventoryChanged;
+    public static void InventoryChanged(Entity entity)
     {
-        s_EventQueue.Data.Enqueue(new (eType, entity));
+        s_EventQueue.Data.Enqueue(new (Type.InventoryChanged, entity));
     }
 
-    public static void Trigger(Type eType, Entity entity, int int0)
+    private const Type PlayerHealthChangedEnum = Type.PlayerHealthChanged;
+    public delegate void OnPlayerHealthChangedDel(Entity entity, Health health);
+    public static event OnPlayerHealthChangedDel OnPlayerHealthChanged;
+    public static void PlayerHealthChanged(Entity entity, Health health)
     {
-        s_EventQueue.Data.Enqueue(new (eType, entity, int0));
+        s_EventQueue.Data.Enqueue(new (Type.PlayerHealthChanged, entity, health));
+    }
+
+    private const Type InteractableStartEnum = Type.InteractableStart;
+    public delegate void OnInteractableStartDel(Entity entity);
+    public static event OnInteractableStartDel OnInteractableStart;
+    public static void InteractableStart(Entity entity)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.InteractableStart, entity));
+    }
+
+    private const Type InteractableEndEnum = Type.InteractableEnd;
+    public delegate void OnInteractableEndDel(Entity entity);
+    public static event OnInteractableEndDel OnInteractableEnd;
+    public static void InteractableEnd(Entity entity)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.InteractableEnd, entity));
+    }
+
+    private const Type VisualsUpdatedEnum = Type.VisualsUpdated;
+    public delegate void OnVisualsUpdatedDel(Entity entity);
+    public static event OnVisualsUpdatedDel OnVisualsUpdated;
+    public static void VisualsUpdated(Entity entity)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.VisualsUpdated, entity));
+    }
+
+    private const Type WalletChangedEnum = Type.WalletChanged;
+    public delegate void OnWalletChangedDel(Entity entity, Wallet wallet);
+    public static event OnWalletChangedDel OnWalletChanged;
+    public static void WalletChanged(Entity entity, Wallet wallet)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.WalletChanged, entity, wallet));
+    }
+
+    private const Type EnemyHealthChangedEnum = Type.EnemyHealthChanged;
+    public delegate void OnEnemyHealthChangedDel(Entity entity, Health newHealth, int changeReceived);
+    public static event OnEnemyHealthChangedDel OnEnemyHealthChanged;
+    public static void EnemyHealthChanged(Entity entity, Health newHealth, int changeReceived)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.EnemyHealthChanged, entity, newHealth, changeReceived));
+    }
+
+    private const Type PlayerDiedEnum = Type.PlayerDied;
+    public delegate void OnPlayerDiedDel(Entity entity, int playerIndex);
+    public static event OnPlayerDiedDel OnPlayerDied;
+    public static void PlayerDied(Entity entity, int playerIndex)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.PlayerDied, entity, playerIndex));
+    }
+
+    private const Type PlayerRevivedEnum = Type.PlayerRevived;
+    public delegate void OnPlayerRevivedDel(Entity entity, int playerIndex);
+    public static event OnPlayerRevivedDel OnPlayerRevived;
+    public static void PlayerRevived(Entity entity, int playerIndex)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.PlayerRevived, entity, playerIndex));
+    }
+
+    private const Type PlayerLevelProgressEnum = Type.PlayerLevelProgress;
+    public delegate void OnPlayerLevelProgressDel(Entity entity, PlayerLevel playerLevel);
+    public static event OnPlayerLevelProgressDel OnPlayerLevelProgress;
+    public static void PlayerLevelProgress(Entity entity, PlayerLevel playerLevel)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.PlayerLevelProgress, entity, playerLevel));
+    }
+
+    private const Type PlayerLevelUpEnum = Type.PlayerLevelUp;
+    public delegate void OnPlayerLevelUpDel(Entity entity, PlayerLevel playerLevel);
+    public static event OnPlayerLevelUpDel OnPlayerLevelUp;
+    public static void PlayerLevelUp(Entity entity, PlayerLevel playerLevel)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.PlayerLevelUp, entity, playerLevel));
     }
 
     public static bool TryGetSingleton<T>(out T o) where T : unmanaged, IComponentData

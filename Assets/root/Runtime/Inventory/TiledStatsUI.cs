@@ -61,7 +61,8 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
 
         HandUIController.Attach(this);
 
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnInventoryChanged += OnInventoryChanged;
+        GameEvents.OnWalletChanged += OnWalletChanged;
         if (CameraTarget.MainTarget) RebuildTilesFull();
         else
         {
@@ -80,12 +81,14 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
     {
         HandUIController.Detach(this);
 
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnInventoryChanged -= OnInventoryChanged;
+        GameEvents.OnWalletChanged -= OnWalletChanged;
 
         UIFocus.OnFocus -= OnFocus;
 
         ChoiceUI.OnActiveRingChange -= OnActiveRingChange;
     }
+
 
     ExclusiveCoroutine m_focusRedirectCo;
 
@@ -117,18 +120,25 @@ public class TiledStatsUI : MonoBehaviour, HandUIController.IStateChangeListener
     private void RebuildTilesFull()
     {
         if (CameraTarget.MainTarget)
-            OnGameEvent(new(GameEvents.Type.InventoryChanged, CameraTarget.MainTarget.Entity));
+            OnInventoryChanged(CameraTarget.MainTarget.Entity);
     }
 
-    private void OnGameEvent(GameEvents.Data data)
+    private void OnInventoryChanged(Entity entity)
     {
-        var eType = data.Type;
-        var entity = data.Entity;
-        if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (entity != CameraTarget.MainEntity) return;
         if (GameEvents.TryGetComponent2<Wallet>(entity, out var wallet)
             && GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var baseStats)
+            && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats)
+            && GameEvents.TryGetBuffer<Ring>(entity, out var rings))
+        {
+            RebuildTiles(wallet, baseStats, compiledStats, rings.AsNativeArray());
+        }
+    }
+
+    private void OnWalletChanged(Entity entity, Wallet wallet)
+    {
+        if (entity != CameraTarget.MainEntity) return;
+        if (GameEvents.TryGetComponent2<TiledStatsTree>(entity, out var baseStats)
             && GameEvents.TryGetComponent2<CompiledStats>(entity, out var compiledStats)
             && GameEvents.TryGetBuffer<Ring>(entity, out var rings))
         {

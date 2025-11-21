@@ -136,7 +136,19 @@ public partial struct GemCollectableSystem : ISystem
             {
                 var walletRW = SystemAPI.GetComponentRW<Wallet>(playerE);
                 walletRW.ValueRW.Value++;
-                GameEvents.Trigger(GameEvents.Type.WalletChanged, playerE);
+                GameEvents.WalletChanged(playerE, walletRW.ValueRW);
+            }
+            if (SystemAPI.HasComponent<PlayerLevel>(playerE))
+            {
+                ref var progress = ref SystemAPI.GetComponentRW<PlayerLevel>(playerE).ValueRW;
+                progress.Progress++;
+                GameEvents.PlayerLevelProgress(playerE, progress);
+                if (progress.Progress >= progress.LevelUpCost)
+                {
+                    progress.Progress -= progress.LevelUpCost;
+                    progress.Level++;
+                    GameEvents.PlayerLevelUp(playerE, progress);
+                }
             }
             //if (SystemAPI.HasBuffer<InventoryGem>(playerE))
             //{

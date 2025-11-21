@@ -320,7 +320,7 @@ namespace Collisions
                     // Do stuff to player
                     _health->Value--;
                     _force->Velocity += math.normalize(queryRange.Center - objBounds.Center)*EnemyDamageJob.k_Knockback;
-                    GameEvents.Trigger(GameEvents.Type.PlayerHealthChanged, _source);
+                    GameEvents.PlayerHealthChanged(_source, *_health);
                     return true;
                 }
             }

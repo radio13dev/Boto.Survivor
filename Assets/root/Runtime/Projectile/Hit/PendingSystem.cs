@@ -219,13 +219,13 @@ public partial struct PendingSystem : ISystem
                     case Pending.eType.Damage:
                         int dmg = (int)math.ceil(pending[i].Value*dmgMul);
                         health.Value -= dmg;
-                        GameEvents.Trigger(GameEvents.Type.EnemyHealthChanged, e, -dmg);
+                        GameEvents.EnemyHealthChanged(e, health, -dmg);
                         
                         if (cut)
                         {
                             int dmgCut = (int)math.ceil(cut.Value*dmgMul);
                             health.Value -= dmgCut;
-                            GameEvents.Trigger(GameEvents.Type.EnemyHealthChanged, e, -dmgCut);
+                            GameEvents.EnemyHealthChanged(e, health, -dmgCut);
                             SetupParticle(ref ecb_presentation, in Key, ref random_presentation, in cutDamageVisual, in t, Time, 0.5f);
                         }
                         break;
@@ -233,7 +233,7 @@ public partial struct PendingSystem : ISystem
                     case Pending.eType.Poke:
                         int dmgPoke = (int)math.ceil(pending[i].Value*dmgMul);
                         health.Value -= dmgPoke;
-                        GameEvents.Trigger(GameEvents.Type.EnemyHealthChanged, e, -dmgPoke);
+                        GameEvents.EnemyHealthChanged(e, health, -dmgPoke);
                         SetupParticle(ref ecb_presentation, in Key, ref random_presentation, in pokeDamageVisual, in t, Time, 0.5f);
                         break;
                 }

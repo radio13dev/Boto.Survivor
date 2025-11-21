@@ -14,6 +14,8 @@ using Random = Unity.Mathematics.Random;
 public struct PlayerLevel : IComponentData
 {
     public long Level;
+    public int Progress;
+    public int LevelUpCost => 10;
 }
 
 [Save]
@@ -289,7 +291,7 @@ public partial struct CompiledStatsSystem : ISystem
             dirtyState.ValueRW = false;
             
             // Notify
-            GameEvents.Trigger(GameEvents.Type.InventoryChanged, entity);
+            GameEvents.InventoryChanged(entity);
         }
     }
 }

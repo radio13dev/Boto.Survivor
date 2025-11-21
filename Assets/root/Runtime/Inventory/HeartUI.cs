@@ -10,31 +10,26 @@ public class HeartUI : MonoBehaviour
     {
         HandUIController.Attach(this);
 
-        GameEvents.OnEvent += OnGameEvent;
-        if (CameraTarget.MainTarget) OnGameEvent(new (GameEvents.Type.PlayerHealthChanged, CameraTarget.MainTarget.Entity));
+        GameEvents.OnPlayerHealthChanged += OnPlayerHealthChanged;
+        if (GameEvents.TryGetComponent2(CameraTarget.MainEntity, out Health health)) 
+            OnPlayerHealthChanged(CameraTarget.MainEntity, health);
     }
 
     private void OnDisable()
     {
         HandUIController.Detach(this);
 
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnPlayerHealthChanged -= OnPlayerHealthChanged;
     }
-    
-    private void OnGameEvent(GameEvents.Data data)
+
+    private void OnPlayerHealthChanged(Entity entity, Health health)
     {
-        var eType = data.Type; var entity = data.Entity;
-        if (eType != GameEvents.Type.PlayerHealthChanged) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
+        if (entity != CameraTarget.MainEntity) return;
         
-        int health = 0;
-        if (GameEvents.TryGetComponent2<Health>(entity, out var healthComp)) health = healthComp.Value;
-        
-        int overshield = health/Hearts.Length;
+        int overshield = health.Value/Hearts.Length;
         for (int i = 0; i < Hearts.Length; i++)
         {
-            Hearts[i].SetValue(overshield + (health%Hearts.Length > i ? 1 : 0));
+            Hearts[i].SetValue(overshield + (health.Value%Hearts.Length > i ? 1 : 0));
         }
     }
 }

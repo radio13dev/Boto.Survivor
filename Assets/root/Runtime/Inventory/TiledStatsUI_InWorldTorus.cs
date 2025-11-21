@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -127,8 +128,8 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
     ExclusiveCoroutine m_RevealItemsCo;
     private void OnEnable()
     {
-
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnInventoryChanged += OnInventoryChanged;
+        GameEvents.OnWalletChanged += OnWalletChanged;
         if (CameraTarget.MainTarget) Demo();
         else
         {
@@ -138,11 +139,24 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
 
     private void OnDisable()
     {
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnInventoryChanged -= OnInventoryChanged;
+        GameEvents.OnWalletChanged -= OnWalletChanged;
         
         ClearFocus();
     }
-    
+
+    private void OnInventoryChanged(Entity entity)
+    {
+        if (entity != CameraTarget.MainEntity) return;
+        Demo();
+    }
+
+    private void OnWalletChanged(Entity entity, Wallet wallet)
+    {
+        if (entity != CameraTarget.MainEntity) return;
+        Demo();
+    }
+
     [Header("Reveal Animation")]
     public float2 InitZero;
     public float2 InitItemGrouping = 1f;
@@ -179,16 +193,6 @@ public class TiledStatsUI_InWorldTorus : MonoBehaviour, IPointerClickHandler, Ha
             yield return null;
         }
         StartFocus(); // Fallback
-    }
-
-    private void OnGameEvent(GameEvents.Data data)
-    {
-        var eType = data.Type;
-        var entity = data.Entity;
-        if (eType != GameEvents.Type.InventoryChanged && eType != GameEvents.Type.WalletChanged) return;
-        if (!GameEvents.TryGetSharedComponent<PlayerControlled>(entity, out var player)) return;
-        if (player.Index != Game.ClientGame.PlayerIndex) return;
-        Demo();
     }
 
     public static void OpenUI(Action DoOnceOnClose)

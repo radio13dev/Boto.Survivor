@@ -398,6 +398,10 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
                             old.InputBuffer = default;
                             m_ServerConnections[Game.PlayerIndex] = old;
                         }
+                        
+                        // Insert local special actions
+                        while (Game.RpcSendBuffer.TryDequeue(out var localRpc))
+                            m_SpecialActionQueue.Enqueue(localRpc);
 
                         // Load special actions
                         m_SpecialActionList.Clear();

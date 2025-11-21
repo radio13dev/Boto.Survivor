@@ -10,13 +10,29 @@ public class ShowInInteractRangeUI : MonoBehaviour
     
     private void OnEnable()
     {
-        GameEvents.OnEvent += OnGameEvent;
+        GameEvents.OnInteractableStart += OnInteractableStart;
+        GameEvents.OnInteractableEnd += OnInteractableEnd;
         ForceCheckState();
     }
 
     private void OnDisable()
     {
-        GameEvents.OnEvent -= OnGameEvent;
+        GameEvents.OnInteractableStart -= OnInteractableStart;
+        GameEvents.OnInteractableEnd -= OnInteractableEnd;
+    }
+
+    private void OnInteractableStart(Entity entity)
+    {
+        if (entity == Entity.Null) return;
+        m_Entity = entity;
+        OnInteractStart?.Invoke();
+    }
+
+    private void OnInteractableEnd(Entity entity)
+    {
+        if (entity == Entity.Null) return;
+        m_Entity = Entity.Null;
+        OnInteractEnd?.Invoke();
     }
 
     private void ForceCheckState()
@@ -31,24 +47,6 @@ public class ShowInInteractRangeUI : MonoBehaviour
         {
             m_Entity = nearest.Value;
             OnInteractStart?.Invoke();
-        }
-    }
-
-    public virtual void OnGameEvent(GameEvents.Data data)
-    {
-        var eType = data.Type;
-        if (eType != GameEvents.Type.InteractableStart && eType != GameEvents.Type.InteractableEnd) return;
-        if (data.Entity == Entity.Null) return;
-        
-        if (eType == GameEvents.Type.InteractableStart)
-        {
-            m_Entity = data.Entity;
-            OnInteractStart?.Invoke();
-        }
-        else
-        {
-            m_Entity = Entity.Null;
-            OnInteractEnd?.Invoke();
         }
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine;
 public class CameraTarget : EntityLinkMono
 {
     public static CameraTarget MainTarget;
+    public static Entity MainEntity => MainTarget ? MainTarget.Entity : Entity.Null;
 
     public int PlayerIndex
     {
@@ -31,9 +32,9 @@ public class CameraTarget : EntityLinkMono
         if (PlayerIndex == Game.PlayerIndex)
         {
             MainTarget = this;
-            GameEvents.Trigger(GameEvents.Type.InventoryChanged, Entity);
-            GameEvents.Trigger(GameEvents.Type.PlayerHealthChanged, Entity);
-            GameEvents.Trigger(GameEvents.Type.WalletChanged, Entity);
+            GameEvents.InventoryChanged(Entity);
+            GameEvents.PlayerHealthChanged(Entity, GameEvents.GetComponent<Health>(Entity));
+            GameEvents.WalletChanged(Entity, GameEvents.GetComponent<Wallet>(Entity));
         }
     }
 }

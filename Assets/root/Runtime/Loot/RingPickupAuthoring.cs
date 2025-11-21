@@ -66,7 +66,7 @@ public partial struct LootGenerationRequestSystem : ISystem
             var ringE = entities[correctOrdering[i]];
             SystemAPI.SetComponent(ringE, RingStats.Generate(ref r));
             SystemAPI.SetComponentEnabled<LootGenerationRequest>(ringE, false);
-            GameEvents.Trigger(GameEvents.Type.VisualsUpdated, ringE);
+            GameEvents.VisualsUpdated(ringE);
         }
         correctOrdering.Dispose();
     }

@@ -71,8 +71,8 @@ public unsafe struct StepInput : IComponentData
         var dir = player.Move.ReadValue<Vector2>();
         Direction += (float3)camera.transform.right*dir.x + (float3)camera.transform.up*dir.y;
         
-        if (Keyboard.current.jKey.isPressed)        Input |= StepInput.S1Input;
-        if (Keyboard.current.kKey.isPressed)        Input |= StepInput.S2Input;
+        if (Keyboard.current.jKey.isPressed    )    Input |= StepInput.S1Input;
+        if (Keyboard.current.kKey.isPressed    )    Input |= StepInput.S2Input;
         if (Keyboard.current.spaceKey.isPressed)    Input |= StepInput.S3Input;
         if (Keyboard.current.shiftKey.isPressed)    Input |= StepInput.S4Input;
     }
