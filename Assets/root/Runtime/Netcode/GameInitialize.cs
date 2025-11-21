@@ -6,6 +6,7 @@ using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public class GameInitialize : MonoBehaviour
@@ -43,6 +44,8 @@ public class GameInitialize : MonoBehaviour
             if (!mainScene.isLoaded)
                     SceneManager.LoadSceneAsync("main", LoadSceneMode.Additive);
         }
+        else if (!Object.FindFirstObjectByType<AudioListener>())
+            gameObject.AddComponent<AudioListener>();
 
         if (!GameLaunch.Main)
             switch (InitMode)

@@ -7,11 +7,11 @@ public class Billboard : MonoBehaviour
     [EditorButton]
     private void Update()
     {
+        if (!CameraRegistry.Main) return;
         //var camForward = CameraRegistry.Main.transform.forward;
         //var worldForward = (transform.position - CameraRegistry.Main.transform.position).normalized;
         //var cross = math.cross(math.cross(worldForward, camForward), worldForward);
         //transform.LookAt(CameraRegistry.Main.transform, cross);
-        
         transform.rotation = quaternion.LookRotationSafe(CameraRegistry.Main.transform.forward, CameraRegistry.Main.transform.up);
     }
 }

@@ -175,7 +175,7 @@ public partial struct CompiledStatsSystem : ISystem
                         stats.CompiledStatsTree[stat] += boost;
                     
             // Setup...
-            var r = SharedRandom.Random;
+            var r = SharedRandom.Get(playerId.Index);
             
             // Destroy any owned projectiles that are no longer valid
             {

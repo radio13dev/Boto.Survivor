@@ -29,7 +29,7 @@ public struct NetworkIdMapping : IComponentData
         get
         {
             if (id.Value == 0) return Entity.Null;
-            
+
             int mappingArray = (int)(id.Value >> k_MappingOffset);
             if (mappingArray < m_Offset) return Entity.Null;
             if (mappingArray >= m_Offset + m_Mapping.Length) return Entity.Null;
@@ -43,18 +43,25 @@ public struct NetworkIdMapping : IComponentData
 public struct LocalTransformComparer : IComparer<int>
 {
     [ReadOnly] NativeArray<LocalTransform> m_Transforms;
+
     public LocalTransformComparer(NativeArray<LocalTransform> transforms)
     {
         m_Transforms = transforms;
-        m_DebugEntities = default;
-    }
-    
+        
 #if UNITY_EDITOR
+        m_DebugEntities = default;
+        m_DebugEntityManager = default;
+#endif
+    }
+
+#if UNITY_EDITOR
+    [ReadOnly] EntityManager m_DebugEntityManager;
     [ReadOnly] NativeArray<Entity> m_DebugEntities;
-    public LocalTransformComparer(NativeArray<LocalTransform> transforms, NativeArray<Entity> debugEntities)
+    public LocalTransformComparer(NativeArray<LocalTransform> transforms, NativeArray<Entity> debugEntities, in EntityManager entityManager)
     {
         m_Transforms = transforms;
         m_DebugEntities = debugEntities;
+        m_DebugEntityManager = entityManager;
     }
 #endif
 
@@ -66,13 +73,16 @@ public struct LocalTransformComparer : IComparer<int>
         if (c == 0)
         {
 #if UNITY_EDITOR
-            Debug.LogError($"Two transforms at same position {x}/{y}. " +
-                           $"Entities: {(m_DebugEntities.IsCreated ? m_DebugEntities[x] : default)}/{(m_DebugEntities.IsCreated ? m_DebugEntities[y] : default)}. " +
-                           $"Transforms:{m_Transforms[x]}/{m_Transforms[y]}");
+            Debug.LogError($"Two transforms at same position {x}/{y}. \n" +
+                           $"Entities: {(m_DebugEntities.IsCreated ? m_DebugEntities[x] : default)}/{(m_DebugEntities.IsCreated ? m_DebugEntities[y] : default)}\n" +
+                           $"Transforms:{m_Transforms[x]}/{m_Transforms[y]}. \n" +
+                           $"{(m_DebugEntities.IsCreated ? m_DebugEntityManager.Debug.GetEntityInfo(m_DebugEntities[x]) : default)}\n" +
+                           $"{(m_DebugEntities.IsCreated ? m_DebugEntityManager.Debug.GetEntityInfo(m_DebugEntities[y]) : default)}");
 #else
             Debug.LogError($"Two transforms at same position: {x}:{m_Transforms[x]} and {y}:{m_Transforms[y]}");
 #endif
         }
+
         return c;
     }
 }
@@ -84,8 +94,7 @@ public struct LocalTransformComparer : IComparer<int>
 [RequireMatchingQueriesForUpdate]
 public partial struct NetworkIdSystem : ISystem
 {
-    [NativeDisableUnsafePtrRestriction]
-    EntityQuery m_Query;
+    [NativeDisableUnsafePtrRestriction] EntityQuery m_Query;
 
     public void OnCreate(ref SystemState state)
     {
@@ -98,19 +107,19 @@ public partial struct NetworkIdSystem : ISystem
             m_Mapping = new UnsafeList<UnsafeArray<Entity>>(1, Allocator.Persistent)
         });
     }
-    
+
     public static void InitAfterLoad(EntityManager entityManager)
     {
         using var idQuery = entityManager.CreateEntityQuery(typeof(NetworkId));
         using var ids = idQuery.ToComponentDataArray<NetworkId>(Allocator.Temp);
         if (ids.Length == 0) return;
-        
+
         using var idEntities = idQuery.ToEntityArray(Allocator.Temp);
-        
+
         NativeArray<int> correctOrdering = new NativeArray<int>(ids.Length, Allocator.Temp);
         for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
         correctOrdering.Sort(new NetworkIdComparer(ids)); // Sort to change it into the order of indexes to process (should be consistent across platform)
-        
+
         // Setup default offset (for the 'zero' array
         var mapping = entityManager.GetSingleton<NetworkIdMapping>();
         mapping.m_Offset = (int)(ids[correctOrdering[0]].Value >> NetworkIdMapping.k_MappingOffset);
@@ -127,25 +136,26 @@ public partial struct NetworkIdSystem : ISystem
 
             mapping.m_Mapping.ElementAt(mappingArray)[mappingIndex] = idEntities[correctOrdering[i]];
         }
+
         correctOrdering.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         if (m_Query.IsEmpty) return;
-        
+
         using var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         using var entities = m_Query.ToEntityArray(Allocator.Temp);
 
         // Gotta do this based on the Hash ordering of the gem drops
         NativeArray<int> correctOrdering = new NativeArray<int>(transforms.Length, Allocator.Temp);
         for (int i = 0; i < correctOrdering.Length; i++) correctOrdering[i] = i; // Array of initial indexes
-        
-        #if UNITY_EDITOR
-        correctOrdering.Sort(new LocalTransformComparer(transforms, entities));
-        #else
+
+#if UNITY_EDITOR
+        correctOrdering.Sort(new LocalTransformComparer(transforms, entities, state.EntityManager));
+#else
         correctOrdering.Sort(new LocalTransformComparer(transforms)); // Sort to change it into the order of indexes to process (should be consistent across platform)
-        #endif
+#endif
 
         using EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         var iterator = SystemAPI.GetSingleton<NetworkIdIterator>().Value;
@@ -170,6 +180,7 @@ public partial struct NetworkIdSystem : ISystem
             // Iterate
             iterator++;
         }
+
         ecb.Playback(state.EntityManager);
 
         SystemAPI.SetSingleton(new NetworkIdIterator() { Value = iterator });

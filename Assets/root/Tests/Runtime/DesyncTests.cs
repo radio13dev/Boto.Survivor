@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 public abstract class GameTestBase
 {
@@ -172,6 +173,65 @@ public class DesyncTests : GameTestBase
         // Assert
         Assert.AreEqual(stubStepProvider.ManualStep, mockServer.Server.Game.Step);
         Assert.AreEqual(stubStepProvider.ManualStep, mockClient.Client.Game.Step);
+    }
+
+    [UnityTest]
+    public IEnumerator DesyncTest_BotSession_Success([Values(false, true)] bool showVisuals)
+    {
+        // Arrange
+        var stubStepProvider = new ManualStepProvider();
+        using var mockServer = GameLaunch.Create(new GameFactory("mockServer", showVisuals, stepProvider: stubStepProvider));
+        using var mockClient = GameLaunch.Create(new GameFactory("mockClient", showVisuals, stepProvider: stubStepProvider));
+        yield return mockServer.CreateServer(); // Start server
+        yield return mockClient.JoinRelay(mockServer.Server.RelayJoinCode);
+        var mockDesyncTester = new DesyncTester(mockServer.Server.Game, mockClient.Client.Game);
+
+        // Act
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+        Assert.IsTrue(mockDesyncTester.GetSynced());
+        
+        // Setup bots
+        Assert.AreNotEqual(mockServer.Server.Game.PlayerIndex, mockClient.Client.Game.PlayerIndex);
+        BotPlayer botServer = new(mockServer.Server.Game.PlayerIndex);
+        BotPlayer botClient = new(mockClient.Client.Game.PlayerIndex);
+        
+        // Run for 60
+        float DurationSeconds = 60;
+        while (DurationSeconds > 0)
+        {
+            var old = DurationSeconds;
+            DurationSeconds -= (float)Game.DefaultDt;
+            
+            if (math.float2(DurationSeconds%10, old%10).Contains(9))
+            {
+                Debug.Log($"Remaining simulation time: {DurationSeconds:N2}s...");
+            }
+            
+            botServer.Advance(mockServer.Server.Game, (float)Game.DefaultDt);
+            botClient.Advance(mockClient.Client.Game, (float)Game.DefaultDt);
+            
+            mockServer.Server.SetStepInput(botServer.PlayerIndex, botServer.GetInputs(mockServer.Server.Game));
+            mockServer.Server.SetStepInput(botClient.PlayerIndex, botClient.GetInputs(mockClient.Client.Game));
+            stubStepProvider.AdvanceStep();
+            
+            // Desync check every 5 seconds
+            if (math.float2(DurationSeconds%5, old%5).Contains(1))
+            {
+                yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+                Debug.Log($"Desync check...");
+                Assert.AreEqual(stubStepProvider.ManualStep, mockServer.Server.Game.Step);
+                Assert.AreEqual(stubStepProvider.ManualStep, mockClient.Client.Game.Step);
+                Assert.IsTrue(mockDesyncTester.GetSynced());
+            }
+            else
+                yield return null;
+        }
+
+        // Assert
+        yield return new WaitUntil(() => mockServer.Server.WaitingForStep && mockClient.Client.WaitingForStep);
+        Assert.AreEqual(stubStepProvider.ManualStep, mockServer.Server.Game.Step);
+        Assert.AreEqual(stubStepProvider.ManualStep, mockClient.Client.Game.Step);
+        Assert.IsTrue(mockDesyncTester.GetSynced());
     }
 
     [UnityTest]

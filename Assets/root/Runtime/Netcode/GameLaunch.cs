@@ -210,7 +210,7 @@ public class GameLaunch : MonoBehaviour, IDisposable
         server.StartCoroutine(server.Connect(lobbyName,
             OnSuccess: () =>
             {
-                server.AddLocalPlayer();
+                server.RegisterLocalPlayer();
                 singleplayer.Game = null; // Null out our game so we don't destroy the server when we destroy this component
                 Destroy(singleplayer);
                 Game.ClientGame = server.Game;

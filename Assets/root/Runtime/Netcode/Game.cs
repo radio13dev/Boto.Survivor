@@ -253,7 +253,7 @@ public class Game : IDisposable
         
         if (ClientGame == this)
             ClientGame = null;
-        RpcSendBuffer.Dispose();
+        if (RpcSendBuffer.IsCreated) RpcSendBuffer.Dispose();
         if (m_World.IsCreated)
         {
             // Don't need to dispose of the scenes, I think? World dispose should do it.
@@ -476,7 +476,7 @@ public class Game : IDisposable
         if (GameType == 1)
         {
             var mapGen = Object.FindFirstObjectByType<MapGenMono>();
-            mapGen.Demo();
+            if (mapGen) mapGen.Demo();
         }
     }
 }
@@ -750,7 +750,7 @@ public static class GameEvents
     }
     public static bool HasComponent<T>(Entity entity) where T : unmanaged, IComponentData
     {
-        if (Game.ClientGame == null)
+        if (Game.ClientGame == null || !Game.ClientGame.World.EntityManager.Exists(entity))
         {
             return false;
         }
@@ -764,7 +764,7 @@ public static class GameEvents
     }
     public static bool TryGetComponent2<T>(Entity entity, out T o) where T : unmanaged, IComponentData
     {
-        if (Game.ClientGame == null)
+        if (Game.ClientGame == null || !Game.ClientGame.World.EntityManager.Exists(entity))
         {
             o = default;
             return false;

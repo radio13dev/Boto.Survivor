@@ -172,8 +172,21 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         var lobbyHostTask = LobbyService.Instance.CreateLobbyAsync(lobbyName, PingServerBehaviour.k_MaxPlayerCount, createOptions);
         while (!lobbyHostTask.IsCompleted)
             yield return null;
+        if (lobbyHostTask.IsFaulted)
+        {
+            Debug.LogError("Failed to host lobby: " + lobbyHostTask.Exception);
+            OnFailure?.Invoke();
+            yield break;
+        }
+        
         Lobby = lobbyHostTask.Result;
         Debug.Log($"Hosting lobby {Lobby.Name} with id {Lobby.Id}");
+        
+        
+        yield return new WaitUntil(() => Game.IsReady);
+        
+        m_Idle = true;
+        Debug.Log($"{this} entered idle state...");
         
         OnSuccess?.Invoke();
         OnLobbyHostStart?.Invoke();
@@ -374,7 +387,6 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
             }
             else
             {
-                m_Idle = true;
                 if (m_ServerConnections.Length > 0 || Game.PlayerIndex != -1)
                 {
                     if (Game.PlayerIndex != -1)
@@ -472,6 +484,9 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         }
     }
 
+    /// <summary>
+    /// Locks out a slot and inserts a new local player
+    /// </summary>
     public void AddLocalPlayer()
     {
         m_ServerJobHandle.Complete();
@@ -489,5 +504,24 @@ public unsafe class PingServerBehaviour : GameHostBehaviour
         }
 
         Debug.LogError("No free slots available for a new player.");
+    }
+    
+    /// <summary>
+    /// Locks out a slot for an existing local player to take up
+    /// </summary>
+    public void RegisterLocalPlayer()
+    {
+        m_ServerJobHandle.Complete();
+        
+        for (byte i = 0; i < m_ServerConnections.Length; i++)
+        {
+            if (!m_ServerConnections[i].Connection.IsCreated && !m_ServerConnections[i].Disabled)
+            {
+                Game.PlayerIndex = i;
+
+                m_ServerConnections.ElementAt(i).Disabled = true;
+                return;
+            }
+        }
     }
 }

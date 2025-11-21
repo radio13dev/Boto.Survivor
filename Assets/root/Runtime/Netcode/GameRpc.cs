@@ -113,6 +113,7 @@ public unsafe struct GameRpc : IComponentData
     #region PlayerJoin and PlayerLeave
     public static GameRpc PlayerJoin(byte playerId, byte characterType)
     {
+        Debug.Log($"Creating player join delta for {playerId} as character {characterType}...");
         return new GameRpc(){ Type = GameRpc.Code.PlayerJoin, PlayerId = playerId, SpawnType = characterType };
     }
     #endregion
@@ -261,7 +262,7 @@ public partial struct GameRpcSystem : ISystem
             var rpc = rpcs[rpcIt];
             var rpcE = rpcsE[rpcIt];
             
-            Debug.Log($"{state.WorldUnmanaged.Name} Step {SystemAPI.GetSingleton<StepController>().Step}: Executing rpc: {rpc}");
+            Debug.Log($"{state.WorldUnmanaged.Name} Step {SystemAPI.GetSingleton<StepController>().Step}: Executing rpc {rpcIt}: {rpc}");
             state.EntityManager.DestroyEntity(rpcE);
 
             var playerId = rpc.PlayerId;
@@ -327,7 +328,7 @@ public partial struct GameRpcSystem : ISystem
 
                     var newPlayer = ecb.Instantiate(survivors[rpc.SpawnType].Entity);
                     ecb.SetComponent(newPlayer, new PlayerControlledSaveable(){ Index = playerTag.Index });
-                    ecb.SetComponent(newPlayer, LocalTransform.FromPosition(closest));
+                    ecb.SetComponent(newPlayer, LocalTransform.FromPosition(closest + new float3(playerTag.Index, 0, 0)));
                     Debug.Log($"Player {playerId} created.");
                     break;
                 }

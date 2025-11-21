@@ -33,8 +33,8 @@ public class CameraTarget : EntityLinkMono
         {
             MainTarget = this;
             GameEvents.InventoryChanged(Entity);
-            GameEvents.PlayerHealthChanged(Entity, GameEvents.GetComponent<Health>(Entity));
-            GameEvents.WalletChanged(Entity, GameEvents.GetComponent<Wallet>(Entity));
+            if (GameEvents.TryGetComponent2(Entity, out Health health)) GameEvents.PlayerHealthChanged(Entity, health);
+            if (GameEvents.TryGetComponent2(Entity, out Wallet wallet)) GameEvents.WalletChanged(Entity, wallet);
         }
     }
 }
