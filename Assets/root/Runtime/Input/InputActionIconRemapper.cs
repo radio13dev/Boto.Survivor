@@ -16,11 +16,21 @@ public class InputActionIconRemapper : MonoBehaviour
     private static readonly int XboxProperty = Shader.PropertyToID("_Xbox");
     private static readonly int XboxOutlineProperty = Shader.PropertyToID("_XboxOutline");
     private InputSystem_Actions _inputActions;
+
+    private void Awake()
+    {
+        _inputActions = GameInput.Inputs;
+    }
     
     [EditorButton]
     public void UpdateInputKeyIcons()
     {
-        _inputActions = new InputSystem_Actions();
+        #if UNITY_EDITOR
+        // Only create a new input action if not in play mode
+        _inputActions = Application.isPlaying ? _inputActions : new InputSystem_Actions();
+        #endif
+
+        if (_inputActions == null) { return; }
         
         foreach (var iconBinding in ActionKeyIcons)
         {
