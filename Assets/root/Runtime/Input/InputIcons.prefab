@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0e35a478c480c947a944f518f3823c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InputSystemManager
-  Keyboard: {fileID: 11400000, guid: a658dd13bf75c584286688946d2d3354, type: 2}
-  KeyboardOutline: {fileID: 11400000, guid: 5449a7af895a67045adab2739b2ed979, type: 2}
   ActionKeyIcons:
   - Material: {fileID: 2100000, guid: df36696a6a016b14fa091a55742890d8, type: 2}
     ActionRef: {fileID: 392368643174621059, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
@@ -61,3 +59,7 @@ MonoBehaviour:
     ActionRef: {fileID: 0}
   - Material: {fileID: 2100000, guid: e1835b3a772b8c4419d8e0f6f51a5c63, type: 2}
     ActionRef: {fileID: 6049025954638195773, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  Keyboard: {fileID: 11400000, guid: a658dd13bf75c584286688946d2d3354, type: 2}
+  KeyboardOutline: {fileID: 11400000, guid: 5449a7af895a67045adab2739b2ed979, type: 2}
+  Xbox: {fileID: 11400000, guid: 8865834b113ad114e939559cc865beb0, type: 2}
+  XboxOutline: {fileID: 11400000, guid: 577a28eca21cadc4788ae4368aada53a, type: 2}
