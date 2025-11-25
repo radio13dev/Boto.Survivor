@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 4
     _Asset: {fileID: 11400000, guid: 92baefcbddd4e7a4ab4ef1b984ebbed0, type: 2}
 --- !u!114 &4178705034800183704
 MonoBehaviour:
@@ -62,14 +61,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -0.5
-    y: -0.5
-    z: -0.5
-  Max:
-    x: 0.5
-    y: 0.5
-    z: 0.5
+  EnableColliderOnDestroy: 0
+  Radius: 1
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
 --- !u!114 &254759076134581957
 MonoBehaviour:
   m_ObjectHideFlags: 0

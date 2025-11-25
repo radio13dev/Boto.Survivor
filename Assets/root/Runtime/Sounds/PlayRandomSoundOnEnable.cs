@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -12,6 +11,7 @@ public class PlayRandomSoundOnEnable : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!GameInitialize.EnableMainContentLoad) return;
         if (audio.GetPoolActiveCount() >  PooledAudio.k_MaxAudioSources) return;
         StartCoroutine(DelayedStart());
     }

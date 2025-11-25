@@ -1,4 +1,5 @@
 using System;
+using BovineLabs.Saving;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -19,6 +20,7 @@ public struct SpriteAnimFrameTime : IComponentData
     public double NextFrameTime;
 }
 
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct SpriteUpdateSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -35,6 +37,7 @@ public partial struct SpriteUpdateSystem : ISystem
         }.ScheduleParallel();
     }
     
+    [WithNone(typeof(Hidden))]
     partial struct Job : IJobEntity
     {
         [ReadOnly] public double Time;
@@ -49,6 +52,34 @@ public partial struct SpriteUpdateSystem : ISystem
             frame.Frame++;
             if (frame.Frame > animData.Frames)
                 frame.Frame = 0;
+        }
+    }
+}
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
+public partial struct LifespanMaterialUpdateSystem : ISystem
+{
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<GameManager.InstancedResources>();
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        new Job()
+        {
+            Time = SystemAPI.Time.ElapsedTime,
+            InstanceData = SystemAPI.GetSingletonBuffer<GameManager.InstancedResources>()
+        }.ScheduleParallel();
+    }
+    
+    [WithNone(typeof(Hidden))]
+    partial struct Job : IJobEntity
+    {
+        [ReadOnly] public double Time;
+        [ReadOnly] public DynamicBuffer<GameManager.InstancedResources> InstanceData;
+    
+        public void Execute(in SpawnTimeCreated spawnTime, in DestroyAtTime destroyTime, in InstancedResourceRequest instance)
+        {
         }
     }
 }

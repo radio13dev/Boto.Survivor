@@ -1,0 +1,243 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7419757055955712054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 240200278457971943}
+  - component: {fileID: 3557533656269071170}
+  - component: {fileID: 4710129199327565736}
+  - component: {fileID: 8164776769268316261}
+  - component: {fileID: 8235055791634373634}
+  - component: {fileID: 2943698238182725417}
+  - component: {fileID: 2038396025834592094}
+  - component: {fileID: -344366494644098489}
+  - component: {fileID: 3596222818112159491}
+  - component: {fileID: -6214064834619478089}
+  - component: {fileID: 2597590745030026647}
+  - component: {fileID: 441538821448249754}
+  - component: {fileID: 7694570616119701969}
+  m_Layer: 0
+  m_Name: Enemy_Tier2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &240200278457971943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3557533656269071170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571c308f90f147e0aecf82aae727c7cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::EnemyCharacterAuthoring
+  type: 0
+  Health: 50
+--- !u!114 &4710129199327565736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8ce66ed88f44bfbd9988bcb0a2009c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
+  Particle:
+    _Asset: {fileID: 11400000, guid: e69c870269dcc9e4c836f041164fc39e, type: 2}
+--- !u!114 &8164776769268316261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
+  EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 5
+  Radius: 0.7
+  ColliderType: 1
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
+  Mesh:
+    _Asset: {fileID: 0}
+--- !u!114 &8235055791634373634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 331f710d9c624cc2982f7147ae7f3594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
+  Particle:
+    _Asset: {fileID: -7316752644588120911, guid: 1f70d824da994f244bfaa631c330cd3a, type: 3}
+--- !u!114 &2943698238182725417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &2038396025834592094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f26d0c7b7149fab9d6b8b04357124e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ParticleOnDamageAuthoring
+  Particle:
+    _Asset: {fileID: -8333230072600633316, guid: 95eb34cd54f5f7a4195a1befee0b14c0, type: 3}
+--- !u!114 &-344366494644098489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d441d596723349038a4ba229add7a43c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::ItemDropOnDestroyAuthoring
+  Drops:
+  - Type: 0
+    Chance: 1000
+    MinCount: 1
+    MaxCount: 1
+  - Type: 1
+    Chance: 5
+    MinCount: 1
+    MaxCount: 1
+--- !u!114 &3596222818112159491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90949429c2e4d25b0e2dbf93203af24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::NetworkIdAuthoring
+--- !u!114 &-6214064834619478089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b805b7df1e2046a782020a66e491a450, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::StepInputAuthoring
+  MovementSettings:
+    Speed: 0.5
+--- !u!114 &2597590745030026647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e558fdd1dc64d21a083de09e84a8063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::PhysicsAuthoring
+  PhysicsResponse:
+    Gravity: 30
+    BounceThresholdMin: 100
+    BounceResponse: 0.5
+    BounceFriction: 0.5
+    DisableGrounding: 0
+    AirDrag: 1
+    AirDragLinear: 1
+    Friction: 7
+    FrictionLinear: 4
+    RotationalDrag: 1
+    RotationalDragLinear: 1
+    Radius: 0.75
+    LockToSurface: 1
+    RotateWithSurface: 1
+    IdlePivot:
+      x: 0
+      y: 0
+      z: 0
+    ForceVelocityResistance: 0
+    ForceShiftResistance: 0
+    LookInMoveDirection: 0
+  HasSurfaceMovement: 0
+--- !u!114 &441538821448249754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring
+--- !u!114 &7694570616119701969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38a1b3a223845b89e2109be77b254ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::GenericEnemyMovementTagAuthoring

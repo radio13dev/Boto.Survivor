@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6766154591255843430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1346322375229505780}
+  - component: {fileID: 8790607403076166029}
+  m_Layer: 0
+  m_Name: InputIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1346322375229505780
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6766154591255843430}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 832.176, y: 135.08975, z: -163.6424}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8790607403076166029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6766154591255843430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0e35a478c480c947a944f518f3823c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::InputSystemManager
+  ActionKeyIcons:
+  - Material: {fileID: 2100000, guid: df36696a6a016b14fa091a55742890d8, type: 2}
+    ActionRef: {fileID: 392368643174621059, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  - Material: {fileID: 2100000, guid: f7f87c452745bc648b763c67347fe9e2, type: 2}
+    ActionRef: {fileID: 7727032971491509709, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  - Material: {fileID: 2100000, guid: 1272d10cea099cc4ca37ab6af6c3c604, type: 2}
+    ActionRef: {fileID: 5589407895052837907, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  - Material: {fileID: 2100000, guid: cda236d183b9dcf49b75b8aa932441d2, type: 2}
+    ActionRef: {fileID: 3325894100396130052, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  - Material: {fileID: 2100000, guid: e1835b3a772b8c4419d8e0f6f51a5c63, type: 2}
+    ActionRef: {fileID: 6049025954638195773, guid: 126c199a97d97bc488ab2afa94d53b37, type: 3}
+  Keyboard: {fileID: 11400000, guid: a658dd13bf75c584286688946d2d3354, type: 2}
+  KeyboardOutline: {fileID: 11400000, guid: 5449a7af895a67045adab2739b2ed979, type: 2}
+  Xbox: {fileID: 11400000, guid: 8865834b113ad114e939559cc865beb0, type: 2}
+  XboxOutline: {fileID: 11400000, guid: 577a28eca21cadc4788ae4368aada53a, type: 2}

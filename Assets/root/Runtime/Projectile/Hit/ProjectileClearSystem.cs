@@ -1,22 +1,35 @@
 ﻿using Unity.Entities;
+using Unity.Jobs;
 
 /// <summary>
 /// Destroys projectiles when hit.
 /// </summary>
-[UpdateInGroup(typeof(ProjectileSystemGroup), OrderLast = true)]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup), OrderLast = true)]
+[RequireMatchingQueriesForUpdate]
 public partial struct ProjectileClearSystem : ISystem
 {
-    EntityQuery m_CleanupQuery;
-    public void OnCreate(ref SystemState state)
-    {
-        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-        m_CleanupQuery = SystemAPI.QueryBuilder().WithAll<ProjectileHit>().WithAbsent<DestroyFlag>().Build();
-        state.RequireForUpdate(m_CleanupQuery);
-    }
-
     public void OnUpdate(ref SystemState state)
     {
-        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
-        delayedEcb.AddComponent<DestroyFlag>(m_CleanupQuery, EntityQueryCaptureMode.AtPlayback);
+        var a = new Job().Schedule(state.Dependency);
+        var b = new HitClearJob().Schedule(state.Dependency);
+        state.Dependency = JobHandle.CombineDependencies(a,b);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    [WithDisabled(typeof(DestroyFlag))]
+    partial struct Job : IJobEntity
+    {
+        public void Execute(EnabledRefRW<DestroyFlag> destroyFlag)
+        {
+            destroyFlag.ValueRW = true;
+        }
+    }
+    [WithNone(typeof(ProjectileHit))]
+    partial struct HitClearJob : IJobEntity
+    {
+        public void Execute(ref DynamicBuffer<ProjectileHitEntity> hits)
+        {
+            hits.Clear();
+        }
     }
 }

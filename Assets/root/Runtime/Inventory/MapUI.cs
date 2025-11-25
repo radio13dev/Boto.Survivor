@@ -1,0 +1,248 @@
+﻿using System;
+using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
+
+public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISubmitHandler, ICancelHandler, HandUIController.IStateChangeListener, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
+    public Transform MapCameraTransform;
+    public Camera MapCamera;
+    
+    public SmoothMovementTransform CursorTransform;
+    public Collider MapCollider;
+    public Vector2 TextureScale;
+    public MapDrawing MapDrawing;
+    
+    public Vector2 DragRate;
+    
+    public float PositionChaseRate = 10.0f;
+    public float RotationChaseRate = 100.0f;
+    
+    public float MaxInnerAngle = 2.4f;
+    public float SwapInnerAngle = 2.9f;
+    public float InnerAngleTransition = 0.1f;
+    
+    float2 m_CursorPosition;
+    DateTime m_LastAdjustTime;
+    bool m_Dragging = false;
+    bool m_AutoTrack = true;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        CursorTransform.gameObject.SetActive(false);
+        OnDeselect(default);
+    }
+    
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        HandUIController.Attach(this);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        HandUIController.Detach(this);
+    }
+
+    public override void OnSelect(BaseEventData eventData)
+    {
+        base.OnSelect(eventData);
+        HandUIController.SetState(HandUIController.State.Map);
+    }
+
+    private void Update()
+    {
+        var now = DateTime.UtcNow;
+        var timeSinceAdjust = now - m_LastAdjustTime;
+        if (m_AutoTrack && CameraTarget.MainTarget)
+        {
+            // Regular map update
+            SetCursorPosition(CameraTarget.MainTarget.transform.position);
+            AlignViewToCursor();
+        }
+    }
+
+    private void SetCursorPosition(Vector3 worldPosition)
+    {
+        m_CursorPosition = TorusMapper.CartesianToToroidal(worldPosition);
+    }
+
+    bool m_Alignment;
+    private void AlignViewToCursor()
+    {
+        var alignToroidal = m_CursorPosition;
+        if (alignToroidal.y > MaxInnerAngle || alignToroidal.y < -MaxInnerAngle)
+        {
+            if (m_Alignment && alignToroidal.y < 0 && alignToroidal.y > -SwapInnerAngle)
+                m_Alignment = false; // Swap to negative alignment
+            if (!m_Alignment && alignToroidal.y > 0 && alignToroidal.y < SwapInnerAngle)
+                m_Alignment = true; // Swap to positive alignment
+            
+            if (m_Alignment && alignToroidal.y > 0)
+            {
+                alignToroidal.y = Mathf.Lerp(alignToroidal.y, MaxInnerAngle + InnerAngleTransition, (alignToroidal.y - MaxInnerAngle)/InnerAngleTransition);
+            }
+            else if (!m_Alignment && alignToroidal.y < 0)
+            {
+                alignToroidal.y = Mathf.Lerp(alignToroidal.y, -(MaxInnerAngle + InnerAngleTransition), (-alignToroidal.y - MaxInnerAngle)/InnerAngleTransition);
+            }
+            else
+            {
+                alignToroidal.y = m_Alignment ? (MaxInnerAngle+InnerAngleTransition) : -(MaxInnerAngle+InnerAngleTransition);
+            }
+            
+        }
+        else
+            m_Alignment = alignToroidal.y > 0;
+        
+        var worldPoint = (Vector3)TorusMapper.ToroidalToCartesian(alignToroidal);
+        var cameraPoint = (Vector3)TorusMapper.ToroidalToCartesian(alignToroidal, 10);
+        
+        var forwardPointToroidal = alignToroidal + new float2(0, -0.1f);
+        var forwardPoint = (Vector3)TorusMapper.ToroidalToCartesian(forwardPointToroidal);
+        
+        MapCameraTransform.position = Vector3.zero; //Vector3.MoveTowards(MapCameraTransform.position, cameraPoint, Time.deltaTime * PositionChaseRate);
+        MapCameraTransform.rotation = Quaternion.RotateTowards(MapCameraTransform.rotation, Quaternion.LookRotation(worldPoint - cameraPoint, forwardPoint - worldPoint), Time.deltaTime * RotationChaseRate);
+        
+        var distFromCam = math.distance(worldPoint, MapCamera.transform.position);
+        MapCamera.nearClipPlane = distFromCam - 500;
+        MapCamera.farClipPlane = distFromCam + 500;
+    }
+
+    /*
+    [ExecuteInEditMode]
+    public void LateUpdate()
+    {
+        Vector3[] testPositions = new Vector3[]
+        {
+            new Vector3(0, 0, 0),
+            new Vector3(((RectTransform)transform).rect.width, 0, 0),
+            new Vector3(0, ((RectTransform)transform).rect.height, 0),
+            new Vector3(((RectTransform)transform).rect.width, ((RectTransform)transform).rect.height, 0)
+        };
+        
+        for (int i = 0; i < testPositions.Length; i++)
+        {
+            // As the mouse moves around on the surface move the cursor
+            var screenPos = testPositions[i];
+            screenPos.x /= ((RectTransform)transform).rect.width;
+            screenPos.y /= ((RectTransform)transform).rect.height;
+        
+            Ray ray = MapCamera.ViewportPointToRay(screenPos);
+            Debug.DrawRay(ray.origin, ray.direction*1000);
+        }
+    }
+    */
+
+    public void OnPointerMove(PointerEventData eventData)
+    {
+        // As the mouse moves around on the surface move the cursor
+        var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+        var screenPos = transform.InverseTransformPoint(worldPos);
+        screenPos.x /= ((RectTransform)transform).rect.width;
+        screenPos.y /= ((RectTransform)transform).rect.height;
+        
+        Ray ray = MapCamera.ViewportPointToRay(screenPos);
+        if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+        {
+            
+            CursorTransform.SetTarget(hitInfo.point, Quaternion.LookRotation(-hitInfo.normal, Vector3.up));
+            CursorTransform.gameObject.SetActive(true);
+        }
+        else
+        {
+            CursorTransform.gameObject.SetActive(false);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (m_Dragging) return;
+        
+        var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+        var screenPos = transform.InverseTransformPoint(worldPos);
+        screenPos.x /= ((RectTransform)transform).rect.width;
+        screenPos.y /= ((RectTransform)transform).rect.height;
+        
+        Ray ray = MapCamera.ViewportPointToRay(screenPos);
+        if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+        {
+            // Draw something
+            MapDrawing.AddPoint(hitInfo.point);
+        }
+    }
+
+    public void OnSubmit(BaseEventData eventData)
+    {
+        // Ping at the cursor position
+        // TODO
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        // Drag!
+        m_Dragging = true;
+        m_AutoTrack = false;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (m_Dragging)
+        {
+            if (Mouse.current.rightButton.isPressed)
+            {
+                var worldPos = eventData.pointerCurrentRaycast.worldPosition;
+                var screenPos = transform.InverseTransformPoint(worldPos);
+                screenPos.x /= ((RectTransform)transform).rect.width;
+                screenPos.y /= ((RectTransform)transform).rect.height;
+        
+                Ray ray = MapCamera.ViewportPointToRay(screenPos);
+                if (MapCollider.Raycast(ray, out var hitInfo, 10000))
+                {
+                    // Draw something
+                    MapDrawing.AddSketchPoint(hitInfo.point);
+                }
+            }
+            else
+            {
+                // Rotate the camera
+                var delta = eventData.delta;
+                MapCameraTransform.rotation = Quaternion.AngleAxis(delta.x*DragRate.x, MapCameraTransform.up) 
+                                              * Quaternion.AngleAxis(delta.y*DragRate.y, MapCameraTransform.right)
+                                              * MapCameraTransform.rotation;
+            }
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        MapDrawing.EndSketchPoint();
+        m_Dragging = false;
+    }
+
+    public void OnCancel(BaseEventData eventData)
+    {
+        HandUIController.SetState(HandUIController.State.Closed);
+    }
+
+    public void OnStateChanged(HandUIController.State oldState, HandUIController.State newState)
+    {
+        switch (newState)
+        {
+            case HandUIController.State.Inventory:
+                break;
+            case HandUIController.State.Map:
+                this.Select();
+                break;
+            default:
+            case HandUIController.State.Closed:
+                m_AutoTrack = true;
+                this.Deselect();
+                break;
+        }
+    }
+}

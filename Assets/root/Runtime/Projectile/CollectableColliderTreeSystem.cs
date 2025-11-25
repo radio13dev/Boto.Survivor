@@ -12,14 +12,14 @@ namespace Collisions
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     public partial struct CollectableColliderTreeSystem : ISystem
     {
-        NativeTrees.NativeOctree<Entity> m_Tree;
+        NativeTrees.NativeOctree<(Entity, Collectable)> m_Tree;
         EntityQuery m_TreeQuery;
 
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+            state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
             m_Tree = new(
-                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
+                new(min: new float3(-350, -200, -350), max: new float3(350, 200, 350)),
                 Allocator.Persistent
             );
 
@@ -32,25 +32,30 @@ namespace Collisions
             var entities = m_TreeQuery.ToEntityArray(allocator: Allocator.TempJob);
             var colliders = m_TreeQuery.ToComponentDataArray<CollectCollider>(allocator: Allocator.TempJob);
             var transforms = m_TreeQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
+            var collectable = m_TreeQuery.ToComponentDataArray<Collectable>(allocator: Allocator.TempJob);
             state.Dependency = new RegenerateJob()
             {
                 tree = m_Tree,
                 entities = entities,
                 colliders = colliders,
-                transforms = transforms
+                transforms = transforms,
+                collectables = collectable
             }.Schedule(state.Dependency);
             entities.Dispose(state.Dependency);
             colliders.Dispose(state.Dependency);
             transforms.Dispose(state.Dependency);
+            collectable.Dispose(state.Dependency);
 
             // Perform collisions
-            var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+            var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            state.Dependency = new SurvivorCollectCollisionJob()
+            var a = new SurvivorCollectCollisionJob()
             {
                 ecb = parallel,
                 tree = m_Tree,
             }.ScheduleParallel(state.Dependency);
+            
+            state.Dependency = a;
         }
 
         public void OnDestroy(ref SystemState state)
@@ -60,19 +65,21 @@ namespace Collisions
         
         public partial struct RegenerateJob : IJob
         {
-            public NativeTrees.NativeOctree<Entity> tree;
+            public NativeTrees.NativeOctree<(Entity, Collectable)> tree;
             [ReadOnly] public NativeArray<Entity> entities;
             [ReadOnly] public NativeArray<CollectCollider> colliders;
             [ReadOnly] public NativeArray<LocalTransform> transforms;
+            [ReadOnly] public NativeArray<Collectable> collectables;
 
             public void Execute()
             {
                 tree.Clear();
                 for (int i = 0; i < colliders.Length; i++)
-                    tree.Insert(entities[i], colliders[i].Collider.Add(transforms[i].Position));
+                    tree.Insert((entities[i], collectables[i]), colliders[i].Collider.Add(transforms[i]));
             }
         }
 
+        
         /// <summary>
         /// Searches for overlaps between entities and their collision targets.
         /// </summary>
@@ -81,39 +88,38 @@ namespace Collisions
         unsafe partial struct SurvivorCollectCollisionJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity, Collectable)> tree;
 
-            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity survivorE, in LocalTransform transform, in Collider collider)
+            unsafe public void Execute([ChunkIndexInQuery] int Key, Entity survivorE, in PlayerControlled playerControlled, in LocalTransform transform, in Collider collider)
             {
-                var adjustedAABB = collider.Add(transform.Position);
+                var adjustedAABB = collider.Add(transform);
                 {
-                    var visitor = new CollisionVisitor(Key, ref ecb, survivorE);
+                    var visitor = new CollisionVisitor(Key, ref ecb, playerControlled);
                     tree.Range(adjustedAABB, ref visitor);
                 }
             }
 
             [BurstCompile]
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity, Collectable)>
             {
                 readonly int _key;
                 EntityCommandBuffer.ParallelWriter _ecb;
-                Entity _survivorE;
+                PlayerControlled _player;
 
-                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, Entity survivorE)
+                public CollisionVisitor(int key, ref EntityCommandBuffer.ParallelWriter ecb, PlayerControlled player)
                 {
                     _key = key;
                     _ecb = ecb;
-                    _survivorE = survivorE;
+                    _player = player;
                 }
 
-                public bool OnVisit(Entity treeEntity, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity, Collectable) treeEntity, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (treeEntity.Item2.PlayerId != _player.Index) return true;
 
-                    _ecb.SetComponent(_key, treeEntity, new Collectable(){ CollectedBy = _survivorE });
-                    _ecb.SetComponentEnabled<Collectable>(_key, treeEntity, true);
+                    _ecb.SetComponentEnabled<Collectable>(_key, treeEntity.Item1, true);
 
-                    return false;
+                    return true;
                 }
             }
         }

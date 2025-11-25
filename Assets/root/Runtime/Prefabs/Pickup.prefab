@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3078662805218601296}
   - component: {fileID: 5750577854139021121}
   - component: {fileID: 1249446285491673129}
+  - component: {fileID: -6696640375298184475}
   m_Layer: 0
   m_Name: Pickup
   m_TagString: Untagged
@@ -48,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfe97125d9bd4a7cbebd73916dd7f7b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::PickupAuthoring
+  Radius: 1
 --- !u!114 &7756041969186760268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,7 +75,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 0
     _Asset: {fileID: 11400000, guid: a2a0a10c9a1a1554d9f5b1ec3ff10f47, type: 2}
 --- !u!114 &5750577854139021121
 MonoBehaviour:
@@ -87,12 +88,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -0.5
-    y: -0.5
-  Max:
-    x: 0.5
-    y: 0.5
+  EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 4
+  Radius: 1
+  ColliderType: 0
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &1249446285491673129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,3 +112,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &-6696640375298184475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring

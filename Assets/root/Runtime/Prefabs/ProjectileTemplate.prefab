@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: -3127374150066105801}
   - component: {fileID: 1234742855914670883}
   - component: {fileID: 497324972839419108}
+  - component: {fileID: -6949698779435470453}
+  - component: {fileID: -6360861978305353800}
   m_Layer: 0
   m_Name: ProjectileTemplate
   m_TagString: Untagged
@@ -49,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e9fc89639284d18825bb54aa8c18d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ProjectileAuthoring
+  Lightweight: 0
 --- !u!114 &3099219579393939003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,7 +77,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::InstancedResourceAuthoring
   Particle:
-    AssetIndex: 3
     _Asset: {fileID: 11400000, guid: ff8758fc6cfd60c48828bdef4e8041a5, type: 2}
 --- !u!114 &-3127374150066105801
 MonoBehaviour:
@@ -89,7 +91,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ParticleOnDestroyAuthoring
   Particle:
-    AssetIndex: 8
     _Asset: {fileID: -8811920126680653655, guid: 036e8201696153f4b9bd6f22772cfcf6, type: 3}
 --- !u!114 &1234742855914670883
 MonoBehaviour:
@@ -103,14 +104,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be3d2a17883a4cceac32c5b9713fd2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Boto.Survivor::ColliderAuthoring
-  Min:
-    x: -0.2
-    y: -0.2
-    z: -0.2
-  Max:
-    x: 0.2
-    y: 0.2
-    z: 0.2
+  EnableColliderOnDestroy: 0
+  TerrainCollisionMask: 3
+  Radius: 0.2
+  ColliderType: 0
+  TorusMin: 0
+  ConeAngle: 0
+  ConeDirection:
+    x: 0
+    y: 0
+    z: 1
+  Mesh:
+    _Asset: {fileID: 0}
 --- !u!114 &497324972839419108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +128,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abfe98b4e9961d444a6a7cbe1af5979c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Saving.Authoring::BovineLabs.Saving.Authoring.SavableAuthoring
+--- !u!114 &-6949698779435470453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e558fdd1dc64d21a083de09e84a8063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::PhysicsAuthoring
+  PhysicsResponse:
+    Gravity: 0
+    BounceThresholdMin: 0
+    BounceResponse: 0
+    BounceFriction: 0
+    DisableGrounding: 0
+    AirDrag: 0
+    AirDragLinear: 0
+    Friction: 0
+    FrictionLinear: 0
+    RotationalDrag: 0
+    RotationalDragLinear: 0
+    Radius: 0.3
+    LockToSurface: 1
+    RotateWithSurface: 1
+    IdlePivot:
+      x: 0
+      y: 0
+      z: 0
+    ForceVelocityResistance: 0
+    ForceShiftResistance: 0
+    LookInMoveDirection: 0
+  HasSurfaceMovement: 1
+--- !u!114 &-6360861978305353800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311269425040365492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db962dff2e2648a3a647e7412c0260b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::DestroyableAuthoring

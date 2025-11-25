@@ -1,46 +1,137 @@
 using System.Threading;
+using BovineLabs.Core.Collections;
+using BovineLabs.Core.Memory;
 using NativeTrees;
 using Unity.Burst;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using AABB = NativeTrees.AABB;
 
 namespace Collisions
 {
+    public static class EnemyColliderTree
+    {
+        [BurstCompile]
+        public struct NearestVisitor : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
+        {
+            public bool Hit;
+            public AABB Nearest;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
+
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
+            {
+                Nearest = bounds;
+                NearestObj = obj;
+                Hit = true;
+                return false; // End checks
+            }
+        }
+        [BurstCompile]
+        public struct NearestVisitorCount : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
+        {
+            public int DesiredHits;
+            public int Hits;
+            public AABB Nearest;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
+            public AABB Last;
+            public (Entity e, NetworkId id, Collider c) LastObj;
+
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
+            {
+                if (Hits == 0)
+                {
+                    Nearest = bounds;
+                    NearestObj = obj;
+                }
+                Hits++;
+                Last = bounds;
+                LastObj = obj;
+                return Hits < DesiredHits; // End checks
+            }
+        }
+        [BurstCompile]
+        public struct NearestVisitorIgnore : IOctreeNearestVisitor<(Entity e, NetworkId id, Collider c)>
+        {
+            public bool Hit;
+            public AABB Nearest;
+            public (Entity e, NetworkId id, Collider c) NearestObj;
+            [ReadOnly] public DynamicBuffer<ProjectileIgnoreEntity> Ignore;
+
+            public NearestVisitorIgnore(in DynamicBuffer<ProjectileIgnoreEntity> ignoredEntities)
+            {
+                Hit = default;
+                Nearest = default;
+                NearestObj = default;
+                Ignore = ignoredEntities;
+            }
+
+            public bool OnVist((Entity e, NetworkId id, Collider c) obj, AABB bounds)
+            {
+                for (int i = 0; i < Ignore.Length; i++)
+                    if (Ignore[i].Value == obj.Item2)
+                    {
+                        return true;
+                    }
+                    
+                Nearest = bounds;
+                NearestObj = obj;
+                Hit = true;
+                return false; // End checks
+            }
+        }
+
+        [BurstCompile]
+        public struct DistanceProvider : IOctreeDistanceProvider<(Entity e, NetworkId id, Collider c)>
+        {
+            public float DistanceSquared(float3 point, (Entity e, NetworkId id, Collider c) obj, AABB bounds)
+            {
+                return math.distancesq(point, bounds.Center);
+            }
+        }
+    }
+
     [UpdateInGroup(typeof(CollisionSystemGroup))]
     [BurstCompile]
-    public partial struct EnemyColliderTreeSystem : ISystem
+    public unsafe partial struct EnemyColliderTreeSystem : ISystem
     {
-        NativeTrees.NativeOctree<Entity> m_enemyTree;
-        EntityQuery m_enemyQuery;
-
+        public NativeOctree<(Entity e, NetworkId id, Collider c)> Tree;
+        public EntityQuery Query;
+        
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<GameManager.Resources>();
-            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-            m_enemyTree = new(
-                new(min: new float3(-1000, -1000, -1000), max: new float3(1000, 1000, 1000)),
+            Tree = new(
+                new(min: new float3(-350, -200, -350), max: new float3(350, 200, 350)),
                 Allocator.Persistent
             );
+            Query = SystemAPI.QueryBuilder().WithAll<NetworkId, LocalTransform, Collider>().WithAll<EnemyTag>().Build();
 
-            m_enemyQuery = SystemAPI.QueryBuilder().WithAll<LocalTransform, Collider>().WithAll<EnemyTag>().Build();
-            //state.RequireForUpdate(m_enemyQuery);
+            state.RequireForUpdate<GameManager.Resources>();
+            state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        }
+
+        public void OnDestroy(ref SystemState state)
+        {
+            Tree.Dispose();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             // Allocate
-            var enemyEntities = m_enemyQuery.ToEntityArray(allocator: Allocator.TempJob);
-            var enemyColliders = m_enemyQuery.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
-            var enemyTransforms = m_enemyQuery.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
+            var enemyEntities = Query.ToEntityArray(allocator: Allocator.TempJob);
+            var enemyNetworkIds = Query.ToComponentDataArray<NetworkId>(allocator: Allocator.TempJob);
+            var enemyColliders = Query.ToComponentDataArray<Collider>(allocator: Allocator.TempJob);
+            var enemyTransforms = Query.ToComponentDataArray<LocalTransform>(allocator: Allocator.TempJob);
         
             // Update trees
-            state.Dependency = new RegenerateJob()
+            state.Dependency = new RegenerateJob_NetworkId()
             {
-                tree = m_enemyTree,
+                tree = Tree,
+                networkIds = enemyNetworkIds,
                 entities = enemyEntities,
                 colliders = enemyColliders,
                 transforms = enemyTransforms 
@@ -48,144 +139,68 @@ namespace Collisions
             enemyEntities.Dispose(state.Dependency);
             enemyColliders.Dispose(state.Dependency);
             enemyTransforms.Dispose(state.Dependency);
+            enemyNetworkIds.Dispose(state.Dependency);
 
             // Perform collisions
-            var delayedEcb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+            var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
             var parallel = delayedEcb.AsParallelWriter();
-            var a = new FireAtNearestTargetJob()
+            
+            var a = new EnemyDamageJob()
             {
-                ecb = parallel,
-                resources = SystemAPI.GetSingleton<GameManager.Resources>(),
-                tree = m_enemyTree,
-                time = SystemAPI.Time.ElapsedTime
+                tree = Tree,
+                ecb = parallel
             }.ScheduleParallel(state.Dependency);
             
             var b = new EnemyPushForceJob()
             {
-                tree = m_enemyTree
-            }.ScheduleParallel(state.Dependency);
+                tree = Tree
+            }.ScheduleParallel(a);
             
             var c = new ProjectileHitEnemyJob()
             {
-                tree = m_enemyTree
+                tree = Tree
             }.ScheduleParallel(state.Dependency);
             
-            state.Dependency = JobHandle.CombineDependencies(a,b,c);
-        }
-
-        public void OnDestroy(ref SystemState state)
-        {
-            m_enemyTree.Dispose();
-        }
-
-        /// <summary>
-        /// Searches for overlaps between entities and their collision targets.
-        /// </summary>
-        [WithAll(typeof(LaserProjectileSpawner), typeof(SurvivorTag))]
-        [BurstCompile]
-        unsafe partial struct FireAtNearestTargetJob : IJobEntity
-        {
-            public EntityCommandBuffer.ParallelWriter ecb;
-            [ReadOnly] public GameManager.Resources resources;
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
-            [ReadOnly] public double time;
-
-            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, in Movement movement, ref LaserProjectileSpawner laserSpawner)
-            {
-                if (laserSpawner.LastProjectileTime + laserSpawner.TimeBetweenShots > time) return;
-            
-                fixed (FireAtNearestTargetJob* job_ptr = &this)
-                fixed (LaserProjectileSpawner* spawner_ptr = &laserSpawner)
-                {
-                    var visitor = new NearestVisitor(Key, job_ptr, transform, spawner_ptr);
-                    var distance = new DistanceProvider();
-
-                    tree.Nearest(transform.Position, 30, ref visitor, distance);
-                    
-                    if (visitor.Hits == 0)
-                    {
-                        laserSpawner.LastProjectileDirection = movement.LastDirection;
-                    }
-                    
-                    var laser = ecb.Instantiate(Key, resources.Projectile_Survivor_Laser);
-                    var laserT = transform;
-                    laserT.Rotation = math.mul(quaternion.AxisAngle(transform.Up(), -math.PIHALF), quaternion.LookRotationSafe(laserSpawner.LastProjectileDirection, transform.Up()));
-                    ecb.SetComponent(Key, laser, laserT);
-                    ecb.SetComponent(Key, laser, new SurfaceMovement(){ Velocity = new float2(8,0)});
-                    ecb.SetComponent(Key, laser, new DestroyAtTime(){ DestroyTime = time + laserSpawner.Lifespan });
-                    
-                    laserSpawner.LastProjectileTime = time;
-                }
-            }
-
-            [BurstCompile]
-            unsafe struct NearestVisitor : IOctreeNearestVisitor<Entity>
-            {
-                public int Hits;
-                int _key;
-                FireAtNearestTargetJob* _job;
-                LocalTransform _transform;
-                LaserProjectileSpawner* _sourceSpawner;
-
-                public NearestVisitor(int Key, FireAtNearestTargetJob* job, LocalTransform transform, LaserProjectileSpawner* sourceSpawner)
-                {
-                    Hits = 0;
-                    
-                    _key = Key;
-                    _job = job;
-                    _transform = transform;
-                    _sourceSpawner = sourceSpawner;
-                }
-
-                public bool OnVist(Entity obj, AABB bounds)
-                {
-                    Interlocked.Increment(ref Hits);
-                    _sourceSpawner->LastProjectileDirection = bounds.Center - _transform.Position;
-                    return false;
-                }
-            }
-
-            [BurstCompile]
-            unsafe struct DistanceProvider : IOctreeDistanceProvider<Entity>
-            {
-                public float DistanceSquared(float3 point, Entity obj, AABB bounds)
-                {
-                    return math.distancesq(point, bounds.Center);
-                }
-            }
+            state.Dependency = JobHandle.CombineDependencies(b,c);
         }
 
         [BurstCompile]
+        [WithNone(typeof(SurvivorTag))]
+        [WithNone(typeof(Projectile))]
         unsafe partial struct EnemyPushForceJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, NetworkId id, Collider c)> tree;
 
             unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Force force)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
+                var adjustedAABB2D = collider.Add(transform);
                 fixed (Force* force_ptr = &force)
                 {
-                    var visitor = new CollisionVisitor(entity, force_ptr);
+                    var visitor = new CollisionVisitor((collider, transform), entity, force_ptr);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
 
 
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
+                LazyCollider _collider;
+                
                 Entity _source;
                 Force* _force;
 
-                public CollisionVisitor(Entity source, Force* force)
+                public CollisionVisitor(LazyCollider collider, Entity source, Force* force)
                 {
+                    _collider = collider;
+                    
                     _source = source;
                     _force = force;
                 }
 
-                public bool OnVisit(Entity projectile, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, NetworkId id, Collider c) projectile, AABB objBounds, AABB queryRange)
                 {
-                    if (_source == projectile) return true;
-                    if (!objBounds.Overlaps(queryRange)) return true;
+                    if (_source == projectile.e) return true;
+                    if (!projectile.c.Overlaps(_collider)) return true;
                     
                     _force->Velocity += (queryRange.Center - objBounds.Center)/2;
                     return true;
@@ -198,37 +213,114 @@ namespace Collisions
         [WithDisabled(typeof(ProjectileHit))]
         unsafe partial struct ProjectileHitEnemyJob : IJobEntity
         {
-            [ReadOnly] public NativeTrees.NativeOctree<Entity> tree;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity e, NetworkId id, Collider c)> tree;
 
             public unsafe void Execute([EntityIndexInChunk] int Key, Entity projectileE, in LocalTransform transform, in Collider collider, 
-                ref ProjectileHit projectileHit, EnabledRefRW<ProjectileHit> projectileHitState)
+               in DynamicBuffer<ProjectileIgnoreEntity> projectileIgnoreEntities, ref DynamicBuffer<ProjectileHitEntity> projectileHitEntities, EnabledRefRW<ProjectileHit> projectileHitState)
             {
-                var adjustedAABB2D = collider.Add(transform.Position);
-                fixed (ProjectileHit* projectileHit_ptr = &projectileHit)
+                var adjustedAABB2D = collider.Add(transform);
+                fixed (DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr = &projectileHitEntities)
                 {
-                    var visitor = new CollisionVisitor(projectileE, projectileHit_ptr, projectileHitState);
+                    var visitor = new CollisionVisitor((collider, transform), projectileE, projectileIgnoreEntities, projectileHit_ptr, projectileHitState);
                     tree.Range(adjustedAABB2D, ref visitor);
                 }
             }
 
-            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<Entity>
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
             {
+                LazyCollider _collider;
+                
                 Entity _projectileE;
-                ProjectileHit* _projectileHit_ptr;
+                DynamicBuffer<ProjectileIgnoreEntity> _projectileIgnore_ptr;
+                DynamicBuffer<ProjectileHitEntity>* _projectileHit_ptr;
                 EnabledRefRW<ProjectileHit> _projectileHitState;
 
-                public CollisionVisitor(Entity projectileE, ProjectileHit* projectileHit_ptr, EnabledRefRW<ProjectileHit> projectileHitState)
+                public CollisionVisitor(LazyCollider collider, Entity projectileE, 
+                    DynamicBuffer<ProjectileIgnoreEntity> projectileIgnore_ptr, DynamicBuffer<ProjectileHitEntity>* projectileHit_ptr, 
+                    EnabledRefRW<ProjectileHit> projectileHitState)
                 {
+                    _collider = collider;
+                    
                     _projectileE = projectileE;
+                    _projectileIgnore_ptr = projectileIgnore_ptr;
                     _projectileHit_ptr = projectileHit_ptr;
                     _projectileHitState = projectileHitState;
                 }
 
-                public bool OnVisit(Entity enemyE, AABB objBounds, AABB queryRange)
+                public bool OnVisit((Entity e, NetworkId id, Collider c) enemyE, AABB objBounds, AABB queryRange)
                 {
-                    if (!objBounds.Overlaps(queryRange)) return true;
-                    _projectileHit_ptr->HitEntity = enemyE;
+                    if (!enemyE.c.Overlaps(_collider)) return true;
+                    
+                    for (int i = 0; i < _projectileIgnore_ptr.Length; i++)
+                    {
+                        if (_projectileIgnore_ptr[i].Value == enemyE.id)
+                        {
+                            return true; // Ignore this entity
+                        }
+                    }
+                    _projectileHit_ptr->Add(new ProjectileHitEntity(enemyE.id));
                     _projectileHitState.ValueRW = true;
+                    return true;
+                }
+            }
+        }
+        
+
+        [BurstCompile]
+        [WithAll(typeof(SurvivorTag))]
+        unsafe partial struct EnemyDamageJob : IJobEntity
+        {
+            public const float k_Knockback = 20;
+        
+            public EntityCommandBuffer.ParallelWriter ecb;
+            [ReadOnly] public NativeTrees.NativeOctree<(Entity, NetworkId, Collider)> tree;
+
+            unsafe public void Execute([EntityIndexInChunk] int Key, Entity entity, in LocalTransform transform, in Collider collider, ref Health health, ref Force force)
+            {
+                var adjustedAABB = collider.Add(transform);
+                fixed (Force* force_ptr = &force)
+                fixed (Health* health_ptr = &health)
+                {
+                    var visitor = new CollisionVisitor((collider, transform), Key, entity, force_ptr, health_ptr, ref ecb);
+                    tree.Range(adjustedAABB, ref visitor);
+                }
+            }
+
+
+            [BurstCompile]
+            public unsafe struct CollisionVisitor : IOctreeRangeVisitor<(Entity e, NetworkId id, Collider c)>
+            {
+                LazyCollider _collider;
+                
+                int _key;
+                Entity _source;
+                Force* _force;
+                Health* _health;
+                EntityCommandBuffer.ParallelWriter _ecb;
+
+                public CollisionVisitor(LazyCollider collider, int key, Entity source, Force* force, Health* health, ref EntityCommandBuffer.ParallelWriter ecb)
+                {
+                    _collider = collider;
+                    
+                    _key = key;
+                    _source = source;
+                    _force = force;
+                    _health = health;
+                    _ecb = ecb;
+                }
+
+                public bool OnVisit((Entity e, NetworkId id, Collider c) enemy, AABB objBounds, AABB queryRange)
+                {
+                    if (_source == enemy.e) return true;
+                    if (!enemy.c.Overlaps(_collider)) return true;
+                    
+                    // Flag enemy as destroyed
+                    _ecb.SetComponentEnabled<DestroyFlag>(_key, enemy.e, true);
+                    
+                    // Do stuff to player
+                    _health->Value--;
+                    _force->Velocity += math.normalize(queryRange.Center - objBounds.Center)*EnemyDamageJob.k_Knockback;
+                    GameEvents.PlayerHealthChanged(_source, *_health);
                     return true;
                 }
             }

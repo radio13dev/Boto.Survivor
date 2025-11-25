@@ -2,7 +2,7 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-//#define DEBUG_COMPONENT_ERROR
+#define DEBUG_COMPONENT_ERROR
 
 namespace BovineLabs.Saving
 {

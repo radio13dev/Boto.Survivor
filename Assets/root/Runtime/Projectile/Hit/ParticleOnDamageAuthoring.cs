@@ -1,5 +1,4 @@
 ﻿using BovineLabs.Saving;
-using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
@@ -19,17 +18,18 @@ public class ParticleOnDamageAuthoring : MonoBehaviour
         public override void Bake(ParticleOnDamageAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.WorldSpace);
-            AddComponent(entity, new ParticleOnDamage(){ ParticleIndex = authoring.Particle.AssetIndex });
+            AddComponent(entity, new ParticleOnDamage(){ ParticleIndex = authoring.Particle.GetAssetIndex() });
         }
     }
 }
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
+[WorldSystemFilter(WorldSystemFilterFlags.Presentation)]
 public partial struct ProjectileHitSystem_Particle : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
+        state.RequireForUpdate<NetworkIdMapping>();
         state.RequireForUpdate<GameManager.Particles>();
     }
 
@@ -37,13 +37,20 @@ public partial struct ProjectileHitSystem_Particle : ISystem
     {
         var particles = SystemAPI.GetSingletonBuffer<GameManager.Particles>(true);
         var particleOnDamageLookup = SystemAPI.GetComponentLookup<ParticleOnDamage>(true);
-        foreach (var (hit, transform) in SystemAPI.Query<RefRO<ProjectileHit>, RefRO<LocalTransform>>())
+        var networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>();
+        foreach (var (transform, projE) in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<ProjectileHit>().WithEntityAccess())
         {
-            if (!particleOnDamageLookup.TryGetRefRO(hit.ValueRO.HitEntity, out var particleOnDamage)) continue;
-            if (particleOnDamage.ValueRO.ParticleIndex < 0 || particleOnDamage.ValueRO.ParticleIndex >= particles.Length) continue;
-            var particlePrefab = particles[particleOnDamage.ValueRO.ParticleIndex];
-            var particle = particlePrefab.Prefab.Value.GetFromPool();
-            particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
+            if (!SystemAPI.HasBuffer<ProjectileHitEntity>(projE)) continue;
+            
+            var hit = SystemAPI.GetBuffer<ProjectileHitEntity>(projE);
+            for (int i = 0; i < hit.Length; i++)
+            {
+                if (!particleOnDamageLookup.TryGetRefRO(networkIdMapping[hit[i].Value], out var particleOnDamage)) continue;
+                if (particleOnDamage.ValueRO.ParticleIndex < 0 || particleOnDamage.ValueRO.ParticleIndex >= particles.Length) continue;
+                var particlePrefab = particles[particleOnDamage.ValueRO.ParticleIndex];
+                var particle = particlePrefab.Prefab.Value.GetFromPool();
+                particle.transform.SetPositionAndRotation(transform.ValueRO.Position, transform.ValueRO.Rotation);
+            }
         }
     }
 }

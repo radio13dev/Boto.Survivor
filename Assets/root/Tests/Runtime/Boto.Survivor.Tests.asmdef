@@ -1,16 +1,25 @@
 {
     "name": "Boto.Survivor.Tests",
+    "rootNamespace": "",
     "references": [
-        "Boto.Survivor"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Boto.Survivor",
+        "Boto.Utility",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.Mathematics",
+        "Unity.Services.Multiplayer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
     "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

@@ -1,0 +1,442 @@
+﻿using System;
+using System.Collections.Generic;
+using BovineLabs.Saving;
+using TMPro;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
+
+[Save]
+public struct Wallet : IComponentData
+{
+    public long Value;
+
+    public static Wallet Demo
+    {
+        get
+        {
+            return new Wallet()
+            {
+                Value = Random.Range(0, 100)
+            };
+        }
+    }
+}
+
+public class TiledStatsUITile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler, IFocusFilter, DescriptionUI.ISource, IFocusScale
+{
+
+    public const int MaxLevel = 5;
+    
+    public bool IsRing => false; //TiledStats.Get(TileKey).GetRingIndex() >= 0;
+    public TiledStat Stat => TiledStats.Get(TileKey);
+    public Ring Ring { get; private set; }
+
+    public StatIcon StatIcon;
+
+    public Image[] BodyImages;
+    public Image[] OutlineImages;
+    public Image[] IconImages;
+    
+    public Image[] ToColor;
+
+    public TMP_Text LevelText;
+
+    public Image NotEnoughMoneyOverlay;
+    public Image HasEnoughMoneyOverlay;
+
+    public Image HasNoPointOutline;
+    public Image HasPointOutline;
+    public Image MaxedOutline;
+    public Image ModifiedOutline;
+    public TMP_Text ModifiedText;
+
+    public Image[] Connecteds = new Image[4];
+    public Image[] Connecteds_Ring = new Image[4];
+
+    public PooledParticle LevelUpParticle;
+    
+    public RingDisplay RingTemplate;
+    public RingDisplay m_SpawnedRing;
+    public GameObject NotEnoughMoneyOverlay_Ring;
+    public GameObject HasEnoughMoneyOverlay_Ring;
+    public GameObject HasNoPointOutline_Ring;
+    public GameObject HasPointOutline_Ring;
+    
+    public Transform RingContainer;
+    public Transform UiContainer;
+    
+    public GameObject[] PipsMain = Array.Empty<GameObject>();
+    public GameObject[] PipsMain_DisabledOverlays = Array.Empty<GameObject>();
+    public GameObject[] PipsExtra = Array.Empty<GameObject>();
+    
+    public GameObject Highlight;
+    public GameObject HighlightFade;
+    public GameObject Highlight_Ring;
+    public GameObject HighlightFade_Ring;
+    public CanvasGroup HighlightFadeCanvasGroup;
+    
+    public void NothingHighlighted()
+    {
+        HighlightFadeCanvasGroup.alpha = 1;
+        Highlight.SetActive(false);
+        HighlightFade.SetActive(false);
+        Highlight_Ring.SetActive(false);
+        HighlightFade_Ring.SetActive(false);
+        UiContainer.localScale = Vector3.one;
+        for (int i = 0; i < PipsMain.Length; i++)
+            PipsMain[i].transform.localScale = Vector3.one;
+        for (int i = 0; i < PipsExtra.Length; i++)
+            PipsExtra[i].transform.localScale = Vector3.one;
+    }
+    public void RingHighlighted(bool fadeIrrelevent, Ring ring)
+    {
+        if (this.IsRing)
+        {
+            if (fadeIrrelevent)
+                Highlight_Ring.SetActive(true);
+        }
+        else
+        {
+            if (ring.Stats.DoesBoostStat(this.Stat, out int boost))
+            {
+                if (fadeIrrelevent)
+                {
+                    Highlight.SetActive(true);
+                    for (int i = 0; i < PipsMain.Length; i++)
+                        PipsMain[i].transform.localScale = Vector3.one*0.5f;
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                        if (i >= CompiledLevel-Level - boost)
+                            PipsExtra[i].transform.localScale = Vector3.one*1f;
+                        else if (fadeIrrelevent)
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                        if (i >= CompiledLevel-Level - boost)
+                            PipsExtra[i].transform.localScale = Vector3.one*1f;
+                        else
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+            }
+            else
+            {
+                if (fadeIrrelevent)
+                {
+                    HighlightFadeCanvasGroup.alpha = 0.2f;
+                    HighlightFade.SetActive(true);
+                    for (int i = 0; i < PipsMain.Length; i++)
+                        PipsMain[i].transform.localScale = Vector3.one*0.5f;
+                    for (int i = 0; i < PipsExtra.Length; i++)
+                        PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                }
+                else
+                {
+                    for (int i = 0; i < CompiledLevel-Level; i++)
+                    {
+                            PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                    }
+                }
+            }
+        }
+    }
+    public void StatHighlighted(bool fadeIrrelevent, TiledStat stat)
+    {
+        if (this.IsRing)
+        {
+            if (this.Ring.Stats.DoesBoostStat(stat, out int boost))
+                Highlight_Ring.SetActive(true);
+            else
+            {
+                if (fadeIrrelevent)
+                {
+                    HighlightFade_Ring.SetActive(true);
+                    HighlightFadeCanvasGroup.alpha = 0.2f;
+                    //RingContainer.localScale = Vector3.one * 0.5f;
+                }
+            }
+        }
+        else
+        {
+            if (stat == this.Stat)
+            {
+                Highlight.SetActive(true);
+            }
+            else
+            {
+                for (int i = 0; i < CompiledLevel-Level; i++)
+                {
+                    PipsExtra[i].transform.localScale = Vector3.one*0.5f;
+                }
+            }
+        }
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        //var ui = GetComponentInParent<TiledStatsUI>();
+        //if (ui)
+        //    ui.StartDrag(this);
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        // Send drag movement to parent ui
+        //var ui = GetComponentInParent<TiledStatsUI>();
+        //if (ui)
+        //    ui.ApplyDragDelta(eventData.delta);
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        //var ui = GetComponentInParent<TiledStatsUI>();
+        //if (ui)
+        //    ui.EndDrag(this);
+    }
+
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        //if (UIFocus.Focus == gameObject)// && !eventData.dragging)
+        {
+            if (DescriptionUI.m_CustomZero == gameObject)
+                DoLevelUp();
+            FocusParentToMe();
+        }
+    }
+
+    public void FocusParentToMe()
+    {
+        var ui = GetComponentInParent<TiledStatsUI>();
+        if (ui)
+        {
+            ui.MoveTowards(Offset);
+            DescriptionUI.m_CustomZero = gameObject;
+            UIFocus.StartFocus(this.GetComponent<Focusable>());
+            ui.RebuildHighlights();
+        }
+    }
+
+    public void DoLevelUp()
+    {
+        var ui = GetComponentInParent<TiledStatsUI>();
+        if (ui)
+        {
+            if (Keyboard.current.shiftKey.isPressed)
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex, 
+                        (TiledStat)(this.TileKey.x + this.TileKey.y*TiledStats.TileCols),
+                        true
+                    ));
+            else if (Keyboard.current.ctrlKey.isPressed)
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.AdminPlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                        (TiledStat)(this.TileKey.x + this.TileKey.y * TiledStats.TileCols),
+                        false
+                    ));
+            else
+                Game.ClientGame.RpcSendBuffer.Enqueue(
+                    GameRpc.PlayerLevelStat((byte)Game.ClientGame.PlayerIndex,
+                        (TiledStat)(this.TileKey.x + this.TileKey.y * TiledStats.TileCols)
+                    ));
+        }
+    }
+
+    public Vector2 Offset;
+
+    public void SetOffset(Vector2 offset)
+    {
+        Offset = offset;
+    }
+
+    public void SetImages(Sprite body, Sprite bodyOutline, Sprite icon)
+    {
+        StatIcon.SetImages(body, bodyOutline, icon);
+        foreach (var img in BodyImages)
+            img.sprite = body;
+        foreach (var img in OutlineImages)
+            img.sprite = bodyOutline;
+        foreach (var img in IconImages)
+            img.sprite = icon;
+    }
+
+    public void SetColor(Color rowColor)
+    {
+        StatIcon.SetColor(rowColor);
+        foreach (var toColor in ToColor)
+            toColor.color = rowColor;
+    }
+
+    int2 TileKey;
+    int Level;
+    int CompiledLevel;
+    long m_Cost;
+
+    static readonly int2[] directions = new int2[]
+        {
+            new int2(0,1),
+            new int2(1,0),
+            new int2(0,-1),
+            new int2(-1,0)
+        };
+
+    public void RefreshState(int2 tileKey, in Wallet wallet, in TiledStatsTree baseStats, in CompiledStats compiledStats, in NativeArray<Ring> rings)
+    {
+        bool init = math.any(TileKey != tileKey);
+        TileKey = tileKey;
+        
+        var oldLevel = Level;
+        Level = baseStats[TileKey];
+        CompiledLevel = compiledStats.CompiledStatsTree[TileKey];
+
+        if (Application.isPlaying && !init && oldLevel < Level && CoroutineHost.Instance)
+        {
+            var particle = LevelUpParticle.GetFromPool();
+            particle.transform.SetPositionAndRotation(transform.position, transform.rotation);
+            particle.transform.localScale = Vector3.one * 100;
+        }
+
+        LevelText.text = $"{Level}/{MaxLevel}";
+
+        m_Cost = baseStats.GetLevelUpCost(TileKey);
+        var canAfford = m_Cost <= wallet.Value;
+        
+        NotEnoughMoneyOverlay.gameObject.SetActive(!canAfford);
+        HasEnoughMoneyOverlay.gameObject.SetActive(canAfford && Level < MaxLevel);
+        MaxedOutline.gameObject.SetActive(Level >= MaxLevel);
+        HasNoPointOutline.gameObject.SetActive(Level == 0 && CompiledLevel == 0);
+        HasPointOutline.gameObject.SetActive(Level > 0 && Level < MaxLevel);
+        //ModifiedOutline.gameObject.SetActive(Level != CompiledLevel);
+        //ModifiedText.text = (CompiledLevel - Level).ToValueChangeString();
+        //ModifiedText.color = CompiledLevel > Level ? Palette.MoneyChangePositive : Palette.MoneyChangeNegative;
+
+        bool leveled = CompiledLevel > 0;
+        
+        for (int i = 0; i < 4; i++)
+        {
+            bool dirLeveled = compiledStats.CompiledStatsTree[tileKey + directions[i]] > 0;
+            if (dirLeveled && leveled)
+            {
+                Connecteds[i].gameObject.SetActive(true);
+                Connecteds_Ring[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                Connecteds[i].gameObject.SetActive(false);
+                Connecteds_Ring[i].gameObject.SetActive(false);
+            }
+        }
+        
+        
+        
+        var ringIndex = -1; //TiledStats.Get(TileKey).GetRingIndex();
+        if (ringIndex >= 0)
+        {
+            if (!m_SpawnedRing) m_SpawnedRing = Instantiate(RingTemplate, RingContainer);
+            Ring = rings.IsCreated ? rings[ringIndex] : default;
+            var ring = ringIndex != ChoiceUI.ActiveRingIndex ? Ring : default;
+            m_SpawnedRing.UpdateRing(ringIndex, ring, ReadOnlySpan<EquippedGem>.Empty, false);
+        
+            NotEnoughMoneyOverlay_Ring.gameObject.SetActive(!canAfford);
+            HasEnoughMoneyOverlay_Ring.gameObject.SetActive(canAfford && CompiledLevel == 0);
+            HasNoPointOutline_Ring.gameObject.SetActive(CompiledLevel == 0);
+            HasPointOutline_Ring.gameObject.SetActive(CompiledLevel > 0);
+        }
+        else {
+            if (m_SpawnedRing)
+            {
+                if (Application.isPlaying) Destroy(m_SpawnedRing.gameObject);
+                else DestroyImmediate(m_SpawnedRing.gameObject);
+                m_SpawnedRing = null;
+            }
+        }
+        
+        for (int i = 0; i < PipsMain_DisabledOverlays.Length; i++)
+            PipsMain_DisabledOverlays[i].SetActive(i >= Level);
+        for (int i = 0; i < PipsExtra.Length; i++)
+            PipsExtra[i].SetActive(i < (CompiledLevel - Level));
+        
+        UiContainer.localScale = CompiledLevel > 0 ? Vector3.one : Vector3.one*0.6f;
+        RingContainer.localScale = CompiledLevel > 0 ? Vector3.one*1.4f : Vector3.one*0.8f;
+        RingContainer.gameObject.SetActive(ringIndex >= 0);
+        UiContainer.gameObject.SetActive(ringIndex < 0);
+        
+        if (DescriptionUI.m_CustomZero == gameObject && (DescriptionUI.m_CustomZero == UIFocus.Focus || !UIFocus.Focus))
+            UIFocus.Refresh();
+    }
+
+    public bool CheckFocusFilter(GameObject go)
+    {
+        return go == null;
+    }
+
+    public Vector3 GetFocusScale()
+    {
+        return RingContainer.gameObject.activeSelf ? (CompiledLevel > 0 ? Vector3.one * 1.4f : Vector3.one * 1.2f) 
+            : (CompiledLevel > 0 ? Vector3.one * 1.2f : Vector3.one * 1.2f);
+    }
+
+    public DescriptionUI.Data GetDescription()
+    {
+        var stat = TiledStats.Get(TileKey);
+        
+        var data = new DescriptionUI.Data();
+        
+        if (false) //stat.GetRingIndex() >= 0)
+        {
+            if (CompiledLevel > 0)
+                return m_SpawnedRing.GetDescription();
+                
+            data = m_SpawnedRing.GetDescription();
+        }
+        else
+        {
+            data.Title = stat.GetTitle();
+            data.Description = stat.GetDescription();
+            
+            //if (Level == 0 || Level >= 5)
+            //    rows = stat.GetDescriptionRows(math.max(CompiledLevel, 1));
+            //else
+            data.Rows = stat.GetDescriptionRows(CompiledLevel, CompiledLevel + 1);
+        }
+
+        if (Level >= MaxLevel)
+        {
+            // Maxed out
+            data.BottomLeft = $"Maxed!";
+            data.BottomVariant = DescriptionUI.eBottomRowVariant.BuyInvalid;
+            data.BottomRight = string.Empty;
+            
+            data.ButtonText = $"MAXED";
+            data.ButtonDisabled = true;
+            data.CostFieldText = "-";
+        }
+        else
+        {
+            // Cost
+            GameEvents.TryGetComponent2<Wallet>(CameraTarget.MainTarget ? CameraTarget.MainTarget.Entity : default, out var wallet);
+            bool canAfford = m_Cost <= wallet.Value;
+            
+            data.BottomLeft = $"Cost";
+            data.BottomVariant = canAfford ? DescriptionUI.eBottomRowVariant.BuyValid : DescriptionUI.eBottomRowVariant.BuyInvalid;
+            data.BottomRight = $"{m_Cost.ToGemString()}{(canAfford ? "" : "  (Not enough)")}".Color(canAfford ? Color.white : Palette.MoneyChangeNegative);
+            
+            data.ButtonText = $"Upgrade";
+            data.ButtonDisabled = !canAfford;
+            data.CostFieldText = $"{m_Cost.ToGemString()}{(canAfford ? "" : "")}".Color(canAfford ? Color.white : Palette.MoneyChangeNegative);
+        }
+        
+        data.ButtonPress = DoLevelUp;
+        return data;
+    }
+}

@@ -2,7 +2,16 @@
     "name": "Boto.Survivor.Editor",
     "rootNamespace": "",
     "references": [
-        "Boto.Survivor"
+        "Boto.Survivor",
+        "Boto.Utility",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.Collections",
+        "Unity.Transforms",
+        "Unity.EditorCoroutines.Editor",
+        "com.bartofzo.nativetrees",
+        "ALINE",
+        "AYellowpaper.SerializedCollections"
     ],
     "includePlatforms": [
         "Editor"

@@ -4,12 +4,14 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 
 /// <summary>
 /// Projectile collision is predicted, only after all movement is done
 /// </summary>
 [UpdateBefore(typeof(MovementSystemGroup))]
+[UpdateInGroup(typeof(SurvivorSimulationSystemGroup))]
 public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 {
 }
@@ -19,15 +21,6 @@ public partial class ProcessInputsSystemGroup : ComponentSystemGroup
 public struct MovementSettings : IComponentData
 {
     public float Speed;
-    public float MaxCollectableSpeed;
-    public float CollectRadius;
-    public float JumpValue;
-}
-
-[Save]
-public struct LastStepInputLastDirection : IComponentData
-{
-    public float2 Value;
 }
 
 [Save]
@@ -48,44 +41,48 @@ public partial struct ProcessInputs : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        state.Dependency = new MovementInputJob().Schedule(state.Dependency);
-        state.Dependency = new RotateInputJob()
+        state.Dependency = new MovementInputJob()
         {
-            dt = SystemAPI.Time.DeltaTime
-        }.Schedule(state.Dependency);
+        }.ScheduleParallel(state.Dependency);
+        state.Dependency = new LockedMovementInputJob()
+        {
+        }.ScheduleParallel(state.Dependency);
         state.Dependency = new RollInputJob()
         {
-        }.Schedule(state.Dependency);
+        }.ScheduleParallel(state.Dependency);
     }
 
     [WithNone(typeof(MovementInputLockout))]
     [WithAll(typeof(Simulate))]
     partial struct MovementInputJob : IJobEntity
     {
-        public void Execute(in StepInput input, ref LastStepInputLastDirection lastDirection, in LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
+        public void Execute(in StepInput input, ref LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
         {
-            lastDirection.Value = math.normalizesafe(input.Direction, lastDirection.Value);
-            var dir = local.TransformDirection(input.Direction.f3z());
-            var vel = math.normalizesafe(dir) * movementSettings.Speed * math.clamp(math.length(dir), 0, 1);
+            // Rotate character to face input direction
+            var up = local.Up();
+            var inputForward = math.cross(up, math.cross(math.normalizesafe(input.Direction, local.Forward()), up));
+            local.Rotation = quaternion.LookRotation(inputForward, up);
+        
+            movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
+            var vel = movement.LastDirection * movementSettings.Speed * math.clamp(math.length(input.Direction), 0, 1);
             movement.Velocity += vel;
-            movement.LastDirection = math.normalizesafe(dir, movement.LastDirection);
+        }
+    }
+    [WithAll(typeof(MovementInputLockout))]
+    [WithAll(typeof(Simulate))]
+    partial struct LockedMovementInputJob : IJobEntity
+    {
+        public void Execute(in StepInput input, ref LocalTransform local, ref Movement movement, in MovementSettings movementSettings)
+        {
+            // Rotate character to face input direction
+            var up = local.Up();
+            var inputForward = math.cross(up, math.cross(math.normalizesafe(input.Direction, local.Forward()), up));
+            local.Rotation = quaternion.LookRotation(inputForward, up);
+        
+            movement.LastDirection = math.normalizesafe(inputForward, movement.LastDirection);
         }
     }
 
-    [WithAll(typeof(Simulate))]
-    partial struct RotateInputJob : IJobEntity
-    {
-        [ReadOnly] public float dt;
-        public void Execute(in StepInput input, ref LocalTransform local)
-        {
-            var sign = input.RotateSign;
-            if (sign != 0)
-            {
-                local.Rotation = math.mul(local.Rotation, quaternion.RotateY(2.0f*dt*sign));
-            }
-        }
-    }
-    
     [WithPresent(typeof(ActiveLockout), typeof(MovementInputLockout), typeof(RollActive))]
     [WithAll(typeof(Simulate))]
     partial struct RollInputJob : IJobEntity

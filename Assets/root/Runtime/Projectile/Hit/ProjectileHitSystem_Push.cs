@@ -1,24 +1,44 @@
 ﻿using Unity.Burst;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Transforms;
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Push : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<NetworkIdMapping>();
+        state.Enabled = false; // Don't do knockback for now.
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var forceLookup = SystemAPI.GetComponentLookup<Force>(false);
-        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
-        foreach (var (hit, movement, transform) in SystemAPI.Query<RefRO<ProjectileHit>, RefRO<SurfaceMovement>, RefRO<LocalTransform>>())
+        state.Dependency = new Job()
         {
-            if (!forceLookup.TryGetRefRW(hit.ValueRO.HitEntity, out var hitEntityF))
-                continue;
-            
-            var hitEntityT = transformLookup[hit.ValueRO.HitEntity];
-            hitEntityF.ValueRW.Shift += hitEntityT.TransformDirection(movement.ValueRO.Velocity.f3z()/20);
+            ForceLookup = SystemAPI.GetComponentLookup<Force>(false),
+            networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
+        }.Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    partial struct Job : IJobEntity
+    {
+        public ComponentLookup<Force> ForceLookup;
+        [ReadOnly] public NetworkIdMapping networkIdMapping;
+    
+        public void Execute(in Movement movement, in LocalTransform hitT, in DynamicBuffer<ProjectileHitEntity> hits)
+        {
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (ForceLookup.TryGetRefRW(networkIdMapping[hits[i].Value], out var otherEntityF))
+                {
+                    otherEntityF.ValueRW.Velocity += movement.Velocity;
+                }
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
-using System.Linq;
+using BovineLabs.Core.Extensions;
 using BovineLabs.Saving;
+using Collisions;
 using Unity.Entities;
-using Unity.Transforms;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,6 +14,11 @@ public struct InstancedResourceRequest : ISharedComponentData
     public InstancedResourceRequest(int toSpawn)
     {
         ToSpawn = toSpawn;
+    }
+    
+    public GameManager.InstancedResources Get(World world)
+    {
+        return world.EntityManager.GetSingletonBuffer<GameManager.InstancedResources>(true)[ToSpawn];
     }
 }
 
@@ -27,13 +33,61 @@ public class InstancedResourceAuthoring : MonoBehaviour
     {
         public override void Bake(InstancedResourceAuthoring authoring)
         {
-            var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
-            AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.AssetIndex));
-            AddComponent(entity, new LocalTransformLast());
-            AddComponent<SpriteAnimFrame>(entity);
+            DependsOn(authoring.Particle.Asset);
+            if (!authoring.Particle.Asset)
+            {
+                Debug.LogError($"Invalid asset on {authoring}: {authoring.Particle.Asset}");
+                return;
+            }
             
-            if (authoring.Particle.Asset && authoring.Particle.Asset.Animated)
+            if (authoring.Particle.Asset.HasLifespan)
+            {
+                var component = GetComponent<HasLifespanAuthoring>();
+                DependsOn(component);
+                if (!component)
+                {
+                    Debug.LogError($"{authoring.gameObject} has a lifespan but is missing the {nameof(HasLifespanAuthoring)} component");
+                    return;
+                }
+            }
+        
+            var entity = GetEntity(authoring, TransformUsageFlags.Dynamic);
+            AddSharedComponent(entity, new InstancedResourceRequest(authoring.Particle.GetAssetIndex()));
+            
+            if (authoring.Particle.Asset.UseLastTransform)
+            {
+                AddComponent(entity, new LocalTransformLast());
+            }
+            if (authoring.Particle.Asset.Animated)
+            {
+                AddComponent<SpriteAnimFrame>(entity);
                 AddComponent<SpriteAnimFrameTime>(entity);
+            }
+            if (authoring.Particle.Asset.IsTorus)
+            {
+                AddComponent<TorusMin>(entity);
+            }
+            if (authoring.Particle.Asset.IsCone)
+            {
+                AddComponent<TorusCone>(entity);
+            }
+            
+            if (authoring.Particle.Asset.IsColorBaseColor)
+            {
+                AddComponent<ColorBaseColor>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorA)
+            {
+                AddComponent<ColorA>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorB)
+            {
+                AddComponent<ColorB>(entity);
+            }
+            if (authoring.Particle.Asset.IsColorC)
+            {
+                AddComponent<ColorC>(entity);
+            }
         }
     }
 
@@ -73,6 +127,46 @@ public class InstancedResourceAuthoring : MonoBehaviour
            
             //Leaves a small trail, object only visible in camera
             //Graphics.DrawMesh(mesh, matrix, material, gameObject.layer, camera);
+        }
+    }
+    
+    [EditorButton]
+    public void RegenerateColliders(float delta)
+    {
+        if (Particle.Asset && Particle.Asset.Mesh && Particle.Asset.Material)
+        {
+            // 'Imagine' the mesh at our position, create colliders on the xz-plane relative to that info
+            var c = gameObject.AddComponent<MeshCollider>();
+            try
+            {
+                var children = GetComponentsInChildren<Transform>();
+                foreach (var child in children)
+                    if (c.gameObject != child.gameObject)
+                        DestroyImmediate(child.gameObject);
+                    
+                c.convex = true;
+                c.sharedMesh = Particle.Asset.Mesh;
+                var bounds = c.bounds;
+                for (float x = bounds.min.x; x <= bounds.max.x; x += delta)
+                for (float z = bounds.min.z; z <= bounds.max.z; z += delta)
+                {
+                    var p = new Vector3(x,0,z);
+                    var pIn = c.ClosestPoint(p);
+                    if (pIn == p)
+                    {
+                        var childObj = new GameObject($"C:({x},{0},{z})");
+                        childObj.transform.SetParent(transform);
+                        childObj.transform.SetPositionAndRotation(p, Quaternion.identity);
+                        var childC = childObj.AddComponent<ColliderAuthoring>();
+                        childC.ColliderType = ColliderType.Sphere;
+                        childC.Radius = delta/childC.transform.lossyScale.x;
+                    }
+                }
+            }
+            finally
+            {
+                DestroyImmediate(c);
+            }
         }
     }
 #endif

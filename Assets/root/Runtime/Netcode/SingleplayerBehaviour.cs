@@ -1,89 +1,81 @@
 ﻿using System;
 using System.Collections;
+using BovineLabs.Core.Extensions;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = Unity.Mathematics.Random;
 
-public unsafe class SingleplayerBehaviour : MonoBehaviour
+public unsafe class SingleplayerBehaviour : GameHostBehaviour
 {
-    public bool TickEnabled = true;
-
-    private float m_T;
     private bool m_InitComplete;
-    private NativeArray<SpecialLockstepActions> m_SpecialActionArr;
-    private Game m_Game;
+    private NativeArray<GameRpc> m_SpecialActionArr;
+    public override bool Idle => m_InitComplete && Game != null && Game.IsReady;
 
     private IEnumerator Start()
     {
-        if (Game.ClientGame != null && Game.ClientGame.IsReady)
-        {
-            Debug.LogError($"Running multiple singleplayer games at the same time, creating new one...");
-            Game.ClientGame = new Game(true);
-            World.DefaultGameObjectInjectionWorld = Game.ClientGame.World;
-        }
-        
         // Build game
-        yield return new WaitUntil(() => Game.ConstructorReady && Game.ClientGame != null);
-        m_Game = Game.ClientGame;
-        
-        m_SpecialActionArr = new NativeArray<SpecialLockstepActions>(4, Allocator.Persistent);
-        m_Game.LoadScenes();
+        yield return new WaitUntil(() => Game.ConstructorReady);
+
+        m_SpecialActionArr = new NativeArray<GameRpc>(PingClientBehaviour.k_MaxSpecialActionCount, Allocator.Persistent);
+        Game.LoadScenes();
         yield return new WaitUntil(() =>
         {
-            m_Game.World.Update();
-            return m_Game.IsReady;
+            if (Game.IsReady) return true;
+            Game.Update_NoLogic();
+            return false;
         });
-        
-        // Spawn the player
-        m_Game.PlayerIndex = 0;
-        SpawnPlayer();
-        ApplyStep();
+
+        // Randomise seed
+        Game.InitWorld();
+            
         
         // Complete
         m_InitComplete = true;
+        
+        Game.PlayerIndex = 0;
+        Game.RpcSendBuffer.Enqueue(GameRpc.PlayerJoin(0,0));
     }
 
     private void OnDestroy()
     {
+        Game?.Dispose();
         m_SpecialActionArr.Dispose();
     }
 
     FullStepData m_StepData;
     StepInput m_Inputs;
+
     private void Update()
     {
         if (!m_InitComplete) return;
-        
-        m_Inputs.Collect();
-        
-        if (TickEnabled && (m_T += Time.deltaTime) >= Game.k_ClientPingFrequency)
+
+        m_Inputs.Collect(Camera.main);
+
+        if (Game.CanStep())
         {
-            m_T -= Game.k_ClientPingFrequency;
-            ApplyStep();
+            // Load rpcs
+            while (m_StepData.ExtraActionCount < PingClientBehaviour.k_MaxSpecialActionCount && Game.RpcSendBuffer.TryDequeue(out var specialAction))
+            {
+                m_SpecialActionArr[m_StepData.ExtraActionCount] = specialAction;
+                m_StepData.ExtraActionCount++;
+            }
+
+            m_StepData = new FullStepData(Game.Step + 1)
+            {
+                ExtraActionCount = m_StepData.ExtraActionCount
+            };
+            m_StepData[Game.PlayerIndex] = m_Inputs;
+            Game.ApplyStepData(m_StepData, (GameRpc*)m_SpecialActionArr.GetUnsafePtr());
+            m_StepData.ExtraActionCount = 0;
             m_Inputs = default;
         }
         else
         {
-            m_Game.ApplyRender(m_T/Game.k_ClientPingFrequency);
+            Game.ApplyRender();
         }
-    }
-
-    [EditorButton]
-    private void ApplyStep()
-    {
-        m_StepData = new FullStepData(m_StepData.Step + 1, m_Inputs)
-        {
-            ExtraActionCount = m_StepData.ExtraActionCount
-        };
-        m_Game.ApplyStepData(m_StepData, (SpecialLockstepActions*)m_SpecialActionArr.GetUnsafePtr());
-        m_StepData.ExtraActionCount = 0;
-    }
-
-    [EditorButton]
-    public void SpawnPlayer()
-    {
-        m_SpecialActionArr[m_StepData.ExtraActionCount] = SpecialLockstepActions.PlayerJoin(0);
-        m_StepData.ExtraActionCount++;
     }
 }

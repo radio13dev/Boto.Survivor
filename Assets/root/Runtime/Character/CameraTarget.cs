@@ -1,37 +1,40 @@
-﻿using Unity.Collections;
+﻿using System;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public class CameraTarget : MonoBehaviour
+public class CameraTarget : EntityLinkMono
 {
-    bool setupComplete = false;
+    public static CameraTarget MainTarget;
+    public static Entity MainEntity => MainTarget ? MainTarget.Entity : Entity.Null;
 
-    EntityQuery m_Query;
-
-    private void Update()
+    public int PlayerIndex
     {
-        if (!setupComplete)
+        get
         {
-            if (Game.PresentationGame == null)
-                return;
-
-            var entityManager = Game.PresentationGame.World.EntityManager;
-            m_Query = entityManager.CreateEntityQuery(new ComponentType(typeof(PlayerControlled)), new ComponentType(typeof(SurvivorTag)),
-                new ComponentType(typeof(LocalTransform)));
-            setupComplete = true;
+            if (!HasLink()) return -1;
+            if (Game.World.EntityManager.HasComponent<PlayerControlledSaveable>(Entity))
+                    return Game.World.EntityManager.GetComponentData<PlayerControlledSaveable>(Entity).Index;
+            return -1;
         }
+    }
 
-        var players = m_Query.ToComponentDataArray<PlayerControlled>(Allocator.Temp);
-        var transforms = m_Query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-        for (int i = 0; i < players.Length; i++)
+    private void Start()
+    {
+        if (Game == null)
         {
-            if (players[i].Index == Game.PresentationGame.PlayerIndex)
-            {
-                var target = transforms[i];
-                transform.SetPositionAndRotation(target.Position, target.Rotation);
-                return;
-            }
+            Debug.LogError("No Game found for CameraTarget");
+            return;
+        }
+        
+        if (PlayerIndex == Game.PlayerIndex)
+        {
+            MainTarget = this;
+            GameEvents.InventoryChanged(Entity);
+            if (GameEvents.TryGetComponent2(Entity, out Health health)) GameEvents.PlayerHealthChanged(Entity, health);
+            if (GameEvents.TryGetComponent2(Entity, out Wallet wallet)) GameEvents.WalletChanged(Entity, wallet);
         }
     }
 }

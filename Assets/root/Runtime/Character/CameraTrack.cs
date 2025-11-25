@@ -1,34 +1,43 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraTrack : MonoBehaviour
+{
+    public float linearCameraChase;
+    public float relativeCameraChase;
+    public float velocityFalloff;
+    public float newVelocityEffect;
+    public float virtualTargetOffset;
+    public float camRotSpeed = 2f;
+
+    float3 virtualTarget;
+    float3 recentVelocity;
+    float3 recentPosition;
+    float rotOffset = 0;
+
+    private void Update()
     {
-        public Transform CameraTarget;
+        if (!CameraTarget.MainTarget) return;
+    
+        if (Keyboard.current.eKey.isPressed) rotOffset += Time.deltaTime * camRotSpeed;
+        if (Keyboard.current.qKey.isPressed) rotOffset -= Time.deltaTime * camRotSpeed;
+        if (rotOffset > math.PI) rotOffset -= math.PI2;
+        if (rotOffset < -math.PI) rotOffset += math.PI2;
 
-        public float linearCameraChase;
-        public float relativeCameraChase;
-        public float velocityFalloff;
-        public float newVelocityEffect;
-        public float virtualTargetOffset;
-
-        float3 virtualTarget;
-        float3 recentVelocity;
-        float3 recentPosition;
-
-        private void Update()
+        var cameraTarget = CameraTarget.MainTarget.transform;
+        if (math.distancesq(transform.position, cameraTarget.position) > 500)
         {
-            var target = CameraTarget.transform;
-            var targetPosition = (float3)target.position;
-            
-            recentVelocity *= Time.deltaTime * velocityFalloff;
-            recentVelocity += (targetPosition - recentPosition) * newVelocityEffect;
-            virtualTarget = targetPosition + recentVelocity * virtualTargetOffset;
-            recentPosition = targetPosition;
-
-            Vector3 actualCamTarget = (targetPosition + virtualTarget) / 2;
-            transform.position = Vector3.MoveTowards(transform.position, actualCamTarget, Time.deltaTime * linearCameraChase);
-            transform.position += (actualCamTarget - transform.position) * (Time.deltaTime * relativeCameraChase);
-
-            transform.rotation = target.rotation;
+            transform.position = cameraTarget.position;
         }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, cameraTarget.position, Time.deltaTime * linearCameraChase);
+            transform.position += (cameraTarget.position - transform.position) * (Time.deltaTime * relativeCameraChase);
+        }
+
+        TorusMapper.GetTorusInfo(transform.position, out _, out _, out var tangent);
+        tangent = math.mul(quaternion.AxisAngle(cameraTarget.up, rotOffset), tangent);
+        transform.rotation = Quaternion.LookRotation(-cameraTarget.up, tangent);
     }
+}

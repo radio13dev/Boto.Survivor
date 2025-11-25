@@ -1,21 +1,49 @@
-﻿using Unity.Burst;
+﻿using BovineLabs.Core.SingletonCollection;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 
-[UpdateInGroup(typeof(ProjectileSystemGroup))]
-[UpdateBefore(typeof(ProjectileClearSystem))]
+[UpdateInGroup(typeof(ProjectileDamageSystemGroup))]
 [BurstCompile]
 public partial struct ProjectileHitSystem_Damage : ISystem
 {
+    public void OnCreate(ref SystemState state)
+    {
+        state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+        state.RequireForUpdate<NetworkIdMapping>();
+    }
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var healthLookup = SystemAPI.GetComponentLookup<Health>(false);
-        foreach (var hit in SystemAPI.Query<RefRO<ProjectileHit>>())
+        var delayedEcb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged);
+        
+        state.Dependency = new Job()
         {
-            if (!healthLookup.TryGetRefRW(hit.ValueRO.HitEntity, out var hitEntityH))
-                continue;
-            
-            hitEntityH.ValueRW.Value--;
+            ecb = delayedEcb.AsParallelWriter(),
+            networkIdMapping = SystemAPI.GetSingleton<NetworkIdMapping>()
+        }.Schedule(state.Dependency);
+    }
+    
+    [WithAll(typeof(ProjectileHit))]
+    partial struct Job : IJobEntity
+    {
+        public EntityCommandBuffer.ParallelWriter ecb;
+        [ReadOnly] public NetworkIdMapping networkIdMapping;
+    
+        public void Execute([ChunkIndexInQuery] int Key, in DynamicBuffer<ProjectileHitEntity> hits, in Projectile projectile
+        )
+        {
+            for (int i = 0; i < hits.Length; i++)
+            {
+                var e = networkIdMapping[hits[i].Value];
+                if (e != Entity.Null)
+                {
+                    ecb.AppendToBuffer(Key, e, Pending.Damage(projectile.Damage));
+                    ecb.SetComponentEnabled<Pending.Dirty>(Key, e, true);
+                }
+            }
         }
     }
 }

@@ -113,7 +113,8 @@ public static class AutoPool
     {
         if (poolObject == null)
         {
-            throw new Exception($"Pool object cannot be null.");
+            Debug.LogError($"Pool object cannot be null.");
+            return;
         }
         
         var poolKey = poolObject.PoolKey;

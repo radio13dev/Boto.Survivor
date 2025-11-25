@@ -8,11 +8,11 @@ using UnityEngine;
 
 public static partial class NetworkPing
 {
-    public static readonly SharedStatic<NativeList<(DateTime, int)>> ServerPingTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<NativeList<(DateTime, int)>, ServerPingTimesKey>();
+    public static readonly SharedStatic<NativeList<(DateTime, int)>> ServerPingTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<ServerPingTimesKey>();
     private class ServerPingTimesKey {}
-    public static readonly SharedStatic<NativeList<(DateTime, int)>> ClientPingTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<NativeList<(DateTime, int)>, ClientPingTimesKey>();
+    public static readonly SharedStatic<NativeList<(DateTime, int)>> ClientPingTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<ClientPingTimesKey>();
     private class ClientPingTimesKey {}
-    public static readonly SharedStatic<NativeList<(DateTime, int)>> ClientExecuteTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<NativeList<(DateTime, int)>, ClientExecuteTimesKey>();
+    public static readonly SharedStatic<NativeList<(DateTime, int)>> ClientExecuteTimes = SharedStatic<NativeList<(DateTime, int)>>.GetOrCreate<ClientExecuteTimesKey>();
     private class ClientExecuteTimesKey {}
     
     [RuntimeInitializeOnLoadMethod]

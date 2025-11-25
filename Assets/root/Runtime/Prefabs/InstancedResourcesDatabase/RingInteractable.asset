@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59930f09355d47679d886e789fe5a04f, type: 3}
+  m_Name: RingInteractable
+  m_EditorClassIdentifier: Boto.Survivor::InstancedResource
+  Material: {fileID: 2100000, guid: 4c80a56d92dca174eaca6c3b1c5a453c, type: 2}
+  Mesh: {fileID: 2534964839176971238, guid: 25bb88b603d472e448e73564831c4d9b, type: 3}
+  AnimData:
+    Frames: 0
+    TimeBetweenFrames: 0
+  HasLifespan: 0
+  UseLastTransform: 0
+  IsTorus: 0
+  IsCone: 0
+  IsColorBaseColor: 0
+  IsColorA: 0
+  IsColorB: 0
+  IsColorC: 0
+  ShowOnMap: 0
+  IsStretch: 0

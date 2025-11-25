@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class WebGpu
 {
-    public static readonly SharedStatic<bool> Enabled = SharedStatic<bool>.GetOrCreate<bool, EnabledKey>();
+    public static readonly SharedStatic<bool> Enabled = SharedStatic<bool>.GetOrCreate<EnabledKey>();
     private class EnabledKey {}
     
     [RuntimeInitializeOnLoadMethod]

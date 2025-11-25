@@ -1,18 +1,25 @@
+using System;
+using Collisions;
+using NativeTrees;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Serialization;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
+using Collider = Collisions.Collider;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public struct GameManager : IComponentData
 {
     [ChunkSerializable]
     public struct Resources : IComponentData
     {
-        public Entity ProjectileTemplate;
-        public Entity SurvivorTemplate;
-        public Entity EnemyTemplate;
-        
-        public Entity Projectile_Survivor_Laser;
+        public Entity GemDropTemplate;
+        public Entity RingDropTemplate;
     }
     
     public struct SpecificPrefabs : IBufferElementData
@@ -24,6 +31,20 @@ public struct GameManager : IComponentData
     {
         public UnityObjectRef<InstancedResource> Instance;
         public SpriteAnimData AnimData;
+        public bool Valid;
+        public const int ChainVisualIndex = 45;
+        public const int ChainEffectIndex = 46;
+
+        public void Validate()
+        {
+            if (!Instance.Value || !Instance.Value.Mesh || !Instance.Value.Material)
+            {
+                Debug.Log($"{Instance.Value} invalid. Mesh or Mat null: {(Instance.Value ? Instance.Value.Mesh : null)}, {(Instance.Value ? Instance.Value.Material : null)}");
+                Valid = false;
+            }
+            else
+                Valid = true;
+        }
     }
     
     [ChunkSerializable]
@@ -47,20 +68,137 @@ public struct GameManager : IComponentData
     {
         public Entity Entity;
     }
+    
+    /// <summary>
+    /// The ULTIMATE generic entity list.
+    /// </summary>
+    public struct Prefabs : IBufferElementData
+    {
+        public Entity Entity;
+        
+        public const int TerrainGroup_Challenge = 0;
+        public const int CircleBlast = 1;
+        public const int TorusBlast = 2;
+        public const int TorusConeBlast = 3;
+        public const int TrapProjectile = 4;
+        public const int TerrainGroup_ChallengeWall = 5;
+        public const int PlayerProjectile_Chain = 6;
+        public const int PlayerProjectile_ChainVisual = 7;
+        
+        public const int Status_cutVisual = 8;
+        public const int Status_degenerateVisual = 9; 
+        public const int Status_subdivideVisual = 10;
+        public const int Status_decimateVisual = 11;
+        public const int Status_dissolveVisual = 12;
+        
+        public const int Status_cutDamageVisual = 13;
+        public const int Status_pokeDamageVisual = 14;
+        
+        public const int PlayerProjectile_Decimate = 15;
+        
+        public const int LobbyTemplate = 16;
+        
+        public const int LootDropTemplate = 17;
+
+        public static Entity SpawnCircleBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radius, double Time, float delay)
+        {
+            var circleE = ecb.Instantiate(prefabs[CircleBlast].Entity);
+            var t = transform;
+            t.Scale = radius;
+            ecb.SetComponent(circleE, t);
+            ecb.SetComponent(circleE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(circleE, new DestroyAtTime(Time + delay));
+            return circleE;
+        }
+
+        public static Entity SpawnTorusBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, double Time, float delay)
+        {
+            var torusE = ecb.Instantiate(prefabs[TorusBlast].Entity);
+            var t = transform;
+            t.Scale = radiusMax;
+            ecb.SetComponent(torusE, t);
+            ecb.SetComponent(torusE, new TorusMin(radiusMin/radiusMax));
+            ecb.SetComponent(torusE, Collider.Torus(radiusMin/radiusMax, 1));
+            ecb.SetComponent(torusE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
+            return torusE;
+        }
+        
+        public static Entity SpawnTorusConeBlast(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in LocalTransform transform, float radiusMin, float radiusMax, float angle, double Time, float delay)
+        {
+            var torusE = ecb.Instantiate(prefabs[TorusConeBlast].Entity);
+            var t = transform;
+            t.Scale = radiusMax;
+            ecb.SetComponent(torusE, t);
+            ecb.SetComponent(torusE, new TorusMin(radiusMin/radiusMax));
+            ecb.SetComponent(torusE, new TorusCone(angle));
+            ecb.SetComponent(torusE, Collider.TorusCone(radiusMin/radiusMax, 1, angle, math.right()));
+            ecb.SetComponent(torusE, new SpawnTimeCreated(Time));
+            ecb.SetComponent(torusE, new DestroyAtTime(Time + delay));
+            return torusE;
+        }
+
+        public static void SpawnTrapProjectile(in DynamicBuffer<Prefabs> prefabs, ref EntityCommandBuffer ecb, in NetworkId parentNetworkId, in LocalTransform localTransform, in double Time)
+        {
+            var trapProjE = ecb.Instantiate(prefabs[TrapProjectile].Entity);
+            ecb.SetComponent(trapProjE, LocalTransform.FromPositionRotationScale(localTransform.Position, localTransform.Rotation, 0.01f));
+            ecb.SetComponent(trapProjE, new EnemyTrapProjectileAnimation(){ ParentId = parentNetworkId });
+            ecb.SetComponentEnabled<MovementDisabled>(trapProjE, true);
+            ecb.SetComponent(trapProjE, new DestroyAtTime(Time + 2));
+        }
+    }
+    
+    public struct Enemies : IBufferElementData
+    {
+        public Entity Entity;
+    }
+    
+    public struct GemVisual : IBufferElementData
+    {
+        public int InstancedResourceIndex;
+    }
+    public struct RingVisual : IBufferElementData
+    {
+        public int InstancedResourceIndex;
+    }
+    public struct RingDropTemplate : IBufferElementData
+    {
+        public Entity Entity;
+    }
+    
+    public struct Survivors : IBufferElementData
+    {
+        public Entity Entity;
+    }
+    
+    public struct WallTemplates : IBufferElementData
+    {
+        public Entity Entity;
+    }
+    
+    public struct GameEventTemplates : IBufferElementData
+    {
+        public Entity Entity;
+    }
 }
 
 public class GameManagerResourcesAuthoring : MonoBehaviour
 {
-    public GameObject ProjectileTemplate;
-    public GameObject SurvivorTemplate;
-    public GameObject EnemyTemplate;
-    public GameObject Projectile_Survivor_Laser;
+    public GemDropAuthoring GemDropTemplate;
     
     public SpecificPrefabDatabase SpecificPrefabDatabase;
     public InstancedResourcesDatabase InstancedResourcesDatabase;
     public ParticleDatabase ParticleDatabase;
     public TerrainAuthoring[] Terrains;
     public ProjectileAuthoring[] Projectiles;
+    public EnemyCharacterAuthoring[] Enemies;
+    public GemVisuals GemVisuals;
+    public RingVisuals RingVisuals;
+    public RingDropAuthoring[] RingDropTemplates;
+    public SurvivorAuthoring[] Survivors;
+    public GenericDatabase Prefabs;
+    public GameObject[] WallTemplates;
+    public GameObject[] GameEventTemplates;
 
     public class Baker : Baker<GameManagerResourcesAuthoring>
     {
@@ -70,10 +208,7 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
             AddComponent(entity, new GameManager());
             AddComponent(entity, new GameManager.Resources()
             {
-                ProjectileTemplate = GetEntity(authoring.ProjectileTemplate, TransformUsageFlags.WorldSpace),
-                SurvivorTemplate = GetEntity(authoring.SurvivorTemplate, TransformUsageFlags.WorldSpace),
-                EnemyTemplate = GetEntity(authoring.EnemyTemplate, TransformUsageFlags.WorldSpace),
-                Projectile_Survivor_Laser = GetEntity(authoring.Projectile_Survivor_Laser, TransformUsageFlags.WorldSpace)
+                GemDropTemplate = GetEntity(authoring.GemDropTemplate, TransformUsageFlags.WorldSpace),
             });
             
             if (authoring.SpecificPrefabDatabase)
@@ -89,7 +224,9 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.InstancedResourcesDatabase.Assets.Count; i++)
                 {
                     var instance = authoring.InstancedResourcesDatabase.Assets[i];
-                    buffer.Add(new GameManager.InstancedResources() { Instance = instance, AnimData = instance.AnimData });
+                    var instancedResource = new GameManager.InstancedResources() { Instance = instance, AnimData = instance.AnimData };
+                    instancedResource.Validate();
+                    buffer.Add(instancedResource);
                 }
             }
             
@@ -117,6 +254,104 @@ public class GameManagerResourcesAuthoring : MonoBehaviour
                 for (int i = 0; i < authoring.Projectiles.Length; i++)
                 {
                     buffer.Add(new GameManager.Projectiles(){ Entity = GetEntity(authoring.Projectiles[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Enemies?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Enemies>(entity);
+                for (int i = 0; i < authoring.Enemies.Length; i++)
+                {
+                    buffer.Add(new GameManager.Enemies(){ Entity = GetEntity(authoring.Enemies[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Prefabs?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Prefabs>(entity);
+                for (int i = 0; i < authoring.Prefabs.Length; i++)
+                {
+                    buffer.Add(new GameManager.Prefabs(){ Entity = GetEntity(authoring.Prefabs[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.GemVisuals && authoring.GemVisuals.Value?.Count > 0)
+            {
+                if (!authoring.InstancedResourcesDatabase)
+                {
+                    Debug.LogError($"Couldn't author GemVisuals, instanced resource database null.");
+                }
+                else
+                {
+                    var buffer = AddBuffer<GameManager.GemVisual>(entity);
+                    buffer.Resize(Enum.GetValues(typeof(Gem.Type)).Length , NativeArrayOptions.ClearMemory);
+                    foreach (var kvp in authoring.GemVisuals.Value)
+                    {
+                        var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
+                        if (index == -1)
+                        {
+                            Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
+                        }
+                        buffer[(int)kvp.Key] = new GameManager.GemVisual(){ InstancedResourceIndex = index } ;
+                    }
+                }
+            }
+            
+            if (authoring.RingVisuals && authoring.RingVisuals.Value?.Count > 0)
+            {
+                if (!authoring.InstancedResourcesDatabase)
+                {
+                    Debug.LogError($"Couldn't author RingVisuals, instanced resource database null.");
+                }
+                else
+                {
+                    var buffer = AddBuffer<GameManager.RingVisual>(entity);
+                    buffer.Resize(Enum.GetValues(typeof(RingPrimaryEffect)).Length , NativeArrayOptions.ClearMemory);
+                    foreach (var kvp in authoring.RingVisuals.Value)
+                    {
+                        var index = authoring.InstancedResourcesDatabase.Assets.IndexOf(kvp.Value);
+                        if (index == -1)
+                        {
+                            Debug.LogError($"{kvp.Value} cannot be found in the InstancedResourcesDatabase");
+                        }
+                        buffer[(byte)kvp.Key] = new GameManager.RingVisual(){ InstancedResourceIndex = index } ;
+                    }
+                }
+            }
+            
+            if (authoring.RingDropTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.RingDropTemplate>(entity);
+                foreach (var ringDropTemplate in authoring.RingDropTemplates)
+                {
+                    buffer.Add(new GameManager.RingDropTemplate(){ Entity = GetEntity(ringDropTemplate.gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.Survivors?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.Survivors>(entity);
+                for (int i = 0; i < authoring.Survivors.Length; i++)
+                {
+                    buffer.Add(new GameManager.Survivors(){ Entity = GetEntity(authoring.Survivors[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.WallTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.WallTemplates>(entity);
+                for (int i = 0; i < authoring.WallTemplates.Length; i++)
+                {
+                    buffer.Add(new GameManager.WallTemplates(){ Entity = GetEntity(authoring.WallTemplates[i].gameObject, TransformUsageFlags.WorldSpace) });
+                }
+            }
+            
+            if (authoring.GameEventTemplates?.Length > 0)
+            {
+                var buffer = AddBuffer<GameManager.GameEventTemplates>(entity);
+                for (int i = 0; i < authoring.GameEventTemplates.Length; i++)
+                {
+                    buffer.Add(new GameManager.GameEventTemplates(){ Entity = GetEntity(authoring.GameEventTemplates[i].gameObject, TransformUsageFlags.WorldSpace) });
                 }
             }
         }
