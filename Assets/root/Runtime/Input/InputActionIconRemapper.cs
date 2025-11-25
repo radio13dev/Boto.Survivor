@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,13 +19,15 @@ public class InputActionIconRemapper : MonoBehaviour
     private static readonly int XboxOutlineProperty = Shader.PropertyToID("_XboxOutline");
     private InputSystem_Actions _inputActions;
 
-    private void Awake()
+    private IEnumerator Start()
     {
+        yield return new WaitUntil(() => GameInput.Inputs != null);
         _inputActions = GameInput.Inputs;
+        UpdateInputKeyMaterials();
     }
     
     [EditorButton]
-    public void UpdateInputKeyIcons()
+    private void UpdateInputKeyMaterials()
     {
         #if UNITY_EDITOR
         // Only create a new input action if not in play mode
@@ -75,7 +79,7 @@ public class InputActionIconRemapper : MonoBehaviour
 }
 
 /// <summary>
-/// A matches a player input "action" with the associated key / button material
+/// Matches a player input "action" with the associated key / button material
 /// </summary>
 [Serializable]
 public class ActionKeyIcon
