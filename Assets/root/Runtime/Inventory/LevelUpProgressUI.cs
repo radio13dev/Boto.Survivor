@@ -7,6 +7,9 @@ public class LevelUpProgressUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _progressText;
     [SerializeField] private TextMeshProUGUI _maxProgressText;
     [SerializeField] private TextMeshProUGUI _currentLevelText;
+    [SerializeField] private PooledParticle _levelUpParticle;
+    [SerializeField] private Transform _particlePosition;
+    [SerializeField] private float _particleSize = 100f;
 
     private void OnEnable()
     {
@@ -47,5 +50,10 @@ public class LevelUpProgressUI : MonoBehaviour
         if (!_maxProgressText || !_currentLevelText) { return; }
         _maxProgressText.text = playerLevel.LevelUpCost.ToString();
         _currentLevelText.text = playerLevel.Level.ToString();
+        
+        var particle = _levelUpParticle.GetFromPool();
+        particle.transform.position = _particlePosition.position;
+        particle.transform.rotation = _particlePosition.rotation;
+        particle.transform.localScale = Vector3.one * _particleSize;
     }
 }
