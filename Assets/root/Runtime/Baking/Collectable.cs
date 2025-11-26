@@ -143,11 +143,12 @@ public partial struct GemCollectableSystem : ISystem
                 ref var progress = ref SystemAPI.GetComponentRW<PlayerLevel>(playerE).ValueRW;
                 progress.Progress++;
                 GameEvents.PlayerLevelProgress(playerE, progress);
-                if (progress.Progress >= progress.LevelUpCost)
+                while (progress.Progress >= progress.LevelUpCost)
                 {
-                    progress.Progress -= progress.LevelUpCost;
                     progress.Level++;
                     GameEvents.PlayerLevelUp(playerE, progress);
+                    progress.Progress -= progress.LevelUpCost;
+                    GameEvents.PlayerLevelProgress(playerE, progress);
                 }
             }
             //if (SystemAPI.HasBuffer<InventoryGem>(playerE))

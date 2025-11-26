@@ -22,14 +22,9 @@ public class LevelUpProgressUI : MonoBehaviour
     private static readonly int EndAngleProperty = Shader.PropertyToID("_EndAngle");
     private float _progressBarStartAngle;
     private float _progressBarEndAngle;
-    
-    private void OnEnable()
-    {
-        HandUIController.Attach(this);
-        
-        GameEvents.OnPlayerLevelProgress += OnPlayerLevelProgress;
-        GameEvents.OnPlayerLevelUp += OnPlayerLevelUp;
 
+    private void Awake()
+    {
         if (_progressBarBackground != null)
         {
             _progressBarStartAngle = _progressBarBackground.material.GetFloat(StartAngleProperty);
@@ -50,36 +45,48 @@ public class LevelUpProgressUI : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnPlayerLevelProgress += OnPlayerLevelProgress;
+        GameEvents.OnPlayerLevelUp += OnPlayerLevelUp;
+    }
+
     private void OnDisable()
     {
-        HandUIController.Detach(this);
-        
         GameEvents.OnPlayerLevelProgress -= OnPlayerLevelProgress;
         GameEvents.OnPlayerLevelUp -= OnPlayerLevelUp;
+    }
 
-        if (_progressBarFill) { SetProgressBarFill(0f);}
+    private void OnDestroy()
+    {
+        SetProgressBarFill(0f);
     }
 
     private void OnPlayerLevelProgress(Entity entity, PlayerLevel playerLevel)
     {
-        if (!_progressText) { return; }
-        int playerProgress = playerLevel.Progress >= playerLevel.LevelUpCost ? 0 : playerLevel.Progress;
-        _progressText.text = playerProgress.ToString();
+        if (entity != CameraTarget.MainEntity) { return; }
         
-        SetProgressBarFill((float) playerProgress / playerLevel.LevelUpCost);
+        if (_progressText) { _progressText.text = playerLevel.Progress.ToString(); }
+        SetProgressBarFill((float) playerLevel.Progress / playerLevel.LevelUpCost);
     }
 
     private void OnPlayerLevelUp(Entity entity, PlayerLevel playerLevel)
     {
-        if (!_maxProgressText || !_currentLevelText) { return; }
-        
-        _maxProgressText.text = playerLevel.LevelUpCost.ToString();
-        _currentLevelText.text = playerLevel.Level.ToString();
-        
-        var particle = _levelUpParticle.GetFromPool();
-        particle.transform.position = _particlePosition.position;
-        particle.transform.rotation = _particlePosition.rotation;
-        particle.transform.localScale = Vector3.one * _particleSize;
+        if (entity != CameraTarget.MainEntity) { return; }
+
+        if (_maxProgressText && _currentLevelText)
+        {
+            _maxProgressText.text = playerLevel.LevelUpCost.ToString();
+            _currentLevelText.text = playerLevel.Level.ToString();
+        }
+
+        if (_levelUpParticle)
+        {
+            var particle = _levelUpParticle.GetFromPool();
+            particle.transform.position = _particlePosition.position;
+            particle.transform.rotation = _particlePosition.rotation;
+            particle.transform.localScale = Vector3.one * _particleSize;
+        }
     }
 
     private void SetProgressBarFill(float percentage)

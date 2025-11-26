@@ -34,9 +34,13 @@ public static class IAutoPoolExtensions
     {
         if (afterSeconds <= 0)
             AutoPool.Return(poolObject);
-        else
+        else if (CoroutineHost.Instance)
         {
             CoroutineHost.Instance.StartCoroutine(DelayedReturnToPool(poolObject, afterSeconds));
+        }
+        else
+        {
+            AutoPool.Return(poolObject);
         }
     }
     
