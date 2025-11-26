@@ -20,6 +20,12 @@ public class LevelUpProgressUI : MonoBehaviour
             OnPlayerLevelUp(CameraTarget.MainEntity, playerLevel);
             OnPlayerLevelProgress(CameraTarget.MainEntity, playerLevel);
         }
+        else
+        {
+            _progressText.text = "0";
+            _maxProgressText.text = "0";
+            _currentLevelText.text = "0";
+        }
     }
 
     private void OnDisable()
@@ -33,7 +39,7 @@ public class LevelUpProgressUI : MonoBehaviour
     private void OnPlayerLevelProgress(Entity entity, PlayerLevel playerLevel)
     {
         if (!_progressText) { return; }
-        _progressText.text = playerLevel.Progress.ToString();
+        _progressText.text = playerLevel.Progress >= playerLevel.LevelUpCost ? "0" : playerLevel.Progress.ToString();
     }
 
     private void OnPlayerLevelUp(Entity entity, PlayerLevel playerLevel)
