@@ -35,6 +35,11 @@ public class CameraTarget : EntityLinkMono
             GameEvents.InventoryChanged(Entity);
             if (GameEvents.TryGetComponent2(Entity, out Health health)) GameEvents.PlayerHealthChanged(Entity, health);
             if (GameEvents.TryGetComponent2(Entity, out Wallet wallet)) GameEvents.WalletChanged(Entity, wallet);
+            if (GameEvents.TryGetComponent2(Entity, out PlayerLevel playerLevel))
+            {
+                GameEvents.PlayerLevelProgress(Entity, playerLevel);
+                GameEvents.PlayerLevelUp(Entity, playerLevel);
+            }
         }
     }
 }
