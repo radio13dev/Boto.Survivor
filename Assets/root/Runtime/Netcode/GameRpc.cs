@@ -24,7 +24,6 @@ public unsafe struct GameRpc : IComponentData
         PlayerLeave = 0b1000_0001,
 
         // Runtime Actions
-        
         PlayerSlotInventoryGemIntoRing = 0b0000_0001,
         PlayerSwapGemSlots = 0b0000_0010,
         PlayerSwapRingSlots = 0b0000_0011,
@@ -37,6 +36,7 @@ public unsafe struct GameRpc : IComponentData
         PlayerInviteToPrivateLobby = 0b0000_1010,
         PlayerSetLobbyPrivate = 0b0000_1011,
         PlayerChooseLootReward = 0b0000_1100,
+        PlayerDrawMapPoint = 0b0000_1101,
 
         
         // Admin Actions
@@ -132,6 +132,14 @@ public unsafe struct GameRpc : IComponentData
     public static GameRpc PlayerSetLobbyPrivate(byte playerId, bool setPrivate)
     {
         return new GameRpc(){ Type = GameRpc.Code.PlayerSetLobbyPrivate, PlayerId = playerId, IsPrivateLobby = setPrivate };
+    }
+    #endregion
+    
+    #region Map Drawing
+    [FieldOffset(2)] public float3 MapPointPosition;
+    public static GameRpc PlayerDrawMapPoint(byte playerId, float3 mapPointPosition)
+    {
+        return new GameRpc() { Type = Code.PlayerDrawMapPoint, PlayerId = playerId, MapPointPosition = mapPointPosition };
     }
     #endregion
 
@@ -454,6 +462,17 @@ public partial struct GameRpcSystem : ISystem
                         buffer.Clear();
                         buffer.Add(new PrivateLobbyWhitelist(){ Player = playerId });
                     }
+                    break;
+                }
+
+                case GameRpc.Code.PlayerDrawMapPoint:
+                {
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(LocalTransform));
+                    playerQuery.SetSharedComponentFilter(playerTag);
+                    if (!playerQuery.HasSingleton<LocalTransform>()) continue;
+                    
+                    var playerE = playerQuery.GetSingletonEntity();
+                    GameEvents.PlayerDrawMapPoint(playerE, playerId, rpc.MapPointPosition);
                     break;
                 }
                 
