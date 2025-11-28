@@ -467,11 +467,19 @@ public partial struct GameRpcSystem : ISystem
 
                 case GameRpc.Code.PlayerDrawMapPoint:
                 {
-                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(LocalTransform));
+                    using var playerQuery = state.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(MapDrawingData), typeof(LocalTransform));
                     playerQuery.SetSharedComponentFilter(playerTag);
                     if (!playerQuery.HasSingleton<LocalTransform>()) continue;
                     
                     var playerE = playerQuery.GetSingletonEntity();
+                    
+                    var mapData = SystemAPI.GetBuffer<MapDrawingData>(playerE);
+                    var addedPoint = new MapDrawingData { DrawPoint = rpc.MapPointPosition };
+                    mapData.Add(addedPoint);
+
+                    if (mapData.Length > MapDrawing.MAX_NODES)
+                        mapData.RemoveRange(0, MapDrawing.MAX_NODES - mapData.Length);
+                    
                     GameEvents.PlayerDrawMapPoint(playerE, playerId, rpc.MapPointPosition);
                     break;
                 }

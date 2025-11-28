@@ -17,6 +17,21 @@ public class MapDrawingRouter : MonoBehaviour
         GameEvents.OnPlayerDrawMapPoint -= OnPlayerDrawMapPoint;
     }
 
+    public void ResetExistingMapPoints()
+    {
+        _mapDrawing.Clear();
+        
+        using var q = Game.ClientGame.World.EntityManager.CreateEntityQuery(typeof(PlayerControlled), typeof(MapDrawingData));
+        q.SetSharedComponentFilter(new PlayerControlled(){ Index = (byte)PlayerIndexToCheck });
+        if (!q.HasSingleton<MapDrawingData>()) { return; }
+        
+        var points = q.GetSingletonBuffer<MapDrawingData>();
+        for (int i = 0; i < points.Length; i++)
+        {
+            _mapDrawing.AddPoint(points[i].DrawPoint, false);
+        }
+    }
+
     private void OnPlayerDrawMapPoint(Entity entity, int playerIndex, float3 pointPos)
     {
         if (!_mapDrawing || playerIndex != PlayerIndexToCheck || playerIndex == CameraTarget.MainTarget.PlayerIndex) { return; } 

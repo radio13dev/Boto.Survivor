@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 900170924473941128}
   - component: {fileID: 8968431526063313881}
   - component: {fileID: -1972603713845305123}
+  - component: {fileID: 5846850189972172274}
   m_Layer: 0
   m_Name: Player_Base_Cylinder
   m_TagString: Untagged
@@ -240,3 +241,15 @@ MonoBehaviour:
   Prefabs: []
   Prefab: {fileID: 7419757055955712054, guid: 4014da6cb66f6c14abcc5788e2f1a018, type: 3}
   Count: 1
+--- !u!114 &5846850189972172274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419757055955712054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 078871c379fd4560966a8a276c0973af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Boto.Survivor::MapDrawingDataAuthoring
