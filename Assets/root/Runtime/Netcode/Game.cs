@@ -11,6 +11,7 @@ using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -496,6 +497,7 @@ public static class GameEvents
         PlayerRevived,
         PlayerLevelProgress,
         PlayerLevelUp,
+        PlayerDrawMapPoint,
     }
     
     
@@ -511,6 +513,8 @@ public static class GameEvents
         [FieldOffset(16)] public readonly int Int1;
         [FieldOffset(20)] public readonly int Int2;
         [FieldOffset(24)] public readonly int Int3;
+
+        [FieldOffset(16)] public readonly float3 Vec3;
         
         [FieldOffset(12)] public readonly Health Health;
         [FieldOffset(12)] public readonly Wallet Wallet;
@@ -538,6 +542,11 @@ public static class GameEvents
         {
             Int0 = int0;
             Int1 = int1;
+        }
+        public Data(Type type, Entity entity, int int0, float3 vec3) : this(type, entity)
+        {
+            Int0 = int0;
+            Vec3 = vec3;
         }
         public Data(Type type, Entity entity, Wallet wallet) : this(type, entity)
         {
@@ -621,6 +630,9 @@ public static class GameEvents
                     break;
                 case PlayerLevelUpEnum:
                     OnPlayerLevelUp?.Invoke(data.Entity, data.PlayerLevel);
+                    break;
+                case PlayerDrawMapPointEnum:
+                    OnPlayerDrawMapPoint?.Invoke(data.Entity, data.Int0, data.Vec3);
                     break;
             }
         }
@@ -712,6 +724,14 @@ public static class GameEvents
     public static void PlayerLevelUp(Entity entity, PlayerLevel playerLevel)
     {
         s_EventQueue.Data.Enqueue(new (Type.PlayerLevelUp, entity, playerLevel));
+    }
+    
+    private const Type PlayerDrawMapPointEnum = Type.PlayerDrawMapPoint;
+    public delegate void OnPlayerDrawMapPointDel(Entity entity, int playerIndex, float3 pointPos);
+    public static event OnPlayerDrawMapPointDel OnPlayerDrawMapPoint;
+    public static void PlayerDrawMapPoint(Entity entity, int playerIndex, float3 pointPos)
+    {
+        s_EventQueue.Data.Enqueue(new (Type.PlayerDrawMapPoint, entity, playerIndex, pointPos));
     }
 
     public static bool TryGetSingleton<T>(out T o) where T : unmanaged, IComponentData
