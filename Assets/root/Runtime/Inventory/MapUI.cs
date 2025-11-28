@@ -172,7 +172,7 @@ public class MapUI : Selectable, IPointerMoveHandler, IPointerClickHandler, ISub
         if (MapCollider.Raycast(ray, out var hitInfo, 10000))
         {
             // Draw something
-            MapDrawing.AddPoint(hitInfo.point);
+            MapDrawing.AddPoint(hitInfo.point, true);
         }
     }
 

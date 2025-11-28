@@ -72,20 +72,22 @@ public class MapDrawing : MonoBehaviour
         
         // Add all toroidal points back in again
         for (int i = 0; i < oldPoints.Count; i++)
-            AddPoint(oldPoints[i]);
+        {
+            AddPoint(oldPoints[i], false);
+        }
     }
     
     [EditorButton]
     private void Demo()
     {
         Clear();
-        AddPoint(math.float3(100, 100, 0));
-        AddPoint(math.float3(100, 100, 10));
-        AddPoint(math.float3(120, 100, 20));
-        AddPoint(math.float3(140, 50, 40));
-        AddPoint(math.float3(100, 20, 0));
-        AddPoint(math.float3(10, 100, 100));
-        AddPoint(math.float3(10, -100, -100));
+        AddPoint(math.float3(100, 100, 0), false);
+        AddPoint(math.float3(100, 100, 10), false);
+        AddPoint(math.float3(120, 100, 20), false);
+        AddPoint(math.float3(140, 50, 40), false);
+        AddPoint(math.float3(100, 20, 0), false);
+        AddPoint(math.float3(10, 100, 100), false);
+        AddPoint(math.float3(10, -100, -100), false);
     }
     
     bool m_HasSketch = false;
@@ -94,14 +96,14 @@ public class MapDrawing : MonoBehaviour
         // Only add this to the path IF it's different enough from the last point
         if (Nodes.Count == 0)
         {
-            AddPoint(point);
+            AddPoint(point, true);
             return;
         }
             
         var comp = m_HasSketch ? Nodes[^2] : Nodes[^1];
         if (math.any(math.abs(TorusMapper.Path.deltaAngle(TorusMapper.CartesianToToroidal(comp), TorusMapper.CartesianToToroidal(point))) > SketchSpacing))
         {
-            AddPoint(point);
+            AddPoint(point, true);
         }
         else
         {
@@ -124,11 +126,13 @@ public class MapDrawing : MonoBehaviour
     public void EndSketchPoint()
     {
         if (m_HasSketch)
-            AddPoint(Nodes[^1]);
+            AddPoint(Nodes[^1], true);
     }
 
-    public void AddPoint(float3 point)
+    public void AddPoint(float3 point, bool sendRpc)
     {
+        if (sendRpc) { Game.ClientGame.RpcSendBuffer.Enqueue(GameRpc.PlayerDrawMapPoint((byte)Game.ClientGame.PlayerIndex, point)); }
+        
         if (m_HasSketch)
         {
             Path.RemoveAt(Path.Count-1);
