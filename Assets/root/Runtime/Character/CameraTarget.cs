@@ -1,8 +1,4 @@
-﻿using System;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
+﻿using Unity.Entities;
 using UnityEngine;
 
 public class CameraTarget : EntityLinkMono
@@ -39,6 +35,11 @@ public class CameraTarget : EntityLinkMono
             {
                 GameEvents.PlayerLevelProgress(Entity, playerLevel);
                 GameEvents.PlayerLevelUp(Entity, playerLevel);
+            }
+            
+            foreach (var mapRouter in FindObjectsByType<MapDrawingRouter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                mapRouter.ResetExistingMapPoints();
             }
         }
     }
